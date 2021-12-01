@@ -31,7 +31,7 @@ Willard's credits
 <meta name="theme-color" id="themeColor">
 <link id="vtfont" href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
 <style>@font-face{font-family: 'VT323'; src:url('mojangles.ttf');}</style>
-<link rel="shortcut icon" type="image/ico" href="favicon.ico">
+<link rel="shortcut icon" type="image/ico" href="favicon.ico?">
 <link rel="manifest" href="manifest.json">
 </head>
 <style>
@@ -709,7 +709,7 @@ color.b += (0.9 - color.b) * waterFog;
 return vec4(color.r * 0.9, color.g * 0.9, min(color.b + 0.3, 1.0), color.a);
 }
 vec4 redShift(vec4 color) {
-return vec4(mix(color.rgb, vec3(255.,0.,0.), waterFog*12.), color.a);
+return vec4(mix(color.rgb, vec3(255.,0.,0.), min(waterFog*12., 1.)), color.a);
 }
 void main(){
 vec4 color = texture2D(uSampler, vTexture);
@@ -8723,8 +8723,9 @@ speak(msg)
 this.update()
 },
 write: function(msg, from){
-if(!from){ //remove bad words
-for(var regex of this.remove){
+if(!from){
+if(!msg) return
+for(var regex of this.remove){ //remove bad words
 msg = msg.replace(regex, "<span style='color:black; background:black;'>$1</span>")
 }
 }
@@ -15160,7 +15161,6 @@ if(this.sections[y >> 4]) this.sections[y >> 4].setLight(x, y & 15, z, level, bl
 }
 getLight(x, y, z, blockLight = 0) {
 if (y >= this.sections.length * 16) return 15
-if(!this.sections[y >> 4]) return 0
 return this.sections[y >> 4].getLight(x, y & 15, z, blockLight)
 }
 trySpread(x, y, z, level, spread, blockLight, update = false) {
@@ -16988,57 +16988,16 @@ this.tint.g = 1
 this.tint.b = 0
 }
 facePlayer(){
-//var magnitude = dist3(this.x,this.y,this.z,p.x,p.y,p.z)
-this.yaw = atan2(p.z - this.z, p.x-this.x)
+this.yaw = Math.PId-atan2(p.z - this.z, p.x - this.x) + Math.PI2
 var adjacent = dist2(this.x,this.z,p.x,p.z)
-this.pitch = atan2(p.y - this.y, adjacent)
-/*var r = this.rotationMatrix
-r.identity()
-var e = r.elements
-var up = vec4
-up.x = 0
-up.y = 1
-up.z = 0
-e[12] = this.x
-e[13] = this.y
-e[14] = this.z
-var z = vec1
-z.x = this.x - p.x
-z.y = this.y - p.y
-z.z = this.z - p.z
-z.normalize()
-var x = up.crossProduct(z.x,z.y,z.z, vec2)
-x.normalize()
-var y = z.crossProduct(x.x,x.y,x.z, vec3)
-y.normalize()
-e[0] = x.x
-e[1] = x.y
-e[2] = x.z
-e[4] = y.x
-e[5] = y.y
-e[6] = y.z
-e[8] = z.x
-e[9] = z.y
-e[10] = z.z*/
-/*/less code, more computing
-var dx = p.x-this.x;
-var dy = p.y-this.y;
-var dz = p.z-this.z;
-var rxy = Math.sqrt( Math.pow(dx,2) + Math.pow(dy,2) );
-var lambda = Math.atan(dy/dx);
-var phi = Math.atan(dz/rxy)
-if (dx < 0) phi = phi + Math.PI;
-if (dz < 0) lambda = -1 * lambda;
-this.pitch = rxy
-this.yaw = lambda*/
+this.pitch = Math.PId-atan2(p.y - this.y, adjacent)
 }
 render(){
 const modelMatrix = new Matrix();
 modelMatrix.identity()
 modelMatrix.translate(this.x, this.y, this.z)
-modelMatrix.rotX(this.pitch)
 modelMatrix.rotY(this.yaw)
-modelMatrix.rotX(this.dieEffect)
+modelMatrix.rotX(this.pitch)
 modelMatrix.scale(this.width, this.height, this.depth)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
@@ -17054,8 +17013,8 @@ const x = round(this.x)
 const y = round(this.y)
 const z = round(this.z)
 const blockLight = world.getLight(x, y, z, 1)
-const skysLight = world.getLight(x, y, z, 0) * (skyLight / 15)
-const lightLevel = min(max(skysLight, blockLight) * 0.9 + 0.1, 1.0)
+const skysLight = world.getLight(x, y, z, 0)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
 gl.bindTexture(gl.TEXTURE_2D, explodeTexture)
 gl.uniform1i(glCache.uSamplerEntity, 5)
 gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
@@ -17735,13 +17694,15 @@ this.health = 10
 class Particle extends Entity{
 constructor() {
 super(...arguments)
-this.rotationMatrix = new Matrix() //for pointing at camera
 }
 facePlayer(){
-//var magnitude = dist3(this.x,this.y,this.z,p.x,p.y,p.z)
+this.yaw = Math.PId-atan2(p.z - this.z, p.x - this.x) + Math.PI2
+var adjacent = dist2(this.x,this.z,p.x,p.z)
+this.pitch = Math.PId-atan2(p.y - this.y, adjacent)
+/*//var magnitude = dist3(this.x,this.y,this.z,p.x,p.y,p.z)
 this.yaw = atan2(p.z - this.z, p.x-this.x)
 var adjacent = dist2(this.x,this.z,p.x,p.z)
-this.pitch = atan2(p.y - this.y, adjacent)
+this.pitch = atan2(p.y - this.y, adjacent)*/
 /*var r = this.rotationMatrix
 r.identity()
 var e = r.elements
@@ -17810,10 +17771,9 @@ let renderz = (this.z - this.previousZ) * diff + this.previousZ
 const offsetY = this.offsetY
 const modelMatrix = new Matrix();
 modelMatrix.identity()
-//var modelMatrix = this.rotationMatrix
 modelMatrix.translate(renderx, rendery + offsetY, renderz)
-modelMatrix.rotX(this.pitch)
 modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
 modelMatrix.scale(this.width, this.height, this.depth)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
@@ -17829,8 +17789,8 @@ const x = round(this.x)
 const y = round(this.y)
 const z = round(this.z)
 const blockLight = world.getLight(x, y, z, 1)
-const skysLight = world.getLight(x, y, z, 0) * (skyLight / 15)
-const lightLevel = min(max(skysLight, blockLight) * 0.9 + 0.1, 1.0)
+const skysLight = world.getLight(x, y, z, 0)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 gl.uniform1i(glCache.uSamplerParticle, 0)
 gl.uniform1f(glCache.uLightLevelParticle, lightLevel)
@@ -17879,16 +17839,16 @@ super(x, y, z, 0, 0, velx, vely, velz, bs, bs, bs, new Float32Array(shapeVerts.f
 }
 }
 win.BlockParticle = BlockParticle
-class GenericParticle extends Particle{
+class PoofParticle extends Particle{
 constructor(x,y,z){
-super(x, y, z, rand(-0.04, 0.04), 0, rand(-0.04, 0.04), 0, 0, 0.5, 0.5, 0.5, null, null, explodeVaos.size, rand(500, 2000), genericVaos[floor(rand(8))])
+super(x, y, z, 0, 0, rand(-0.05, 0.05), 0, rand(-0.05, 0.05), 0.5, 0.5, 0.5, null, null, genericVaos.size, rand(1000, 3000), genericVaos[floor(rand(8))])
 this.brightness = rand(0.8, 1)
 this.speed = rand(0.01, 0.05)
 }
 update(){
-this.vely = this.speed
 let now = performance.now()
 this.updateVelocity(now)
+this.vely = this.speed
 this.move(now)
 if (now - this.spawn > this.despawns) {
 this.canDespawn = true
@@ -17899,8 +17859,8 @@ render(){
 const modelMatrix = new Matrix();
 modelMatrix.identity()
 modelMatrix.translate(this.x, this.y, this.z)
-modelMatrix.rotX(this.pitch)
 modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
 modelMatrix.scale(this.width, this.height, this.depth)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
@@ -17916,10 +17876,10 @@ const x = round(this.x)
 const y = round(this.y)
 const z = round(this.z)
 const blockLight = world.getLight(x, y, z, 1)
-const skysLight = world.getLight(x, y, z, 0) * (skyLight / 15)
-const lightLevel = min(max(skysLight, blockLight) * 0.9 + 0.1, 1.0) * this.brightness
+const skysLight = world.getLight(x, y, z, 0)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0) * this.brightness
 gl.bindTexture(gl.TEXTURE_2D, genericTexture)
-gl.uniform1i(glCache.uSamplerParticle, 6) //explode texture
+gl.uniform1i(glCache.uSamplerParticle, 6)
 gl.uniform1f(glCache.uLightLevelParticle, lightLevel)
 gl.uniformMatrix4fv(glCache.uViewParticle, false, modelViewProjectionMatrix.elements)
 gl.uniform1i(glCache.isTextureAtlasParticle, 0)
@@ -17929,10 +17889,10 @@ glExtensions.vertex_array_object.bindVertexArrayOES(null)
 gl.uniform1i(glCache.isTextureAtlasParticle, 1)
 }
 }
-win.GenericParticle = GenericParticle
+win.PoofParticle = PoofParticle
 function poof(x,y,z){
 for(var i=0; i<20; i++){
-world.particles.push(new GenericParticle(x,y,z))
+world.particles.push(new PoofParticle(x,y,z))
 }
 }
 win.poof = poof
@@ -17958,8 +17918,8 @@ render(){
 const modelMatrix = new Matrix();
 modelMatrix.identity()
 modelMatrix.translate(this.x, this.y, this.z)
-modelMatrix.rotX(this.pitch)
 modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
 modelMatrix.scale(this.width, this.height, this.depth)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
@@ -17975,8 +17935,8 @@ const x = round(this.x)
 const y = round(this.y)
 const z = round(this.z)
 const blockLight = world.getLight(x, y, z, 1)
-const skysLight = world.getLight(x, y, z, 0) * (skyLight / 15)
-const lightLevel = min(max(skysLight, blockLight) * 0.9 + 0.1, 1.0) * this.brightness
+const skysLight = world.getLight(x, y, z, 0)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0) * this.brightness
 gl.bindTexture(gl.TEXTURE_2D, explodeTexture)
 gl.uniform1i(glCache.uSamplerParticle, 3) //explode texture
 gl.uniform1f(glCache.uLightLevelParticle, lightLevel)
@@ -18203,11 +18163,13 @@ console.log(message, ellapsed.toFixed(2), "milliseconds")
 function updateUserTo(fetchRes){
 if(typeof fetchRes === "object"){
 username = fetchRes.username
+userInfo = fetchRes
 //p.character.changeBlock(abs(r.hashCode()) % 80 + 1)
 if(fetchRes.skin) p.character.setSkin(fetchRes.skin)
 return username
 }else{
 username = "Steve"
+userInfo = null
 return null
 }
 }
@@ -18235,6 +18197,7 @@ window.addEventListener("message", onmsg);
 }
 var achexUsername = "player"+Date.now()
 win.username = "Steve"
+win.userInfo = null
 async function loggedIn(){
 var logged = false;
 await fetch("https://server.thingmaker.repl.co/account", {credentials:"include"}).then(r => r.json()).then(r => {
@@ -18249,6 +18212,9 @@ var logged
 await login().then(r => logged=r).catch(r => logged=r)
 if(logged){
 username = logged
+await fetch("https://server.thingmaker.repl.co/account", {credentials:"include"}).then(r => r.json()).then(r => {
+updateUserTo(r)
+})
 return logged
 }
 }
@@ -18521,7 +18487,9 @@ world.posEntity(arr[i], true)
 }
 }
 }else if(data.type === "entityDelete"){
+if(world){
 world.deleteEntity(data.id, true)
+}
 }else if(data.type === "achievment"){
 Messages.add(data.USER+" earned the achievment: "+data.data)
 }else if(data.type === "hit"){
@@ -18556,6 +18524,7 @@ volume = posSound(data.x,data.y,data.z)
 if(data.volume) volume *= data.volume
 playSound(data.data, 0, volume, data.pitch)
 }else if(data.type === "eval"){
+console.log("Evaluating script: "+data.data)
 try{
 eval(data.data)
 }catch(e){
@@ -20299,7 +20268,11 @@ reach = normReach
 Slider.add(width / 4, height/2 + -5, width / 3, 40, "options", "Sound Volume", 0,1, "volume", val => settings.volume = val, true, val => {blockSound(blockIds.grass, "place")}, {"0%":"Off"})
 Button.add(width / 4, height/2 + 55, width / 3, 40, "Change Controls", "options", r => changeScene("options controls"))
 Button.add(width / 4, height/2 + 115, width / 3, 40, "Change skin", "options", r => {
+if(userInfo){
 window.open("https://www.thingmaker.repl.co/website/account.html#skin", "_blank")
+}else{
+window.open("https://www.thingmaker.repl.co/website/login.html?redirect=account.html%23skin", "_blank")
+}
 })
 Button.add(width * 0.75, height/2 + -245, width / 3, 40, "World Options", "options", r => changeScene("options worldSettings"), () => beforeOptionsScreen !== "pause")
 Button.add(width * 0.75, height/2 + -185, width / 3, 40, "Narrator Options", "options", r => changeScene("options narrator"))
