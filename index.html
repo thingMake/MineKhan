@@ -2628,6 +2628,9 @@ chestFront: "0g0gA(ĚHQŚWSŉZ000EúZđŉZčęZčĩHòíHïÞZöĉZĉĊWòÎYUŘ
 chestSide: "0g0gssÞH(ĚH)ĩH)ĚHSŉZ000EúZúJYúíWéßWýĚZQŚWčęZĉĊWđŉZčĩHöĉZwÞHAìZ$úZïíZöíHQřZìÏHâÐWâÂYÖRYÞÂZ0Rx8TgXxùčMĵXčPÂJüĔčOqĽęõÐoĭĔčOĀŞ.Ķèx8$čaĽĝĔôÈįR$čòČÐoĭāöOoč*káđPÂJüĔčNć8RgásŎ$č*ÈĭMõØÈĭÆčMŅŞĩgîĄŞĔčNÊįRfçĉ8gčNĄŞĥĵîsŎ$č*ŒÈĉ8ĕØÈĿč+MõŒÈĭMĤ$č0Rx8TgXxùčF^ÂüčF^Âüč",
 chestTop: "0g0ghEúZ)ĚH-ĚH(ĚH000)ĩHïíZéßWýĚZúJYđŉZöĉZčĩHöíHčęZĉĊWúíW0QgIx8R(õXF÷áwŏTĹîkX!kčđØÈĽīkXbÊŞĥĵàĄŝXX!Æč%ØÉoīõXpĽĝMôÈŃċõX!kď%^ÐoČcXcuŞĥĵàŅş4X!očFØÉüČkXpĿĭFÙÐoěõXFĽĝF×ÈŃīüXbÊŎ.ĵàŅş4XFĈüĄŎ.ĹàcX0ĭNüċF^ÂëXx8RgXx8RgXx8RgXx8RgX",
 boneMeal: "0g0g7000ÇÅZŒĖYZZZĢœY?mHéŐZ0000000200000k]0g00mňwĒ00ĎĜ@/00ĴĎÜ*S0ÓřØ|S0ĎĚJÖE0ĝĄĺ+Đ5{ĹāĕE0ĴĎıÖS5ÄĚăPS2ôĎĹŎS01ÑüVS00%Ĉa0000000",
+clay: "0g0g6þ×HĂôWĖģZĖŔHĊăWĆóZ5*yð]Ĉó9dNđ$JĪPÂÅÏĜĊĂúaÑðQÑĜPdJxPÂR9yýkęúAÀįÑíŀhïĲÎ+Aœþļ1Àİ{ĐČ]óÃlĒiĻĜįČkļyNUĂðīúÁEÁþyÚ÷Èc×lAùİ$",
+clayBall: "0g0g9000TlYâŠWĊăWþ×H)ŋHĖŔHĖģZËĠZ000000000000000000000000000hh000001zyg0000k)NB0001+,ÐíÀ001O@OíÀ00j[ÓREB00kO)OEB00iOÔ-yï001îOyEÀ000VyíV00000VV0000000000000000000",
+brick:"0g0g8000]ìYöjWĝÑWèřZĬXH$ÁWKĚW0000000000000000ù0001B-002^Úğ04üłÚĞŇ*ĞłÚģU!ĞłãļCFÄŔĒPCF#UJP=MDAJ~Ę6DAćÙ00Į=Ŀ000jĘ000000000000000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -4860,6 +4863,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+lightLevel:1
 },
 {
 name:"brownMushroom",
@@ -4869,6 +4873,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+lightLevel:1
 },
 {
 name:"mushroomStem",
@@ -6402,8 +6407,27 @@ blockData[blockIds.birchSapling].grow(x,y,z)
 minusOne()
 }
 },
-minusOnUse:true,
-useAnywhere:true
+minusOnUse:true
+},
+{
+name:"clay",
+Name:"Clay",
+breakTime:0.9,
+type:"ground",
+digSound: ["block.gravel.dig1", "block.gravel.dig2", "block.gravel.dig3", "block.gravel.dig4"],
+stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","block.gravel.step4"],
+drop:"clayBall",
+dropAmount:4
+},
+{
+name:"clayBall",
+Name:"Clay Ball",
+item:true
+},
+{
+name:"brick",
+Name:"Brick",
+item:true
 },
 /*
 { name: "pigFace" },
@@ -6589,6 +6613,7 @@ function newInvItem(id){
 for(let i=0; i<inventory.hotbar.length; i++){
 if(!inventory.hotbar[i].id){
 inventory.hotbar[i] = {id:id, amount:1, animation:1.5}
+if(i === inventory.hotbarSlot) inventory.showName = 1.5
 return true
 }
 if(inventory.hotbar[i].id === id && inventory.hotbar[i].amount < blockData[inventory.hotbar[i].id].stackSize){
@@ -6784,6 +6809,9 @@ const crafts = {
 "air,stick,air,stick,coal,stick,oakLog,oakLog,oakLog":{name:"campfire"},
 "air,stick,air,stick,soulSand,stick,oakLog,oakLog,oakLog":{name:"soulCampfire"},
 "oakPlanks,oakPlanks,oakPlanks,oakPlanks,air,oakPlanks,oakPlanks,oakPlanks,oakPlanks":{name:"chest"},
+"clayBall,clayBall,air,clayBall,clayBall":{name:"clay",shaped:true},
+"brick,brick,air,brick,brick":{name:"bricks",shaped:true},
+"brick,air,brick,air,brick":{name:"flowerPot",shaped:true},
 }
 var breakTypes = {
 plant: "axe",
@@ -6820,7 +6848,9 @@ rawGold: {name:"goldIngot", time:200, xp:1},
 sand: {name:"glass",time:200,xp:0.1, furnace:true},//furnace propertie means it can only be smelted in furnace
 cobblestone: {name:"stone",time:200,xp:0.1, furnace:true},
 stone: {name:"smoothStone", time:200, xp:0.1, furnace:true},
-stoneBricks: {name:"crackedStoneBricks",time:200,xp:0.1, furnace:true}
+stoneBricks: {name:"crackedStoneBricks",time:200,xp:0.1, furnace:true},
+clay: {name:"terracotta",time:200,xp:0.35},
+clayBall: {name:"brick",time:200,xp:0.3},
 }
 var smeltFuel = { //time is in seconds
 oakLog: {time:15},
@@ -13845,9 +13875,31 @@ crack.idx = floor(prog * crack.length)
 crack.tex = crack[crack.idx]
 pTouch.digProg = prog
 crack.soundTimer ++
-if(crack.soundTimer > 10){
-crack.soundTimer -= 10
+if(crack.soundTimer > 15){
+crack.soundTimer -= 15
 blockSound(block, "breaking", hitBox.pos[0], hitBox.pos[1], hitBox.pos[2])
+var x = hitBox.pos[0], y = hitBox.pos[1], z = hitBox.pos[2]
+switch(hitBox.face) {
+case "top":
+y += 0.5
+break
+case "bottom":
+y -= 0.5
+break
+case "south":
+z -= 0.5
+break
+case "north":
+z += 0.5
+break
+case "west":
+x -= 0.5
+break
+case "east":
+x += 0.5
+break
+}
+blockParticles(block, x,y,z, 4, "breaking")
 p.punchEffect = 10
 }
 if(crack.idx >= crack.length){
@@ -13939,8 +13991,8 @@ blockSound(b, "dig", x,y,z)
 }, tickTime)
 }
 }
-function blockParticles(block,x,y,z,amount){
-for(var i=0; i<amount; i++) world.particles.push(new BlockParticle(blockData[block].textures[2], x,y,z))
+function blockParticles(block,x,y,z,amount, type){
+for(var i=0; i<amount; i++) world.particles.push(new BlockParticle(blockData[block].textures[2], x,y,z, type))
 }
 // Save the coords for a small sphere used to carve out caves
 let sphere;
@@ -15294,9 +15346,21 @@ generateBlob(replace, blockID, amount, x,y,z, size = 1){
 // generate blobs (ore blobs, dirt blobs, etc)
 let newX=0, newY=0, newZ=0
 for(let cv = 0; cv < amount; cv++) {
-if(this.getBlock(x+newX, y+newY, z+newZ) === replace) {
-this.setBlock(x+newX, y+newY, z+newZ,blockID);
+var block = this.getBlock(x+newX, y+newY, z+newZ)
+var canReplace = false
+if(Array.isArray(replace)){
+for(var id of replace){
+if(block === id){
+canReplace = true
+break
 }
+}
+}else{
+if(block === replace) {
+canReplace = true
+}
+}
+if(canReplace) this.setBlock(x+newX, y+newY, z+newZ,blockID);
 newX = round(random(-size, size));
 newY = round(random(-size, size));
 newZ = round(random(-size, size));
@@ -15317,6 +15381,8 @@ let smoothness = generator.smooth, hilliness = generator.height
 let biomeSmooth = generator.biomeSmooth;
 let biome = 0
 let type = world.type
+var clayReplaceable = [blockIds.dirt, blockIds.stone, blockIds.gravel]
+var dirtReplaceable = [blockIds.stone,blockIds.gravel]
 for (let i = 0; i < 16; i++) {
 for (let k = 0; k < 16; k++) {
 wx = this.x + i
@@ -15891,7 +15957,7 @@ let y = random() * 16 | 0 + 1
 y = y < ground ? y : ground
 if (this.getBlock(i, y, k)) {
 //this.setBlock(i, y < ground ? y : ground, k, blockIds.diamondOre)
-this.generateBlob(blockIds.stone, blockIds.diamondOre, round(random(3, 8)), i,y < ground ? y : ground,k, 10)
+this.generateBlob(blockIds.stone, blockIds.diamondOre, round(random(3, 8)), i,y,k, 10)
 }
 }
 if (random() < 111.5 / 256) {
@@ -15899,7 +15965,7 @@ let y = random() * 64 | 0 + 1
 y = y < ground ? y : ground
 if (this.getBlock(i, y, k)) {
 //this.setBlock(i, y < ground ? y : ground, k, blockIds.ironOre)
-this.generateBlob(blockIds.stone, blockIds.ironOre, round(random(1, 13)), i,y < ground ? y : ground,k, 9)
+this.generateBlob(blockIds.stone, blockIds.ironOre, round(random(1, 13)), i,y,k, 9)
 }
 }
 if (random() < 51 / 256) {
@@ -15907,7 +15973,7 @@ let y = random() * 64 | 0 + 1
 y = y < ground ? y : ground
 if (this.getBlock(i, y, k)) {
 //this.setBlock(i, y < ground ? y : ground, k, blockIds.copperOre)
-this.generateBlob(blockIds.stone, blockIds.copperOre, round(random(1, 16)), i,y < ground ? y : ground,k, 9)
+this.generateBlob(blockIds.stone, blockIds.copperOre, round(random(1, 16)), i,y,k, 9)
 }
 }
 if (random() < 185.5 / 256) {
@@ -15915,7 +15981,7 @@ let y = random() * ground | 0 + 1
 y = y < ground ? y : ground
 if (this.getBlock(i, y, k)) {
 //this.setBlock(i, y < ground ? y : ground, k, blockIds.coalOre)
-this.generateBlob(blockIds.stone, blockIds.coalOre, round(random(1, 37)), i,y < ground ? y : ground,k, 20)
+this.generateBlob(blockIds.stone, blockIds.coalOre, round(random(1, 37)), i,y,k, 20)
 }
 }
 if (random() < 10.4 / 256) {
@@ -15923,7 +15989,7 @@ let y = random() * 32 | 0 + 1
 y = y < ground ? y : ground
 if (this.getBlock(i, y, k)) {
 //this.setBlock(i, y < ground ? y : ground, k, blockIds.goldOre)
-this.generateBlob(blockIds.stone, blockIds.goldOre, round(random(1, 13)), i,y < ground ? y : ground,k, 9)
+this.generateBlob(blockIds.stone, blockIds.goldOre, round(random(1, 13)), i,y,k, 9)
 }
 }
 if (random() < 29.1 / 256) {
@@ -15931,7 +15997,7 @@ let y = random() * 16 | 0 + 1
 y = y < ground ? y : ground
 if (this.getBlock(i, y, k)) {
 //this.setBlock(i, y < ground ? y : ground, k, blockIds.redstoneOre)
-this.generateBlob(blockIds.stone, blockIds.redstoneOre, round(random(1, 10)), i,y < ground ? y : ground,k, 8)
+this.generateBlob(blockIds.stone, blockIds.redstoneOre, round(random(1, 10)), i,y,k, 8)
 }
 }
 if (random() < 4.1 / 256) {
@@ -15939,7 +16005,22 @@ let y = random() * 32 | 0 + 1
 y = y < ground ? y : ground
 if (this.getBlock(i, y, k)) {
 //this.setBlock(i, y < ground ? y : ground, k, blockIds.lapisOre)
-this.generateBlob(blockIds.stone, blockIds.lapisOre, round(random(1, 9)), i,y < ground ? y : ground,k, 9)
+this.generateBlob(blockIds.stone, blockIds.lapisOre, round(random(1, 9)), i,y,k, 9)
+}
+}
+//clay & dirt
+if (random() < 0.1) {
+let y = random() * ground | 0 + 1
+y = y < ground ? y : ground
+if (this.getBlock(i, y, k)/* && blockData[this.getBlock(i, y+1, k)].name === "Water"*/) {
+this.generateBlob(clayReplaceable, blockIds.clay, round(random(20, 40)), i,y,k, 5)
+}
+}
+if (random() < 0.1) {
+let y = random() * ground | 0 + 1
+y = y < ground ? y : ground
+if (this.getBlock(i, y, k)) {
+this.generateBlob(dirtReplaceable, blockIds.dirt, round(random(20, 40)), i,y,k, 5)
 }
 }
 }
@@ -17785,7 +17866,7 @@ glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
 }
 class BlockParticle extends Particle{
-constructor(tex, x,y,z){
+constructor(tex, x,y,z, type){
 let s=4/16
 let bs = 3/16 //particle size
 let p=1/(16+4)
@@ -17793,6 +17874,16 @@ let offX = random(p), offY = random(p)
 let velx = (Math.random()-0.5) * 0.3,
 vely = Math.random() * 0.2,
 velz = (Math.random()-0.5) * 0.3
+let despawn = Math.random()*3000
+switch(type){
+case "breaking":
+bs /= 2
+despawn /= 4
+velx /= 2
+vely /= 2
+velz /= 2
+break
+}
 const shape = shapes.blockParticle
 const shapeVerts = shape.verts
 const shapeTexVerts = shape.texVerts
@@ -17819,7 +17910,7 @@ texture[index + 7] = ty + (texShapeVerts[7]*s)
 index += 8
 }
 }
-super(x, y, z, 0, 0, velx, vely, velz, bs, bs, bs, new Float32Array(shapeVerts.flat(Infinity)), new Float32Array(texture), size, Math.random()*3000)
+super(x, y, z, 0, 0, velx, vely, velz, bs, bs, bs, new Float32Array(shapeVerts.flat(Infinity)), new Float32Array(texture), size, despawn)
 }
 }
 win.BlockParticle = BlockParticle
