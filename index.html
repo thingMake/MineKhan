@@ -8417,13 +8417,13 @@ noCheats: true
 },
 {
 name: "fromPlayer",
-info: "Sets position 1 to player",
+info: "Sets starting position to player",
 func: () => fromPlayer()
 },
 {
 name: "fillToPlayer",
 args: ["block_name"],
-info: "Fills from position 1 to player position",
+info: "Fills from starting position to player position",
 func: split => {
 let id = blockIds[split[1]]
 if(!split[1]) id = 0
@@ -8432,7 +8432,7 @@ fillToPlayer(id)
 },
 {
 name: "copyToPlayer",
-info: "Copys blocks from position 1 to player position",
+info: "Copys blocks from starting position to player position",
 func: () => copyToPlayer()
 },
 {
@@ -8489,14 +8489,14 @@ for(var a=0; a<amount; a++){
 world.addEntity(new Item(p.x,p.y,p.z,0,0,0,id))
 }
 }else{
-Messages.add("Can't select with selector "+split[1])
+Messages.add("No such target: "+split[1])
 }
 }
 },
 {
 name: "kill",
-args: ["selector","message"],
-info: "Kills someone. Selectors: @s, your username, someone's uername, @a, @e",
+args: ["target","message"],
+info: "Kills someone. Target can be: @s, your username, someone's uername, @a, @e",
 func: split => {
 if(worldSettings.killCmdOff) return Messages.add("Kill command is disabled on this world.")
 split[1] = split[1] || "@s"
@@ -8513,7 +8513,7 @@ world.deleteEntity(0,false,i)
 }
 Messages.add("Killed: "+killed.join(", "))
 }else{
-Messages.add("Can't select with selector "+split[1])
+Messages.add("No such target: "+split[1])
 }
 }
 },
@@ -8621,8 +8621,8 @@ Messages.add("That sound doesn't exsist.")
 },
 {
 name:"sendEval",
-args:["selector","data"],
-info:"Send javascript to players. Only works if your'e the host. Selector can be: username, @a. If selector isn't specified, it sends it to all players except you.",
+args:["target","data"],
+info:"Send javascript to players. Only works if your'e the host. Target can be: username, @a. If target isn't specified, it sends it to all players except you.",
 func: split => {
 if(!multiplayer) return
 split.splice(0,1)
@@ -10629,12 +10629,12 @@ size: 6
 },
 playerBody:{
 verts:[
-[objectify(4,2,6,8,4,28,16),objectify(3.5,1.5,5.5,9,5,28,32, false,false,false,8,4)],
-[objectify(4,14,10,8,4,20,16),objectify(3.5,14.5,10.5,9,5,20,32, false,false,false,8,4)],
-[objectify(12,14,10,8,12,20,20),objectify(12.5,14.5,10.5,9,13,20,36, false,false,false,8,12)],
-[objectify(4,14,6,8,12,32,20),objectify(3.5,14.5,5.5,9,13,32,36, false,false,false,8,12)],
-[objectify(12,14,6,4,12,28,20),objectify(12.5,14.5,5.5,5,13,28,36, false,false,false,4,12)],
-[objectify(4,14,10,4,12,16,20),objectify(3.5,14.5,10.5,5,13,16,36, false,false,false,4,12)]
+[objectify(4,2,6,8,4,28,16),objectify(3.75,1.75,5.75,8.5,4.5,28,32,false,false,false,8,4)],
+[objectify(4,14,10,8,4,20,16),objectify(3.75,14.25,10.25,8.5,4.5,20,32,false,false,false,8,4)],
+[objectify(12,14,10,8,12,20,20),objectify(12.25,14.25,10.25,8.5,12.5,20,36,false,false,false,8,12)],
+[objectify(4,14,6,8,12,32,20),objectify(3.75,14.25,5.75,8.5,12.5,32,36,false,false,false,8,12)],
+[objectify(12,14,6,4,12,28,20),objectify(12.25,14.25,5.75,4.5,12.5,28,36,false,false,false,4,12)],
+[objectify(4,14,10,4,12,16,20),objectify(3.75,14.25,10.25,4.5,12.5,16,36,false,false,false,4,12)]
 ],
 cull: {
 top: 3,
@@ -10647,12 +10647,12 @@ west: 3
 },
 playerHead:{
 verts:[
-[objectify(4,8,4,8,8,16,0),objectify(3.5,7.5,3.5,9,9,48,0, false,false,false,8,8)],
-[objectify(4,16,12,8,8,8,0),objectify(3.5,16.5,12.5,9,9,40,0, false,false,false,8,8)],
-[objectify(12,16,12,8,8,8,8),objectify(12.5,16.5,12.5,9,9,40,8, false,false,false,8,8)],
-[objectify(4,16,4,8,8,24,8),objectify(3.5,16.5,3.5,9,9,56,8, false,false,false,8,8)],
-[objectify(12,16,4,8,8,16,8),objectify(12.5,16.5,3.5,9,9,48,8, false,false,false,8,8)],
-[objectify(4,16,12,8,8,0,8),objectify(3.5,16.5,12.5,9,9,32,8, false,false,false,8,8)]
+[objectify(4,8,4,8,8,16,0),objectify(3.75,7.75,3.75,8.5,8.5,48,0,false,false,false,8,8)],
+[objectify(4,16,12,8,8,8,0),objectify(3.75,16.25,12.25,8.5,8.5,40,0,false,false,false,8,8)],
+[objectify(12,16,12,8,8,8,8),objectify(12.25,16.25,12.25,8.5,8.5,40,8,false,false,false,8,8)],
+[objectify(4,16,4,8,8,24,8),objectify(3.75,16.25,3.75,8.5,8.5,56,8,false,false,false,8,8)],
+[objectify(12,16,4,8,8,16,8),objectify(12.25,16.25,3.75,8.5,8.5,48,8,false,false,false,8,8)],
+[objectify(4,16,12,8,8,0,8),objectify(3.75,16.25,12.25,8.5,8.5,32,8,false,false,false,8,8)]
 ],
 cull: {
 top: 3,
@@ -10665,12 +10665,12 @@ west: 3
 },
 playerLeftArm:{
 verts:[
-[objectify(6,-4,6,4,4,40,48),objectify(5.5,-4.5,5.5,5,5,56,48, false,false,false,4,4)],
-[objectify(6,8,10,4,4,36,48),objectify(5.5,8.5,10.5,5,5,52,48, false,false,false,4,4)],
-[objectify(10,8,10,4,12,36,53),objectify(10.5,8.5,10.5,5,13,52,52, false,false,false,4,12)],
-[objectify(6,8,6,4,12,44,52),objectify(5.5,8.5,5.5,5,13,60,52, false,false,false,4,12)],
-[objectify(10,8,6,4,12,32,52),objectify(10.5,8.5,5.5,5,13,48,52, false,false,false,4,12)],
-[objectify(6,8,10,4,12,40,52),objectify(5.5,8.5,10.5,5,13,56,52, false,false,false,4,12)]
+[objectify(6,-4,6,4,4,40,48),objectify(5.75,-4.25,5.75,4.5,4.5,56,48, false,false,false,4,4)],
+[objectify(6,8,10,4,4,36,48),objectify(5.75,8.25,10.25,4.5,4.5,52,48, false,false,false,4,4)],
+[objectify(10,8,10,4,12,36,53),objectify(10.25,8.25,10.25,4.5,12.5,52,52, false,false,false,4,12)],
+[objectify(6,8,6,4,12,44,52),objectify(5.75,8.25,5.75,4.5,12.5,60,52, false,false,false,4,12)],
+[objectify(10,8,6,4,12,32,52),objectify(10.25,8.25,5.75,4.5,12.5,48,52, false,false,false,4,12)],
+[objectify(6,8,10,4,12,40,52),objectify(5.75,8.25,10.25,4.5,12.5,56,52, false,false,false,4,12)]
 ],
 cull: {
 top: 3,
@@ -10683,12 +10683,12 @@ west: 3
 },
 playerRightArm:{
 verts:[
-[objectify(6,-4,6,4,4,48,16),objectify(5.5,-4.5,5.5,5,5,48,32, false,false,false,4,4)],
-[objectify(6,8,10,4,4,44,16),objectify(5.5,8.5,10.5,5,5,44,32, false,false,false,4,4)],
-[objectify(10,8,10,4,12,44,20),objectify(10.5,8.5,10.5,5,13,44,36, false,false,false,4,12)],
-[objectify(6,8,6,4,12,52,20),objectify(5.5,8.5,5.5,5,13,52,36, false,false,false,4,12)],
-[objectify(10,8,6,4,12,40,20),objectify(10.5,8.5,5.5,5,13,40,36, false,false,false,4,12)],
-[objectify(6,8,10,4,12,48,20),objectify(5.5,8.5,10.5,5,13,48,36, false,false,false,4,12)]
+[objectify(6,-4,6,4,4,48,16),objectify(5.75,-4.25,5.75,4.5,4.5,48,32, false,false,false,4,4)],
+[objectify(6,8,10,4,4,44,16),objectify(5.75,8.25,10.25,4.5,4.5,44,32, false,false,false,4,4)],
+[objectify(10,8,10,4,12,44,20),objectify(10.25,8.25,10.25,4.5,12.5,44,36, false,false,false,4,12)],
+[objectify(6,8,6,4,12,52,20),objectify(5.75,8.25,5.75,4.5,12.5,52,36, false,false,false,4,12)],
+[objectify(10,8,6,4,12,40,20),objectify(10.25,8.25,5.75,4.5,12.5,40,36, false,false,false,4,12)],
+[objectify(6,8,10,4,12,48,20),objectify(5.75,8.25,10.25,4.5,12.5,48,36, false,false,false,4,12)]
 ],
 cull: {
 top: 3,
@@ -10701,12 +10701,12 @@ west: 3
 },
 playerLeftLeg:{
 verts:[
-[objectify(6,-4,6,4,4,24,48),objectify(5.5,-4.5,5.5,5,5,8,48, false,false,false,4,4)],
-[objectify(6,8,10,4,4,20,48),objectify(5.5,8.5,10.5,5,5,4,48, false,false,false,4,4)],
-[objectify(10,8,10,4,12,20,52),objectify(10.5,8.5,10.5,5,13,4,52, false,false,false,4,12)],
-[objectify(6,8,6,4,12,28,52),objectify(5.5,8.5,5.5,5,13,12,52, false,false,false,4,12)],
-[objectify(10,8,6,4,12,24,52),objectify(10.5,8.5,5.5,5,13,0,52, false,false,false,4,12)],
-[objectify(6,8,10,4,12,16,52),objectify(5.5,8.5,10.5,5,13,8,52, false,false,false,4,12)]
+[objectify(6,-4,6,4,4,24,48),objectify(5.75,-4.25,5.75,4.5,4.5,8,48, false,false,false,4,4)],
+[objectify(6,8,10,4,4,20,48),objectify(5.75,8.25,10.25,4.5,4.5,4,48, false,false,false,4,4)],
+[objectify(10,8,10,4,12,20,52),objectify(10.25,8.25,10.25,4.5,12.5,4,52, false,false,false,4,12)],
+[objectify(6,8,6,4,12,28,52),objectify(5.75,8.25,5.75,4.5,12.5,12,52, false,false,false,4,12)],
+[objectify(10,8,6,4,12,24,52),objectify(10.25,8.25,5.75,4.5,12.5,0,52, false,false,false,4,12)],
+[objectify(6,8,10,4,12,16,52),objectify(5.75,8.25,10.25,4.5,12.5,8,52, false,false,false,4,12)]
 ],
 cull: {
 top: 3,
@@ -10719,12 +10719,12 @@ west: 3
 },
 playerRightLeg:{
 verts:[
-[objectify(6,-4,6,4,4,8,16),objectify(5.5,-4.5,5.5,5,5,8,32, false,false,false,4,4)],
-[objectify(6,8,10,4,4,4,16),objectify(5.5,8.5,10.5,5,5,4,32, false,false,false,4,4)],
-[objectify(10,8,10,4,12,4,20),objectify(10.5,8.5,10.5,5,13,4,36, false,false,false,4,12)],
-[objectify(6,8,6,4,12,12,20),objectify(5.5,8.5,5.5,5,13,12,36, false,false,false,4,12)],
-[objectify(10,8,6,4,12,8,20),objectify(10.5,8.5,5.5,5,13,0,36, false,false,false,4,12)],
-[objectify(6,8,10,4,12,0,20),objectify(5.5,8.5,10.5,5,13,8,36, false,false,false,4,12)]
+[objectify(6,-4,6,4,4,8,16),objectify(5.75,-4.25,5.75,4.5,4.5,8,32, false,false,false,4,4)],
+[objectify(6,8,10,4,4,4,16),objectify(5.75,8.25,10.25,4.5,4.5,4,32, false,false,false,4,4)],
+[objectify(10,8,10,4,12,4,20),objectify(10.25,8.25,10.25,4.5,12.5,4,36, false,false,false,4,12)],
+[objectify(6,8,6,4,12,12,20),objectify(5.75,8.25,5.75,4.5,12.5,12,36, false,false,false,4,12)],
+[objectify(10,8,6,4,12,8,20),objectify(10.25,8.25,5.75,4.5,12.5,0,36, false,false,false,4,12)],
+[objectify(6,8,10,4,12,0,20),objectify(5.75,8.25,10.25,4.5,12.5,8,36, false,false,false,4,12)]
 ],
 cull: {
 top: 3,
@@ -23258,7 +23258,8 @@ freeze1: "damage/freeze1.ogg",
 freeze2: "damage/freeze2.ogg",
 freeze3: "damage/freeze3.ogg",
 freeze4: "damage/freeze4.ogg",
-freeze5: "damage/freeze5.ogg"
+freeze5: "damage/freeze5.ogg",
+classic_hurt: "damage/classic_hurt.ogg",
 },
 block: {
 grass: {
