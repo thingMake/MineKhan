@@ -2989,7 +2989,8 @@ stepSound: ["block.soul_sand.step1", "block.soul_sand.step2","block.soul_sand.st
 name: "glowstone",
 Name:"Glowstone",
 lightLevel: 15,
-glassSound: true
+glassSound: true,
+shadow:false
 },
 { name: "netherBricks",
 Name:"Nether Bricks",
@@ -6392,6 +6393,15 @@ chestData.y = y
 chestData.z = z
 changeScene("chest")
 releasePointer()
+},
+onbreak:function(x,y,z, block, data){
+if(!(data && data.chest && data.contents)) return
+data = data.contents
+for(var i=0; i<data.length; i++){
+if(data[i] && data[i].id){
+for(var j=0; j<data[i].amount; j++)world.addEntity(new Item(x,y,z,0,0,0,data[i].id, true))
+}
+}
 }
 },
 {
@@ -13416,6 +13426,7 @@ if (t && shape.flip && hitBox.face !== "top" && (hitBox.face === "bottom" || (p.
 t |= FLIP
 }
 var prevBlock = world.getBlock(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2])
+var prevTags = world.getTags(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2])
 world.setBlock(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2], t)
 if(drop){
 let block = prevBlock
@@ -13462,6 +13473,9 @@ p.lastPlace = Date.now()
 p.lastBreak = Date.now()
 if(!prevBlock) return
 blockParticles(prevBlock,hitBox.pos[0],hitBox.pos[1],hitBox.pos[2],30)
+if(blockData[prevBlock].onbreak){
+blockData[prevBlock].onbreak(hitBox.pos[0],hitBox.pos[1],hitBox.pos[2], prevBlock, prevTags)
+}
 blockSound(prevBlock, "dig", hitBox.pos[0], hitBox.pos[1], hitBox.pos[2])
 if(blockData[prevBlock].experience) world.addEntity(new ExperienceOrb(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2], blockData[prevBlock].experience))
 var breakType = blockData[prevBlock].type
@@ -14070,6 +14084,7 @@ blocks: [],
 top: function(x, y, z, block) { // Actually the bottom... How did these get flipped?
 let blocks = this.blocks
 let ret = this.ret
+if(blockData[getBlock(x, y, z, block)].shadow){
 blocks[0] = blockData[getBlock(x-1, y-1, z-1, block)].shadow
 blocks[1] = blockData[getBlock(x, y-1, z-1, block)].shadow
 blocks[2] = blockData[getBlock(x+1, y-1, z-1, block)].shadow
@@ -14083,11 +14098,15 @@ ret[0] = this.shade[blocks[0] + blocks[1] + blocks[3] + blocks[4]]*0.75
 ret[1] = this.shade[blocks[1] + blocks[2] + blocks[4] + blocks[5]]*0.75
 ret[2] = this.shade[blocks[5] + blocks[4] + blocks[8] + blocks[7]]*0.75
 ret[3] = this.shade[blocks[4] + blocks[3] + blocks[7] + blocks[6]]*0.75
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = 0.75
+}
 return ret
 },
 bottom: function(x, y, z, block) { // Actually the top
 let blocks = this.blocks
 let ret = this.ret
+if(blockData[getBlock(x, y, z, block)].shadow){
 blocks[0] = blockData[getBlock(x-1, y+1, z-1, block)].shadow
 blocks[1] = blockData[getBlock(x, y+1, z-1, block)].shadow
 blocks[2] = blockData[getBlock(x+1, y+1, z-1, block)].shadow
@@ -14101,11 +14120,15 @@ ret[0] = this.shade[blocks[4] + blocks[3] + blocks[7] + blocks[6]]
 ret[1] = this.shade[blocks[5] + blocks[4] + blocks[8] + blocks[7]]
 ret[2] = this.shade[blocks[1] + blocks[2] + blocks[4] + blocks[5]]
 ret[3] = this.shade[blocks[0] + blocks[1] + blocks[3] + blocks[4]]
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = 1
+}
 return ret
 },
 north: function(x, y, z, block) {
 let blocks = this.blocks
 let ret = this.ret
+if(blockData[getBlock(x, y, z, block)].shadow){
 blocks[0] = blockData[getBlock(x-1, y-1, z+1, block)].shadow
 blocks[1] = blockData[getBlock(x, y-1, z+1, block)].shadow
 blocks[2] = blockData[getBlock(x+1, y-1, z+1, block)].shadow
@@ -14119,11 +14142,15 @@ ret[0] = this.shade[blocks[5] + blocks[4] + blocks[8] + blocks[7]]*0.95
 ret[1] = this.shade[blocks[4] + blocks[3] + blocks[7] + blocks[6]]*0.95
 ret[2] = this.shade[blocks[0] + blocks[1] + blocks[3] + blocks[4]]*0.95
 ret[3] = this.shade[blocks[1] + blocks[2] + blocks[4] + blocks[5]]*0.95
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = 0.95
+}
 return ret
 },
 south: function(x, y, z, block) {
 let blocks = this.blocks
 let ret = this.ret
+if(blockData[getBlock(x, y, z, block)].shadow){
 blocks[0] = blockData[getBlock(x-1, y-1, z-1, block)].shadow
 blocks[1] = blockData[getBlock(x-1, y, z-1, block)].shadow
 blocks[2] = blockData[getBlock(x-1, y+1, z-1, block)].shadow
@@ -14137,11 +14164,15 @@ ret[0] = this.shade[blocks[1] + blocks[2] + blocks[4] + blocks[5]]*0.95
 ret[1] = this.shade[blocks[5] + blocks[4] + blocks[8] + blocks[7]]*0.95
 ret[2] = this.shade[blocks[4] + blocks[3] + blocks[7] + blocks[6]]*0.95
 ret[3] = this.shade[blocks[0] + blocks[1] + blocks[3] + blocks[4]]*0.95
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = 0.95
+}
 return ret
 },
 east: function(x, y, z, block) {
 let blocks = this.blocks
 let ret = this.ret
+if(blockData[getBlock(x, y, z, block)].shadow){
 blocks[0] = blockData[getBlock(x+1, y-1, z-1, block)].shadow
 blocks[1] = blockData[getBlock(x+1, y, z-1, block)].shadow
 blocks[2] = blockData[getBlock(x+1, y+1, z-1, block)].shadow
@@ -14155,11 +14186,15 @@ ret[0] = this.shade[blocks[1] + blocks[2] + blocks[4] + blocks[5]]*0.8
 ret[1] = this.shade[blocks[5] + blocks[4] + blocks[8] + blocks[7]]*0.8
 ret[2] = this.shade[blocks[4] + blocks[3] + blocks[7] + blocks[6]]*0.8
 ret[3] = this.shade[blocks[0] + blocks[1] + blocks[3] + blocks[4]]*0.8
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = 0.8
+}
 return ret
 },
 west: function(x, y, z, block) {
 let blocks = this.blocks
 let ret = this.ret
+if(blockData[getBlock(x, y, z, block)].shadow){
 blocks[0] = blockData[getBlock(x-1, y-1, z-1, block)].shadow
 blocks[1] = blockData[getBlock(x-1, y, z-1, block)].shadow
 blocks[2] = blockData[getBlock(x-1, y+1, z-1, block)].shadow
@@ -14173,6 +14208,9 @@ ret[0] = this.shade[blocks[7] + blocks[8] + blocks[4] + blocks[5]]*0.8
 ret[1] = this.shade[blocks[5] + blocks[4] + blocks[2] + blocks[1]]*0.8
 ret[2] = this.shade[blocks[4] + blocks[3] + blocks[1] + blocks[0]]*0.8
 ret[3] = this.shade[blocks[6] + blocks[7] + blocks[3] + blocks[4]]*0.8
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = 0.8
+}
 return ret
 },
 }
@@ -14207,7 +14245,7 @@ return (total) / 60
 }
 let getLight = {
 blocks: [],
-top: function(x, y, z, block, ret, blockLight = 0, bright) { // Actually the bottom... How did these get flipped?
+top: function(x, y, z, block, ret, blockLight = 0) { // Actually the bottom... How did these get flipped?
 let blocks = this.blocks
 blocks[0] = (getBlock(x-1, y-1, z-1, block) & 0xf << (blockLight * 4)) >> blockLight * 4
 blocks[1] = (getBlock(x, y-1, z-1, block) & 0xf << (blockLight * 4)) >> blockLight * 4
@@ -14218,14 +14256,10 @@ blocks[5] = (getBlock(x+1, y-1, z, block) & 0xf << (blockLight * 4)) >> blockLig
 blocks[6] = (getBlock(x-1, y-1, z+1, block) & 0xf << (blockLight * 4)) >> blockLight * 4
 blocks[7] = (getBlock(x, y-1, z+1, block) & 0xf << (blockLight * 4)) >> blockLight * 4
 blocks[8] = (getBlock(x+1, y-1, z+1, block) & 0xf << (blockLight * 4)) >> blockLight * 4
-if(bright){
-ret[0] = ret[1] = ret[2] = ret[3] = 1
-}else{
 ret[0] = average(blocks, 4, 0, 1, 3)
 ret[1] = average(blocks, 4, 1, 2, 5)
 ret[2] = average(blocks, 4, 5, 7, 8)
 ret[3] = average(blocks, 4, 3, 6, 7)
-}
 // debugger
 return ret
 },
@@ -14315,6 +14349,13 @@ ret[3] = average(blocks, 4, 3, 6, 7)
 return ret
 },
 }
+/*for(var it in getLight){
+if(typeof getLight[it] !== "function")continue
+getLight[it]=function(x,y,z,block,ret){
+ret[0]=ret[1]=ret[2]=ret[3]=1
+return ret
+}
+}*///for debugging
 /*
 function interpolateShadows(shadows, x, y) {
 let sx = (shadows[1] - shadows[0]) * x + shadows[0]
@@ -18540,7 +18581,7 @@ if(world){
 let pos = data.data
 let world = dimensions[pos.dimension]
 let prevBlock = world.getBlock(pos.x, pos.y, pos.z)
-world.setBlock(pos.x, pos.y, pos.z, pos.block, false, false, true)
+world.setBlock(pos.x, pos.y, pos.z, pos.block, false, false, true, pos.keepTags)
 }
 }else if(data.type === "setTags"){
 if(world){
@@ -19008,7 +19049,7 @@ return
 }
 if(!keepTags) this.setTags(x, y, z, null)
 if(multiplayer && !remote){
-send({type:"setBlock", data:{x:x, y:y, z:z, block:blockID, dimension:getDimension()}})
+send({type:"setBlock", data:{x:x, y:y, z:z, block:blockID, dimension:getDimension(), keepTags:keepTags}})
 }
 //Update the 6 adjacent blocks and 1 changed block
 if (xm && xm !== 15 && zm && zm !== 15) {
@@ -21656,6 +21697,7 @@ break
 }
 }
 data.smeltStart += (a/20)*smeltTo.time*1000
+world.updateTags(furnaceData.x,furnaceData.y,furnaceData.z)
 }
 if(burnProgress >= fuel.time){
 data.canBurn = false
@@ -21669,6 +21711,7 @@ data.fuel = 0
 break
 }
 }
+world.updateTags(furnaceData.x,furnaceData.y,furnaceData.z)
 data.burnStart += a*fuel.time*1000
 data.canBurn = true
 }
@@ -21821,7 +21864,11 @@ world.addEntity(new ExperienceOrb(p.x,p.y,p.z, xp))
 data.output = 0
 clicked = true
 }
-if(!clicked)clickInv(true, mouse)
+if(clicked){
+world.updateTags(furnaceData.x,furnaceData.y,furnaceData.z)
+}else{
+clickInv(true, mouse)
+}
 drawScreens.furnace()
 }
 function drawChest(){
@@ -23870,6 +23917,7 @@ findObjValueAmount(obj[i])
 }
 findObjValueAmount(sounds)
 for(var image in images) maxStartLoad ++
+maxStartLoad ++ // fetch the account
 loadProg.innerHTML = `0% 0/${maxStartLoad}`
 function loadDone(){
 loaded ++
@@ -24171,8 +24219,10 @@ constVersion(version)
 initPlayer()
 fetch("https://server.thingmaker.repl.co/account",{credentials:'include'}).then(r => r.json()).then(r => {
 updateUserTo(r)
+loadDone()
 }).catch(e => {
 console.log(e)
+loadDone()
 })
 setSeed(Math.random() * 2000000000 | 0)
 win.islandGenerator = new Generator();
