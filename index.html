@@ -3,7 +3,7 @@
 Notes and accreditation:
 !!Willard is another person, not me!!
 My credits (not Willard's)
-* Thanks to Red Monster (https://www.khanacademy.org/profile/monsterred) for the block shapes
+* Red Monster (https://www.khanacademy.org/profile/monsterred) made the shapes for the blocks
 * Shoos10 (https://www.khanacademy.org/profile/kaid_651789387350300127259402) created the Island World type
 * I created the survival mode
 Willard's credits
@@ -2631,6 +2631,7 @@ boneMeal: "0g0g7000ÇÅZŒĖYZZZĢœY?mHéŐZ0000000200000k]0g00mňwĒ00ĎĜ@/00
 clay: "0g0g6þ×HĂôWĖģZĖŔHĊăWĆóZ5*yð]Ĉó9dNđ$JĪPÂÅÏĜĊĂúaÑðQÑĜPdJxPÂR9yýkęúAÀįÑíŀhïĲÎ+Aœþļ1Àİ{ĐČ]óÃlĒiĻĜįČkļyNUĂðīúÁEÁþyÚ÷Èc×lAùİ$",
 clayBall: "0g0g9000TlYâŠWĊăWþ×H)ŋHĖŔHĖģZËĠZ000000000000000000000000000hh000001zyg0000k)NB0001+,ÐíÀ001O@OíÀ00j[ÓREB00kO)OEB00iOÔ-yï001îOyEÀ000VyíV00000VV0000000000000000000",
 brick:"0g0g8000]ìYöjWĝÑWèřZĬXH$ÁWKĚW0000000000000000ù0001B-002^Úğ04üłÚĞŇ*ĞłÚģU!ĞłãļCFÄŔĒPCF#UJP=MDAJ~Ę6DAćÙ00Į=Ŀ000jĘ000000000000000",
+charcoal: "0g0ga000sÎHEúZSŉZ(ĊWgSZéĝY|jHÎUWwÞY000000000001h000001zRÀ0000UÔñB0005>äàNÀ005M]Ðîý005xk-).À0ÂphyPhÀ0ÂûhhhJÀ0ÇyFhJNÀ0ÁJßúpFÀ0ÁFyJhúÀ05iāxhl000ÁhlVÀ0005VÀ00000000000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -6439,6 +6440,11 @@ name:"brick",
 Name:"Brick",
 item:true
 },
+{
+name:"charcoal",
+Name:"Charcoal",
+item:true
+},
 /*
 { name: "pigFace" },
 { 
@@ -8514,7 +8520,7 @@ if(split[1] === "@s" || split[1] === username){
 dieMessage = split[2] || (username+" killed themself with the kill command. Why would you do that???")
 die()
 }else if(split[1] === "@a" || hasPlayer(split[1])){
-send({type:"kill", message:split[2] || "", data:split[1]})
+send({type:"kill", message:split[2] || username+ "killed "+(split[1] === "@a" ? "everyone" : split[1])+" with the kill command.", data:split[1]})
 }else if(split[1] === "@e"){
 var killed = []
 for(var i=world.entities.length-1; i>=0; i--){
@@ -14395,6 +14401,27 @@ ret[1] = ret[4] = ret[7] = ret[10] = 0
 return ret
 },
 }
+var worldGenArray = {
+array: [],
+size: 0,
+add: function(x, y, z, block) {
+if (this.size === this.array.length) {
+this.array.push([ x, y, z, block ])
+} else {
+this.array[this.size][0] = x
+this.array[this.size][1] = y
+this.array[this.size][2] = z
+this.array[this.size][3] = block
+}
+this.size++
+},
+clear: function() {
+this.size = 0
+},
+get:function(n){
+if(n < this.size) return this.array[n]
+}
+}
 class Generator {
 constructor() {
 this.seedSet = false;
@@ -15684,9 +15711,9 @@ world.spawnBlock(wx, j, wz + 1, tree)
 world.spawnBlock(wx+1, j, wz+1, tree)
 }
 this.setBlock(i, ground, k, blockIds.dirt)
-world.setBlock(wx + 1, ground, wz, blockIds.dirt)
-world.setBlock(wx, ground, wz + 1, blockIds.dirt)
-world.setBlock(wx+1, ground, wz+1, blockIds.dirt)
+world.spawnBlock(wx + 1, ground, wz, blockIds.dirt)
+world.spawnBlock(wx, ground, wz + 1, blockIds.dirt)
+world.spawnBlock(wx+1, ground, wz+1, blockIds.dirt)
 //Messy part
 //leaves
 let w2 = 5 * 5
@@ -15727,7 +15754,7 @@ let x = mx === 1?2:mx, z = mz === 1?2:mz
 var rnd = Math.floor(random(4))+2
 //branch
 for(var by=0; by<rnd; by++){
-world.setBlock(wx+x, y+by, wz+z, tree)
+world.spawnBlock(wx+x, y+by, wz+z, tree)
 x += mx
 z += mz
 }
@@ -15746,6 +15773,34 @@ world.spawnBlock(wx+x + lx, y+by+ly, wz+z + lz, leaf)
 }
 }
 // m = move; l = leaf
+}
+//vines
+for(var vi=0; vi<10; vi++){
+var vy = random(ground, top)
+var side = floor(random(4))
+var vx = wx, vz = wz
+switch(side){
+case 0:
+vz += 2
+side = SOUTH
+break
+case 1:
+vz -= 1
+side = NORTH
+break
+case 2:
+vx += 2
+side = WEST
+break
+case 3:
+vx -= 1
+side = EAST
+break
+}
+var vh = max(floor(random(ground,vy)), ground)
+for(; vy > vh && !world.getBlock(vx, vy, vz); vy --){
+world.spawnBlock(vx,vy,vz, blockIds.vine | WALLFLAT | side)
+}
 }
 }//end giant jungle trees; jungle bushes
 if(trees && random() < 0.007 && type === "" && (b === "jungle" || b === "giantJungle") && world.getBlock(i, ground, k)){
@@ -18440,6 +18495,7 @@ invStuff.hotbar = inventory.hotbar
 invStuff.x = p.x
 invStuff.y = p.y
 invStuff.z = p.z
+invStuff.survival = survival
 invStuff.survivStr = world.getSurvivStr()
 shouldSendInvStuff = true
 if(host){
@@ -18527,6 +18583,7 @@ p.x = data.inv.x
 p.y = data.inv.y
 p.z = data.inv.z
 }
+survival = data.inv.survival || false
 if(data.survivStr) world.loadSurvivStr(data.survivStr)
 }
 world.editedTagsToLoad = data.tags
