@@ -3439,8 +3439,7 @@ shadow: false,
 torch: true,
 lightLevel: 13,
 woodSound:true,
-solid:false,
-drop:"torch"
+solid:false
 },
 {
 name: "soulTorch",
@@ -3450,8 +3449,7 @@ shadow: false,
 torch: true,
 lightLevel: 10,
 woodSound:true,
-solid:false,
-drop:"soulTorch"
+solid:false
 },
 {
 name: "lantern",
@@ -8521,7 +8519,7 @@ if(split[1] === "@s" || split[1] === username){
 dieMessage = split[2] || (username+" killed themself with the kill command. Why would you do that???")
 die()
 }else if(split[1] === "@a" || hasPlayer(split[1])){
-send({type:"kill", message:split[2] || username+ "killed "+(split[1] === "@a" ? "everyone" : split[1])+" with the kill command.", data:split[1]})
+send({type:"kill", message:split[2] || username+" killed "+(split[1] === "@a" ? "everyone" : split[1])+" with the kill command.", data:split[1]})
 }else if(split[1] === "@e"){
 var killed = []
 for(var i=world.entities.length-1; i>=0; i--){
@@ -11269,35 +11267,59 @@ let carpetBlock = Object.create(baseBlock)
 baseBlock.shape = shapes.cube
 slabBlock.shape = shapes.slab
 slabBlock.transparent = true
+slabBlock.drop = i | SLAB
+slabBlock.Name += " Slab"
 stairBlock.shape = shapes.stair
 stairBlock.transparent = true
+stairBlock.drop = i | STAIR
+stairBlock.Name += " Stair"
 crossBlock.shape = shapes.cross
+crossBlock.drop = i
 tallcrossBlock.shape = shapes.tallCross
+tallcrossBlock.drop = i
 doorBlock.shape = shapes.door
+doorBlock.drop = i
 torchBlock.shape = shapes.torch
+torchBlock.drop = i
 lanternBlock.shape = shapes.lantern
 lanternHangBlock.shape = shapes.lanternHang
 beaconBlock.shape = shapes.beacon
+beaconBlock.drop = i
 cactusBlock.shape = shapes.cactus
+cactusBlock.drop = i
 paneBlock.shape = shapes.pane
+paneBlock.drop = i
 portalBlock.shape = shapes.portal
 wallFlatBlock.shape = shapes.wallFlat
+wallFlatBlock.drop = i
 trapdoorBlock.shape = shapes.trapdoor
+trapdoorBlock.drop = i
 openTrapdoor.shape = shapes.trapdoorOpen
+openTrapdoor.drop = i
 fenceBlock.shape = shapes.fence
 fenceBlock.transparent = true
+fenceBlock.drop = i
 wallPostBlock.shape = shapes.wallpost
 wallPostBlock.transparent = true
+wallPostBlock.drop = i
 wallBlock.shape = shapes.wall
+wallBlock.drop = i
 walluBlock.shape = shapes.wallu
+walluBlock.drop = i
 fencqBlock.shape = shapes.fencq
+fencqBlock.drop = i
 buttonBlock.shape = shapes.button
+buttonBlock.drop = i
 chainBlock.shape = shapes.chain
+chainBlock.drop = i
 potBlock.shape = shapes.pot
+potBlock.drop = i
 potCrossBlock.shape = shapes.potCross
+potCrossBlock.drop = i
 carpetBlock.shape = shapes.carpet
 carpetBlock.shadow = false
 carpetBlock.transparent = true
+carpetBlock.drop = i
 if(baseBlock.door){//doesn't work: open and close weirdly
 var doorType = baseBlock.id
 var func = function(x,y,z){
@@ -11333,6 +11355,7 @@ world.setTagByName(x,y,z,"open",!o)
 }
 baseBlock.onclick = func.bind({doorType:doorType})
 slabBlock.shape = shapes.door2
+slabBlock.drop = i
 }
 if(baseBlock.bed) baseBlock.shape = shapes.bed
 if(baseBlock.rotate) baseBlock.shape = shapes.rotate
@@ -11551,9 +11574,8 @@ v = slabBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
 let t = slabBlock.textures
 if (v[j]) {
-let block = Object.create(baseBlock)
+let block = Object.create(slabBlock)
 block.shape = v[j]
-block.transparent = true
 if(v[j].rotated) block.textures = rotTex(t, v[j].rotateTimes) //rotate textures around
 blockData[i | SLAB | v[j].bit] = block
 }
@@ -11561,9 +11583,8 @@ blockData[i | SLAB | v[j].bit] = block
 v = stairBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
 if (v[j]) {
-let block = Object.create(baseBlock)
+let block = Object.create(stairBlock)
 block.shape = v[j]
-block.transparent = true
 blockData[i | STAIR | v[j].bit] = block
 }
 }
@@ -11571,7 +11592,7 @@ v = doorBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
 let t = doorBlock.textures
 if (v[j]) {
-let block = Object.create(baseBlock)
+let block = Object.create(doorBlock)
 block.shape = v[j]
 if(v[j].rotated) block.textures = rotTex(t, v[j].rotateTimes) //rotate textures around
 blockData[i | DOOR | v[j].bit] = block
@@ -11581,7 +11602,7 @@ v = paneBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
 let t = baseBlock.textures
 if (v[j]) {
-let block = Object.create(baseBlock)
+let block = Object.create(paneBlock)
 block.shape = v[j]
 if(v[j].rotated) block.textures = rotTex(t, v[j].rotateTimes) //rotate textures around
 blockData[i | PANE | v[j].bit] = block
@@ -11598,7 +11619,7 @@ blockData[i | PORTAL | v[j].bit] = block
 v = wallFlatBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
 if (v[j]) {
-let block = Object.create(baseBlock)
+let block = Object.create(wallFlatBlock)
 block.shape = v[j]
 blockData[i | WALLFLAT | v[j].bit] = block
 }
@@ -11606,7 +11627,7 @@ blockData[i | WALLFLAT | v[j].bit] = block
 v = trapdoorBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
 if (v[j]) {
-let block = Object.create(baseBlock)
+let block = Object.create(trapdoorBlock)
 block.shape = v[j]
 blockData[i | TRAPDOOR | v[j].bit] = block
 }
@@ -11614,7 +11635,7 @@ blockData[i | TRAPDOOR | v[j].bit] = block
 v = openTrapdoor.shape.varients
 for (let j = 0; j < v.length; j++) {
 if (v[j]) {
-let block = Object.create(baseBlock)
+let block = Object.create(openTrapdoor)
 block.shape = v[j]
 blockData[i | TRAPDOOROPEN | v[j].bit] = block
 }
@@ -11622,34 +11643,31 @@ blockData[i | TRAPDOOROPEN | v[j].bit] = block
 v = wallBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
 if (v[j]) {
-let block = Object.create(baseBlock)
+let block = Object.create(wallBlock)
 block.shape = v[j]
-block.transparent = true
 blockData[i | WALL | v[j].bit] = block
 }
 }
 v = walluBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
 if (v[j]) {
-let block = Object.create(baseBlock)
+let block = Object.create(walluBlock)
 block.shape = v[j]
-block.transparent = true
 blockData[i | WALLU | v[j].bit] = block
 }
 }
 v = fencqBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
 if (v[j]) {
-let block = Object.create(baseBlock)
+let block = Object.create(fencqBlock)
 block.shape = v[j]
-block.transparent = true
 blockData[i | FENCQ | v[j].bit] = block
 }
 }
 v = buttonBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
 if (v[j] && blockData[i].button) {
-let block = Object.create(baseBlock)
+let block = Object.create(buttonBlock)
 block.shape = v[j]
 blockData[i | BUTTON | v[j].bit] = block
 }
@@ -13451,7 +13469,8 @@ if(blockData[prevBlock].shearDropAmount){
 amount = blockData[prevBlock].shearDropAmount
 }
 }else{
-if(typeof theDrop === "function"){
+if(typeof theDrop === "number") block = theDrop
+else if(typeof theDrop === "function"){
 block = blockIds[theDrop()]
 }else if(Array.isArray(theDrop)){
 block = theDrop
