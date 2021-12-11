@@ -142,13 +142,14 @@ background-position: 0 -64px;
 .world .ping{
 float:right;
 }
-.world .ping .img{
+.world .ping .img, .pingImg{
 width:20px;
 height:14px;
 image-rendering:pixelated;
 background-image: url("https://data.thingmaker.repl.co/images/ping.png");
 background-position: 0 0;
 background-size: 40px 600%;
+display:inline-block;
 }
 .world-select .message{
 font-size: 15px;
@@ -23262,6 +23263,30 @@ p.innerHTML = "Error"
 if(worlds === "notLoggedIn") return changeScene("main menu")
 if(worlds === "offline") return window.servers.innerHTML = "<div class='message'>You are offline. Connect to the internet first.</div>"
 worlds.forEach(r => addWorld(r.name, r.id, r.host, r.players))
+var pingStart = Date.now()
+function addPingMsg(msg){
+var div = document.createElement("div")
+div.classList.add("message")
+div.innerHTML = msg
+window.servers.prepend(div)
+}
+fetch("https://server.thingmaker.repl.co/test").then(r => r.text()).then(r => {
+if(r !== "test"){
+console.log(r)
+throw "The server didn't respond correctly."
+}
+var ping = Date.now() - pingStart
+var y
+if(ping > 800) y = -56
+else if(ping > 600) y = -42
+else if(ping > 400) y = -28
+else if(ping > 200) y = -14
+else y = 0
+addPingMsg("Your ping: "+ping+" miliseconds <div class='pingImg' style='background-position:0 "+y+"px;'></div>")
+}).catch(e => {
+addPingMsg("Something went wrong when pinging: "+e)
+console.log(e)
+})
 window.servers.onclick = Button.draw
 superflat = false
 trees = true
