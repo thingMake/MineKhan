@@ -3039,10 +3039,15 @@ textures: ["tntBottom", "tntTop", "tntSides"],
 //onupdate: function(x,y,z){
 //  explode(x,y,z,5)
 //}, flint and steel explodes it
-explode: function(x,y,z){
+explode: function(x,y,z, how){
 world.setBlock(x,y,z,0)
-world.addEntity(new PrimedTNT(x,y,z))
+var e = new PrimedTNT(x,y,z)
+world.addEntity(e)
 playSound("entity.tnt.fuse", 0, posSound(x,y,z))
+switch(how){
+case "explosion":
+e.timeLimit = rand(10,30)
+}
 },
 onupdate:function(x,y,z){
 var neigbors = [
@@ -13973,7 +13978,7 @@ for (let Z = -r; Z <= r; Z++) {
 let n = X * X / w2 + Y * Y / h2 + Z * Z / d2
 if (n < 1) {
 if(world.getBlock(X + x, Y + y, Z + z) === blockIds.tnt){
-blockData[blockIds.tnt].explode(X+x,Y+y,Z+z)
+blockData[blockIds.tnt].explode(X+x,Y+y,Z+z, "explosion")
 }
 if(Math.random() > 0.5){
 var time = Math.random()*1000
@@ -16255,6 +16260,7 @@ this.width = width
 this.height = height
 this.depth = depth
 this.offsetY = 0
+this.extraSize = 0
 this.hidden = false
 this.harmEffect = 0
 this.contacts = new Contacts()
@@ -16595,7 +16601,7 @@ modelMatrix.translate(renderx, rendery, renderz)
 modelMatrix.rotZ(this.dieEffect)
 modelMatrix.rotX(this.pitch)
 modelMatrix.rotY(this.yaw)
-modelMatrix.scale(this.width, this.height, this.depth)
+modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
 const projectionMatrix = [proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0]
@@ -17012,6 +17018,7 @@ this.prevTex = blockIds.tnt
 this.tex = this.prevTex
 this.timerStart = timerStart || this.spawn
 this.lastCollidedY = this.timerStart
+this.timeLimit = 80
 }
 update() {
 let now = performance.now()
@@ -17030,12 +17037,17 @@ if(i%2){
 this.tex = blockIds.tnt
 }else{
 this.tex = blockIds.whiteConcrete
+world.particles.push(new TNTSmokeParticle(this.x,this.y+0.5-0.125,this.z))
 }
 if(this.prevTex !== this.tex){
 this.changeBlock(this.tex)
 this.prevTex = this.tex
 }
-if(i >= 16){
+if((now - this.spawn) / tickTime >= this.timeLimit - 10){
+//get bigger
+this.extraSize = -((this.timeLimit - 10) - ((now - this.spawn) / tickTime)) / 40
+}
+if((now - this.spawn) / tickTime >= this.timeLimit){
 this.canDespawn = true
 var x = round(this.x), y = round(this.y), z = round(this.z)
 explode(x,y,z,4, blockData[world.getBlock(x,y,z)].liquid || !worldSettings.tntExplode)
@@ -17947,7 +17959,7 @@ this.move(now)
 if (now - this.spawn > this.despawns) {
 this.canDespawn = true
 }
-this.facePlayer()
+this.canFacePlayer = true
 }
 render() {
 let diff = (performance.now() - this.lastUpdate) / tickTime
@@ -17955,6 +17967,10 @@ if (diff > 1) diff = 1
 let renderx = (this.x - this.previousX) * diff + this.previousX
 let rendery = (this.y - this.previousY) * diff + this.previousY
 let renderz = (this.z - this.previousZ) * diff + this.previousZ
+if(this.canFacePlayer){
+this.facePlayer()
+this.canFacePlayer = false
+}
 const offsetY = this.offsetY
 const modelMatrix = new Matrix();
 modelMatrix.identity()
@@ -18050,9 +18066,13 @@ this.move(now)
 if (now - this.spawn > this.despawns) {
 this.canDespawn = true
 }
-this.facePlayer()
+this.canFacePlayer = true
 }
 render(){
+if(this.canFacePlayer){
+this.facePlayer()
+this.canFacePlayer = false
+}
 const modelMatrix = new Matrix();
 modelMatrix.identity()
 modelMatrix.translate(this.x, this.y, this.z)
@@ -18093,6 +18113,26 @@ world.particles.push(new PoofParticle(x,y,z))
 }
 }
 win.poof = poof
+function playerPoof(player){
+var {x,y,z} = player
+y += player.offsetY
+y -= 1/4
+var space = 1/4
+let w2 = 1 * 1
+let d2 = 1 * 1
+let h2 = 1.2 * 1.2
+for (let Y = -h2; Y < h2; Y+=space) {
+for (let X = -w2; X <= w2; X+=space) {
+for (let Z = -d2; Z <= d2; Z+=space) {
+let n = X * X / w2 + Y * Y / h2 + Z * Z / d2
+if (n < 1) {
+world.particles.push(new PoofParticle(x+X,y+Y,z+Z))
+}
+}
+}
+}
+}
+win.playerPoof = playerPoof
 class ExplodeParticle extends Particle{
 constructor(x,y,z){
 var vao = explodeVaos[8]
@@ -18109,9 +18149,13 @@ this.canDespawn = true
 }
 this.index = Math.floor((now - this.spawn) / this.frameTime)
 this.vao = explodeVaos[this.index]
-this.facePlayer()
+this.canFacePlayer = true
 }
 render(){
+if(this.canFacePlayer){
+this.facePlayer()
+this.canFacePlayer = false
+}
 const modelMatrix = new Matrix();
 modelMatrix.identity()
 modelMatrix.translate(this.x, this.y, this.z)
@@ -18146,6 +18190,65 @@ gl.uniform1i(glCache.isTextureAtlasParticle, 1)
 }
 }
 win.ExplodeParticle = ExplodeParticle
+class TNTSmokeParticle extends Particle {
+constructor(x,y,z){
+var frameTime = tickTime
+super(x, y, z, 0, 0, rand(-0.02,0.02), 0, rand(-0.02,0.02), 0.125, 0.125, 0.125, null, null, genericVaos.size, genericVaos.length*frameTime, genericVaos[0])
+this.brightness = rand(0, 0.2)
+this.speed = 0.05
+this.frameTime = frameTime
+}
+update(){
+let now = performance.now()
+this.updateVelocity(now)
+this.vely = this.speed
+this.move(now)
+if (now - this.spawn > this.despawns) {
+this.canDespawn = true
+}
+this.index = genericVaos.length - 1 - Math.floor((now - this.spawn) / this.frameTime)
+this.vao = genericVaos[this.index]
+this.canFacePlayer = true
+}
+render(){
+if(this.canFacePlayer){
+this.facePlayer()
+this.canFacePlayer = false
+}
+const modelMatrix = new Matrix();
+modelMatrix.identity()
+modelMatrix.translate(this.x, this.y, this.z)
+modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
+modelMatrix.scale(this.width, this.height, this.depth)
+const viewMatrix = p.transformation.elements
+const proj = p.projection
+const projectionMatrix = [proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0]
+const modelViewProjectionMatrix = new Matrix()
+modelViewProjectionMatrix.identity()
+modelViewProjectionMatrix.mult(projectionMatrix)
+modelViewProjectionMatrix.mult(viewMatrix)
+modelViewProjectionMatrix.mult(modelMatrix.elements)
+// row major to column major
+modelViewProjectionMatrix.transpose()
+const x = round(this.x)
+const y = round(this.y)
+const z = round(this.z)
+const blockLight = world.getLight(x, y, z, 1)
+const skysLight = world.getLight(x, y, z, 0)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0) * this.brightness
+gl.bindTexture(gl.TEXTURE_2D, genericTexture)
+gl.uniform1i(glCache.uSamplerParticle, 6)
+gl.uniform1f(glCache.uLightLevelParticle, lightLevel)
+gl.uniformMatrix4fv(glCache.uViewParticle, false, modelViewProjectionMatrix.elements)
+gl.uniform1i(glCache.isTextureAtlasParticle, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
+gl.uniform1i(glCache.isTextureAtlasParticle, 1)
+}
+}
+win.TNTSmokeParticle = TNTSmokeParticle
 function initParticles(){
 win.explodeVaos = explodeVaos
 let shape = shapes.blockParticle
@@ -18659,6 +18762,7 @@ if(data.host && data.worldSettings){
 Object.assign(worldSettings, data.worldSettings)
 }
 }else if(data.type === "dc"){
+playerPoof(data.data) //cool effect
 delete players[data.data]
 }else if(data.type === "setBlock"){
 if(world){
