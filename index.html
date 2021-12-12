@@ -16693,6 +16693,7 @@ texNum++
 super(x, y, z, 0, 0, velx, vely, velz, 0.25, 0.25, 0.25, new Float32Array(shapeVerts.flat(Infinity)), new Float32Array(texture), size, 1500000)
 this.block = blockID
 this.type = "Item"
+this.from = achexUsername
 //this.amount = amount || 1
 if(autoSetVel){
 this.velx = (Math.random()-0.5) * 0.2
@@ -16773,6 +16774,10 @@ achievment("Getting Wood")
 }
 if(this.block === blockIds.diamond){
 achievment("DIAMONDS!")
+}
+if(multiplayer && this.block === blockIds.diamond && this.from !== achexUsername){
+//that achivement
+send({type:"diamondsToYou"}, this.from)
 }
 updateHUD = true
 var pitch = rand(0.8, 1.5)
@@ -18482,6 +18487,7 @@ target = world.id || 0
 host = true
 }
 players = {} //empty
+playersInv = {}
 multiplayer = new WebSocket("wss://server.thingmaker.repl.co/ws?target="+target)
 multiplayer.onopen = e => {
 /*multiplayer.send(JSON.stringify({
@@ -18686,6 +18692,8 @@ world.deleteEntity(data.id, true)
 }
 }else if(data.type === "achievment"){
 Messages.add(data.USER+" earned the achievment: "+data.data)
+}else if(data.type === "diamondsToYou"){
+achievment("Diamonds to you!")
 }else if(data.type === "hit"){
 if(survival){
 damage(data.data || 1, data.username+" killed "+username)
@@ -23272,7 +23280,7 @@ else if(ping > 600) y = -42
 else if(ping > 400) y = -28
 else if(ping > 200) y = -14
 else y = 0
-p.innerHTML = ping+" miliseconds<div class='img' style='background-position:0 "+y+"px;'></div>"
+p.innerHTML = ping+" miliseconds <div class='img' style='background-position:0 "+y+"px;'></div>"
 }else if(ping === "timeout"){
 p.innerHTML = "Ping timed out"
 }else{
