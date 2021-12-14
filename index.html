@@ -6633,7 +6633,10 @@ function newInvItem(id){
 for(let i=0; i<inventory.hotbar.length; i++){
 if(!inventory.hotbar[i].id){
 inventory.hotbar[i] = {id:id, amount:1, animation:1.5}
-if(i === inventory.hotbarSlot) inventory.showName = 1.5
+if(i === inventory.hotbarSlot){
+inventory.showName = 1.5
+holding = inventory.hotbar[inventory.hotbarSlot].id
+}
 return true
 }
 if(inventory.hotbar[i].id === id && inventory.hotbar[i].amount < blockData[inventory.hotbar[i].id].stackSize){
@@ -8847,6 +8850,9 @@ function damage(amount, why, nosound,type){
 p.health -= amount
 harmEffect = 40
 if(!nosound){
+if(p.health <= 0){
+oofSound()
+}else{
 switch(type){
 case "drown":
 drownHurtSound()
@@ -8854,8 +8860,16 @@ break
 case "freeze":
 freezeHurtSound()
 break
+case "smallfall":
+playSound("damage.smallfall")
+break
+case "bigfall":
+playSound("damage.bigfall")
+break
 default:
 hitSound()
+break
+}
 }
 }
 dieMessage = why
@@ -13174,10 +13188,8 @@ let fall = p.lastY - p.y
 p.lastY = p.y
 var block = standingOn
 if(fall > 3 && survival && !liquid) {
-damage(Math.floor(fall-3), username+" fell from a high place. You fell "+Math.round(fall)+" blocks.", true)//Math.floor( (p.velocity.y * p.velocity.y * 8));
-if(fall > 6){
-playSound("damage.bigfall")
-}else playSound("damage.smallfall")
+var fallType = fall > 6 ? "bigfall" : "smallfall"
+damage(Math.floor(fall-3), username+" fell from a high place. You fell "+Math.round(fall)+" blocks.", false, fallType)//Math.floor( (p.velocity.y * p.velocity.y * 8));
 }
 if(p.velocity.y < -0.1 && block){
 blockParticles(block, p.x,p.y-p.bottomH,p.z,10)
@@ -18762,8 +18774,10 @@ if(data.host && data.worldSettings){
 Object.assign(worldSettings, data.worldSettings)
 }
 }else if(data.type === "dc"){
-playerPoof(data.data) //cool effect
+if(players[data.data]){
+playerPoof(players[data.data]) //cool effect
 delete players[data.data]
+}
 }else if(data.type === "setBlock"){
 if(world){
 let pos = data.data
@@ -20551,7 +20565,7 @@ play()
 //Help buttons
 Button.add(60, 30, 80, 30, "Back", "help", r => changeScene(previousScreen))
 // Marketplace buttons
-Button.add(60, 40, 80, 30, "Back", "marketplace", r => changeScene(previousScreen))
+Button.add(60, 40, 80, 30, "Back", "marketplace", r => changeScene("main menu"))
 Button.add(mid - x2, height - 75, w2, 40, "Download", "marketplace", saveFromMarketplace, () => !marketplace[selectedWorld])
 // Comingsoon menu buttons
 Button.add(width / 2, 395, width / 3, 40, "Back", "comingsoon menu", r => changeScene(previousScreen))
@@ -23427,9 +23441,13 @@ survival = false
 }
 let marketplace = {}; win.marketplaceData = null
 async function initMarketplace(){
-marketplaceData = await fetch("maps.json")
-await new Promise((resolve, reject) => {
-marketplaceData.text().then(r => {marketplaceData = JSON.parse(r); resolve()})
+marketplaceData = await fetch("maps.json").then(r => r.json())
+await fetch("https://minekhan.repl.co/server/maps").then(r => r.json()).then(data => {
+for(var m in data){
+var v = data[m]
+v.fetchUrl = "https://minekhan.repl.co/server/map/"+v.name
+marketplaceData.push(v)
+}
 })
 marketplace = {}
 window.marketplace.innerHTML = ""
@@ -23439,7 +23457,7 @@ if (elem && elem[0]) {
 elem[0].classList.remove("selected")
 }
 }
-function addWorld(name, version, size, id, edited) {
+function addWorld(name, version, size, id, by, edited) {
 let div = doc.createElement("div")
 div.className = "world"
 div.onclick = e => {
@@ -23460,8 +23478,9 @@ minute: "2-digit"
 }))
 div.innerHTML += str + br
 }
-div.innerHTML += version + br
+if(version) div.innerHTML += version + br
 div.innerHTML += `${size.toLocaleString()} bytes used`
+if(by) div.innerHTML += br+"By: "+by
 window.marketplace.appendChild(div)
 superflat = false
 trees = true
@@ -23470,21 +23489,26 @@ survival = false
 }
 var prevSeed = worldSeed //this should fix seed always the same
 let tempWorld = new World()
-marketplaceData.forEach(data => {
+marketplaceData.forEach((data,i) => {
+let id = i
+if(data.fetchUrl){
+addWorld(data.name, "", data.bytes, id, data.user, data.created)
+marketplace[id] = data
+}else{
 let loadString, mod
 if(typeof data === "object"){
 loadString = data.loadString
 mod = data.mod
 }else loadString = data
 tempWorld.loadSave(loadString)
-let now = Date.now()
-addWorld(tempWorld.name, tempWorld.version, loadString.length, now)
-marketplace[now] = {
+addWorld(tempWorld.name, tempWorld.version, loadString.length, id)
+marketplace[id] = {
 code: loadString,
-id: now,
+id: id,
 name: tempWorld.name,
 version: tempWorld.version,
 mod: mod,
+}
 }
 })
 setSeed(prevSeed)
@@ -23492,6 +23516,46 @@ window.marketplace.onclick = Button.draw
 }
 function saveFromMarketplace(){
 let save = marketplace[selectedWorld]
+if(save.fetchUrl){
+changeScene("savingFromMarketplace")
+fetch(save.fetchUrl).then(r => r.json()).then(data => {
+try{
+var loadString
+if(data.file){
+data.file = JSON.parse(data.file)
+loadString = data.file.code
+}else{
+loadString = data.code
+}
+var id = Date.now()
+if(data.file){
+data.file.id = id
+if(data.file.name !== data.name) data.file.name = data.name+" ("+data.file.name+")"
+saveToDB(id, data.file)
+}else{
+var tempWorld = new World()
+tempWorld.loadSave(loadString)
+saveToDB(id, {
+id: id,
+edited: Date.now(),
+name: tempWorld.name === data.name ? data.name : data.name+" ("+tempWorld.name+")",
+version: tempWorld.version,
+code: data.code,
+mod: (data.file && data.file.mod) || null
+})
+}
+initWorldsMenu()
+changeScene("loadsave menu")
+}catch(e){
+console.error(e)
+alert("Error saving map: "+e)
+changeScene("marketplace")
+}
+}).catch(e => {
+alert("Error fetching map: "+e)
+changeScene("marketplace")
+})
+}else{
 saveToDB(save.id, {
 id: save.id,
 edited: Date.now(),
@@ -23502,6 +23566,7 @@ mod: save.mod
 })
 initWorldsMenu()
 changeScene("loadsave menu")
+}
 }
 var sounds = {
 click: "click.ogg",
@@ -24086,6 +24151,7 @@ var i = Math.ceil(Math.random()*3)
 playSound("damage.hit"+i)
 if(multiplayer) send({type:"playSound", data:"damage.hit"+i, x:p.x,y:p.y,z:p.z})
 }
+win.hitSound = hitSound
 function drownHurtSound(){
 var i = Math.ceil(Math.random()*4)
 playSound("damage.drown"+i)
@@ -24096,7 +24162,10 @@ var i = Math.ceil(Math.random()*5)
 playSound("damage.freeze"+i)
 if(multiplayer) send({type:"playSound", data:"damage.freeze"+i, x:p.x,y:p.y,z:p.z})
 }
-win.hitSound = hitSound
+function oofSound(){
+playSound("damage.classic_hurt")
+if(multiplayer) send({type:"playSound", data:"damage.classic_hurt", x:p.x,y:p.y,z:p.z})
+}
 var explodeSounds = ["entity.generic.explode1", "entity.generic.explode2", "entity.generic.explode3", "entity.generic.explode4"]
 function explodeSound(x,y,z){
 var sound = explodeSounds[Math.floor(Math.random()*explodeSounds.length)]
@@ -24858,7 +24927,8 @@ p.velocity.y *= 0.8
 if(survival){
 if(liquid && blockHere === blockIds.Water){
 if(p.oxygen > 0){
-if(now - lastLoseOxygen > 1000){
+var time = floor(p.oxygen / 2) * 2 === p.oxygen ? 1000 : 125
+if(now - lastLoseOxygen > time){
 p.oxygen --
 lastLoseOxygen = now
 updateHUD = true
@@ -25179,6 +25249,13 @@ ctx.textAlign = 'center'
 textSize(18)
 fill(255)
 text("Marketplace", width / 2, 20)
+}
+drawScreens.savingFromMarketplace = () => {
+dirt()
+ctx.textAlign = 'center'
+fill(255)
+textSize(25)
+text("Downloading...", width / 2, height / 2)
 }
 })()
 // Give the font time to load and redraw the homescreen
