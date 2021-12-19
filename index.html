@@ -905,7 +905,7 @@ if (gl_FragColor.a == 0.0) discard;
 let errorScreen = document.querySelector("#errorScreen")
 // If there is an error, show error screen
 const errors = []
-window.addEventListener("error", function(e){
+function logError(e){
 errors.push(e)
 var html = "<h1>Error!</h1>"
 errors.forEach(e => {
@@ -918,7 +918,8 @@ html += "</div>"
 html += "<br><br><button onclick='errorScreen.style.display=\"none\"'>Hide</button>"
 errorScreen.innerHTML = html
 errorScreen.style.display = "block"
-})
+}
+window.addEventListener("error", logError)
 </script>
 <script type="application/javascript">
 "use strict";
@@ -2633,6 +2634,10 @@ clay: "0g0g6þ×HĂôWĖģZĖŔHĊăWĆóZ5*yð]Ĉó9dNđ$JĪPÂÅÏĜĊĂúaÑ�
 clayBall: "0g0g9000TlYâŠWĊăWþ×H)ŋHĖŔHĖģZËĠZ000000000000000000000000000hh000001zyg0000k)NB0001+,ÐíÀ001O@OíÀ00j[ÓREB00kO)OEB00iOÔ-yï001îOyEÀ000VyíV00000VV0000000000000000000",
 brick:"0g0g8000]ìYöjWĝÑWèřZĬXH$ÁWKĚW0000000000000000ù0001B-002^Úğ04üłÚĞŇ*ĞłÚģU!ĞłãļCFÄŔĒPCF#UJP=MDAJ~Ę6DAćÙ00Į=Ŀ000jĘ000000000000000",
 charcoal: "0g0ga000sÎHEúZSŉZ(ĊWgSZéĝY|jHÎUWwÞY000000000001h000001zRÀ0000UÔñB0005>äàNÀ005M]Ðîý005xk-).À0ÂphyPhÀ0ÂûhhhJÀ0ÇyFhJNÀ0ÁJßúpFÀ0ÁFyJhúÀ05iāxhl000ÁhlVÀ0005VÀ00000000000",
+christmasChestYellowThing: "0g0g5000ŊOZZįYŖÑWŢďY4Ď0000%þħ000%Jħ000AJë000Ñÿ0000000000000000000000000000000000000000000000000000000000000000000000",
+christmasChestSide: "0g0gCĘĚYĜĩYZįY000ĔÎWČÁWĐÎWłzZĘÎWĘÞHĵŊYŢďYĈÁWĄÁWĐÁWīĹZĀJWĄÀZĈÀZČÞHīĹYÆgWÙÁWÝwWáwHäwHè(HùìYëwHèwHõÞYKgWÝwHáÁWÝÁWÑgW]0W{0W0gT4gí4gT4gĪ0T@gTĩgT8AgĪ0Á?kÂôkÁ?wgĪ0Īc)ĹñkÃ|-ŗĪTh?kĩóPx?|SĪTh?kÂóPx?|SĪVVVVVVVVVVÀĪÇâľËðoËâŀÖĘĪÇðVÞĭtÎýÊÞŇĪÇÿļéĽoÒŜÍâŇĪÇVVVÆtVVVVŇĪÇïÍVĿtÎÅļãgĪòÆĿöÆtÄ+zÄgĪòðoìÿKÎðwÓgĪJÇBþÇÒþÇÒþÀĪc(Īc(Īc(Īc(Ī",
+christmasChestTop: "0g0gpĳŉZķŉZĘĩYZįYŖÑW000ĈÀZĄÁWČÁWŢďYłjZĈÁWĔÎWľjZĐÎWłzZĜĩYĘĚYĩĪHņzZŎQWľ3YŎ>Zĺ3YĦěH0Rh8ÑgXgXč9÷áx!TĽî4čaoĬęĕÈĽŋ4čhùXwøRgî4číŃĭ$öÉĄŌXčòĽĞ-öÈķĪīčJď,ùáçņ*Ač|URgãx8ĒįčísĭM%ÈoīSčòŃŎMėàĄěīčìĽĞMČÈķŌħč9ùXxŋRgïXč9þĝĆŞ.Ľà4č0>oT-Xx0ëčF^ÂüčF^ÂüčF^ÂüčF^Âüč",
+christmasChestBottom: "0g0g7èSZÝSZëSZ000áwHëwHäwH4JPAJăNÇ)þ]ÉNP)J]ÉNŀAJÆÉNPAĚ]ÉN|ÑJ]ÉNÇÑJ]ÉNÇAĂ]ÉNPAJ]ÉNPÑþ]É+P%J^ÉNĲAĹ^ÉNPAJįÉ4JPAJrÚĞłÚĞłÚĞłÚĞł",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -4453,7 +4458,8 @@ name: "cowSpawnEgg",
 item: true,
 onuse: (x,y,z, block, replaceItem) => {
 world.addEntity(new Cow(p2.x,p2.y,p2.z))
-}
+},
+minusOnUse:true
 },
 {
 name:"sugarCane",
@@ -4537,7 +4543,8 @@ name: "pigSpawnEgg",
 item: true,
 onuse: (x,y,z, block, replaceItem) => {
 world.addEntity(new Pig(p2.x,p2.y,p2.z))
-}
+},
+minusOnUse:true
 },
 {name:"tuff",Name:"Tuff",breakTime:1.5},
 {name:"deepslate", Name:"Deepslate", textures:["deepslateTop","deepslate"],breakTime:3,deepslateSound:true},
@@ -6389,7 +6396,7 @@ needsSupportingBlocks(x,y,z,b)
 {
 name:"chest",
 Name:"Chest",
-textures:"chestFront",
+textures:"christmasChestSide",//*/"chestFront",//christmas
 transparent:true,
 chest:true,
 onclick:function(x,y,z){
@@ -8523,6 +8530,7 @@ info: "Kills someone. Target can be: @s, your username, someone's uername, @a, @
 func: split => {
 if(worldSettings.killCmdOff) return Messages.add("Kill command is disabled on this world.")
 split[1] = split[1] || "@s"
+split[2] = split.splice(2,split.length).join(" ")
 if(split[1] === "@s" || split[1] === username){
 dieMessage = split[2] || (username+" killed themself with the kill command. Why would you do that???")
 die()
@@ -8839,7 +8847,7 @@ for(var j=0; j<invItems[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,
 invItems[i].id = 0
 }
 }
-world.addEntity(new ExperienceOrb(p.x,p.y,p.z,p.totalXP))
+if(p.totalXP > 0) world.addEntity(new ExperienceOrb(p.x,p.y,p.z,p.totalXP))
 }
 changeScene("dead")
 releasePointer()
@@ -8872,6 +8880,7 @@ break
 }
 }
 }
+loseHealthEffect = 60
 dieMessage = why
 updateHUD = true
 if(multiplayer) send({type:"harmEffect", id:achexUsername})
@@ -10622,12 +10631,31 @@ west: 0
 },
 chest:{
 verts:[
-[objectify(1,0,1,14,14,32,0),objectify(7,7,15,2,1,-13,0)],
-[objectify(1,14,15,14,14,32,0),objectify(7,11,16,2,1,-15,0)],
-[objectify(15,14,15,14,4,0,0),objectify(15,10,15,14,10,0,5),objectify(9,11,16,2,4,-14,1)],
-[objectify(1,14,1,14,4,16,0),objectify(1,10,1,14,10,16,5),objectify(7,11,15,2,4,-16,1)],
-[objectify(15,14,1,14,4,16,0),objectify(15,10,1,14,10,16,5),objectify(9,11,15,1,4,-16,1)],
-[objectify(1,14,15,14,4,16,0),objectify(1,10,15,14,10,16,5),objectify(7,11,16,1,4,-14,0)]
+[objectify(1,0,1,14,14,32,0),objectify(7,7,0,2,1,-13,0)],
+[objectify(1,14,15,14,14,32,0),objectify(7,11,1,2,1,-15,0)],
+[objectify(15,14,15,14,4,16,0),objectify(15,10,15,14,10,16,5),objectify(9,11,1,2,4,-16,1)],
+[objectify(1,14,1,14,4,0,0),objectify(1,10,1,14,10,0,5),objectify(7,11,0,2,4,-14,1)],
+[objectify(15,14,1,14,4,16,0),objectify(15,10,1,14,10,16,5),objectify(9,11,0,1,4,-14,1)],
+[objectify(1,14,15,14,4,16,0),objectify(1,10,15,14,10,16,5),objectify(7,11,1,1,4,-16,1)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+rotate:true
+},
+christmasChest:{
+verts:[
+[objectify(1,0,1,14,14,32,0),objectify(7,7,0,2,1,-13,0)],
+[objectify(1,14,15,14,14,16,0),objectify(7,11,1,2,1,-15,0)],
+[objectify(15,14,15,14,4,0,0),objectify(15,10,15,14,10,0,5),objectify(9,11,1,2,4,-16,1)],
+[objectify(1,14,1,14,4,0,0),objectify(1,10,1,14,10,0,5),objectify(7,11,0,2,4,-14,1)],
+[objectify(15,14,1,14,4,0,0),objectify(15,10,1,14,10,0,5),objectify(9,11,0,1,4,-14,1)],
+[objectify(1,14,15,14,4,0,0),objectify(1,10,15,14,10,0,5),objectify(7,11,1,1,4,-16,1)]
 ],
 cull: {
 top: 0,
@@ -11551,7 +11579,7 @@ stairBlock.shadow = false
 stairBlock.transparent = true
 potCrossBlock.shape = shapes.bambooPot
 }
-if(baseBlock.chest) baseBlock.shape = shapes.chest
+if(baseBlock.chest) baseBlock.shape = shapes.christmasChest//*/shapes.chest//christmas
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
 blockData[i | CROSS] = crossBlock
@@ -12296,6 +12324,13 @@ to[i] = from[i]
 copyMatrix(from) {
 let to = this.elements
 from = from.elements
+for (let i = 0; i < from.length; i++) {
+to[i] = from[i]
+}
+}
+set(a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p) {
+let to = this.elements
+let from = arguments
 for (let i = 0; i < from.length; i++) {
 to[i] = from[i]
 }
@@ -16253,6 +16288,11 @@ clear() {
 this.size = 0
 }
 }
+var entityMatrices = {
+modelViewProjectionMatrix: new Matrix(),
+projectionMatrix: new Matrix(),
+modelMatrix: new Matrix()
+}
 class Entity {
 constructor(x, y, z, pitch, yaw, velx, vely, velz, width, height, depth, vertices, texture, faces, despawns, vao) {
 this.x = x
@@ -16607,7 +16647,7 @@ const offsetY = this.offsetY
 let renderx = (this.x - this.previousX) * diff + this.previousX
 let rendery = ((this.y - this.previousY) * diff + this.previousY) + offsetY
 let renderz = (this.z - this.previousZ) * diff + this.previousZ
-const modelMatrix = new Matrix();
+const modelMatrix = entityMatrices.modelMatrix;
 modelMatrix.identity()
 modelMatrix.translate(renderx, rendery, renderz)
 modelMatrix.rotZ(this.dieEffect)
@@ -16616,8 +16656,10 @@ modelMatrix.rotY(this.yaw)
 modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
-const projectionMatrix = [proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0]
-const modelViewProjectionMatrix = new Matrix()
+let projectionMatrix = entityMatrices.projectionMatrix
+projectionMatrix.set(proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0)
+projectionMatrix = projectionMatrix.elements
+const modelViewProjectionMatrix = entityMatrices.modelViewProjectionMatrix
 modelViewProjectionMatrix.identity()
 modelViewProjectionMatrix.mult(projectionMatrix)
 modelViewProjectionMatrix.mult(viewMatrix)
@@ -17199,9 +17241,9 @@ this.tint.g = 1
 this.tint.b = 0
 }
 facePlayer(){
-this.yaw = Math.PId-atan2(p.z - this.z, p.x - this.x) + Math.PI2
+this.yaw = Math.PId - (atan2(p.z - this.z, p.x - this.x) + Math.PI2 + Math.PI)
 var adjacent = dist2(this.x,this.z,p.x,p.z)
-this.pitch = Math.PId-atan2(p.y - this.y, adjacent)
+this.pitch = Math.PId - atan2(p.y - this.y, adjacent)
 }
 render(){
 const modelMatrix = new Matrix();
@@ -17907,9 +17949,9 @@ constructor() {
 super(...arguments)
 }
 facePlayer(){
-this.yaw = Math.PId-atan2(p.z - this.z, p.x - this.x) + Math.PI2
+this.yaw = Math.PId - (atan2(p.z - this.z, p.x - this.x) + Math.PI2 + Math.PI)
 var adjacent = dist2(this.x,this.z,p.x,p.z)
-this.pitch = Math.PId-atan2(p.y - this.y, adjacent)
+this.pitch = Math.PId - atan2(p.y - this.y, adjacent)
 /*//var magnitude = dist3(this.x,this.y,this.z,p.x,p.y,p.z)
 this.yaw = atan2(p.z - this.z, p.x-this.x)
 var adjacent = dist2(this.x,this.z,p.x,p.z)
@@ -18541,9 +18583,9 @@ if(!logged){
 return "notLoggedIn"
 }
 var worlds
-await fetch("https://server.thingmaker.repl.co/worlds").then(r => r.json()).then(r => worlds=r)
+await fetch("https://server.thingmaker.repl.co/worlds").then(r => r.json()).then(r => worlds=r).catch(e => logError(e))
 if(pingCallback){
-fetch("https://server.thingmaker.repl.co/worldsPing").then(r => r.json()).then(pingCallback)
+fetch("https://server.thingmaker.repl.co/worldsPing").then(r => r.json()).then(pingCallback).catch(e => logError(e))
 }
 return worlds
 }
@@ -18775,7 +18817,7 @@ Object.assign(worldSettings, data.worldSettings)
 }
 }else if(data.type === "dc"){
 if(players[data.data]){
-playerPoof(players[data.data]) //cool effect
+if(world) playerPoof(players[data.data]) //cool effect
 delete players[data.data]
 }
 }else if(data.type === "setBlock"){
@@ -18827,7 +18869,7 @@ die()
 var ent = players[data.id]
 if(ent){
 ent.die = true
-poof(ent.x, ent.y, ent.z)
+if(world) poof(ent.x, ent.y, ent.z)
 }
 Messages.add(data.message)
 }else if(data.type === "message"){
@@ -21601,7 +21643,8 @@ inventory.crafting[idx] = temp
 updateCraftingGrid()
 }else if(screen === "inventory" && mouseX>craftResX && mouseX<craftResX+s && mouseY>craftResY && mouseY<craftResY+s && inventory.craftingRes && inventory.craftingRes.id){
 //inv crafting output
-inventory.holding = Object.assign({}, inventory.craftingRes)
+var res = inventory.craftingRes
+inventory.holding = {id:res.id,amount:res.amount}
 for(let i=0; i<9; i++){
 let block = inventory.crafting[i]
 if(block && block.id){
@@ -21799,7 +21842,8 @@ let y = offY + (s*4)
 //get thing from output
 let over = mouseX>x && mouseX<x+s && mouseY>y && mouseY<y+s
 if(over && inventory.craftingRes && inventory.craftingRes.id){
-inventory.holding = Object.assign({}, inventory.craftingRes)
+var res = inventory.craftingRes
+inventory.holding = {id:res.id,amount:res.amount}
 for(let i=0; i<9; i++){
 let block = inventory.crafting[i]
 if(block && block.id){
@@ -23556,6 +23600,7 @@ alert("Error fetching map: "+e)
 changeScene("marketplace")
 })
 }else{
+save.id = Date.now()
 saveToDB(save.id, {
 id: save.id,
 edited: Date.now(),
@@ -24800,7 +24845,6 @@ if(witherEffect>0){
 witherEffect --;
 if(survival && now-lastBlockHarm > witherTime){
 lastBlockHarm = now
-loseHealthEffect = 60
 damage(witherDamage, username+" got withered. Ew.")
 }
 }
@@ -24811,7 +24855,6 @@ if(freezeEffect > 140){
 freezeEffect = 140
 if(now - lastFreezeHealth > 2000 && survival){
 lastFreezeHealth = now
-loseHealthEffect = 60
 damage(1,username+" froze to death.", false, "freeze")
 }
 }else{
@@ -25399,6 +25442,13 @@ world.setBlock(X + x, Y + y, Z + z, id)
 }
 }
 }
+}
+function lookAt(x,y,z){
+var p = player
+var {atan2, PId, PI2,PI} = Math
+p.ry = atan2(z - p.z, x - p.x) + PI2+PI
+var adjacent = dist2(p.x,p.z,x,z)
+p.rx = atan2(y - p.y, adjacent)
 }
 if (("serviceWorker" in navigator) && location.origin === "https://minekhan.thingmaker.repl.co") {
 window.addEventListener("load", function() {
