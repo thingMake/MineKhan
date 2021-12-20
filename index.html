@@ -5381,62 +5381,62 @@ rotate:true
 {
 name: "oakPressurePlate",
 textures: "oakPlanks",
-carpet: true
+pressurePlate: true
 },
 {
 name: "birchPressurePlate",
 textures: "birchPlanks",
-carpet: true
+pressurePlate: true
 },
 {
 name: "sprucePressurePlate",
 textures: "sprucePlanks",
-carpet: true
+pressurePlate: true
 },
 {
 name: "junglePressurePlate",
 textures: "junglePlanks",
-carpet: true
+pressurePlate: true
 },
 {
 name: "acaciaPressurePlate",
 textures: "acaciaPlanks",
-carpet: true
+pressurePlate: true
 },
 {
 name:"darkOakPressurePlate",
 textures: "darkOakPlanks",
-carpet: true
+pressurePlate: true
 },
 {
 name: "warpedPressurePlate",
 textures: "warpedPlanks",
-carpet: true
+pressurePlate: true
 },
 {
 name: "crimsonPressurePlate",
 textures: "crimsonPlanks",
-carpet: true
+pressurePlate: true
 },
 {
 name: "stonePressurePlate",
 textures: "stone",
-carpet: true
+pressurePlate: true
 },
 {
 name: "polishedBlackstonePressurePlate",
 textures: "polishedBlackstone",
-carpet: true
+pressurePlate: true
 },
 {
 name: "lightWeightedPressurePlate",
 textures: "goldBlock",
-carpet: true
+pressurePlate: true
 },
 {
 name: "heavyWeightedPressurePlate",
 textures: "ironBlock",
-carpet: true
+pressurePlate: true
 },
 {
 name:"oakButton",
@@ -7873,6 +7873,7 @@ extra: 30, // Extra height added to the world.
 caveSize: 0.00, // Redefined right above where it's used
 biomeSmooth: 0.007, // Smoothness of biomes
 }
+win.generator = generator //for mods
 let maxHeight = 255
 let blockOutlines = false
 let blockFill = true
@@ -10667,6 +10668,24 @@ west: 0
 },
 rotate:true
 },
+pressurePlate:{
+verts:[
+[objectify(1,0,1,14,14,1,1)],
+[objectify(1,1,15,14,14,1,1)],
+[objectify(15,1,15,14,1,0,0)],
+[objectify(1,1,1,14,1,0,0)],
+[objectify(15,1,1,14,1,0,0)],
+[objectify(1,1,15,14,1,0,0)]
+],
+cull: {
+top: 0,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+},
 playerHand: {
 verts: [
 [objectify( 6,  6,  6, 4,  4, 0, 0)], //bottom
@@ -11580,6 +11599,11 @@ stairBlock.transparent = true
 potCrossBlock.shape = shapes.bambooPot
 }
 if(baseBlock.chest) baseBlock.shape = shapes.christmasChest//*/shapes.chest//christmas
+if(baseBlock.pressurePlate){
+baseBlock.shape = shapes.pressurePlate
+baseBlock.transparent = true
+baseBlock.shadow = false
+}
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
 blockData[i | CROSS] = crossBlock
@@ -24039,29 +24063,30 @@ eat: {
 2: "random/eat2.ogg",
 3: "random/eat3.ogg",
 burp:"random/burp.ogg"
-},
-/*music:{
-menu:{
-1:"music/menu/menu1.ogg",
-2:"music/menu/menu2.ogg",
-3:"music/menu/menu3.ogg",
-4:"music/menu/menu4.ogg",
-},
-game:{
-creative:{
-1:"music/game/creative/creative1.ogg",
-2:"music/game/creative/creative2.ogg",
-3:"music/game/creative/creative3.ogg",
-4:"music/game/creative/creative4.ogg",
-5:"music/game/creative/creative5.ogg",
-6:"music/game/creative/creative6.ogg",
 }
-}
-},*/
 }
 var soundVolumes = {
 }
 win.sounds = sounds
+var music = {
+menu:{
+1:"menu/menu1.ogg",
+2:"menu/menu2.ogg",
+3:"menu/menu3.ogg",
+4:"menu/menu4.ogg",
+},
+game:{
+creative:{
+1:"game/creative/creative1.ogg",
+2:"game/creative/creative2.ogg",
+3:"game/creative/creative3.ogg",
+4:"game/creative/creative4.ogg",
+5:"game/creative/creative5.ogg",
+6:"game/creative/creative6.ogg",
+}
+}
+}
+win.music = music
 function loadSoundBuffer(url){
 return new Promise((resolve, reject) => {
 var request = new XMLHttpRequest();
@@ -24080,6 +24105,7 @@ async function initAudioCtx(){
 try{
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 audioCtx = new AudioContext();
+win.audioCtx = audioCtx
 }catch(e) {
 alert('Web Audio API is not supported in this browser');
 return
@@ -24096,7 +24122,6 @@ url = obj[i]
 url = "https://data.thingmaker.repl.co/sounds/"+obj[i]
 }
 let loadIt = true
-if(url.startsWith("https://data.thingmaker.repl.co/sounds/music/") && urlParams.has("no_music")) loadIt = false
 if(loadIt){
 await loadSoundBuffer(url).then(buffer => {
 obj[i] = buffer
@@ -24108,7 +24133,30 @@ loadDone()
 }
 }
 }
+function loadMusicObj(obj){
+for(var i in obj){
+if(typeof obj[i] === "object"){
+loadMusicObj(obj[i])
+}else{
+var url = "https://music.minekhan.repl.co/"+obj[i]
+var audio = new Audio(url)
+audio.crossOrigin = ""
+var source = audioCtx.createMediaElementSource(audio)
+var gainNode = audioCtx.createGain();
+source.connect(gainNode);
+gainNode.gain.value = 1
+gainNode.connect(audioCtx.destination);
+obj[i] = {
+audio,
+source,
+gainNode,
+gain: gainNode.gain
+}
+}
+}
+}
 loadSoundsObj(sounds)
+loadMusicObj(music)
 }
 function playSound(name, start, volume, pitch, onend, loop, getSourceFunc){ //from https://www.html5rocks.com/en/tutorials/webaudio/intro/
 if(!settings.volume) return
@@ -24233,6 +24281,49 @@ var i = Math.ceil(Math.random()*3)
 playSound("eat."+i)
 if(multiplayer) send({type:"playSound", data:"eat."+i, x:p.x,y:p.y,z:p.z})
 }
+function playMusic(a, onend = null){
+var audio = a.audio
+audio.currentTime = 0
+audio.onended = function(){
+audio.onended = null
+if(onend) onend()
+}
+audio.play().catch(console.warn)
+return a
+}
+win.playMusic = playMusic
+win.menuMusicVolume = 1
+win.menuMusicIdx = 0
+win.currentMusic = null
+function updateMusic(){
+if(screen === "play" || screen === "pause" || screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest"){
+if(menuMusicVolume > 0) menuMusicVolume -= 0.01
+if(menuMusicVolume < 0) menuMusicVolume = 0
+if(currentMusic && menuMusicVolume === 0){
+currentMusic.audio.pause()
+console.log("stop menu music")
+currentMusic = null
+}
+}else{
+if(menuMusicVolume < 1) menuMusicVolume += 0.01
+if(menuMusicVolume > 1) menuMusicVolume = 1
+if(!currentMusic){
+menuMusicIdx ++
+currentMusic = playMusic(music.menu[menuMusicIdx], function(){currentMusic = null})
+console.log("play menu music",menuMusicIdx)
+}
+}
+if(currentMusic){
+currentMusic.gain.value = menuMusicVolume * settings.volume
+}
+}
+function tryPlayMusic(){
+currentMusic.audio.play()
+audioCtx.resume()
+document.removeEventListener("mousedown", tryPlayMusic)
+console.log("%cTry Play Music!", "background:#0a0;color:white;padding:10px 20px;")
+}
+document.addEventListener("mousedown", tryPlayMusic)
 document.body.onmousedown = e => {if(e.target && e.target.tagName.toLowerCase() === "button") playSound("click")}
 let maxStartLoad = 0, loaded = 0
 win.allLoaded = false
@@ -25334,6 +25425,7 @@ if(screen === "furnace" && furnaceData.data.smelting){
 drawScreens[screen]()
 }
 }
+updateMusic()
 if (Date.now() - analytics.lastUpdate > 500 && analytics.frames) {
 analytics.displayedTickTime = (analytics.totalTickTime / analytics.frames).toFixed(1)
 analytics.displayedRenderTime = (analytics.totalRenderTime / analytics.frames).toFixed(1)
