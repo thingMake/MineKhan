@@ -2638,6 +2638,7 @@ christmasChestYellowThing: "0g0g5000ŊOZZįYŖÑWŢďY4Ď0000%þħ000%Jħ000AJë
 christmasChestSide: "0g0gCĘĚYĜĩYZįY000ĔÎWČÁWĐÎWłzZĘÎWĘÞHĵŊYŢďYĈÁWĄÁWĐÁWīĹZĀJWĄÀZĈÀZČÞHīĹYÆgWÙÁWÝwWáwHäwHè(HùìYëwHèwHõÞYKgWÝwHáÁWÝÁWÑgW]0W{0W0gT4gí4gT4gĪ0T@gTĩgT8AgĪ0Á?kÂôkÁ?wgĪ0Īc)ĹñkÃ|-ŗĪTh?kĩóPx?|SĪTh?kÂóPx?|SĪVVVVVVVVVVÀĪÇâľËðoËâŀÖĘĪÇðVÞĭtÎýÊÞŇĪÇÿļéĽoÒŜÍâŇĪÇVVVÆtVVVVŇĪÇïÍVĿtÎÅļãgĪòÆĿöÆtÄ+zÄgĪòðoìÿKÎðwÓgĪJÇBþÇÒþÇÒþÀĪc(Īc(Īc(Īc(Ī",
 christmasChestTop: "0g0gpĳŉZķŉZĘĩYZįYŖÑW000ĈÀZĄÁWČÁWŢďYłjZĈÁWĔÎWľjZĐÎWłzZĜĩYĘĚYĩĪHņzZŎQWľ3YŎ>Zĺ3YĦěH0Rh8ÑgXgXč9÷áx!TĽî4čaoĬęĕÈĽŋ4čhùXwøRgî4číŃĭ$öÉĄŌXčòĽĞ-öÈķĪīčJď,ùáçņ*Ač|URgãx8ĒįčísĭM%ÈoīSčòŃŎMėàĄěīčìĽĞMČÈķŌħč9ùXxŋRgïXč9þĝĆŞ.Ľà4č0>oT-Xx0ëčF^ÂüčF^ÂüčF^ÂüčF^Âüč",
 christmasChestBottom: "0g0g7èSZÝSZëSZ000áwHëwHäwH4JPAJăNÇ)þ]ÉNP)J]ÉNŀAJÆÉNPAĚ]ÉN|ÑJ]ÉNÇÑJ]ÉNÇAĂ]ÉNPAJ]ÉNPÑþ]É+P%J^ÉNĲAĹ^ÉNPAJįÉ4JPAJrÚĞłÚĞłÚĞłÚĞł",
+appleCore: "0g0gg000áĈWèķZUùYĄTHĻěYĜTZŃÂHŤãYZŤZŒĄZĪ9Z÷DYåĽHľÉZUwZ00000000000010000000z0000000g000004TMg00005Ð[000000VÆ000000āā0000009Ĉ000000bħ000000dĘ000000Ėŕ000000ŕĒ000004Ñ@S0000fhvŗ0000000000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -4276,7 +4277,8 @@ Name:"Apple",
 edible: true,
 eatWhenFull: false,
 food: 4,
-saturation: 2.4
+saturation: 2.4,
+eatResult: "appleCore"
 },
 {
 name:"woodenPickaxe",
@@ -5981,7 +5983,8 @@ Name:"Mushroom Stew",
 edible: true,
 eatWhenFull: false,
 food: 6,
-saturation: 7.2
+saturation: 7.2,
+eatResult:"bowl"
 },
 {
 name:"ramen",
@@ -5989,7 +5992,8 @@ Name:"Ramen! Yum!",
 edible: true,
 eatWhenFull: true,
 food: 8,
-saturation: 10
+saturation: 10,
+eatResult:"bowl"
 },
 {
 name:"orange",
@@ -6456,6 +6460,11 @@ name:"charcoal",
 Name:"Charcoal",
 item:true
 },
+{
+name:"appleCore",
+Name:"Apple Core",
+item:true
+},
 /*
 { name: "pigFace" },
 { 
@@ -6880,7 +6889,7 @@ cobblestone: {name:"stone",time:200,xp:0.1, furnace:true},
 stone: {name:"smoothStone", time:200, xp:0.1, furnace:true},
 stoneBricks: {name:"crackedStoneBricks",time:200,xp:0.1, furnace:true},
 clay: {name:"terracotta",time:200,xp:0.35},
-clayBall: {name:"brick",time:200,xp:0.3},
+clayBall: {name:"brick",time:200,xp:0.3}
 }
 var smeltFuel = { //time is in seconds
 oakLog: {time:15},
@@ -13584,22 +13593,27 @@ if(blockData[prevBlock].experience) world.addEntity(new ExperienceOrb(hitBox.pos
 var breakType = blockData[prevBlock].type
 if(survival && holding && blockData[holding].pickaxe) {
 inventory.hotbar[inventory.hotbarSlot].durability --
+inventory.hotbar[inventory.hotbarSlot].animation = 1.5
 updateHUD = true
 }
 if(survival && holding && blockData[holding].sword) {
 inventory.hotbar[inventory.hotbarSlot].durability -= 2
+inventory.hotbar[inventory.hotbarSlot].animation = 1.5
 updateHUD = true
 }
 if(survival && holding && blockData[holding].shovel) {
 inventory.hotbar[inventory.hotbarSlot].durability -= 1
+inventory.hotbar[inventory.hotbarSlot].animation = 1.5
 updateHUD = true
 }
 if(survival && holding && blockData[holding].axe) {
 inventory.hotbar[inventory.hotbarSlot].durability -= 1
+inventory.hotbar[inventory.hotbarSlot].animation = 1.5
 updateHUD = true
 }
 if(survival && holding && blockData[holding].hoe && breakType !== "plant2") {
 inventory.hotbar[inventory.hotbarSlot].durability -= 1
+inventory.hotbar[inventory.hotbarSlot].animation = 1.5
 updateHUD = true
 }
 }
@@ -13645,6 +13659,7 @@ return pos
 function useDurability(d){
 if(survival && inventory.hotbar[inventory.hotbarSlot]){
 inventory.hotbar[inventory.hotbarSlot].durability -= d
+inventory.hotbar[inventory.hotbarSlot].animation = 1.5
 updateHUD = true
 }
 }
@@ -13680,12 +13695,14 @@ if(cblock === blockIds.grass || cblock === blockIds.dirt || cblock === blockIds.
 world.setBlock(x,y,z,blockIds.grass | TALLCROSS)
 var h = inventory.hotbar[inventory.hotbarSlot]
 h.durability --
+h.animation = 1.5
 return p.lastPlace = Date.now()
 }
 if(blockData[cblock].campfire){
 world.setBlock(x,y,z,blockData[cblock].id | SLAB)
 var h = inventory.hotbar[inventory.hotbarSlot]
 h.durability --
+h.animation = 1.5
 return p.lastPlace = Date.now()
 }
 }
@@ -13697,6 +13714,7 @@ if(blockIds[name]){
 world.setBlock(x,y,z,blockIds[name])
 var h = inventory.hotbar[inventory.hotbarSlot]
 h.durability --
+h.animation = 1.5
 return p.lastPlace = Date.now()
 }
 }
@@ -13705,12 +13723,14 @@ if((blockData[cblock].name === "grass" || cblock === blockIds.dirt) && !world.ge
 world.setBlock(x,y,z,blockIds.farmland)
 var h = inventory.hotbar[inventory.hotbarSlot]
 h.durability --
+h.animation = 1.5
 return p.lastPlace = Date.now()
 }
 if(cblock === blockIds.rootedDirt){
 world.setBlock(x,y,z,blockIds.dirt)
 var h = inventory.hotbar[inventory.hotbarSlot]
 h.durability --
+h.animation = 1.5
 world.addEntity(new Item(x, y+0.5, z, 0, 0, 0, blockIds.hangingRoots, true))
 return p.lastPlace = Date.now()
 }
@@ -13720,6 +13740,7 @@ if(cblock === blockIds.pumpkin){
 world.setBlock(x,y,z,blockIds.carvedPumpkin)
 var h = inventory.hotbar[inventory.hotbarSlot]
 h.durability --
+h.animation = 1.5
 for(var n=0; n<4; n++)world.addEntity(new Item(x, y+0.5, z, 0, 0, 0, blockIds.pumpkinSeeds, true))
 return p.lastPlace = Date.now()
 }
@@ -13906,6 +13927,7 @@ pos[0] = x
 pos[1] = y
 pos[2] = z
 changeWorldBlock(block < isCube ? (block | blockMode) : block)
+if(survival) inventory.hotbar[inventory.hotbarSlot].animation = 1.5 //animation because you used one of the blocks
 blockMode = prevBlockMode;
 if(survival && inventory.hotbar[inventory.hotbarSlot]){
 inventory.hotbar[inventory.hotbarSlot].amount --;
@@ -13945,15 +13967,19 @@ ent.velz += pd.z / 2
 }
 if(block.pickaxe){
 holdObj.durability -= 2
+holdObj.animation = 1.5
 }
 if(block.sword){
 holdObj.durability --
+holdObj.animation = 1.5
 }
 if(block.shovel){
 holdObj.durability -= 2
+holdObj.animation = 1.5
 }
 if(block.axe){
 holdObj.durability -= 2
+holdObj.animation = 1.5
 }
 if(block.pickaxe || block.sword || block.shovel || block.axe){
 attackCooldownStart = Date.now()
@@ -24859,6 +24885,9 @@ p.food += block.food
 p.foodSaturation += block.saturation
 if(survival && inventory.hotbar[inventory.hotbarSlot]){
 inventory.hotbar[inventory.hotbarSlot].amount --;
+if(block.eatResult && !newInvItem(blockIds[block.eatResult])) {
+world.addEntity(new Item(p.x,p.y,p.z,0,0,0,blockIds[block.eatResult]))
+}
 updateHUD = true
 }
 if(p.food >= 20){
