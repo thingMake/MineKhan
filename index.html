@@ -6411,7 +6411,7 @@ if(!(data && data.chest && data.contents)) return
 data = data.contents
 for(var i=0; i<data.length; i++){
 if(data[i] && data[i].id){
-for(var j=0; j<data[i].amount; j++)world.addEntity(new Item(x,y,z,0,0,0,data[i].id, true))
+for(var j=0; j<data[i].amount; j++)world.addEntity(new Item(x,y,z,0,0,0,data[i].id, true, 1, data[i].durability))
 }
 }
 }
@@ -6635,11 +6635,11 @@ invItems.push({id:0,amount:64})
 }
 }
 //add something to inventory
-function newInvItem(id){
+function newInvItem(id, durability){
 //look for empty slot
 for(let i=0; i<inventory.hotbar.length; i++){
 if(!inventory.hotbar[i].id){
-inventory.hotbar[i] = {id:id, amount:1, animation:1.5}
+inventory.hotbar[i] = {id:id, amount:1, durability:durability, animation:1.5}
 if(i === inventory.hotbarSlot){
 inventory.showName = 1.5
 holding = inventory.hotbar[inventory.hotbarSlot].id
@@ -6654,7 +6654,7 @@ return true
 }
 for(let i=0; i<invLength; i++){
 if(!(invItems[i] && invItems[i].id)){
-invItems[i] = {id:id, amount:1}
+invItems[i] = {id:id, durability:durability, amount:1}
 return true
 }
 if(invItems[i].id === id && invItems[i].amount < blockData[invItems[i].id].stackSize){
@@ -8838,13 +8838,13 @@ calculateTotalXP()
 if(survival){
 for(var i=0; i<inventory.hotbar.length; i++){
 if(inventory.hotbar[i].id){
-for(var j=0; j<inventory.hotbar[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,0,inventory.hotbar[i].id,true))
+for(var j=0; j<inventory.hotbar[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,0,inventory.hotbar[i].id,true, 1,inventory.hotbar[i].durability))
 inventory.hotbar[i] = 0
 }
 }
 for(var i=0; i<invLength; i++){
 if(invItems[i] && invItems[i].id){
-for(var j=0; j<invItems[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,0,invItems[i].id, true))
+for(var j=0; j<invItems[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,0,invItems[i].id, true, 1,invItems[i].durability))
 invItems[i].id = 0
 }
 }
@@ -16743,7 +16743,7 @@ glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
 }
 class Item extends Entity {
-constructor(x, y, z, velx, vely, velz, blockID, autoSetVel, amount) {
+constructor(x, y, z, velx, vely, velz, blockID, autoSetVel, amount, durability = null) {
 const block = blockData[blockID]
 const tex = block.textures
 const shape = block.shape
@@ -16778,6 +16778,7 @@ super(x, y, z, 0, 0, velx, vely, velz, 0.25, 0.25, 0.25, new Float32Array(shapeV
 this.block = blockID
 this.type = "Item"
 this.from = achexUsername
+this.durability = durability
 //this.amount = amount || 1
 if(autoSetVel){
 this.velx = (Math.random()-0.5) * 0.2
@@ -16851,7 +16852,7 @@ this.canDespawn = true
 updateHUD = true
 playSound("entity.item.pickup")
 }else this.updateShape()*/
-if(newInvItem(this.block)){
+if(newInvItem(this.block, this.durability)){
 this.canDespawn = true
 if(this.block === blockIds.oakLog || this.block === blockIds.birchLog || this.block === blockIds.jungleLog){
 achievment("Getting Wood")
@@ -19547,7 +19548,7 @@ return i
 }
 }
 getEntPos(ent){
-return {x:ent.x, y:ent.y, z:ent.z, yaw:ent.yaw, pitch:ent.pitch, block:ent.block, velx:ent.velx, vely:ent.vely, velz:ent.velz, amount:ent.amount, solidOnGround:ent.solidOnGround,harmEffect:ent.harmEffect, health:ent.health, from:ent.from, spawn:ent.spawn, value:ent.value, burning:ent.burning}
+return {x:ent.x, y:ent.y, z:ent.z, yaw:ent.yaw, pitch:ent.pitch, block:ent.block, velx:ent.velx, vely:ent.vely, velz:ent.velz, amount:ent.amount, solidOnGround:ent.solidOnGround,harmEffect:ent.harmEffect, health:ent.health, from:ent.from, spawn:ent.spawn, value:ent.value, burning:ent.burning, durability:ent.durability}
 }
 addEntity(ent, remote){
 if(!ent.id)ent.id = Date.now()
@@ -19577,7 +19578,7 @@ ent = this.entities[i]
 }else{
 switch(d.entType){
 case "Item":
-ent = new Item(0, 0, 0, 0, 0, 0, p.block, false, p.amount)
+ent = new Item(0, 0, 0, 0, 0, 0, p.block, false, p.amount, p.durability)
 break
 case "BlockEntity":
 ent = new BlockEntity(p.block, 0,0,0, p.solidOnGround)
@@ -22562,7 +22563,7 @@ if (k === controlMap.dropItem.key && inventory.hotbar[inventory.hotbarSlot] && i
 let d = p.direction
 let block = holding || inventory.hotbar[inventory.hotbarSlot].id
 block = block < isCube ? block | blockMode : block
-world.addEntity(new Item(p.x, p.y, p.z, d.x/4, d.y/4, d.z/4, block))
+world.addEntity(new Item(p.x, p.y, p.z, d.x/4, d.y/4, d.z/4, block, false, 1,inventory.hotbar[inventory.hotbarSlot].durability))
 if(survival){
 inventory.hotbar[inventory.hotbarSlot].amount --
 updateHUD = true
@@ -23598,6 +23599,7 @@ loadString = data.code
 var id = Date.now()
 if(data.file){
 data.file.id = id
+data.file.edited = Date.now()
 if(data.file.name !== data.name) data.file.name = data.name+" ("+data.file.name+")"
 saveToDB(id, data.file)
 }else{
@@ -24309,6 +24311,7 @@ if(menuMusicVolume < 1) menuMusicVolume += 0.01
 if(menuMusicVolume > 1) menuMusicVolume = 1
 if(!currentMusic){
 menuMusicIdx ++
+if(!music.menu[menuMusicIdx]) menuMusicIdx = 1
 currentMusic = playMusic(music.menu[menuMusicIdx], function(){currentMusic = null})
 console.log("play menu music",menuMusicIdx)
 }
