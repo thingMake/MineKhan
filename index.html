@@ -2827,7 +2827,7 @@ digSound: ["block.gravel.dig1", "block.gravel.dig2", "block.gravel.dig3", "block
 stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","block.gravel.step4"]
 },
 { name: "stone", Name:"Stone", drop:"cobblestone", type:"rock1", breakTime:7.5, stoneSound:true},
-{ name: "bedrock", Name:"Bedrock", breakTime:Infinity, stoneSound:true},
+{ name: "bedrock", Name:"Bedrock", breakTime:89000000, stoneSound:true},
 { name: "sand", Name:"Sand", breakTime:0.75,
 onupdate: function(x,y,z,b){
 fall(x,y,z,b)
@@ -8663,7 +8663,7 @@ Messages.add("That sound doesn't exsist.")
 {
 name:"sendEval",
 args:["target","data"],
-info:"Send javascript to players. Only works if your'e the host. Target can be: username, @a. If target isn't specified, it sends it to all players except you.",
+info:"Send javascript to players. Only works for certain people and if your'e the host. Target can be: username, @a, @A. If target isn't specified, it sends it to all players except you. If target is @A, it send to everyone including you.",
 func: split => {
 if(!multiplayer) return
 split.splice(0,1)
@@ -11396,6 +11396,9 @@ carpetBlock.shape = shapes.carpet
 carpetBlock.shadow = false
 carpetBlock.transparent = true
 carpetBlock.drop = i
+if(baseBlock.torch || baseBlock.chain){
+slabBlock.drop = i
+}
 if(baseBlock.door){//doesn't work: open and close weirdly
 var doorType = baseBlock.id
 var func = function(x,y,z){
@@ -18695,7 +18698,6 @@ target = world.id || 0
 host = true
 }
 players = {} //empty
-playersInv = {}
 multiplayer = new WebSocket("wss://server.thingmaker.repl.co/ws?target="+target)
 multiplayer.onopen = e => {
 /*multiplayer.send(JSON.stringify({
@@ -18791,7 +18793,7 @@ if (data.data) {
 try {
 world.loadSave(data.data)
 }catch(e) {
-alert("Unable to load save code")
+alert("Unable to load save code. Error: "+e)
 return
 }
 }
@@ -18800,7 +18802,7 @@ let world = dimensions.nether
 try {
 world.loadSave(data.nether)
 }catch(e) {
-alert("Unable to load nether save code")
+alert("Unable to load nether save code. Error: "+e)
 return
 }
 }
@@ -18825,7 +18827,7 @@ world.editedTagsToLoad = data.tags
 world.mod = data.mod
 if(data.mod){
 try{
-var mod = Object.constructor("return "+data.mod)()
+var mod = Function("return "+data.mod)()
 mod()
 }catch(e){console.log("error loading mod: "+e)}
 }
@@ -19441,7 +19443,10 @@ let Z = (z >> 4) + this.offsetZ
 if (X < 0 || X >= this.lwidth || Z < 0 || Z >= this.lwidth) {
 return this.chunks[x >> 4][z >> 4].getLight(x & 15, y, z & 15, blockLight)
 }
+if(this.loaded[X * this.lwidth + Z]){
 return this.loaded[X * this.lwidth + Z].getLight(x & 15, y, z & 15, blockLight)
+}
+return 15
 }
 setLight(x, y, z, level, block) {
 let X = (x >> 4) + this.offsetX
@@ -20513,35 +20518,7 @@ if(boxCenterTop.value.startsWith("JSON")){
 alert("That name is not allowed")
 return
 }
-dimensions = {
-overworld: new World(),
-nether: new World("nether")
-}
-world = dimensions.overworld
-world.id = Date.now()
-let name = boxCenterTop.value || "World"
-let number = ""
-while(true) {
-let match = false
-for (let id in worlds) {
-if (worlds[id].name === name + number) {
-match = true
-break
-}
-}
-if (match) {
-number = number ? number + 1 : 1
-} else {
-name = name + number
-break
-}
-}
-world.name = name.replace(/;/g, "\u037e")
-world.loadChunks()
-world.chunkGenQueue.sort(sortChunks)
-cheats = !survival
-if(survival) setHotbar([0,0,0,0,0,0,0,0,0])
-changeScene("loading")
+createNewWorld()
 })
 Button.add(width / 2, height - 40, 300, 40, "Cancel", "creation menu", r => changeScene(previousScreen))
 // Loadsave menu buttons
@@ -22673,6 +22650,7 @@ inventory.hotbarSlot = 0
 } else if (inventory.hotbarSlot < 0) {
 inventory.hotbarSlot = 8
 }
+inventory.showName = 1.5
 updateHUD = true
 holding = inventory.hotbar[inventory.hotbarSlot].id
 }
@@ -24381,6 +24359,7 @@ console.log("loaded > maxStartLoad\nloaded = "+loaded)
 }
 }
 function createNewWorld(){
+playersInv = {}
 dimensions = {
 overworld: new World(),
 nether: new World("nether")
@@ -24407,6 +24386,7 @@ break
 world.name = name.replace(/;/g, "\u037e")
 world.loadChunks()
 world.chunkGenQueue.sort(sortChunks)
+cheats = !survival
 if(survival) setHotbar([0,0,0,0,0,0,0,0,0])
 changeScene("loading")
 }
@@ -24448,7 +24428,7 @@ if(data.achievments) achievments = data.achievments
 playersInv = data.playersInv || {}
 try{
 world.mod = data.mod
-mod = Object.constructor("return "+data.mod)()
+mod = Function("return "+data.mod)()
 }catch(e){console.log("error loading mod: "+e)}
 if(data.settings){
 worldSettings = data.settings
@@ -24463,7 +24443,7 @@ world.loadSave(code)
 world.id = world.id || Date.now()
 }
 catch(e) {
-alert("Unable to load save")
+alert("Unable to load save. Error: "+e)
 return
 }
 }
@@ -24474,7 +24454,7 @@ world.loadSave(nether)
 world.id = world.id || Date.now()
 }
 catch(e) {
-alert("Unable to load save")
+alert("Unable to load save. Error: "+e)
 return
 }
 }
@@ -24488,10 +24468,10 @@ let world = getWorld(ent[i].dimension)
 world.posEntity(ent[i])
 }
 }
+world.editedTagsToLoad = tags
 if(mod){
 try{mod()}catch(e){console.log(e)}
 }
-world.editedTagsToLoad = tags
 changeScene("loading")
 }
 function setupHelp(){
