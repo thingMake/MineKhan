@@ -665,6 +665,7 @@ uniform vec3 uPos;
 uniform float uTime;
 uniform vec3 skyColor;
 uniform bool isInWorld;
+uniform bool flicker;
 void main() {
 float x = aTexture.x;
 float y = aTexture.y / 8.0;
@@ -679,9 +680,10 @@ vFog = clamp((length(uPos.xz - aVertex.xz) - uDist + range) / range, 0.0, 1.0);
 waterFog = min(gl_Position.z / 150.0, 1.0);
 lightTint = vec3(1.,1.,1.);
 if(isInWorld){
-vec3 blockLightColor = vec3(1.,0.98,0.95);
-lightTint = mix(lightTint, blockLightColor, aBlocklight);
-lightTint = mix(lightTint, skyColor, aSkylight * uTime * 0.3);
+vec3 blockLightColor = flicker ? vec3(0.98, 0.95, 0.87) : vec3(1.,0.98,0.9);
+float blight = max(aBlocklight - aSkylight * uTime, 0.0);
+lightTint = mix(lightTint, blockLightColor, 1.0-(abs(0.5 - blight) * 2.0));
+lightTint = mix(lightTint, skyColor*0.5, aSkylight * (1.0 - uTime) * 0.4);
 }
 }
 </script>
@@ -2639,6 +2641,8 @@ christmasChestSide: "0g0gCĘĚYĜĩYZįY000ĔÎWČÁWĐÎWłzZĘÎWĘÞHĵŊYŢ�
 christmasChestTop: "0g0gpĳŉZķŉZĘĩYZįYŖÑW000ĈÀZĄÁWČÁWŢďYłjZĈÁWĔÎWľjZĐÎWłzZĜĩYĘĚYĩĪHņzZŎQWľ3YŎ>Zĺ3YĦěH0Rh8ÑgXgXč9÷áx!TĽî4čaoĬęĕÈĽŋ4čhùXwøRgî4číŃĭ$öÉĄŌXčòĽĞ-öÈķĪīčJď,ùáçņ*Ač|URgãx8ĒįčísĭM%ÈoīSčòŃŎMėàĄěīčìĽĞMČÈķŌħč9ùXxŋRgïXč9þĝĆŞ.Ľà4č0>oT-Xx0ëčF^ÂüčF^ÂüčF^ÂüčF^Âüč",
 christmasChestBottom: "0g0g7èSZÝSZëSZ000áwHëwHäwH4JPAJăNÇ)þ]ÉNP)J]ÉNŀAJÆÉNPAĚ]ÉN|ÑJ]ÉNÇÑJ]ÉNÇAĂ]ÉNPAJ]ÉNPÑþ]É+P%J^ÉNĲAĹ^ÉNPAJįÉ4JPAJrÚĞłÚĞłÚĞłÚĞł",
 appleCore: "0g0gg000áĈWèķZUùYĄTHĻěYĜTZŃÂHŤãYZŤZŒĄZĪ9Z÷DYåĽHľÉZUwZ00000000000010000000z0000000g000004TMg00005Ð[000000VÆ000000āā0000009Ĉ000000bħ000000dĘ000000Ėŕ000000ŕĒ000004Ñ@S0000fhvŗ0000000000",
+tintedGlass: "0g0g5)ċĚEîNEÏřAJÉPkă029FgSdğzÚĞĿdġrÚĞĿdįłÚĞŀe@łÚĞŁN+łÚĞŀhĞłÚĞŁ%ĞłÚĞŀ%ĞłÚĞŀ|ĞłÚĞŀ%ĞłÚĞŇ%ĞłÚğx|ĞłÚġo%ĞłÚįĿdĞłÛ@Ŀ0ĊúAëS",
+light_15: "0g0g8000ŕśHÁQZZāYZZZŊÙHĢłWĂ]Y52^000B2ëß@052^J]ħ50aJPoAĊ^JPw00AJPw00sJPo004÷.0000Û+0000hħ0000dĘ0000mŇ0000rŗ0000nK00003ë0000000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -3191,8 +3195,10 @@ textures: "none",
 transparent:true,
 lightLevel: 15,
 solid: false,
-icon: "glass",
-shadow: false
+iconTexture: "light_15",
+flatIcon: true,
+shadow: false,
+noHitbox:true
 },
 {
 name: "autumnLeaves",
@@ -6465,6 +6471,16 @@ name:"appleCore",
 Name:"Apple Core",
 item:true
 },
+{
+name:"tintedGlass",
+Name:"Tinted Glass",
+transparent: true,
+shadow: false,
+blocksLight: true,
+breakTime: 0.45,
+type: "glass",
+glassSound: true
+},
 /*
 { name: "pigFace" },
 { 
@@ -6552,6 +6568,7 @@ data.textures[t] = "error"
 data.transparent = data.transparent || false
 data.shadow = data.shadow !== undefined ? data.shadow	: true
 data.lightLevel = data.lightLevel || 0
+data.blocksLight = data.blocksLight !== undefined ? data.blocksLight : !data.transparent
 data.onupdate = data.onupdate || emptyFunc
 if(data.solid === undefined)data.solid = true
 data.breakTime = data.breakTime ? data.breakTime*1000 : 0.05*1000 //time for breaking
@@ -6851,6 +6868,7 @@ const crafts = {
 "clayBall,clayBall,air,clayBall,clayBall":{name:"clay",shaped:true},
 "brick,brick,air,brick,brick":{name:"bricks",shaped:true},
 "brick,air,brick,air,brick":{name:"flowerPot",shaped:true},
+"air,amethystShard,air,amethystShard,glass,amethystShard,air,amethystShard":{name:"tintedGlass",amount:2},
 }
 var breakTypes = {
 plant: "axe",
@@ -8743,6 +8761,7 @@ cmd.func(split)
 win.runCmd = runCmd
 }
 let Messages = {
+span: document.createElement("span"),
 array: [],
 all: [],
 remove: (function(){
@@ -8773,7 +8792,8 @@ if(this.array.length > 8){
 this.array.shift()
 }
 if(settings.narrator){
-speak(msg)
+this.span.innerHTML = msg
+speak(this.span.innerText)
 }
 this.update()
 },
@@ -10402,10 +10422,10 @@ verts: [
 [objectify(0,32,16,3,16,-16,0, false,false,false,2),objectify(0,16,16,3,16,0,0, false,false,false,2)]
 ],
 cull: {
-top: 0,
-bottom: 0,
+top: 3,
+bottom: 3,
 north: 0,
-south: 3,
+south: 0,
 east: 0,
 west: 0
 },
@@ -13792,7 +13812,7 @@ break
 }
 var hitboxBlock = world.getBlock(x, y, z)
 var blocking = blockData[holding].solid && inBox(x, y, z, 1, 1, 1)
-var canPlace = (!hitboxBlock) || (blockData[hitboxBlock].liquid)
+var canPlace = (!hitboxBlock) || (blockData[hitboxBlock].noHitbox)
 if (!blocking && canPlace) {
 var block = holding
 var prevBlockMode = blockMode;
@@ -14108,7 +14128,7 @@ ent.onhit(damageTook)
 }
 var p = player
 var dist = dist3(x,y,z, p.x, p.y, p.z)
-if(dist <= r){
+if(!p.spectator && dist <= r){
 var X = p.x - x; p.velocity.x += ((Math.sign(X)*r)-X)/5
 var Y = p.y - y; p.velocity.y += ((Math.sign(Y)*r)-Y)/5
 var Z = p.z - z; p.velocity.z += ((Math.sign(Z)*r)-Z)/5
@@ -15343,7 +15363,7 @@ if (!blockSpread[data.lightLevel]) blockSpread[data.lightLevel] = []
 blockSpread[data.lightLevel].push(x + this.x, y, z + this.z)
 this.setLight(x, y, z, data.lightLevel, 1)
 }
-if (!stop && !data.transparent) {
+if (!stop && data.blocksLight) {
 this.tops[z * 16 + x] = y
 stop = true
 } else if (!stop) {
@@ -15396,7 +15416,7 @@ return this.sections[y >> 4].getLight(x, y & 15, z, blockLight)
 trySpread(x, y, z, level, spread, blockLight, update = false) {
 if(y < 0) return
 if (this.world.getLight(x, y, z, blockLight) < level) {
-if (blockData[this.world.getBlock(x, y, z)].transparent) {
+if (!blockData[this.world.getBlock(x, y, z)].blocksLight) {
 this.world.setLight(x, y, z, level, blockLight)
 spread.push(x, y, z)
 }
@@ -15430,7 +15450,7 @@ this.spreadLight(spread, level - 1, update, blockLight)
 tryUnSpread(x, y, z, level, spread, respread, blockLight) {
 if(y < 0) return
 let light = this.world.getLight(x, y, z, blockLight)
-let trans = blockData[this.world.getBlock(x, y, z)].transparent
+let trans = !blockData[this.world.getBlock(x, y, z)].blocksLight
 if (light === level) {
 if (trans) {
 this.world.setLight(x, y, z, 0, blockLight)
@@ -16828,7 +16848,7 @@ this.updateVelocity(now)
 this.move(now)
 let pickup = false
 let comeCloser = false
-if(now - this.spawn > 1000){
+if(now - this.spawn > 1000 && !p.spectator){
 let xDist = this.x - p.x
 let yDist = this.y - (p.y - p.bottomH)
 let zDist = this.z - p.z
@@ -17269,6 +17289,7 @@ this.tint = {r:1,g:1,b:1}
 update(){
 let now = performance.now()
 var dist = dist3(this.x,this.y,this.z,p.x,p.y-p.bottomH,p.z)
+if(!p.spectator){
 if(dist < 7.25 && dist > -7.25){
 ////var speed = (7.25 - dist) / 10
 //var aDist = abs(dist)
@@ -17282,6 +17303,7 @@ if(dist < 0.5 && dist > -0.5){
 if(now - p.lastXP >= 10000){
 XP(this.value)
 this.canDespawn = true
+}
 }
 }
 this.updateVelocity(now)
@@ -19333,13 +19355,13 @@ let zm = z & 15
 if (blockID) {
 chunk.setBlock(xm, y, zm, blockID, !lazy)
 let data = blockData[blockID]
-if (!lazy && chunk.buffer && (!data.transparent || data.lightLevel) && screen !== "loading") {
+if (!lazy && chunk.buffer && (data.blocksLight || data.lightLevel) && screen !== "loading") {
 this.updateLight(x, y, z, true, data.lightLevel)
 }
 } else {
 let data = blockData[chunk.getBlock(xm, y, zm)]
 chunk.deleteBlock(xm, y, zm, !lazy)
-if (!lazy && chunk.buffer && (!data.transparent || data.lightLevel) && screen !== "loading") {
+if (!lazy && chunk.buffer && (data.blocksLight || data.lightLevel) && screen !== "loading") {
 this.updateLight(x, y, z, false, data.lightLevel)
 }
 }
@@ -19441,7 +19463,9 @@ if(y < 0) return 0
 let X = (x >> 4) + this.offsetX
 let Z = (z >> 4) + this.offsetZ
 if (X < 0 || X >= this.lwidth || Z < 0 || Z >= this.lwidth) {
+if(this.chunks[x >> 4] && this.chunks[x >> 4][z >> 4]){
 return this.chunks[x >> 4][z >> 4].getLight(x & 15, y, z & 15, blockLight)
+}
 }
 if(this.loaded[X * this.lwidth + Z]){
 return this.loaded[X * this.lwidth + Z].getLight(x & 15, y, z & 15, blockLight)
@@ -19471,7 +19495,7 @@ let spread = []
 if (!place) { // Block was removed; increase light levels
 if ((up & 15) === 15) {
 for (let i = y; i > 0; i--) {
-if (blockData[chunk.getBlock(cx, i, cz)].transparent) {
+if (!blockData[chunk.getBlock(cx, i, cz)].blocksLight) {
 chunk.setLight(cx, i, cz, 15)
 spread.push(x, i, z)
 } else {
@@ -19515,7 +19539,7 @@ spread.push(x, y, z)
 // Sky light
 if (center === 15) {
 for (let i = y-1; i > 0; i--) {
-if (blockData[chunk.getBlock(cx, i, cz)].transparent) {
+if (!blockData[chunk.getBlock(cx, i, cz)].blocksLight) {
 chunk.setLight(cx, i, cz, 0)
 spread.push(x, i, z)
 } else {
@@ -21273,7 +21297,7 @@ let cname = "Yourself"
 for (let name in players) {
 let pos = players[name]
 if(pos.dimension === world.type){
-let distance = sqrt((pos.x - p2.x)*(pos.x - p2.x) + (pos.y+1 - p2.y)*(pos.y+1 - p2.y) + (pos.z - p2.z)*(pos.z - p2.z))
+let distance = sqrt((pos.x - p2.x)*(pos.x - p2.x) + (pos.y - p2.y)*(pos.y - p2.y) + (pos.z - p2.z)*(pos.z - p2.z))
 if (distance < closest) {
 closest = distance
 cname = pos.username
@@ -22771,9 +22795,11 @@ glCache.inWater = gl.getUniformLocation(program3D, "inWater")
 glCache.uTrans = gl.getUniformLocation(program3D, "uTrans")
 glCache.tint = gl.getAttribLocation(program3D, "aTint")
 glCache.isInWorld = gl.getUniformLocation(program3D, "isInWorld")
+glCache.flicker = gl.getUniformLocation(program3D, "flicker")
 gl.uniform1i(glCache.uTrans, 0)
 gl.uniform1f(glCache.uDist, 1000)
 gl.uniform1i(glCache.isInWorld, 0)
+gl.uniform1i(glCache.flicker, 0)
 gl.disableVertexAttribArray(glCache.tint)
 gl.vertexAttrib3f(glCache.tint, 1,1,1)
 }
@@ -24347,9 +24373,10 @@ maxStartLoad ++ // fetch the account
 loadProg.innerHTML = `0% 0/${maxStartLoad}`
 function loadDone(){
 loaded ++
-let percent = Math.floor(loaded * 100 / maxStartLoad)
+let prog = loaded * 100 / maxStartLoad
+let percent = Math.floor(prog)
 loadProg.innerHTML = `${percent}% ${loaded}/${maxStartLoad}`
-loadBar.style.width = percent+"%"
+loadBar.style.width = prog+"%"
 if(loaded === maxStartLoad){
 allLoaded = true
 changeScene("main menu")
@@ -24843,6 +24870,9 @@ tick = false
 if(now - lastTick > tickTime){
 lastTick = Math.floor(now / 50) * 50
 tick = true
+}
+if(tick && rand() > 0.2){
+gl.uniform1i(glCache.flicker, rand() > 0.9)
 }
 p.rz = 0
 if(survival && p.y < 0){
