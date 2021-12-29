@@ -4631,12 +4631,12 @@ transparent:true
 name:"snowball",
 Name:"Snowball",
 item: true,
-/*onuse:function(){
+onuse:function(){
 var pd = p.direction
 world.addEntity(new Snowball(p.x+pd.x,p.y+pd.y,p.z+pd.z, pd.x, pd.y, pd.z))
 },
 minusOnUse:true,
-useAnywhere:true*/
+useAnywhere:true
 },
 {
 name:"powderSnowBucket",
@@ -12846,9 +12846,7 @@ return entHitbox.ent = ent
 }
 var px = p.x, py = p.y, pz = p.z
 var w2 = p.w/2, th = p.topH, bh = p.bottomH
-if(x>px-p.w && x<px+p.w && y>py-bh && y<py+th && z>pz-w2 && z<pz+w2){
-collidedWithMe = true
-}
+collidedWithMe = x>px-p.w && x<px+p.w && y>py-bh && y<py+th && z>pz-w2 && z<pz+w2
 }
 function runRayTrace(x, y, z) {
 let block = world.getBlock(x, y, z)
@@ -17226,31 +17224,31 @@ this.gravityStrength = -0.05
 }
 updateVelocity(now) {
 this.vely += this.gravityStrength
-if (this.vely < -1.5) {
-this.vely = -1.5
+if (this.vely < -0.5) {
+this.vely = -0.5
 }
 }
 update() {
 let now = performance.now()
 this.updateVelocity(now)
 this.move(now)
-var fromMe = this.from === achexUsername
-if (fromMe && now - this.spawn > this.despawns) {
-this.canDespawn = true
-}
 if(fromMe && now - this.spawn > 1000){
 var collided = entityRayTrace(this.x,this.y,this.z,true)
-if(collided){
+if(collided && collided !== this){
 if(entPlayerCollided){
-var pd = p.direction
-send({type:"hit", username:username, damage:damage, velx:pd.x/2, velz:pd.z/2}, ent.id)
+send({type:"hit", username:username, data:1, message:username+" killed "+ent.username+" with snowballs."}, ent.id)
 }else{
-if(collided.onhit) collided.onhit(0)
+if(collided.onhit) collided.onhit(1)
 }
 this.canDespawn = true
 }else if(collidedWithMe && survival){
-damage(1, username+" got killed by their own snowball")
+damage(1, username+" got killed by their own snowball.")
+this.canDespawn = true
 }
+}
+var fromMe = this.from === achexUsername
+if (fromMe && (now - this.spawn > this.despawns || this.hasCollided)) {
+this.canDespawn = true
 }
 }
 }
@@ -18931,9 +18929,9 @@ Messages.add(data.USER+" earned the achievment: "+data.data)
 achievment("Diamonds to you!")
 }else if(data.type === "hit"){
 if(survival){
-damage(data.data || 1, data.username+" killed "+username)
-p.velocity.x += data.velx
-p.velocity.z += data.velz
+damage(data.data || 1, data.message || (data.username+" killed "+username))
+p.velocity.x += data.velx || 0
+p.velocity.z += data.velz || 0
 }
 }else if(data.type === "harmEffect"){
 if(players[data.id]) players[data.id].harmEffect = 40
