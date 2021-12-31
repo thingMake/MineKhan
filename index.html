@@ -6461,6 +6461,10 @@ minusOne()
 }else if(block === (blockIds.birchSapling | CROSS)){
 blockData[blockIds.birchSapling].grow(x,y,z)
 minusOne()
+}else if(blockData[block].name === "wheat"){
+world.setBlock(x,y,z, blockIds.wheat|LANTERN)
+}else if(blockData[block].name === "tomatoPlant"){
+world.setBlock(x,y,z, blockIds.tomatoPlant|TALLCROSS)
 }
 },
 minusOnUse:true
@@ -7020,6 +7024,10 @@ description:"Throw diamonds at another player."
 "Time to Farm!":{
 score:10,
 description:"Make a Hoe."
+},
+"Time to plant tomatoes!":{
+score:10,
+description:"Get tomato seeds from Tall Grass."
 }
 }
 for(var a in achievementTypes){
@@ -7986,6 +7994,9 @@ bubblePop: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJAgMAAACd/+6DAA
 drumstickBG: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAABGdBTUEAALGPC/xhBQAAAAJiS0dEAP+Hj8y/AAAAB3RJTUUH5AgXESYlKYFJ9wAAAAFvck5UAc+id5oAAAA8SURBVAjXZc2xDcAwDAPBk6bR/tN4G6VQ4MTwV8SDBIHWNoEurMmIEX4yv0GZeYrlJLml/dnV5zdeeXU9xdgUJaD0S9kAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDgtMjNUMTc6Mzg6MzcrMDA6MDDZqKf0AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTA4LTIzVDE3OjM4OjM3KzAwOjAwqPUfSAAAACB0RVh0c29mdHdhcmUAaHR0cHM6Ly9pbWFnZW1hZ2ljay5vcme8zx2dAAAAGHRFWHRUaHVtYjo6RG9jdW1lbnQ6OlBhZ2VzADGn/7svAAAAFnRFWHRUaHVtYjo6SW1hZ2U6OkhlaWdodAA5Gf/zMgAAABV0RVh0VGh1bWI6OkltYWdlOjpXaWR0aAA51JEX7wAAABl0RVh0VGh1bWI6Ok1pbWV0eXBlAGltYWdlL3BuZz+yVk4AAAAXdEVYdFRodW1iOjpNVGltZQAxNTk4MjA0MzE3ULE6DQAAAA50RVh0VGh1bWI6OlNpemUAMELJbxjtAAAANnRFWHRUaHVtYjo6VVJJAGZpbGU6Ly8vdG1wL3RodW1ibHIvaW1nMTIwMTgzMjY0MzU0MzI0OTcxOTF/QUjUAAAAAElFTkSuQmCC",
 drumstick: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJBAMAAAASvxsjAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAJFBMVEUAAAAAAADUKiqyGBjfsY+4hFidbUNhPBt7US3i1ar/99z///9NiP3lAAAAAXRSTlMAQObYZgAAAAFiS0dECx/XxMAAAAAHdElNRQfkCBcRJiawiBhNAAAAAW9yTlQBz6J3mgAAAC5JREFUCNdjYBBkAAJGZQEgKeQUCCSFVVOBHMaKNJCQeAeIZBScCKIYpMCkIAMAcDQEJB3YgfcAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDgtMjNUMTc6Mzg6MzgrMDA6MDAv4NcdAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTA4LTIzVDE3OjM4OjM4KzAwOjAwXr1voQAAACB0RVh0c29mdHdhcmUAaHR0cHM6Ly9pbWFnZW1hZ2ljay5vcme8zx2dAAAAGHRFWHRUaHVtYjo6RG9jdW1lbnQ6OlBhZ2VzADGn/7svAAAAFnRFWHRUaHVtYjo6SW1hZ2U6OkhlaWdodAA5Gf/zMgAAABV0RVh0VGh1bWI6OkltYWdlOjpXaWR0aAA51JEX7wAAABl0RVh0VGh1bWI6Ok1pbWV0eXBlAGltYWdlL3BuZz+yVk4AAAAXdEVYdFRodW1iOjpNVGltZQAxNTk4MjA0MzE4wA4nnAAAAA50RVh0VGh1bWI6OlNpemUAMELJbxjtAAAANnRFWHRUaHVtYjo6VVJJAGZpbGU6Ly8vdG1wL3RodW1ibHIvaW1nMTMzODIyODY4OTM1NDEwNTg2ODQQPSTjAAAAAElFTkSuQmCC",
 halfDrumstick: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAjUlEQVQoU2NkQID/UCYjkhiYCRP4r6GhwdD98iWD7/v3yOJwRWAFB+fWMbxJqGe49+YNhkKQSWBFILChIJjhb+8qhicJRgzu1SvhJmJYB5J5HWPAkDR5P4YikADYREvBNwzS4qIMLRuuY1UEVgjz2eNraxhktUJQfIfua7CG/9/vMjByKsODAKsiWLgBAAIkLghjp1NyAAAAAElFTkSuQmCC",
+cold:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAAXNSR0IArs4c6QAAAHxJREFUKFNjZEAD/S/+7y+UYHREFmaEcUCSILYlDwPD8S8QUZhixuwHEEkVDlQFILGrj1+CFTN63oAoUuKA6AYphkm+fPsBociYn4Hh7EeIoj9v3jBwfHmL4lK4STBR8hXBTIC5DdmkzR4a4KCABwFMseuR1/t324iihBMAZ9FAUIfw/h8AAAAASUVORK5CYII=",
+hot:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAAXNSR0IArs4c6QAAAGxJREFUKFOFkDsKgDAQRN+C19NCsPCEKQQLvZ4QmTXRxCBus595GYYYPxV7omXGlx3fm/lLLGF7QxLlqHueK3sXZiCAd1XgyeAHCROwpD5erlXwG9IDgXJpoBXoIhwGycVzld/kmbYIg7lD1k5Fkzjr1as+mQAAAABJRU5ErkJggg==",
+warm:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAAXNSR0IArs4c6QAAAFlJREFUKFNjZCACMOJSY1rzfz9I7nQLoyOGIpgkSMGvN9cZLs7QQlUEUmCvwcBw8AbEfJApIBpuEroCmCkYimDuAykAAZBVWBXBFGBVBBIEWYluCopJ+IILAI7OLwq+l1sIAAAAAElFTkSuQmCC",
 experienceBar:[
 "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALYAAAAKCAMAAAAuJlQ4AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAACVVBMVEUAAAAJEAw2QzwuOjMpNS8UHxkgKyUgLCUZJB4oMy0IHBEWLRoiPSItSylDaSRjkECLylmIxleGxFdglzRajTE4XhpSgSxMdylxpEh4rk1yp0trm0UsSRVGbSV9tFCPzlx4rkxYijBQfiwzVRhLdShFbCVchTt6sU5TgixHbiVrnEV3rUxVhi5XiC81VhdxpUl9tVB2qkxOeSpNeSouSxV0p0p7s1B1qkt3rExTgy0yUxdZizCJx1iEwFVTgSxbkDGBvFNtnUVUhC4gOg0gOA10qkhllT9eijtOeioaPipMdilpmENIcSdzp0pvoUlTfy96sU95r05TgS1ypUiHxFd9tU9Why92qUtvoEZNeClqmUR2qktKdCiHw1aP0V1Ugy1IcCZJcidsnUZ8tFB5sE6IxlhTgi2NwGS09X6f2nGTyWh6pleOwmVeiT2Rx2ea0myEtF14o1VxmlBpmESY0GuCsFuLvmKLvmOKvGJmlEIvTxZnlUKGt112oVOf2nCo5neLyVluoEeVzGmu7nqj3nOPw2SRxmaCvVQzVRlolkOBsFuWzWplkUCDs1yArlqVy2l3olQWNSRq",
 "mkWIuWCRxWdfiz5/rVmCslxmk0Gp5nab1W2Ds12NwmOXzmqDslwuTBWUy2l8qViz832QxGaLvWOCsVxjjz9jjj+LvWKJvGGCsV2MvmOIuWF+rFhHbyZvokhOeytlkkFfiT1RfyxzpkpPfCtUgyxSfyxzqEtWiC9fiT5Ugi1ijUB1qUxdjzVelDN5sE1zp0mKyVlwo0hPfStypkn///82xGcQAAAAAXRSTlMAQObYZgAAAAFiS0dExvoCes0AAAAHdElNRQflCgkTMix8LVIBAAAAAW9yTlQBz6J3mgAAAqxJREFUOMvVU2dXE0EU3VBlN8xiBAecQUWTWTVEoqBA7Bp1zcauKLGCPYBZFwgoYgdlKQp2sfeKYi/Y9X85s2QTjp/hA+/TPfe+d+edOfdxnGUYFsdZ4uITWMXHJQ4ySkoaMmsLZ0lIHsEqOSFxkFFKypBZW4brbw/TbHO8IFhpCbR4hgSelUkZIpN4s4+pDKVa2YBgjvJRMerGG9OpVmtkgtEGKUTfiODoI0LsEQP2c9QkNbYN1ejWAIhpI222UekZo2Fmlm0MAgCD7LHjbONRzoSJdgdBNglNmowBIFOckpTrmgphnnsaQtPzC7Khe8bMwiJXsQfOmj3HKTnnujzF82zz0woX2Bcu8gK4eMlSQqC8zCcTpIjE58B+gNzu5StW+pjhqtUiyadozdp1adL6Euix+xVpw0YRlHoACLg3ETFnM/ZDZcvWvMycbXh7WfkO585du2We48mevfuCFRWVBFftD1WqBzS1GpNgTa0arqs/eKjhcG2NplUwrjEUCoaPHD2WcfzEyVNN4XDz6TMtQV3TdFUlONBaqTKs",
@@ -17056,6 +17067,9 @@ if(multiplayer && this.block === blockIds.diamond && this.from !== achexUsername
 //that achivement
 send({type:"diamondsToYou"}, this.from)
 }
+if(this.block === blockIds.tomatoSeeds){
+achievment("Time to plant tomatoes!")
+}
 updateHUD = true
 var pitch = rand(0.8, 1.5)
 playSound("entity.item.pickup", 0, 1, pitch)
@@ -19166,6 +19180,30 @@ return "bambooForest"
 return "oakForest"
 }
 }
+function getBiomeTemperature(biome){
+var t
+switch(biome){
+case "snowyField":
+t = 2
+break
+case "desert":
+t = 17
+break
+case "field":
+t = 9
+break
+case "giantJungle":
+t = 12
+break
+case "oakForest":
+t = 9
+break
+default:
+t = 10
+break
+}
+return t
+}
 function getDimension(){
 if(world.type === ""){
 return "overworld"
@@ -19737,6 +19775,14 @@ this.setBlock(x, y, z, blockID, true)
 } else if (!chunk.getBlock(x & 15, y, z & 15)) {
 chunk.setBlock(x & 15, y, z & 15, blockID)
 }
+}
+getBiome(x,y,z){
+if (!this.chunks[x >> 4] || !this.chunks[x >> 4][z >> 4]) {
+return
+}
+var X = x & 15
+var Z = z & 15
+return this.chunks[x >> 4][z >> 4].biomes[Z * 16 + X]
 }
 getEntity(id){
 for(var i=0; i<this.entities.length; i++){
@@ -21379,6 +21425,24 @@ ctx.drawImage(images.bubblePop, bubbleX, iy-ih, iw, iw);
 }else{
 ctx.drawImage(images.bubble, bubbleX, iy-ih, iw, iw);
 }
+}
+}
+//Temperature
+if(p.temperature !== 10){
+for(i=0; i<p.temperature; i+=2){
+if(i+2 <= p.temperature){
+var X = maxX - (i*iw2) - iw*2
+ctx.drawImage(images.hot, X, iy - ih*2, iw, iw);
+}
+}
+var I = i
+for(i=18; i>=p.temperature; i-=2){
+var X = maxX - (i*iw2) - iw*2
+ctx.drawImage(images.cold, X, iy - ih*2, iw, iw);
+}
+if(I !== p.temperature){
+var X = maxX - (i*iw2) - iw*2
+ctx.drawImage(images.warm, X, iy - ih*2, iw, iw);
 }
 }
 var xpBar = p.XP / p.nextLevel
@@ -23479,6 +23543,8 @@ p.burnStart = 0
 p.touchingBurnBlock
 p.walking = false
 p.punchEffect = 0
+p.temperature = 10 // 0 to 20
+p.lastTemperature = 10
 win.player = p
 win.p2 = p2
 }
@@ -24557,6 +24623,7 @@ world.name = name.replace(/;/g, "\u037e")
 world.loadChunks()
 world.chunkGenQueue.sort(sortChunks)
 cheats = !survival
+p.x = p.z = 8
 if(survival) setHotbar([0,0,0,0,0,0,0,0,0])
 changeScene("loading")
 }
@@ -25221,7 +25288,7 @@ if(p.touchingBurnBlock){
 p.burnStart = now
 p.burnTimer += 0.1
 }
-if(liquid && wet) p.burnTimer = 0
+if(wet || freezeEffect > 0) p.burnTimer = 0
 if(survival && p.burnTimer > 0){
 if(now - p.burnStart > 500){
 p.burnStart = now
@@ -25289,6 +25356,29 @@ p.punchEffect --
 }
 if(p.punchEffect < 0) p.punchEffect = 0
 if(tick)resolveContactsAndUpdatePosition(now)
+//Temperature calculation
+if(tick){
+var biome = world.getBiome(p2.x,p2.y,p2.z)
+var temp = getBiomeTemperature(biome)
+if(p.burning){
+temp += p.burnTimer / 2
+}
+if(freezeEffect > 0){
+temp -= freezeEffect / 16
+}else if(wet){
+temp -= 2
+}
+//Darker places are colder
+const blockLight = world.getLight(p2.x, p2.y, p2.z, 1)
+const skysLight = world.getLight(p2.x, p2.y, p2.z, 0)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
+temp -= (1 - lightLevel) * 4
+p.temperature = temp
+if(p.lastTemperature !== p.temperature){
+p.lastTemperature = p.temperature
+updateHUD = true
+}
+}
 if(p.health < 5 && tick) updateHUD = true //for hearts shaking
 if (updateHUD) {
 clear()
