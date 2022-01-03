@@ -2651,6 +2651,10 @@ tomatoPlantStage3: "0g0g8000īĺHĈĚZFĊYqĊZuhZćŗWŢŗW00000050oöë0CĒsĈ0
 tomatoPlantStage4: "0g0g6000īĺHĈĚZFĊYqĊZuhZ00000050oöë0CĒsĈ005Æ4Ĉ(02ĉ0ýë00ýÑüNÀEÈ4ĉíÀCìAĊ^Đm0īJęÆ2^oü(o1òAü00c0ŋĔ0006B1ë000B00006Ō00000AĈ00",
 tomato: "0g0ga000q(Wq0WĠJHŇĚZČÞZĤĊYĻĚZŘVHŏĚZ00100000000i00000001hw00001hxh0000iMAig000Äá]XR003GāāĀù00OåāāĀā00,åāāāò00,åāāāā00,Gāāāā00OGāāāā003Gāāāù003,åāāù0003Gāù0000000000",
 tomatoSeeds: "0g0g3000ĺÏYĒĨZ00000g0000o00000oSg40S00040000gS40g0040000001ë000010010400000000",
+newCactusFruit: "0g0g6000HVHÂŉWRìHBŗWPáY00000000000000000000000000000000000000000000000000000000000000aK0000ÂÝ0000ÃĖ0000ØÛ0000ÂÝ0000aÝ00",
+greenCactusFruit: "0g0g6000HVHÂŉWRìHBŗWPáY00000000000000000000000000000000aÝ0000Âã0002ÃÛS003ÃÚħ00iûÚį00iûÚĿ00iûÚħ002ûĖS003ÃÛ0000ÂÝ0000aÝ00",
+redCactusFruit: "0g0g6000Ť)ZœÞZįÁHĈÝWPáY00000000000000000000000000000000^ß0002ÂãS002ÃÛ]003ÃÚį00iûÚį00iûÚĿ00iûÚį00iûĖS003ÃÛS002Âß0000ÂJ00",
+purpleCactusFruit: "0g0g6000ŤĦZĘFYü7ZŇĄYÎAY000000000000000000001|ë000{|Ę002Ù|Ę002ÑVĞ00iÏPĞ00jÏPĞ00jyPĞ00jyPĽ00jyPĞ00jyđĘ003ÏPĘ002Ñ|ë000ÑÚë0",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -4308,6 +4312,7 @@ return "DoubleTallGrass"
 {
 name:"apple",
 Name:"Apple",
+item:true,
 edible: true,
 eatWhenFull: false,
 food: 4,
@@ -4681,6 +4686,7 @@ stackSize: 1
 name:"bread",
 Name:"Bread",
 edible: true,
+item:true,
 eatWhenFull: false,
 food: 6,
 saturation: 11
@@ -4699,6 +4705,7 @@ _1PixLower: true
 name:"glowBerries",
 Name:"Glow Berries",
 edible: true,
+item:true,
 eatWhenFull: false,
 food: 2,
 saturation: 0.4
@@ -6015,6 +6022,7 @@ item:true
 name:"mushroomStew",
 Name:"Mushroom Stew",
 edible: true,
+item:true,
 eatWhenFull: false,
 food: 6,
 saturation: 7.2,
@@ -6024,6 +6032,7 @@ eatResult:"bowl"
 name:"ramen",
 Name:"Ramen! Yum!",
 edible: true,
+item:true,
 eatWhenFull: true,
 food: 8,
 saturation: 10,
@@ -6033,6 +6042,7 @@ eatResult:"bowl"
 name:"orange",
 Name:"Orange",
 edible: true,
+item:true,
 eatWhenFull: false,
 food: 4,
 saturation: 2.4
@@ -6553,6 +6563,46 @@ Messages.write("tomato seeds need to be planted on farmland")
 p.lastPlace = Date.now()
 }
 }
+},
+{
+name:"newCactusFruit",
+Name:"New Cactus Fruit",
+solid: false,
+transparent: true,
+shadow: false,
+crossShape: true,
+},
+{
+name:"greenCactusFruit",
+Name:"Green Cactus Fruit",
+solid: false,
+transparent: true,
+shadow: false,
+crossShape: true,
+},
+{
+name:"redCactusFruit",
+Name:"Red Cactus Fruit",
+solid: false,
+transparent: true,
+shadow: false,
+crossShape: true,
+edible: true,
+eatWhenFull: false,
+food: 2,
+saturation: 1,
+},
+{
+name:"purpleCactusFruit",
+Name:"Purple Cactus Fruit",
+solid: false,
+transparent: true,
+shadow: false,
+crossShape: true,
+edible: true,
+eatWhenFull: false,
+food: 3,
+saturation: 2,
 },
 /*
 { name: "pigFace" },
@@ -11415,6 +11465,7 @@ break
 }
 }
 var drop = baseBlock.drop || i
+var d = baseBlock.drop
 let slabBlock = Object.create(baseBlock)
 let stairBlock = Object.create(baseBlock)
 let crossBlock = Object.create(baseBlock)
@@ -11443,11 +11494,11 @@ let carpetBlock = Object.create(baseBlock)
 baseBlock.shape = shapes.cube
 slabBlock.shape = shapes.slab
 slabBlock.transparent = true
-slabBlock.drop = i | SLAB
+slabBlock.drop = d || (i | SLAB)
 slabBlock.Name += " Slab"
 stairBlock.shape = shapes.stair
 stairBlock.transparent = true
-stairBlock.drop = i | STAIR
+stairBlock.drop = d || (i | STAIR)
 stairBlock.Name += " Stair"
 crossBlock.shape = shapes.cross
 crossBlock.drop = drop
@@ -13881,7 +13932,7 @@ var item = holding && blockData[holding].item
 if(item && blockData[holding].canPlace && blockData[holding].canPlace(cblock)){
 item = false
 }
-if(!hitBox.pos || !holding || item || blockData[holding].edible) {
+if(!hitBox.pos || !holding || item) {
 return
 }
 let side = false
@@ -15403,6 +15454,21 @@ let x = (rnd >> 8) + this.x
 let y = (rnd >> 4 & 15) + this.y
 let z = (rnd & 15) + this.z
 world.setBlock(x, y, z, blockIds.wheat|LANTERN, false)
+}/*cactus fruit*/else if(this.blocks[rnd] === (blockIds.newCactusFruit|CROSS)){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, blockIds.greenCactusFruit|CROSS, false)
+}else if(this.blocks[rnd] === (blockIds.greenCactusFruit|CROSS)){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, blockIds.redCactusFruit|CROSS, false)
+}else if(this.blocks[rnd] === (blockIds.redCactusFruit|CROSS)){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, blockIds.purpleCactusFruit|CROSS, false)
 }
 }
 }
@@ -15921,7 +15987,8 @@ if(g) world.setBlock(wx+i, g+1, wz+k, 0)
 }
 // Cactus
 if (random() < 0.01 && this.getBlock(i, ground, k) && b === "desert" && ground > 60 && this.type !== "nether") {
-top = ground + Math.floor(2.5 + random(1.5));
+var rnd = random()
+top = ground + Math.floor(2.5 + rnd*1.5);
 rand = Math.floor(random(4096));
 let tree = blockIds.cactus | CACTUS;
 //Center
@@ -15929,6 +15996,18 @@ for (let j = ground + 1; j <= top; j++) {
 this.setBlock(i, j, k, tree);
 }
 this.setBlock(i, ground, k, blockIds.sand);
+//Fruit
+switch(round(rnd*4)){
+case 0:
+this.setBlock(i, top+1, k, blockIds.newCactusFruit|CROSS);
+break
+case 1:
+this.setBlock(i, top+1, k, blockIds.greenCactusFruit|CROSS);
+break
+case 2:
+this.setBlock(i, top+1, k, blockIds.redCactusFruit|CROSS);
+break
+}
 }
 if (random() < 0.006 && this.getBlock(i, ground, k) && b === "desert" && ground > 60 && this.type !== "nether") {
 let tree = blockIds.deadBush | CROSS;
@@ -19132,14 +19211,20 @@ eval(data.data)
 console.error(e)
 }
 }else if(data.type === "error"){
+if(host){
+alert(data.data)
+}else{
 console.warn("Multiplayer error!",data.data)
 multiplayerError = data.data
+}
 }
 }
 multiplayer.onclose = () => {
 if(host){
 alert("Multiplayer connection lost!")
 }else{
+releasePointer()
+multiplayerError = multiplayerError || "Disconnected from server"
 changeScene("multiplayer lost")
 }
 clearInterval(multiplayer.pos)
