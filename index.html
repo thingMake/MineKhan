@@ -3095,7 +3095,8 @@ portal: true,
 transparent:true,
 lightLevel: 11,
 ontouch: function(){
-portalEffect += 6
+touchingPortal = true
+portalEffect += 2
 if(portalEffect >= 100){
 portalEffect = 0
 if(world.type === "nether"){
@@ -6571,6 +6572,7 @@ solid: false,
 transparent: true,
 shadow: false,
 crossShape: true,
+cactusFruit:true
 },
 {
 name:"greenCactusFruit",
@@ -6579,6 +6581,7 @@ solid: false,
 transparent: true,
 shadow: false,
 crossShape: true,
+cactusFruit:true
 },
 {
 name:"redCactusFruit",
@@ -6591,6 +6594,7 @@ edible: true,
 eatWhenFull: false,
 food: 2,
 saturation: 1,
+cactusFruit:true
 },
 {
 name:"purpleCactusFruit",
@@ -6603,6 +6607,7 @@ edible: true,
 eatWhenFull: false,
 food: 3,
 saturation: 2,
+cactusFruit:true
 },
 /*
 { name: "pigFace" },
@@ -6776,11 +6781,18 @@ textureIds[i] = idx
 }
 window.textureIds = textureIds
 // survival inventory
-let invItems = [1];
+let invItems = [];
 let invLength = 13*9;
 for(let i=0; i<invLength; i++){
-if(!invItems[i]){
 invItems.push({id:0,amount:64})
+}
+function clearInv(){
+for(let i=0; i<invLength; i++){
+if(typeof invItems[i] === "object"){
+invItems[i].id = 0
+}else{
+invItems[i] = {id:0,amount:64}
+}
 }
 }
 //add something to inventory
@@ -9261,6 +9273,13 @@ let freezeEffect = 0
 let lastFreezeHealth = 0
 let loseHealthEffect = 0
 let portalEffect = 0
+let portalTriggerSound = null
+let portalTriggerSoundGain = null
+let touchingPortal = false
+function portalTriggerSoundStart(source, gainNode){
+portalTriggerSound = source
+portalTriggerSoundGain = gainNode
+}
 win.lastStepSound = 0
 let eatSoundTimer = 0
 let inventory = {
@@ -13566,9 +13585,13 @@ for(var i in currentAmbientVolume){
 var v = currentAmbientVolume[i] * settings.volume
 if(currentAmbient[i]){
 currentAmbient[i].gain.value = v
+if(v <= 0){
+currentAmbient[i].source.stop()
+delete currentAmbient[i]
+}
 }else{
 var blockObj = blockData[blockIds[i]]
-playSound(blockObj.ambientSound, 0, v, null, null, true, (source, gainNode) => currentAmbient[i] = gainNode)
+playSound(blockObj.ambientSound, 0, v, null, null, true, (source, gainNode) => {currentAmbient[i] = gainNode; currentAmbient[i].source = source})
 }
 }
 }
@@ -15469,6 +15492,16 @@ let x = (rnd >> 8) + this.x
 let y = (rnd >> 4 & 15) + this.y
 let z = (rnd & 15) + this.z
 world.setBlock(x, y, z, blockIds.purpleCactusFruit|CROSS, false)
+}/*cactus*/else if(this.blocks[rnd] === (blockIds.cactus|CACTUS)){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+var above = world.getBlock(x,y+1,z)
+if(blockData[above].cactusFruit){
+if(world.getBlock(x,y+2,z)) return //the cactus fruit can't replace blocks
+world.setBlock(x,y+2,z, above) //move the cactus fruit up
+}else if(above) return //there is a block so it can't grow
+world.setBlock(x,y+1,z, blockIds.cactus|CACTUS)
 }
 }
 }
@@ -19073,6 +19106,7 @@ return
 }
 if(survival){
 setHotbar([0,0,0,0,0,0,0,0,0])
+clearInv()
 }
 world = dimensions[data.dimension || "overworld"]
 worldTime = data.time
@@ -20926,7 +20960,7 @@ Button.add(width / 2, 375, 300, 40, "Exit Without Saving", "pause", r => {
 savebox.value = world.getSaveString()
 initWorldsMenu()
 if(multiplayer) multiplayer.close()
-else changeScene("main menu")
+changeScene("main menu")
 })
 Button.add(width / 2, 425, 300, 40, "Enable Multiplayer", "pause", async r => {
 var logged
@@ -22925,7 +22959,11 @@ if (k === controlMap.inventory.key) {
 if(screen === "crafting" || screen === "inventory"){
 for(var i=0; i<9; i++){
 if(inventory.crafting[i] && inventory.crafting[i].id){
-for(var n=0; n<inventory.crafting[i].amount; n++)newInvItem(inventory.crafting[i].id)
+for(var n=0; n<inventory.crafting[i].amount; n++){
+if(!newInvItem(inventory.crafting[i].id)){
+world.addEntity(new Item(p.x,p.y,p.z,0,0,0,inventory.crafting[i].id))
+}
+}
 inventory.crafting[i].id = 0
 }
 }
@@ -24731,7 +24769,10 @@ world.loadChunks()
 world.chunkGenQueue.sort(sortChunks)
 cheats = !survival
 p.x = p.z = 8
-if(survival) setHotbar([0,0,0,0,0,0,0,0,0])
+if(survival) {
+setHotbar([0,0,0,0,0,0,0,0,0])
+clearInv()
+}
 changeScene("loading")
 }
 function playSelectedWorld(){
@@ -24804,7 +24845,10 @@ return
 }
 if(inv){
 world.loadInv(inv)
-}else if(survival) setHotbar([0,0,0,0,0,0,0,0,0])
+}else if(survival) {
+setHotbar([0,0,0,0,0,0,0,0,0])
+clearInv()
+}
 if(surviv){world.loadSurvivStr(surviv)}else{cheats = !survival}
 if(ent){
 for(var i=0; i<ent.length; i++){
@@ -25462,7 +25506,20 @@ if(p.punchEffect > 0){
 p.punchEffect --
 }
 if(p.punchEffect < 0) p.punchEffect = 0
-if(tick)resolveContactsAndUpdatePosition(now)
+if(tick){
+var pTouchingPortal = touchingPortal
+touchingPortal = false
+resolveContactsAndUpdatePosition(now)
+if(!pTouchingPortal && touchingPortal){
+if(portalTriggerSound){
+portalTriggerSound.stop()
+}
+playSound("block.portal.trigger", 0, 0.01, null, null, false, portalTriggerSoundStart)
+}
+if(portalTriggerSoundGain){
+portalTriggerSoundGain.gain.value = portalEffect / 100
+}
+}
 //Temperature calculation
 if(tick){
 var biome = world.getBiome(p2.x,p2.y,p2.z)
@@ -25480,8 +25537,8 @@ const skysLight = world.getLight(p2.x, p2.y, p2.z, 0)
 const lightLevel = min((skysLight * skyLight / 15) * 0.9 + 0.1, 1.0)
 temp -= (1 - lightLevel) * 4
 p.temperature = temp
-if(p.lastTemperature !== p.temperature){
-p.lastTemperature = p.temperature
+if(p.lastTemperature !== round(p.temperature)){
+p.lastTemperature = round(p.temperature)
 updateHUD = true
 }
 }
@@ -25503,10 +25560,12 @@ fill(255,0,0, harmEffect)
 ctx.fillRect(0,0,width,height)
 }
 if(portalEffect > 0){
+if(tick){
+portalEffect --
+}
+updateHUD = true
 fill(255,0,255, portalEffect)
 ctx.fillRect(0,0,width,height)
-updateHUD = true
-portalEffect --
 }
 if(mouseDown && touchScreen){
 ctx.beginPath()
