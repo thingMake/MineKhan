@@ -72,6 +72,8 @@ border-style:solid;
 color:white;
 outline:none;
 cursor:pointer;
+font-family:VT323;
+font-size:12px;
 }
 button:hover{
 background:rgb(100,120,200);
@@ -3922,7 +3924,7 @@ name: "ironTrapdoor",
 Name:"Iron Trapdoor",
 transparent: true,
 trapdoor: true,
-woodSound: true
+stoneSound: true
 },
 { 
 name: "cryingObsidian",
@@ -4667,7 +4669,7 @@ Name:"Snowball",
 item: true,
 onuse:function(){
 var pd = p.direction
-world.addEntity(new Snowball(p.x+pd.x,p.y+pd.y,p.z+pd.z, pd.x, pd.y, pd.z))
+world.addEntity(new Snowball(p.x+pd.x,p.y+pd.y,p.z+pd.z, pd.x*0.8, pd.y*0.8, pd.z*0.8))
 },
 minusOnUse:true,
 useAnywhere:true
@@ -6445,7 +6447,7 @@ needsSupportingBlocks(x,y,z,b)
 {
 name:"chest",
 Name:"Chest",
-textures:"christmasChestSide",//*/"chestFront",//christmas
+textures:/*"christmasChestSide",//*/"chestFront",//christmas
 transparent:true,
 chest:true,
 onclick:function(x,y,z){
@@ -11780,7 +11782,7 @@ stairBlock.shadow = false
 stairBlock.transparent = true
 potCrossBlock.shape = shapes.bambooPot
 }
-if(baseBlock.chest) baseBlock.shape = shapes.christmasChest//*/shapes.chest//christmas
+if(baseBlock.chest) baseBlock.shape = /*shapes.christmasChest//*/shapes.chest//christmas
 if(baseBlock.pressurePlate){
 baseBlock.shape = shapes.pressurePlate
 baseBlock.transparent = true
@@ -13622,8 +13624,8 @@ if(controlMap.backward.pressed) move.z -= p.speed
 if(controlMap.left.pressed) move.x += p.speed
 if(controlMap.right.pressed) move.x -= p.speed
 if (p.flying) {
-if(controlMap.jump.pressed) p.velocity.y += 0.06
-if(controlMap.sneak.pressed) p.velocity.y -= 0.06
+if(controlMap.jump.pressed) p.velocity.y += 0.09
+if(controlMap.sneak.pressed) p.velocity.y -= 0.09
 }
 if(Key.arrowleft) p.ry -= 0.1
 if(Key.arrowright) p.ry += 0.1
