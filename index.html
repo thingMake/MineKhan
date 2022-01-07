@@ -6520,8 +6520,7 @@ item:true
 name:"tintedGlass",
 Name:"Tinted Glass",
 transparent: true,
-shadow: false,
-blocksLight: true,
+shadow: true,
 breakTime: 0.45,
 type: "glass",
 glassSound: true
@@ -6698,7 +6697,6 @@ data.textures[t] = "error"
 data.transparent = data.transparent || false
 data.shadow = data.shadow !== undefined ? data.shadow	: true
 data.lightLevel = data.lightLevel || 0
-data.blocksLight = data.blocksLight !== undefined ? data.blocksLight : !data.transparent
 data.onupdate = data.onupdate || emptyFunc
 if(data.solid === undefined)data.solid = true
 data.breakTime = data.breakTime ? data.breakTime*1000 : 0.05*1000 //time for breaking
@@ -15622,7 +15620,7 @@ if (!blockSpread[data.lightLevel]) blockSpread[data.lightLevel] = []
 blockSpread[data.lightLevel].push(x + this.x, y, z + this.z)
 this.setLight(x, y, z, data.lightLevel, 1)
 }
-if (!stop && data.blocksLight) {
+if (!stop && !data.transparent) {
 this.tops[z * 16 + x] = y
 stop = true
 } else if (!stop) {
@@ -15675,7 +15673,7 @@ return this.sections[y >> 4].getLight(x, y & 15, z, blockLight)
 trySpread(x, y, z, level, spread, blockLight, update = false) {
 if(y < 0) return
 if (this.world.getLight(x, y, z, blockLight) < level) {
-if (!blockData[this.world.getBlock(x, y, z)].blocksLight) {
+if (blockData[this.world.getBlock(x, y, z)].transparent) {
 this.world.setLight(x, y, z, level, blockLight)
 spread.push(x, y, z)
 }
@@ -15709,7 +15707,7 @@ this.spreadLight(spread, level - 1, update, blockLight)
 tryUnSpread(x, y, z, level, spread, respread, blockLight) {
 if(y < 0) return
 let light = this.world.getLight(x, y, z, blockLight)
-let trans = !blockData[this.world.getBlock(x, y, z)].blocksLight
+let trans = blockData[this.world.getBlock(x, y, z)].transparent
 if (light === level) {
 if (trans) {
 this.world.setLight(x, y, z, 0, blockLight)
@@ -19679,13 +19677,13 @@ let zm = z & 15
 if (blockID) {
 chunk.setBlock(xm, y, zm, blockID, !lazy)
 let data = blockData[blockID]
-if (!lazy && chunk.buffer && (data.blocksLight || data.lightLevel) && screen !== "loading") {
+if (!lazy && chunk.buffer && (!data.transparent || data.lightLevel) && screen !== "loading") {
 this.updateLight(x, y, z, true, data.lightLevel)
 }
 } else {
 let data = blockData[chunk.getBlock(xm, y, zm)]
 chunk.deleteBlock(xm, y, zm, !lazy)
-if (!lazy && chunk.buffer && (data.blocksLight || data.lightLevel) && screen !== "loading") {
+if (!lazy && chunk.buffer && (!data.transparent || data.lightLevel) && screen !== "loading") {
 this.updateLight(x, y, z, false, data.lightLevel)
 }
 }
@@ -19819,7 +19817,7 @@ let spread = []
 if (!place) { // Block was removed; increase light levels
 if ((up & 15) === 15) {
 for (let i = y; i > 0; i--) {
-if (!blockData[chunk.getBlock(cx, i, cz)].blocksLight) {
+if (blockData[chunk.getBlock(cx, i, cz)].transparent) {
 chunk.setLight(cx, i, cz, 15)
 spread.push(x, i, z)
 } else {
@@ -19863,7 +19861,7 @@ spread.push(x, y, z)
 // Sky light
 if (center === 15) {
 for (let i = y-1; i > 0; i--) {
-if (!blockData[chunk.getBlock(cx, i, cz)].blocksLight) {
+if (blockData[chunk.getBlock(cx, i, cz)].transparent) {
 chunk.setLight(cx, i, cz, 0)
 spread.push(x, i, z)
 } else {
