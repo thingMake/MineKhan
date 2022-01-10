@@ -2657,6 +2657,13 @@ newCactusFruit: "0g0g6000HVHÂŉWRìHBŗWPáY00000000000000000000000000000000000
 greenCactusFruit: "0g0g6000HVHÂŉWRìHBŗWPáY00000000000000000000000000000000aÝ0000Âã0002ÃÛS003ÃÚħ00iûÚį00iûÚĿ00iûÚħ002ûĖS003ÃÛ0000ÂÝ0000aÝ00",
 redCactusFruit: "0g0g6000Ť)ZœÞZįÁHĈÝWPáY00000000000000000000000000000000^ß0002ÂãS002ÃÛ]003ÃÚį00iûÚį00iûÚĿ00iûÚį00iûĖS003ÃÛS002Âß0000ÂJ00",
 purpleCactusFruit: "0g0g6000ŤĦZĘFYü7ZŇĄYÎAY000000000000000000001|ë000{|Ę002Ù|Ę002ÑVĞ00iÏPĞ00jÏPĞ00jyPĞ00jyPĽ00jyPĞ00jyđĘ003ÏPĘ002Ñ|ë000ÑÚë0",
+cherry: "0g0g9000u(HqùWĿ(ZĠ(ZĐJHĀÎYŌĞZõÞZ000000000000g0000002000000020000000wh00000200g0000)SVÓ0003àQïÄK00,O)]VÓ00OO)]VÓ00OO)]VÓ003OQïÄK000)SVÓ00000000000000000000000000",
+cherryLogTop: "0g0ga-ĩZ-ĚWQĨZ{ĹWĉīYĢCWĕŜHòÂZčċYýàW001hhg1gizNzzNOwj?VÒÑVÑw2[òäĀòá(2ÇÄVÑVð(2ÆÆòIâýMj]ÇÒÄüâxjÖ[]ýðïxiÆÕÇãýïMjÇÇÄ?ðþMjÕÔåIýüM2]@ÄV@ïw3[ĀIĀòâw2ÒVÒÄ?ÄM2OyzNzNx1g1hhg00",
+cherryLog: "0g0g3-ĚW-ĩZVjZ1S1V0À5×Tč@ýýÄúS×TČÀl0ÁČ00UÀk1đ0ÖÄüklčÀÖ1Ö1ümU5SÖ5qUkq?Ö1?0U6ù00",
+cherryLogSW: "0g0g3-ĚW-ĩZVjZ111ù6@@S@@@Súý6ÁùÇ1ÒQÖ0ÑpÒ0ÀpmTù46þù15þS6Túk6ÀQÒlÑpÒpppppp4p440p",
+cherryLeaves: "0g0g4000eŇWaëWÃ)Hoo0wÕ66oí6+8dK+0ÐÆo6ëĿë+w3ÆĿĿĿ8KÐKK8w0Ľ+8K*ð8ĿdIK+w0Ŀ+o++6zÄ603Æ",
+pinkCherryLeaves: "0g0g6ŤŞZťŒYšÖY000ťġHZĆH5+>ÚĞXF6ıÙĎÀ{SıáĎĺÛíăáĈłFĹÃÒ8a|ĢÀ|ę^ÖĞī5/Ãč/ÀÚNăFíăFĞĺÕSłČď^Ú2ăáüıÚ/ÃÛùĺFğ^ÖIrč,^ÒM^áĎĩÖĹ^áĎwÚĹÀ",
+cherrySapling: "0g0g5000uĨZ9ŇY-ùZAKY000000000000000000000000500000Aü00Jë9ĩÀB,g0Ğň}000krÝü00Ğ^ï-ë00łÚħ0003ë00003ë0000s00000rë000+łÛ00",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -6610,6 +6617,85 @@ food: 3,
 saturation: 2,
 cactusFruit:true
 },
+{
+name:"cherry",
+Name:"Cherry",
+item:true,
+edible:true,
+eatWhenFull: false,
+food: 1,
+saturation: 1,
+},
+{
+name:"cherryLog",
+Name:"Cherry Log",
+textures:["cherryLogTop","cherryLog"],
+woodSound:true,
+breakTime:3,
+woodSound:true,
+type:"wood",
+},
+{
+name:"cherryLogSW",
+textures: ["cherryLog","cherryLog","cherryLogTop","cherryLogSW"],
+rotate: true,
+woodSound:true
+},
+{
+name:"cherryLeaves",
+Name:"Cherry Leaves",
+transparent: true,
+breakTime: 0.3,
+type:"plant2",
+drop: function(){
+if(rand() > 0.8){
+let r = floor(rand(3))
+if(r === 0) return "stick"
+else if(r === 1) return "cherrySapling"
+else return "cherry"
+}
+},
+dropSelfWhenSheared:true,
+shearBreakTime:0.05,
+digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
+stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
+},
+{
+name:"pinkCherryLeaves",
+Name:"Pink Cherry Leaves",
+transparent: true,
+breakTime: 0.3,
+type:"plant2",
+drop: function(){
+if(rand() > 0.8){
+let r = floor(rand(3))
+if(r === 0) return "stick"
+else if(r === 1) return "cherrySapling"
+else if(rand() > 0.5) return "cherry"
+}
+},
+dropSelfWhenSheared:true,
+shearBreakTime:0.05,
+digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
+stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
+},
+{
+name:"cherrySapling",
+Name:"Cherry Sapling",
+transparent: true,
+shadow: false,
+solid: false,
+crossShape: true,
+potCross: true
+},
+{
+name:"cherryWood",
+Name:"CherryWood",
+textures: "cherryLog",
+breakTime:3,
+woodSound:true,
+type:"wood",
+},
 /*
 { name: "pigFace" },
 { 
@@ -6773,13 +6859,6 @@ data.placeSound = deepslateBricksPlaceSound
 data.stepSound = deepslateBricksStepSound
 }
 }
-let textureIds = {}
-let idx = -1
-for(var i in textures){
-idx ++
-textureIds[i] = idx
-}
-window.textureIds = textureIds
 // survival inventory
 let invItems = [];
 let invLength = 13*9;
@@ -20221,7 +20300,7 @@ crack.entity.z = crack.pos[2]
 crack.entity.changeTexture(crack.tex)
 crack.entity.render()
 }
-if(p.burning && !p.thirdPerson){
+/*if(p.burning && !p.thirdPerson){
 fireBlock.x = p.x
 fireBlock.y = p.y
 fireBlock.z = p.z
@@ -20230,7 +20309,7 @@ fireBlock.yaw = p.ry
 gl.disable(gl.CULL_FACE)
 fireBlock.render()
 gl.enable(gl.CULL_FACE)
-}
+}*/
 gl.useProgram(programParticle)
 for (let i = this.particles.length - 1; i >= 0; i--) {
 const particle = this.particles[i]
@@ -21043,12 +21122,22 @@ Slider.add(width / 2, height/2 + -125, width / 3, 40, "options narrator", "Narra
 Button.add(width / 2, height - 50, width / 3, 40, "Back", "options narrator", r => changeScene(previousScreen))
 }
 let texturePixels
+let textureImageData //for drawing on canvas
+let textureImageCanvas
+let textureImageCtx
 let textureSize = 256
 let textureH = 2048
 function initTextures() {
 let scale = 1 / (textureSize/16)
 let scaleH = 1 / (textureSize/16)
 texturePixels = new Uint8Array(textureSize * textureH * 4)
+textureImageData = ctx.createImageData(textureSize, textureH)
+win.textureImageData = textureImageData
+textureImageCanvas = document.createElement("canvas")
+textureImageCanvas.width = textureSize
+textureImageCanvas.height = textureH
+win.textureImageCanvas = textureImageCanvas
+textureImageCtx = textureImageCanvas.getContext("2d")
 textureMap = {}
 textureCoords = []
 setPixel = function(textureNum, x, y, r, g, b, a) {
@@ -21208,6 +21297,9 @@ arr[i + 1] = textureCoords[textureMap.hitbox][1] + 0.01
 }
 textureCoords[textureMap.hitbox] = arr
 }
+//Set imageData
+textureImageData.data.set(texturePixels)
+textureImageCtx.putImageData(textureImageData,0,0)
 // Big texture with everything in it
 textureAtlas = gl.createTexture()
 gl.activeTexture(gl.TEXTURE0)
@@ -21357,6 +21449,10 @@ setPixel(idx, x,y, pixr,pixg,pixb,pixa)
 }
 }
 }
+if(portalEffect > 0 || p.burning){
+textureImageData.data.set(texturePixels)
+textureImageCtx.putImageData(textureImageData,0,0)
+}
 gl.activeTexture(gl.TEXTURE0)
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, textureSize, textureH, 0, gl.RGBA, gl.UNSIGNED_BYTE, texturePixels);
@@ -21481,6 +21577,19 @@ ctx.lineTo(x + 10, y)
 ctx.moveTo(x, y - 10)
 ctx.lineTo(x, y + 10)
 ctx.stroke()
+}
+//fire and portal
+if(p.burning && !p.thirdPerson){
+ctx.globalAlpha = 0.8
+var tex = textureCoords[textureMap.fire]
+ctx.drawImage(textureImageCanvas, tex[0]*textureSize,tex[1]*textureSize, 16,16, 0,0,width,height)
+ctx.globalAlpha = 1
+}
+if(portalEffect > 0){
+ctx.globalAlpha = portalEffect / 100
+var tex = textureCoords[textureMap.portal]
+ctx.drawImage(textureImageCanvas, tex[0]*textureSize,tex[1]*textureSize, 16,16, 0,0,width,height)
+ctx.globalAlpha = 1
 }
 //Attack indicator
 if(attackCooldown > 0){
@@ -25559,13 +25668,18 @@ if(harmEffect > 0){
 fill(255,0,0, harmEffect)
 ctx.fillRect(0,0,width,height)
 }
+if(p.burning && !p.thirdPerson){
+updateHUD = true
+}
 if(portalEffect > 0){
 if(tick){
 portalEffect --
 }
 updateHUD = true
-fill(255,0,255, portalEffect)
-ctx.fillRect(0,0,width,height)
+/*fill(255,0,255, portalEffect)
+ctx.fillRect(0,0,width,height)*/
+//portal texture update in updateTextures
+//code in hud
 }
 if(mouseDown && touchScreen){
 ctx.beginPath()
