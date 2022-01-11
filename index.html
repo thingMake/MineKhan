@@ -8499,14 +8499,13 @@ shape: null,
 pos: [0,0,0],
 prevPos: [-1,-1,-1],
 breakStart: 0,
-delayBetween:60*3/10,
-delayDone:0,
+delayBetween:3/10*1000,
+delayStart:0,
 entity: null, //define later
 soundTimer: 0
 }
 win.crack = crack
 let entityFire
-let fireBlock
 var speakVoices
 function speak(what, rate, pitch){
 var utterThis = new SpeechSynthesisUtterance(what);
@@ -14265,14 +14264,14 @@ p.foodExhaustion += 0.1
 p.lastBreak = Date.now()
 }
 function cracks(){
-var now = Date.now()
+var now = performance.now()
 var block = hitBox.pos ? world.getBlock(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2]) : 0
 var touchBreak = pTouch.touching && pTouch.canDig && Date.now() - pTouch.touchStart > touchMoveLimit
-var breaking = ((controlMap.break.pressed && !Key.control) || touchBreak) && block && (crack.delayDone >= crack.delayBetween)
+var breaking = ((controlMap.break.pressed && !Key.control) || touchBreak) && block && (now - crack.delayStart >= crack.delayBetween)
 if(!arrayValues(crack.prevPos, crack.pos)){
 crack.prevPos = crack.pos
 crack.soundTimer = 0
-crack.delayDone = 0
+crack.delayStart = now
 crack.breakStart = now
 }
 if(breaking){
@@ -14326,12 +14325,11 @@ p.foodExhaustion += 0.005
 }
 }else{
 crack.idx = -1
-crack.delayDone ++
 crack.breakStart = now
 pTouch.digProg = 0
 }
 if(!controlMap.break.pressed){
-crack.delayDone = 0
+crack.delayStart = now
 }
 }
 function explode(x,y,z, r, liquid){
@@ -17453,41 +17451,6 @@ this.canDespawn = true
 }
 }
 win.BlockEntity = BlockEntity
-class FireBlock extends BlockEntity{
-constructor(){
-super(blockIds.fire | SLAB, 0,0,0)
-this.width = 1
-this.height = 0.5
-this.depth = 1
-}
-render(){
-const modelMatrix = new Matrix();
-modelMatrix.identity()
-modelMatrix.translate(this.x, this.y, this.z)
-modelMatrix.rotY(-this.yaw)
-modelMatrix.rotX(-this.pitch)
-modelMatrix.scale(this.width, this.height, this.depth)
-const viewMatrix = p.transformation.elements
-const proj = p.projection
-const projectionMatrix = [proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0]
-const modelViewProjectionMatrix = new Matrix()
-modelViewProjectionMatrix.identity()
-modelViewProjectionMatrix.mult(projectionMatrix)
-modelViewProjectionMatrix.mult(viewMatrix)
-modelViewProjectionMatrix.mult(modelMatrix.elements)
-// row major to column major
-modelViewProjectionMatrix.transpose()
-gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
-gl.uniform1i(glCache.uSamplerEntity, 0)
-gl.uniform1f(glCache.uLightLevelEntity, 1)
-gl.uniform1f(glCache.harmEffectEntity, 0)
-gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
-glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
-gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
-glExtensions.vertex_array_object.bindVertexArrayOES(null)
-gl.uniform1f(glCache.harmEffectEntity, 0)
-}
-}
 class PrimedTNT extends BlockEntity{
 constructor(x,y,z, timerStart){
 super(blockIds.tnt, x,y,z)
@@ -20300,16 +20263,6 @@ crack.entity.z = crack.pos[2]
 crack.entity.changeTexture(crack.tex)
 crack.entity.render()
 }
-/*if(p.burning && !p.thirdPerson){
-fireBlock.x = p.x
-fireBlock.y = p.y
-fireBlock.z = p.z
-fireBlock.pitch = p.rx
-fireBlock.yaw = p.ry
-gl.disable(gl.CULL_FACE)
-fireBlock.render()
-gl.enable(gl.CULL_FACE)
-}*/
 gl.useProgram(programParticle)
 for (let i = this.particles.length - 1; i >= 0; i--) {
 const particle = this.particles[i]
@@ -25155,7 +25108,6 @@ message.innerHTML = ".>a/<etisbew ym>'oc.lper.rekamgniht.www//:sptth'=ferh a< tu
 crack.entity = new crackEntity("crack1",0,0,0)
 for(var i=0; i<crack.length; i++){crack.entity.cacheTexture(crack[i])}
 entityFire = new EntityFire()
-fireBlock = new FireBlock(blockIds.fire | SLAB, 0,0,0) //the fire that shows up on your screen
 initBackgrounds()
 initParticles()
 initPanorama()
