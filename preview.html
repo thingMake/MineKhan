@@ -971,6 +971,7 @@ window.loadBar = document.querySelector("#loadBar div")
 window.themeColor = document.getElementById("themeColor")
 let touchScreen = "ontouchstart" in document
 if(!touchScreen) onscreenControl_Element.style.display = "none"
+var preVersion = true //preview version
 function MineKhan() {
 window.console.log("%cWhat are you doing?\n%cHacking?\n%cDON'T DO THAT!\n%cIf you are not a developer, %cGET OUT OF HERE!!!", "font-size:20px;font-weight:bold;", "background:lightgreen;padding:10px;", "color:red;font-weight:bold;", "text-decoration:underline;","text-decoration:underline;color:red;font-weight:bold;")
 // cache Math object
@@ -993,6 +994,18 @@ return res
 }
 Math.PI2 = Math.PI / 2
 Math.PId = Math.PI * 2
+function xyArrayHas(arr,arr2,x,y,z){
+for(var i=0; i<arr.length; i+=4){
+if(arr[i] === x && arr[i+1] === y && z === arr[i+2]){
+return true
+}
+}
+for(var i=0; i<arr2.length; i+=4){
+if(arr2[i] === x && arr2[i+1] === y && z === arr[i+2]){
+return true
+}
+}
+}
 // Shh don't tell anyone I'm override native objects
 String.prototype.hashCode = function() {
 var hash = 0, i, chr;
@@ -2670,6 +2683,8 @@ cherrySapling: "0g0g5000uĨZ9ŇY-ùZAKY000000000000000000000000500000Aü00Jë9ĩ
 "redstoneDustLine": "0g0g4000ŒĖYZZZłÚY00S0000000ë001ħ001(000(000K0010000ë0020003ë0080003ë000ë000ë00200",
 "redstoneDustDot": "0g0g4000ZZZłÚYŒĖY0000000000000000000004K00CĻ00f<00rá00pA002Q000g00000000000000000",
 gun: "0g0g4000VVH(ĪWT4W0000000000000VVë5VÄĈlÍťĈlHZëlţ00lŗ00lŗ00lŗ00lŗ00nŗ00Wħ00f0000000",
+redstoneTorchOff: "0g0gc000U0W]0WE0WąŜWÚÃHýĻHViZSĹW;ĨZ-ęY)ĉH0000000000000000000000000000000000000000000000000001w0000002(0000004À0000006Ý0000004ë0000004Ý0000006Ý0000005ù0000004Ĉ0000005Ę000",
+redstoneTorch: "0g0gf000ţ0WZKWť(WZŠHZZZĔ0WýĻHViZąŜWSĹWÚÃH;ĨZ-ęY)ĉH00000000000000000000000000000000000000000001g000000iM000000kÁ0000001K0000007ë0000009Ĉ0000009ë0000007ë000000bħ0000009ķ000000bŇ000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -2919,7 +2934,16 @@ glassSound: true
 { name: "ironBlock", Name:"Block of Iron", breakTime:25, type:"metal2", stoneSound:true},
 { name: "goldBlock", Name:"Block of Gold", breakTime:15, type:"metal3", stoneSound:true},
 { name: "diamondBlock", Name:"Block of Diamond", breakTime:25, type:"metal3", stoneSound:true},
-{ name: "redstoneBlock", Name:"Block of Redstone", breakTime:25, type:"metal1", stoneSound:true},
+{
+name: "redstoneBlock", Name:"Block of Redstone", breakTime:25, type:"metal1", stoneSound:true,
+onplace:function(x,y,z){
+world.setTags(x,y,z,{power:16})
+world.spreadPower(x,y,z, 16)
+},
+ondelete: function(x,y,z){
+world.unspreadPower(x,y,z, 16)
+},
+},
 { name: "lapisBlock", Name:"Block of Lapis Lazuli", breakTime:15, type:"metal2", stoneSound:true},
 { name: "emeraldBlock", Name:"Block of Emerald", breakTime:25, type:"metal3", stoneSound:true},
 { name: "oakPlanks", Name:"Oak Planks", type:"wood", breakTime:3, woodSound:true},
@@ -3086,18 +3110,13 @@ case "explosion":
 e.timeLimit = rand(10,30)
 }
 },
-onupdate:function(x,y,z){
-var neigbors = [
-world.getBlock(x+1,y,z),
-world.getBlock(x-1,y,z),
-world.getBlock(x,y,z+1),
-world.getBlock(x,y,z-1),
-world.getBlock(x,y+1,z),
-world.getBlock(x,y-1,z)
-];
-if(neigbors.includes(blockIds.redstoneBlock)){
-this.explode(x,y,z)
-}
+onpowerupdate:function(x,y,z){
+var power = world.getRedstonePower(x,y,z)
+if(power > 0) this.explode(x,y,z)
+},
+onplace:function(x,y,z){
+var power = world.getRedstonePower(x,y,z)
+if(power > 0) this.explode(x,y,z)
 },
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
@@ -3205,6 +3224,7 @@ hidden:true,
 drop: "redstone",
 onupdate: function(x,y,z){
 var tags = world.getTags(x,y,z)
+if(!tags) return
 tags.west = this.connectable(x+1,y,z,"west")
 tags.east = this.connectable(x-1,y,z,"east")
 tags.south = this.connectable(x,y,z-1,"south")
@@ -3240,7 +3260,11 @@ else block = this.id | DOOR | EAST
 }
 }
 if(sum === 4) block = this.id | PANE
-if(world.getBlock(x,y,z) !== block) world.setBlock(x,y,z,block)
+if(world.getBlock(x,y,z) !== block){
+world.setBlock(x,y,z,block,true)
+world.updateBlock(x,y,z)
+}
+this.onpowerupdate(x,y,z,x,y,z)
 },
 onplace:function(x,y,z){
 var tags = {
@@ -3251,9 +3275,108 @@ east:0,
 west:0
 }
 world.setTags(x,y,z,tags)
+tags.power = world.getRedstoneWirePower(x,y,z)
+var strong = world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong"
+if(strong){
+world.setPower(x,y,z,15)
+world.spreadPower(x,y,z,15)
+}
+if(tags.power) world.spreadPower(x,y,z,tags.power)
 },
-ondelete:function(x,y,z,prevTags){},
-connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp"],
+ondelete:function(x,y,z,prevTags){
+var tags = prevTags
+if(tags.power) world.unspreadPower(x,y,z,tags.power)
+if(tags.north){
+var block = world.getBlock(x,y,z+1)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x,y,z+1, null, "south")
+}
+}
+if(tags.south){
+var block = world.getBlock(x,y,z-1)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x,y,z-1, null, "north")
+}
+}
+if(tags.west){
+var block = world.getBlock(x+1,y,z)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x+1,y,z, null, "east")
+}
+}
+if(tags.east){
+var block = world.getBlock(x-1,y,z)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x-1,y,z, null, "west")
+}
+}
+var block = world.getBlock(x,y-1,z)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x,y-1,z, null, "top")
+}
+},
+onpowerupdate:function(x,y,z,sx,sy,sz,blockPowerChanged){
+if(x===sx && y===sy && z===sz){
+var tags = world.getTags(x,y,z)
+if(!tags) return
+if(tags.power){
+if(tags.north){
+var block = world.getBlock(x,y,z+1)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x,y,z+1, "weak", "south")
+}
+}
+if(tags.south){
+var block = world.getBlock(x,y,z-1)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x,y,z-1, "weak", "north")
+}
+}
+if(tags.west){
+var block = world.getBlock(x+1,y,z)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x+1,y,z, "weak", "east")
+}
+}
+if(tags.east){
+var block = world.getBlock(x-1,y,z)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x-1,y,z, "weak", "west")
+}
+}
+}else{
+var block = world.getBlock(x,y,z+1)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x,y,z+1, null, "south")
+}
+block = world.getBlock(x,y,z-1)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x,y,z-1, null, "north")
+}
+block = world.getBlock(x+1,y,z)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x+1,y,z, null, "east")
+}
+block = world.getBlock(x-1,y,z)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x-1,y,z, null, "west")
+}
+}
+var block = world.getBlock(x,y-1,z)
+if(block && !blockData[block].transparent){
+world.setBlockPower(x,y-1,z, tags.power ? "weak" : null, "top")
+}
+}else if(blockPowerChanged){
+var strong = world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong"
+if(strong){
+world.setPower(x,y,z,15)
+world.spreadPower(x,y,z,15)
+}else{
+world.unspreadPower(x,y,z,15,true)
+}
+}
+},
+connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch"],
 connectable: function(x,y,z, d) {
 var id = world.getBlock(x,y,z)
 if(this.connectables.includes(blockData[id].name)) return true
@@ -3272,7 +3395,10 @@ canIt = d === "east" || d === "west"
 return canIt
 }
 return false
-}
+},
+tint:[[75,0,0],[111,0,0],[121,0,0],[130,0,0],[140,0,0],[151,0,0],[161,0,0],[171,0,0],[181,0,0],[191,0,0],[202,0,0],[211,0,0],[221,0,0],[231,6,0],[241,27,0],[252,49,0]].map(v => {v[0]/=255;v[1]/=255;v[2]/=255;return v}),
+tagTintPropertyTop: "power",
+tagTintPropertyBottom: "power"
 },
 {
 name: "buffer",
@@ -5884,6 +6010,14 @@ saturation: 1.2
 {
 name:"redstoneLamp",
 Name:"Redstone Lamp",
+onpowerupdate:function(x,y,z){
+var power = world.getRedstonePower(x,y,z)
+var block = this.id
+if(power > 0){
+block = this.id | SLAB
+}
+if(world.getBlock(x,y,z) !== block) world.setBlock(x,y,z,block)
+}
 },
 {
 name:"glowstoneDust",
@@ -6780,7 +6914,7 @@ potCross: true
 },
 {
 name:"cherryWood",
-Name:"CherryWood",
+Name:"Cherry Wood",
 textures: "cherryLog",
 breakTime:3,
 woodSound:true,
@@ -6795,6 +6929,140 @@ dieMessage = username+" died because he used a gun backwards. guns are dangerous
 die()
 },
 useAnywhere:true
+},
+{
+name:"redstoneTorch",
+Name:"Redstone Torch",
+transparent: true,
+shadow: false,
+redstoneTorch: true,
+lightLevel: 7,
+woodSound:true,
+solid:false,
+flatIcon:true,
+onupdate: function(x,y,z){
+this.onpowerupdate(x,y,z)
+if(world.getPower(x,y,z) === 16){ //is torch on?
+var b = world.getBlock(x,y+1,z)
+if(b && !blockData[b].transparent){
+world.setBlockPower(x,y+1,z, "strong", "bottom") //torch is under this block
+}
+b = world.getBlock(x,y-1,z)
+if(b && blockData[b].name === "redstoneDust"){
+world.setPower(x,y-1,z,15)
+world.spreadPower(x,y-1,z,15)
+}
+}
+},
+onpowerupdate: function(x,y,z){
+var that = this
+setTimeout(function(){
+//find block it's attached to
+var me = world.getBlock(x,y,z)
+var ax=x,ay=y,az=z
+var wall = that.id | SLAB
+var wallOff = that.id | STAIR
+switch(me){
+case wall | NORTH:
+case wallOff | NORTH:
+az++
+break
+case wall | SOUTH:
+case wallOff | SOUTH:
+az--
+break
+case wall | EAST:
+case wallOff | EAST:
+ax++
+break
+case wall | WEST:
+case wallOff | WEST:
+ax--
+break
+default:
+ay--
+}
+var block = world.getBlock(ax,ay,az)
+//see if the torch should be on of off
+var on = world.getPower(ax,ay,az) || world.getBlockPower(ax,ay,az) ? false : true
+var target = me
+if(on){
+switch(me){
+case wallOff | NORTH:
+target = wall | NORTH
+break
+case wallOff | SOUTH:
+target = wall | SOUTH
+break
+case wallOff | EAST:
+target = wall | EAST
+break
+case wallOff | WEST:
+target = wall | WEST
+break
+case that.id | CROSS:
+target = that.id
+}
+}else{
+switch(me){
+case wall | NORTH:
+target = wallOff | NORTH
+break
+case wall | SOUTH:
+target = wallOff | SOUTH
+break
+case wall | EAST:
+target = wallOff | EAST
+break
+case wall | WEST:
+target = wallOff | WEST
+break
+case that.id:
+target = that.id | CROSS
+}
+}
+//set it
+if(me !== target) {
+world.setBlock(x,y,z,target,true)
+if(on){
+world.setPower(x,y,z,16)
+world.spreadPower(x,y,z,16)
+}else{
+world.setPower(x,y,z,0)
+world.unspreadPower(x,y,z,16)
+}
+var b = world.getBlock(x,y+1,z)
+if(b && !blockData[b].transparent){
+world.setBlockPower(x,y+1,z, on ? "strong" : null, "bottom") //torch is under this block
+}
+b = world.getBlock(x,y-1,z)
+if(b && blockData[b].name === "redstoneDust"){
+if(on){
+world.setPower(x,y-1,z,15)
+world.spreadPower(x,y-1,z,15)
+}else{
+world.unspreadPower(x,y-1,z,15,true)
+}
+}
+}
+},tickTime*2)
+},
+onplace:function(x,y,z){
+world.setPower(x,y,z,16)
+world.spreadPower(x,y,z,16)
+},
+ondelete:function(x,y,z){
+world.setPower(x,y,z,0)
+world.unspreadPower(x,y,z,16)
+var b = world.getBlock(x,y+1,z)
+if(b && !blockData[b].transparent){
+world.setBlockPower(x,y+1,z, null, "bottom") //torch is under this block
+}
+b = world.getBlock(x,y-1,z)
+if(b && blockData[b].name === "redstoneDust"){
+world.unspreadPower(x,y-1,z,15,true)
+}
+}
 },
 /*
 { name: "pigFace" },
@@ -9903,11 +10171,7 @@ north: 0,
 south: 0,
 east: 0,
 west: 0
-},
-texVerts: [],
-varients: [],
-buffer: null,
-size: 6,
+}
 },
 wallTorch: {
 verts: [
@@ -9926,10 +10190,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
-size: 6,
 rotate: true
 },
 lantern: {
@@ -10054,12 +10314,12 @@ verts: [
 [objectify(0, 16, 9, 2, 16, 0, 0)]
 ],
 cull: {
-top: 0,
-bottom: 0,
+top: 3,
+bottom: 3,
 north: 0,
 south: 0,
-east: 0,
-west: 0
+east: 3,
+west: 3
 },
 texVerts: [],
 varients: [],
@@ -11045,7 +11305,7 @@ west: 0
 },
 redstoneDust:{
 verts:[
-[objectify(0,0.25,0,16,16,0,0)],
+[objectify(0,0.25,0,16,16,0,0,true,false,2)],
 [objectify(0,0.25,16,16,16,0,0)],
 [],
 [],
@@ -11063,12 +11323,49 @@ west: 0
 },
 redstoneDustRotate:{
 verts:[
-[objectify(0,0.25,0,16,16,0,0)],
+[objectify(0,0.25,0,16,16,0,0,true,false,2)],
 [objectify(0,0.25,16,16,16,0,0)],
 [],
 [],
 [],
 []
+],
+cull: {
+top: 0,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+rotate:true
+},
+redstoneTorch:{
+verts:[
+[objectify(7,0,7,2,2,7,14),objectify(6,10,6,4,4,6,5)],
+[objectify(7,10,9,2,2,7,6),objectify(6,8,10,4,4,6,5)],
+[objectify(9,10,9,2,10,7,6),objectify(10,11,7,4,4,6,5)],
+[objectify(7,10,7,2,10,7,6),objectify(6,11,9,4,4,6,5)],
+[objectify(9,10,7,2,10,7,6),objectify(7,11,6,4,4,6,5)],
+[objectify(7,10,9,2,10,7,6),objectify(9,11,10,4,4,6,5)]
+],
+cull: {
+top: 0,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+redstoneWallTorch:{
+verts: [
+[customFace(9,4,17, 7,4,17, 7,3,15, 9,3,15, 7,14,2,2),customFace(6,12.5,10, 10,12.5,10, 10,14.5,14, 6,14.5,14, 6,5,4,4)],
+[customFace(9,13,11, 7,13,11, 7,14,13, 9,14,13, 7,6,2,2),customFace(10,10.5,10.8, 6,10.5,10.8, 6,12.5,14.8, 10,12.5,14.8, 6,5,4,4)],
+[customFace(9,14,13, 7,14,13, 7,4,17, 9,4,17, 7,6,2,10),customFace(10,14,10.6, 6,14,10.6, 6,10,12.2, 10,10,12.2, 6,5,4,4)], //north
+[customFace(7,13,11, 9,13,11, 9,3,15, 7,3,15, 7,6,2,10),customFace(6,15,12.6, 10,15,12.6, 10,11,14.2, 6,11,14.2, 6,5,4,4)], //south
+[customFace(9,13,11, 9,14,13, 9,4,17, 9,3,15, 7,6,2,10),customFace(7,13.5,9.6, 7,15.5,13.6, 7,11.5,15.2, 7,9.5,11.2, 6,5,4,4)], //east
+[customFace(7,14,13, 7,13,11, 7,3,15, 7,4,17, 7,6,2,10),customFace(9,15.5,13.6, 9,13.5,9.6, 9,9.5,11.2, 9,11.5,15.2, 6,5,4,4)]  //west
 ],
 cull: {
 top: 0,
@@ -11456,7 +11753,13 @@ tex[4] = tx+w
 tex[6] = tx
 }
 if(rect.rt){//doesn't work
+if(rect.rt === -1){
+tex.unshift(...tex.splice(tex.length-2,2))
+}else if(rect.rt === 2){
+tex.push(...tex.splice(0,4))
+}else{
 tex.push(...tex.splice(0,2))
+}
 }
 let pos = null
 switch(face) {
@@ -12029,6 +12332,16 @@ makeBlock(new Array(6).fill("redstoneDustLine"), shapes.redstoneDustRotate, slab
 makeBlock(new Array(6).fill("redstoneDustL"), shapes.redstoneDustRotate, stairBlock, baseBlock)
 makeBlock(new Array(6).fill("redstoneDustT"), shapes.redstoneDustRotate, doorBlock, baseBlock)
 makeBlock(new Array(6).fill("redstoneDust+"), shapes.redstoneDust, paneBlock, baseBlock)
+}
+if(baseBlock.redstoneTorch){
+baseBlock.shape = shapes.redstoneTorch
+makeBlock(baseBlock.textures, shapes.redstoneWallTorch, slabBlock, baseBlock)
+makeBlock(baseBlock.textures, shapes.torch, crossBlock, baseBlock)
+crossBlock.lightLevel = 0
+crossBlock.textures = new Array(6).fill("redstoneTorchOff")
+makeBlock(baseBlock.textures, shapes.wallTorch, stairBlock, baseBlock)
+stairBlock.lightLevel = 0
+stairBlock.textures = crossBlock.textures
 }
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
@@ -14298,6 +14611,10 @@ if(side) blockMode = SLAB
 else if(hitBox.face === "bottom") blockMode = STAIR
 else blockMode = CUBE
 }
+if(blockData[holding].redstoneTorch){
+if(side) blockMode = SLAB
+else blockMode = CUBE
+}
 if(side && blockIds[blockData[block].name+"SW"]){
 block = blockIds[blockData[block].name+"SW"]
 }
@@ -14910,35 +15227,132 @@ let sx2 = (shadows[3] - shadows[2]) * x + shadows[2]
 return (sx2 - sx) * y + sx
 }
 */
-let getTint = {
-top: function(x,y,z,ret){//bottom
+/*
+function(x,y,z,ret){//bottom
 ret[0] = ret[2] = ret[3] = ret[5] = ret[6] = ret[8] = ret[9] = ret[11] = 1
 ret[1] = ret[4] = ret[7] = ret[10] = 0
+return ret
+}
+*/
+let getTint = {
+top: function(x,y,z,ret){//bottom
+var block = world.getBlock(x,y,z)
+var side = "tagTintPropertyTop"
+var tint = null
+if(block && blockData[block][side]){
+var data = blockData[block][side]
+var tags = world.getTags(x,y,z)
+if(tags && (tags[data] || tags[data] === 0)){
+tint = blockData[block].tint[tags[data] || 0]
+}
+}
+if(tint){
+ret[0] = ret[3] = ret[6] = ret[9] = tint[0] || 0
+ret[1] = ret[4] = ret[7] = ret[10] = tint[1] || 0
+ret[2] = ret[5] = ret[8] = ret[11] = tint[2] || 0
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = ret[4] = ret[5] = ret[6] = ret[7] = ret[8] = ret[9] = ret[10] = ret[11] = 1
+}
 return ret
 },
 bottom: function(x,y,z,ret){//top
-ret[0] = ret[2] = ret[3] = ret[5] = ret[6] = ret[8] = ret[9] = ret[11] = 1
-ret[1] = ret[4] = ret[7] = ret[10] = 0
+var block = world.getBlock(x,y,z)
+var side = "tagTintPropertyBottom"
+var tint = null
+if(block && blockData[block][side]){
+var data = blockData[block][side]
+var tags = world.getTags(x,y,z)
+if(tags && (tags[data] || tags[data] === 0)){
+tint = blockData[block].tint[tags[data] || 0]
+}
+}
+if(tint){
+ret[0] = ret[3] = ret[6] = ret[9] = tint[0] || 0
+ret[1] = ret[4] = ret[7] = ret[10] = tint[1] || 0
+ret[2] = ret[5] = ret[8] = ret[11] = tint[2] || 0
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = ret[4] = ret[5] = ret[6] = ret[7] = ret[8] = ret[9] = ret[10] = ret[11] = 1
+}
 return ret
 },
 north: function(x,y,z,ret){
-ret[0] = ret[2] = ret[3] = ret[5] = ret[6] = ret[8] = ret[9] = ret[11] = 1
-ret[1] = ret[4] = ret[7] = ret[10] = 0
+var block = world.getBlock(x,y,z)
+var side = "tagTintPropertyNorth"
+var tint = null
+if(block && blockData[block][side]){
+var data = blockData[block][side]
+var tags = world.getTags(x,y,z)
+if(tags && (tags[data] || tags[data] === 0)){
+tint = blockData[block].tint[tags[data] || 0]
+}
+}
+if(tint){
+ret[0] = ret[3] = ret[6] = ret[9] = tint[0] || 0
+ret[1] = ret[4] = ret[7] = ret[10] = tint[1] || 0
+ret[2] = ret[5] = ret[8] = ret[11] = tint[2] || 0
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = ret[4] = ret[5] = ret[6] = ret[7] = ret[8] = ret[9] = ret[10] = ret[11] = 1
+}
 return ret
 },
 south: function(x,y,z,ret){
-ret[0] = ret[2] = ret[3] = ret[5] = ret[6] = ret[8] = ret[9] = ret[11] = 1
-ret[1] = ret[4] = ret[7] = ret[10] = 0
+var block = world.getBlock(x,y,z)
+var side = "tagTintPropertySouth"
+var tint = null
+if(block && blockData[block][side]){
+var data = blockData[block][side]
+var tags = world.getTags(x,y,z)
+if(tags && (tags[data] || tags[data] === 0)){
+tint = blockData[block].tint[tags[data] || 0]
+}
+}
+if(tint){
+ret[0] = ret[3] = ret[6] = ret[9] = tint[0] || 0
+ret[1] = ret[4] = ret[7] = ret[10] = tint[1] || 0
+ret[2] = ret[5] = ret[8] = ret[11] = tint[2] || 0
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = ret[4] = ret[5] = ret[6] = ret[7] = ret[8] = ret[9] = ret[10] = ret[11] = 1
+}
 return ret
 },
 east: function(x,y,z,ret){
-ret[0] = ret[2] = ret[3] = ret[5] = ret[6] = ret[8] = ret[9] = ret[11] = 1
-ret[1] = ret[4] = ret[7] = ret[10] = 0
+var block = world.getBlock(x,y,z)
+var side = "tagTintPropertyEast"
+var tint = null
+if(block && blockData[block][side]){
+var data = blockData[block][side]
+var tags = world.getTags(x,y,z)
+if(tags && (tags[data] || tags[data] === 0)){
+tint = blockData[block].tint[tags[data] || 0]
+}
+}
+if(tint){
+ret[0] = ret[3] = ret[6] = ret[9] = tint[0] || 0
+ret[1] = ret[4] = ret[7] = ret[10] = tint[1] || 0
+ret[2] = ret[5] = ret[8] = ret[11] = tint[2] || 0
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = ret[4] = ret[5] = ret[6] = ret[7] = ret[8] = ret[9] = ret[10] = ret[11] = 1
+}
 return ret
 },
 west: function(x,y,z,ret){
-ret[0] = ret[2] = ret[3] = ret[5] = ret[6] = ret[8] = ret[9] = ret[11] = 1
-ret[1] = ret[4] = ret[7] = ret[10] = 0
+var block = world.getBlock(x,y,z)
+var side = "tagTintPropertyWest"
+var tint = null
+if(block && blockData[block][side]){
+var data = blockData[block][side]
+var tags = world.getTags(x,y,z)
+if(tags && (tags[data] || tags[data] === 0)){
+tint = blockData[block].tint[tags[data] || 0]
+}
+}
+if(tint){
+ret[0] = ret[3] = ret[6] = ret[9] = tint[0] || 0
+ret[1] = ret[4] = ret[7] = ret[10] = tint[1] || 0
+ret[2] = ret[5] = ret[8] = ret[11] = tint[2] || 0
+}else{
+ret[0] = ret[1] = ret[2] = ret[3] = ret[4] = ret[5] = ret[6] = ret[7] = ret[8] = ret[9] = ret[10] = ret[11] = 1
+}
 return ret
 },
 }
@@ -16795,13 +17209,13 @@ gl.enableVertexAttribArray(glCache.aTexture)
 gl.enableVertexAttribArray(glCache.aShadow)
 gl.enableVertexAttribArray(glCache.aSkylight)
 gl.enableVertexAttribArray(glCache.aBlocklight)
-//gl.enableVertexAttribArray(glCache.tint) //doesn't work, i think bigArray needs to be bigger
+gl.enableVertexAttribArray(glCache.tint)
 gl.vertexAttribPointer(glCache.aVertex, 3, gl.FLOAT, false, 44, 0)
 gl.vertexAttribPointer(glCache.aTexture, 2, gl.FLOAT, false, 44, 12)
 gl.vertexAttribPointer(glCache.aShadow, 1, gl.FLOAT, false, 44, 20)
 gl.vertexAttribPointer(glCache.aSkylight, 1, gl.FLOAT, false, 44, 24)
 gl.vertexAttribPointer(glCache.aBlocklight, 1, gl.FLOAT, false, 44, 28)
-//gl.vertexAttribPointer(glCache.tint, 3, gl.FLOAT, false, 44, 40)
+gl.vertexAttribPointer(glCache.tint, 3, gl.FLOAT, false, 44, 32)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
 this.lazy = false
 }
@@ -19174,6 +19588,7 @@ multiplayer.send(JSON.stringify(msg))
 }
 var host
 function initMultiplayer(target){
+if(preVersion) return alert("Multiplayer is not available on this version")
 if(multiplayer) return
 var ban = []
 host = false
@@ -19426,18 +19841,22 @@ if(data.volume) volume *= data.volume
 playSound(data.data, 0, volume, data.pitch)
 }else if(data.type === "eval"){
 console.log("Evaluating script: "+data.data)
+var res, error = false
 try{
-eval(data.data)
+res = eval(data.data)
 }catch(e){
 console.error(e)
+error = true
+res = e
 }
+//send({type:"evalRes",data:res,error:error})
 }else if(data.type === "error"){
 if(host){
 alert(data.data)
 }else{
-console.warn("Multiplayer error!",data.data)
 multiplayerError = data.data
 }
+console.warn("Multiplayer error!",data.data)
 }
 }
 multiplayer.onclose = () => {
@@ -20213,6 +20632,125 @@ pos: this.getEntPos(ent),
 dimension:this.type
 }
 })
+}
+getRedstoneConnectedTo(x,y,z, level){
+var spreaded = []
+var spreadAt = []
+spreadAt.push(x,y,z,0)
+while(spreadAt.length){
+var x = spreadAt[0]
+var y = spreadAt[1]
+var z = spreadAt[2]
+var i = spreadAt[3]
+if(i < level) {
+if(!xyArrayHas(spreaded,spreadAt,x+1,y,z) && blockData[world.getBlock(x+1,y,z)].name === "redstoneDust") spreadAt.push(x+1,y,z,i+1)
+if(!xyArrayHas(spreaded,spreadAt,x-1,y,z) && blockData[world.getBlock(x-1,y,z)].name === "redstoneDust") spreadAt.push(x-1,y,z,i+1)
+if(!xyArrayHas(spreaded,spreadAt,x,y,z+1) && blockData[world.getBlock(x,y,z+1)].name === "redstoneDust") spreadAt.push(x,y,z+1,i+1)
+if(!xyArrayHas(spreaded,spreadAt,x,y,z-1) && blockData[world.getBlock(x,y,z-1)].name === "redstoneDust") spreadAt.push(x,y,z-1,i+1)
+spreaded.push(x,y,z,i)
+}
+spreadAt.splice(0,4)
+}
+return spreaded
+}
+spreadPower(x,y,z, level){
+var spread = this.getRedstoneConnectedTo(x,y,z,level)
+for(var i=0; i<spread.length; i+=4){
+var bx = spread[i]
+var by = spread[i+1]
+var bz = spread[i+2]
+if(bx === x && by === y && bz === z) continue
+var l = this.getRedstoneWirePower(bx,by,bz)
+this.setPower(bx,by,bz, l)
+}
+this.powerChangeUpdate(x+1,y,z)
+this.powerChangeUpdate(x-1,y,z)
+this.powerChangeUpdate(x,y,z+1)
+this.powerChangeUpdate(x,y,z-1)
+}
+unspreadPower(x,y,z, level, includeSource){
+var spread = this.getRedstoneConnectedTo(x,y,z,level)
+for(var n=0; n<level; n++){
+for(var i=0; i<spread.length; i+=4){
+var bx = spread[i]
+var by = spread[i+1]
+var bz = spread[i+2]
+if(!includeSource && bx === x && by === y && bz === z) continue
+var l = this.getRedstoneWirePower(bx,by,bz)
+this.setPower(bx,by,bz, l)
+}
+}
+this.powerChangeUpdate(x+1,y,z)
+this.powerChangeUpdate(x-1,y,z)
+this.powerChangeUpdate(x,y,z+1)
+this.powerChangeUpdate(x,y,z-1)
+}
+getRedstoneWirePower(x,y,z){
+var right = this.getPower(x+1,y,z)
+var left = this.getPower(x-1,y,z)
+var down = this.getPower(x,y,z+1)
+var up = this.getPower(x,y,z-1)
+var level = max(right,left,down,up) - 1
+return level < 0 ? 0 : level
+}
+getRedstonePower(x,y,z){
+var right = this.getPower(x+1,y,z)
+var left = this.getPower(x-1,y,z)
+var down = this.getPower(x,y,z+1)
+var up = this.getPower(x,y,z-1)
+var level = max(right,left,down,up)
+return level
+}
+getPower(x,y,z){
+var tags = this.getTags(x,y,z)
+return (tags && tags.power) || 0
+}
+setPower(x,y,z, level){
+var block = this.getBlock(x,y,z)
+if(block && blockData[block].noSetPower) return
+var tags = this.getTags(x,y,z) || {}
+tags.power = level
+this.setTags(x,y,z,tags)
+this.updateBlock(x,y,z)
+this.powerChangeUpdate(x,y,z, x,y,z, false)
+this.powerChangeUpdate(x+1,y,z, x,y,z, false)
+this.powerChangeUpdate(x-1,y,z, x,y,z, false)
+this.powerChangeUpdate(x,y,z+1, x,y,z, false)
+this.powerChangeUpdate(x,y,z-1, x,y,z, false)
+}
+setBlockPower(x,y,z, type, fromDir){
+var block = this.getBlock(x,y,z)
+if(block && blockData[block].noSetPower) return
+if(type !== null && type !== "weak" && type !== "strong") {type = null; console.log("Oh no! It can only be strong or weak or null. But it was",type)}
+var tags = this.getTags(x,y,z) || {}
+if(!tags.blockPower) tags.blockPower = {top:null,bottom:null,north:null,south:null,east:null,west:null}
+tags.blockPower[fromDir] = type
+this.setTags(x,y,z,tags)
+this.updateBlock(x,y,z)
+this.powerChangeUpdate(x,y,z, x,y,z, true)
+if(fromDir !== "east") this.powerChangeUpdate(x+1,y,z, x,y,z, true)
+if(fromDir !== "west") this.powerChangeUpdate(x-1,y,z, x,y,z, true)
+if(fromDir !== "north") this.powerChangeUpdate(x,y,z+1, x,y,z, true)
+if(fromDir !== "south") this.powerChangeUpdate(x,y,z-1, x,y,z, true)
+if(fromDir !== "top") this.powerChangeUpdate(x,y+1,z, x,y,z, true)
+}
+getBlockPower(x,y,z){
+var tags = this.getTags(x,y,z)
+if(!tags) return null
+var blockPower = tags.blockPower
+if(!blockPower) return null
+if(blockPower.top === "strong" || blockPower.bottom === "strong" || blockPower.north === "strong" || blockPower.south === "strong" || blockPower.east === "strong" || blockPower.west === "strong"){
+return "strong"
+}else if(blockPower.top === "weak" || blockPower.bottom === "weak" || blockPower.north === "weak" || blockPower.south === "weak" || blockPower.east === "weak" || blockPower.west === "weak"){
+return "weak"
+}
+return null
+}
+powerChangeUpdate(x,y,z,sx,sy,sz, blockPowerChanged){
+var block = world.getBlock(x,y,z)
+if(block && blockData[block].onpowerupdate){
+blockData[block].onpowerupdate(x,y,z,sx,sy,sz, blockPowerChanged)
+}
 }
 tick() {
 let tickStart = performance.now()
@@ -21023,7 +21561,7 @@ const always = () => true
 Button.add(width / 2, height / 2 - 40, 400, 40, "Singleplayer", "main menu", r => changeScene("loadsave menu"))
 Button.add(width / 2, height / 2 + 15, 400, 40, "Multiplayer", "main menu", r => {
 changeScene("multiplayer menu")
-}, null, "If you want multiplayer, why don't you head over to willard.fun/minekhan?")
+}, () => preVersion, "If you want multiplayer, why don't you head over to willard.fun/minekhan?")
 Button.add(width / 2, height / 2 + 70, 400, 40, "Marketplace", "main menu", r => changeScene("marketplace"))
 Button.add(width / 2 - 105, height / 2 + 160, 190, 40, "Options", "main menu", r => changeScene("options"))
 Button.add(width / 2 + 105, height / 2 + 160, 190, 40, "Quit", "main menu", r => {
@@ -21153,7 +21691,7 @@ await loggedIn().then(r => logged = r)
 if(logged){
 initMultiplayer()
 }
-}, () => multiplayer)
+}, () => multiplayer || preVersion)
 Button.add(width / 2, 475, 300, 40, "Get Invite Link", "pause", r => {
 savebox.classList.remove("hidden")
 savebox.value = "https://minekhan.thingmaker.repl.co/?target="+world.id
