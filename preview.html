@@ -483,6 +483,7 @@ font-size:14px;
 }
 </style>
 <body>
+<img style="display:none;" src="https://data.thingmaker.repl.co/images/minekhan.png" alt="MineKhan"><!--Image is for search engines and stuff-->
 <div id="errorScreen" style="display:none;"></div>
 <canvas id="overlay" tabindex="0" width="600" height="600" style="position: absolute; top: 0px; left: 0px"></canvas>
 <input type="text" id="savebox" class="hidden" spellcheck="false" style="position: absolute; top: 10px; left: 10px; z-index: 1;">
@@ -640,7 +641,7 @@ Shapeless: The ingredients can be arranged on the grid in any way
 <div id="loadBar">
 <div></div>
 </div>
-<div id="loadProgress"></div>
+<div id="loadProgress">Initializing...</div>
 </div>
 <script>
 // Code edits will erase the world.
@@ -3316,7 +3317,7 @@ world.setBlockPower(x,y-1,z, null, "top")
 }
 },
 onpowerupdate:function(x,y,z,sx,sy,sz,blockPowerChanged){
-if(x===sx && y===sy && z===sz){
+if(x===sx && y===sy && z===sz && !blockPowerChanged){
 var tags = world.getTags(x,y,z)
 if(!tags) return
 if(tags.power){
@@ -3368,10 +3369,11 @@ world.setBlockPower(x,y-1,z, tags.power ? "weak" : null, "top")
 }
 }else if(blockPowerChanged){
 var strong = world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong"
-if(strong){
+var power = world.getPower(x,y,z)
+if(strong && !power){
 world.setPower(x,y,z,15)
 world.spreadPower(x,y,z,15)
-}else{
+}else if(power){
 world.unspreadPower(x,y,z,15,true)
 }
 }
@@ -4014,7 +4016,8 @@ Name:"That Invisible Block with a 🚫 Icon",
 textures: "none",
 iconTexture: "barrier",
 flatIcon:true,
-transparent:true
+transparent:true,
+breakTime:Infinity
 },
 {
 name: "oakSapling",
@@ -6011,12 +6014,15 @@ saturation: 1.2
 name:"redstoneLamp",
 Name:"Redstone Lamp",
 onpowerupdate:function(x,y,z){
-var power = world.getRedstonePower(x,y,z)
+var power = world.getRedstonePower(x,y,z) || world.getSurroundingBlockPower(x,y,z)
 var block = this.id
-if(power > 0){
+if(power){
 block = this.id | SLAB
 }
 if(world.getBlock(x,y,z) !== block) world.setBlock(x,y,z,block)
+},
+onplace:function(x,y,z){
+this.onpowerupdate(x,y,z)
 }
 },
 {
@@ -20690,7 +20696,11 @@ var right = this.getPower(x+1,y,z)
 var left = this.getPower(x-1,y,z)
 var down = this.getPower(x,y,z+1)
 var up = this.getPower(x,y,z-1)
-var level = max(right,left,down,up) - 1
+var top = this.getPower(x,y+1,z)
+var level = max(right,left,down,up, top) - 1
+if(world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong"){
+level = 15
+}
 return level < 0 ? 0 : level
 }
 getRedstonePower(x,y,z){
@@ -20726,13 +20736,14 @@ var tags = this.getTags(x,y,z) || {}
 if(!tags.blockPower) tags.blockPower = {top:null,bottom:null,north:null,south:null,east:null,west:null}
 tags.blockPower[fromDir] = type
 this.setTags(x,y,z,tags)
-this.updateBlock(x,y,z)
+//this.updateBlock(x,y,z) //cause errors, also it's useless
 this.powerChangeUpdate(x,y,z, x,y,z, true)
-if(fromDir !== "east") this.powerChangeUpdate(x+1,y,z, x,y,z, true)
-if(fromDir !== "west") this.powerChangeUpdate(x-1,y,z, x,y,z, true)
+if(fromDir !== "west") this.powerChangeUpdate(x+1,y,z, x,y,z, true)
+if(fromDir !== "east") this.powerChangeUpdate(x-1,y,z, x,y,z, true)
 if(fromDir !== "north") this.powerChangeUpdate(x,y,z+1, x,y,z, true)
 if(fromDir !== "south") this.powerChangeUpdate(x,y,z-1, x,y,z, true)
 if(fromDir !== "top") this.powerChangeUpdate(x,y+1,z, x,y,z, true)
+if(fromDir !== "bottom") this.powerChangeUpdate(x,y-1,z, x,y,z, true)
 }
 getBlockPower(x,y,z){
 var tags = this.getTags(x,y,z)
@@ -20742,6 +20753,20 @@ if(!blockPower) return null
 if(blockPower.top === "strong" || blockPower.bottom === "strong" || blockPower.north === "strong" || blockPower.south === "strong" || blockPower.east === "strong" || blockPower.west === "strong"){
 return "strong"
 }else if(blockPower.top === "weak" || blockPower.bottom === "weak" || blockPower.north === "weak" || blockPower.south === "weak" || blockPower.east === "weak" || blockPower.west === "weak"){
+return "weak"
+}
+return null
+}
+getSurroundingBlockPower(x,y,z){
+var north = this.getBlockPower(x,y,z-1)
+var south = this.getBlockPower(x,y,z+1)
+var east = this.getBlockPower(x-1,y,z)
+var west = this.getBlockPower(x+1,y,z)
+var top = this.getBlockPower(x,y+1,z)
+var bottom = this.getBlockPower(x,y-1,z)
+if(top === "strong" || bottom === "strong" || north === "strong" || south === "strong" || east === "strong" || west === "strong"){
+return "strong"
+}else if(top === "weak" || bottom === "weak" || north === "weak" || south === "weak" || east === "weak" || west === "weak"){
 return "weak"
 }
 return null
@@ -26771,3 +26796,4 @@ if(el) el.scrollIntoView()
 </script>
 </body>
 </html>
+<!--reminder for myself: if this is preview version, change preVersion to true-->
