@@ -2686,6 +2686,9 @@ cherrySapling: "0g0g5000uĨZ9ŇY-ùZAKY000000000000000000000000500000Aü00Jë9ĩ
 gun: "0g0g4000VVH(ĪWT4W0000000000000VVë5VÄĈlÍťĈlHZëlţ00lŗ00lŗ00lŗ00lŗ00nŗ00Wħ00f0000000",
 redstoneTorchOff: "0g0gc000U0W]0WE0WąŜWÚÃHýĻHViZSĹW;ĨZ-ęY)ĉH0000000000000000000000000000000000000000000000000001w0000002(0000004À0000006Ý0000004ë0000004Ý0000006Ý0000005ù0000004Ĉ0000005Ę000",
 redstoneTorch: "0g0gf000ţ0WZKWť(WZŠHZZZĔ0WýĻHViZąŜWSĹWÚÃH;ĨZ-ęY)ĉH00000000000000000000000000000000000000000001g000000iM000000kÁ0000001K0000007ë0000009Ĉ0000009ë0000007ë000000bħ0000009ķ000000bŇ000",
+redstoneConnector: "0g0gbŒĖYZZZKÎYĮsHŊ÷WÆ0Wľ;Z]0WĢåZđŎYāVH1hhyyhhh)QQ?UQQT)QQQQQQT)QQQQQQT)QQÓÑQQT)Q@ÓÓQQTáQÓIðÑQRâQÕòIÓQÂâQÕĂĀÓQÂáQÓòĀÓQR)QÓÕðÓQT)Q@ÓÓÑQT)QQQQQQT)QQQQQQT)QQ?UQQTOOOGGOO(",
+leverBase: "0g0g6ÚĞZÎðWĎĂHÁ?WĞłHóoY5C^óăl!ÈŋÄě?!ĈVĐmÕCíÕĈļ_KĿöCAđì_TãĬ?UļÕA!cĜbTęh|6wdþĹÆMÁSĜîÁĊó_wmüĈi$QģBmwÏĐr?MÈVmíÕ^ó8ĜlP)úT4ĿĐ",
+lever: "0g0gc000éŞZÞĮWí8WýĻHÚÃHąŜWSĹWViZ;ĨZ-ęY)ĉH0000000000000000000000000000000000000000000000000001w0000003w0000004À0000006Ý0000006ë0000004ë0000004ë0000005ù0000006Ĉ0000005Ę000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -3378,7 +3381,7 @@ world.unspreadPower(x,y,z,15,true)
 }
 }
 },
-connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch"],
+connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch", "lever", "redstoneConnector"],
 connectable: function(x,y,z, d) {
 var id = world.getBlock(x,y,z)
 if(this.connectables.includes(blockData[id].name)) return true
@@ -7070,6 +7073,126 @@ world.unspreadPower(x,y-1,z,15,true)
 }
 }
 },
+{
+name:"redstoneConnector",
+Name:"Block That Redstone Dust Connects To",
+stoneSound:true
+},
+{
+name:"lever",
+Name:"Lever",
+transparent:true,
+shadow:false,
+solid:false,
+lever:true,
+flatIcon:true,
+onclick:function(x,y,z){
+var block = world.getBlock(x,y,z)
+var me = blockData[blockIds.lever]
+var wall = me.id
+var wallOn = me.id | SLAB
+var ax = x, ay = y, az = z
+var dir
+switch(block){
+case wall | NORTH:
+case wallOn | NORTH:
+az++
+dir = "south"
+break
+case wall | SOUTH:
+case wallOn | SOUTH:
+az--
+dir = "north"
+break
+case wall | EAST:
+case wallOn | EAST:
+ax++
+dir = "west"
+break
+case wall | WEST:
+case wallOn | WEST:
+ax--
+dir = "east"
+break
+case me.id | STAIR:
+case me.id | CROSS:
+ay --
+dir = "top"
+break
+case me.id | TALLCROSS:
+case me.id | DOOR:
+ay ++
+dir = "bottom"
+break
+}
+var target, on
+switch(block){
+case wall | NORTH:
+on = true
+target = wallOn | NORTH
+break
+case wall | SOUTH:
+on = true
+target = wallOn | SOUTH
+break
+case wall | EAST:
+on = true
+target = wallOn | EAST
+break
+case wall | WEST:
+on = true
+target = wallOn | WEST
+break
+case wallOn | NORTH:
+on = false
+target = wall | NORTH
+break
+case wallOn | SOUTH:
+on = false
+target = wall | SOUTH
+break
+case wallOn | EAST:
+on = false
+target = wall | EAST
+break
+case wallOn | WEST:
+on = false
+target = wall | WEST
+break
+case me.id | STAIR:
+on = true
+target = me.id | CROSS
+break
+case me.id | CROSS:
+on = false
+target = me.id | STAIR
+break
+case me.id | TALLCROSS:
+on = true
+target = me.id | DOOR
+break
+case me.id | DOOR:
+on = false
+target = me.id | TALLCROSS
+break
+}
+world.setBlock(x,y,z,target)
+if(on){
+world.setPower(x,y,z,16)
+world.spreadPower(x,y,z,15)
+}else{
+world.setPower(x,y,z,0)
+world.unspreadPower(x,y,z,16)
+}
+var a = world.getBlock(ax,ay,az)
+if(a && !blockData[a].transparent){
+world.setBlockPower(ax,ay,az,on ? "strong" : null,dir)
+}
+},
+ondelete:function(x,y,z,prevTags){
+if(prevTags && prevTags.power) world.unspreadPower(x,y,z,16)
+}
+},
 /*
 { name: "pigFace" },
 { 
@@ -7425,7 +7548,7 @@ const crafts = {
 "stoneBricks,vine":{name:"mossyStoneBricks",shapeless:true},
 "cobblestone,vine":{name:"mossyCobble",shapeless:true},
 "chiseledStoneBricks,chiseledStoneBricks,chiseledStoneBricks,chiseledStoneBricks,netheriteIngot,chiseledStoneBricks,chiseledStoneBricks,chiseledStoneBricks,chiseledStoneBricks":{name:"lodestone"},
-"oakPlanks,oakPlanks,oakPlanks,oakPlanks,redstoneDust,oakPlanks,oakPlanks,oakPlanks,oakPlanks":{name:"noteBlock"},
+"oakPlanks,oakPlanks,oakPlanks,oakPlanks,redstone,oakPlanks,oakPlanks,oakPlanks,oakPlanks":{name:"noteBlock"},
 "oakPlanks,oakPlanks,oakPlanks,oakPlanks,diamond,oakPlanks,oakPlanks,oakPlanks,oakPlanks":{name:"jukebox"},
 "ironIngot,ironIngot,ironIngot,ironIngot,furnace,ironIngot,smoothStone,smoothStone,smoothStone":{name:"blastFurnace"},
 "air,oakLog,air,oakLog,furnace,oakLog,air,oakLog":{name:"smoker"},
@@ -7433,8 +7556,8 @@ const crafts = {
 "air,ironIngot,air,ironIngot":{name:"shears"},
 "melonSlice":{name:"melonSeeds",shapeless:true},
 "melonSlice,melonSlice,melonSlice,melonSlice,melonSlice,melonSlice,melonSlice,melonSlice,melonSlice":{name:"melon"},
-"redstoneDust,redstoneDust,redstoneDust,redstoneDust,redstoneDust,redstoneDust,redstoneDust,redstoneDust,redstoneDust":{name:"redstoneBlock"},
-"air,redstoneDust,air,redstoneDust,glowstone,redstoneDust,air,redstoneDust":{name:"redstoneLamp"},
+"redstone,redstone,redstone,redstone,redstone,redstone,redstone,redstone,redstone":{name:"redstoneBlock"},
+"air,redstone,air,redstone,glowstone,redstone,air,redstone":{name:"redstoneLamp"},
 "glowstoneDust,glowstoneDust,air,glowstoneDust,glowstoneDust":{name:"glowstone"},
 "cobblestone,quartz,air,quartz,cobblestone":{name:"diorite",amount:2,shaped:true},
 "diorite,diorite,air,diorite,diorite":{name:"polishedDiorite",amount:4,shaped:true},
@@ -7458,6 +7581,8 @@ const crafts = {
 "brick,brick,air,brick,brick":{name:"bricks",shaped:true},
 "brick,air,brick,air,brick":{name:"flowerPot",shaped:true},
 "air,amethystShard,air,amethystShard,glass,amethystShard,air,amethystShard":{name:"tintedGlass",amount:2},
+"redstone,air,air,stick":{name:"redstoneTorch",shaped:true},
+"stick,air,air,cobblestone":{name:"lever",shaped:true}
 }
 var breakTypes = {
 plant: "axe",
@@ -11383,6 +11508,116 @@ west: 0
 },
 rotate:true
 },
+leverWall:{
+verts:[
+[objectify(5,4,13,6,3,-16,0), customFace(7,12,7, 9,12,7, 9,8.45,15, 7,8.45,15, 7,6,2,10)],
+[objectify(5,12,16,6,3,-16,0), customFace(9,13.5,8, 7,13.5,8, 7,10,16, 9,10,16, 7,6,2,10)],
+[objectify(11,12,16,6,8,-16,0)],
+[objectify(5,12,13,6,8,-16,0), customFace(7,13.5,8, 9,13.5,8, 9,12,7, 7,12,7, 7,6,2,2)],
+[objectify(11,12,13,3,8,-16,0), customFace(9,12,7, 9,13.5,8, 9,10,16, 9,8.45,15, 7,6,2,10)],
+[objectify(5,12,16,3,8,-16,0), customFace(7,13.5,8, 7,12,7, 7,8.45,15, 7,10,16, 7,6,2,10)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 3,
+south: 0,
+east: 0,
+west: 0
+},
+rotate:true
+},
+leverWallOn:{
+verts:[
+[objectify(5,4,13,6,3,-16,0), customFace(7,2.5,8, 9,2.5,8, 9,6,16, 7,6,16, 7,6,2,10)],
+[objectify(5,12,16,6,3,-16,0), customFace(9,4,7, 7,4,7, 7,7.55,15, 9,7.55,15, 7,6,2,10)],
+[objectify(11,12,16,6,8,-16,0)],
+[objectify(5,12,13,6,8,-16,0), customFace(9,2.5,8, 7,2.5,8, 7,4,7, 9,4,7, 7,6,2,2)],
+[objectify(11,12,13,3,8,-16,0), customFace(9,2.5,8, 9,4,7, 9,7.55,15, 9,6,16, 7,6,2,10)],
+[objectify(5,12,16,3,8,-16,0), customFace(7,4,7, 7,2.5,8, 7,6,16, 7,7.55,15, 7,6,2,10)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 3,
+south: 0,
+east: 0,
+west: 0
+},
+rotate:true
+},
+leverFloor:{
+verts:[
+[objectify(5,0,4,6,8,-16,0), customFace(9,8,13.5, 7,8,13.5, 7,0,10, 9,0,10, 7,6,2,10)],
+[objectify(5,3,12,6,8,-16,0), customFace(7,9,12, 9,9,12, 9,1,8.45, 7,1,8.45, 7,6,2,10)],
+[objectify(11,3,12,6,3,-16,0), customFace(7,8,13.5, 9,8,13.5, 9,9,12, 7,9,12, 7,6,2,2)],
+[objectify(5,3,4,6,3,-16,0)],
+[objectify(11,3,4,8,3,-16,0), customFace(9,9,12, 9,8,13.5, 9,0,10, 9,1,8.45, 7,6,2,10)],
+[objectify(5,3,12,8,3,-16,0), customFace(7,8,13.5, 7,9,12, 7,1,8.45, 7,0,10, 7,6,2,10)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+},
+leverFloorOn:{
+verts:[
+[objectify(5,0,4,6,8,-16,0), customFace(7,8,2.5, 9,8,2.5, 9,0,6, 7,0,6, 7,6,2,10)],
+[objectify(5,3,12,6,8,-16,0), customFace(9,9,4, 7,9,4, 7,1,7.55, 9,1,7.55, 7,6,2,10)],
+[objectify(11,3,12,6,3,-16,0)],
+[objectify(5,3,4,6,3,-16,0), customFace(9,8,2.5, 7,8,2.5, 7,9,4, 9,9,4, 7,6,2,2)],
+[objectify(11,3,4,8,3,-16,0), customFace(9,8,2.5, 9,9,4, 9,1,7.55, 9,0,6, 7,6,2,10)],
+[objectify(5,3,12,8,3,-16,0), customFace(7,9,4, 7,8,2.5, 7,0,6, 7,1,7.55, 7,6,2,10)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+},
+leverCeil:{
+verts:[
+[objectify(5,13,4,6,8,-16,0), customFace(9,7,12, 7,7,12, 7,15,8.45, 9,15,8.45, 7,6,2,10)],
+[objectify(5,16,12,6,8,-16,0), customFace(7,8,13.5, 9,8,13.5, 9,16,10, 7,16,10, 7,6,2,10)],
+[objectify(11,16,12,6,3,-16,0), customFace(9,8,13.5, 7,8,13.5, 7,7,12, 9,7,12, 7,6,2,2)],
+[objectify(5,16,4,6,3,-16,0)],
+[objectify(11,16,4,8,3,-16,0), customFace(9,8,13.5, 9,7,12, 9,15,8.45, 9,16,10, 7,6,2,10)],
+[objectify(5,16,12,8,3,-16,0), customFace(7,7,12, 7,8,13.5, 7,16,10, 7,15,8.45, 7,6,2,10)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+},
+leverCeilOn:{
+verts:[
+[objectify(5,13,4,6,8,-16,0), customFace(7,7,4, 9,7,4, 9,15,7.55, 7,15,7.55, 7,6,2,10)],
+[objectify(5,16,12,6,8,-16,0), customFace(9,8,2.5, 7,8,2.5, 7,16,6, 9,16,6, 7,6,2,10)],
+[objectify(11,16,12,6,3,-16,0)],
+[objectify(5,16,4,6,3,-16,0), customFace(7,8,2.5, 9,8,2.5, 9,7,4, 7,7,4, 7,6,2,2)],
+[objectify(11,16,4,8,3,-16,0), customFace(9,7,4, 9,8,2.5, 9,16,6, 9,15,7.55, 7,6,2,10)],
+[objectify(5,16,12,8,3,-16,0), customFace(7,8,2.5, 7,7,4, 7,15,7.55, 7,16,6, 7,6,2,10)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+},
 playerHand: {
 verts: [
 [objectify( 6,  6,  6, 4,  4, 0, 0)], //bottom
@@ -12348,6 +12583,14 @@ crossBlock.textures = new Array(6).fill("redstoneTorchOff")
 makeBlock(baseBlock.textures, shapes.wallTorch, stairBlock, baseBlock)
 stairBlock.lightLevel = 0
 stairBlock.textures = crossBlock.textures
+}
+if(baseBlock.lever){
+baseBlock.shape = shapes.leverWall
+makeBlock(baseBlock.textures, shapes.leverWallOn, slabBlock, baseBlock)
+makeBlock(baseBlock.textures, shapes.leverFloor, stairBlock, baseBlock)
+makeBlock(baseBlock.textures, shapes.leverFloorOn, crossBlock, baseBlock)
+makeBlock(baseBlock.textures, shapes.leverCeil, tallcrossBlock, baseBlock)
+makeBlock(baseBlock.textures, shapes.leverCeilOn, doorBlock, baseBlock)
 }
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
@@ -14620,6 +14863,11 @@ else blockMode = CUBE
 if(blockData[holding].redstoneTorch){
 if(side) blockMode = SLAB
 else blockMode = CUBE
+}
+if(blockData[holding].lever){
+if(side) blockMode = CUBE
+else if(hitBox.face === "top") blockMode = STAIR
+else if(hitBox.face === "bottom") blockMode = TALLCROSS
 }
 if(side && blockIds[blockData[block].name+"SW"]){
 block = blockIds[blockData[block].name+"SW"]
