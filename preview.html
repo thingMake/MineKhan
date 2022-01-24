@@ -3371,7 +3371,7 @@ if(block && !blockData[block].transparent){
 world.setBlockPower(x,y-1,z, tags.power ? "weak" : null, "top")
 }
 }else if(blockPowerChanged){
-var strong = world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong"
+var strong = world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong" || world.getBlockPower(x,y+1,z) === "strong"
 var power = world.getPower(x,y,z)
 if(strong && !power){
 world.setPower(x,y,z,15)
@@ -7107,12 +7107,12 @@ break
 case wall | EAST:
 case wallOn | EAST:
 ax++
-dir = "west"
+dir = "east"
 break
 case wall | WEST:
 case wallOn | WEST:
 ax--
-dir = "east"
+dir = "west"
 break
 case me.id | STAIR:
 case me.id | CROSS:
@@ -7189,8 +7189,52 @@ if(a && !blockData[a].transparent){
 world.setBlockPower(ax,ay,az,on ? "strong" : null,dir)
 }
 },
-ondelete:function(x,y,z,prevTags){
-if(prevTags && prevTags.power) world.unspreadPower(x,y,z,16)
+ondelete:function(x,y,z,prevTags,prevBlock){
+if(prevTags && prevTags.power){
+world.unspreadPower(x,y,z,16)
+var block = prevBlock
+var me = blockData[blockIds.lever]
+var wall = me.id
+var wallOn = me.id | SLAB
+var ax = x, ay = y, az = z
+var dir
+switch(block){
+case wall | NORTH:
+case wallOn | NORTH:
+az++
+dir = "south"
+break
+case wall | SOUTH:
+case wallOn | SOUTH:
+az--
+dir = "north"
+break
+case wall | EAST:
+case wallOn | EAST:
+ax++
+dir = "east"
+break
+case wall | WEST:
+case wallOn | WEST:
+ax--
+dir = "west"
+break
+case me.id | STAIR:
+case me.id | CROSS:
+ay --
+dir = "top"
+break
+case me.id | TALLCROSS:
+case me.id | DOOR:
+ay ++
+dir = "bottom"
+break
+}
+var a = world.getBlock(ax,ay,az)
+if(a && !blockData[a].transparent){
+world.setBlockPower(ax,ay,az,null,dir)
+}
+}
 }
 },
 /*
@@ -20554,7 +20598,7 @@ return
 var prevTags = this.getTags(x,y,z)
 if(!keepTags) this.setTags(x, y, z, null)
 if(prev && blockData[prev].ondelete){
-blockData[prev].ondelete(x,y,z, prevTags)
+blockData[prev].ondelete(x,y,z, prevTags, prev)
 }
 if(blockID && blockData[blockID].onplace){
 blockData[blockID].onplace(x,y,z)
@@ -20925,13 +20969,14 @@ this.powerChangeUpdate(x,y,z-1)
 unspreadPower(x,y,z, level, includeSource){
 var spread = this.getRedstoneConnectedTo(x,y,z,level)
 for(var n=0; n<level; n++){
+var update = n === level - 1
 for(var i=0; i<spread.length; i+=4){
 var bx = spread[i]
 var by = spread[i+1]
 var bz = spread[i+2]
 if(!includeSource && bx === x && by === y && bz === z) continue
 var l = this.getRedstoneWirePower(bx,by,bz)
-this.setPower(bx,by,bz, l)
+this.setPower(bx,by,bz, l, !update)
 }
 }
 this.powerChangeUpdate(x+1,y,z)
@@ -20946,7 +20991,7 @@ var down = this.getPower(x,y,z+1)
 var up = this.getPower(x,y,z-1)
 var top = this.getPower(x,y+1,z)
 var level = max(right,left,down,up, top) - 1
-if(world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong"){
+if(world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong" || world.getBlockPower(x,y+1,z) === "strong"){
 level = 15
 }
 return level < 0 ? 0 : level
@@ -20963,13 +21008,14 @@ getPower(x,y,z){
 var tags = this.getTags(x,y,z)
 return (tags && tags.power) || 0
 }
-setPower(x,y,z, level){
+setPower(x,y,z, level, lazy){
 var block = this.getBlock(x,y,z)
 if(block && blockData[block].noSetPower) return
 var tags = this.getTags(x,y,z) || {}
 tags.power = level
 this.setTags(x,y,z,tags)
 this.updateBlock(x,y,z)
+if(lazy) return //don't update blocks if lazy
 this.powerChangeUpdate(x,y,z, x,y,z, false)
 this.powerChangeUpdate(x+1,y,z, x,y,z, false)
 this.powerChangeUpdate(x-1,y,z, x,y,z, false)
