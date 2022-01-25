@@ -2941,10 +2941,11 @@ glassSound: true
 {
 name: "redstoneBlock", Name:"Block of Redstone", breakTime:25, type:"metal1", stoneSound:true,
 onplace:function(x,y,z){
-world.setTags(x,y,z,{power:16})
+world.setPower(x,y,z,16)
 world.spreadPower(x,y,z, 16)
 },
 ondelete: function(x,y,z){
+world.setPower(x,y,z,0)
 world.unspreadPower(x,y,z, 16)
 },
 },
@@ -3004,22 +3005,22 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 },
-{ name: "whiteWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "orangeWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "magentaWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "lightBlueWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "yellowWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "limeWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "pinkWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "grayWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "lightGrayWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "cyanWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "purpleWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "blueWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "brownWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "greenWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "redWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
-{ name: "blackWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2},
+{ name: "whiteWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "orangeWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "magentaWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "lightBlueWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "yellowWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "limeWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "pinkWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "grayWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "lightGrayWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "cyanWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "purpleWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "blueWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "brownWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "greenWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "redWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "blackWool", breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
 { name: "whiteConcrete", breakTime:9, type:"rock1", stoneSound:true},
 { name: "orangeConcrete", breakTime:9, type:"rock1", stoneSound:true},
 { name: "magentaConcrete", breakTime:9, type:"rock1", stoneSound:true},
@@ -3638,7 +3639,7 @@ transparent: true,
 shadow: false,
 textures:"ironDoorBottom",
 door:true,
-woodSound:true
+stoneSound:true
 },
 {
 name: "darkOakDoor",
@@ -4498,7 +4499,72 @@ rotate: true
 },
 {
 name:"noteBlock",
-Name:"Note Block"
+Name:"Note Block",
+onclick:function(x,y,z){
+var note = world.getTagByName(x,y,z,"note")
+if(!note && note !== 0) note = -1
+note ++
+if(note >= 24) note = 0
+world.setTagByName(x,y,z,"note",note)
+blockData[blockIds.noteBlock].playNote(x,y,z)
+},
+onpowerupdate:function(x,y,z){
+var power = world.getRedstonePower(x,y,z) || world.getSurroundingBlockPower(x,y,z) ? true : false
+var on = world.getTagByName(x,y,z,"on") || false
+if(power !== on) {
+world.setTagByName(x,y,z,"on",power)
+if(power){
+this.playNote(x,y,z)
+}
+}
+},
+playNote:function(x,y,z){
+var note = world.getTagByName(x,y,z,"note") || 0
+if(!note && note !== 0) return
+var pitch = 2**((note-12)/12.0)
+var volume = posSound(x,y,z)
+var instrument = "harp"
+var block = world.getBlock(x,y-1,z)
+if(block && this.noteTypes[blockData[block].name]) instrument = this.noteTypes[blockData[block].name]
+if(block){
+for(var i in this.noteTypes){
+if(i.startsWith("type:") && i.replace("type:","") === blockData[block].type){
+instrument = this.noteTypes[i]
+}
+}
+}
+playSound("note."+instrument, 0, volume, pitch)
+if(multiplayer) send({type:"playSound", data:"note."+instrument, x:x,y:y,z:z,pitch:pitch})
+},
+noteTypes:(function(obj){
+var obj2 = {}
+for(var i in obj){
+if(typeof obj[i] === "string"){
+obj2[obj[i]] = i
+}else{
+for(var i2 of obj[i]){
+obj2[i2] = i
+}
+}
+}
+return obj2
+})({
+bass:"type:wood",
+snare:["sand","gravel"],
+hat:["glass","seaLantern","beacon"],
+bd: ['type:rock1', 'type:rock2', 'type:rock3'],
+bell: "goldBlock",
+flute: ["clay", "honeycombBlock"],
+icechime: ["packedIce"],
+guitar: "type:wool",
+xylobone: ["boneBlock","boneBlockSW"],
+iron_xylophone: ["ironBlock"],
+cow_bell: "soulSand",
+didgeridoo: "pumpkin",
+bit: "emeraldBlock",
+banjo: ["hayBlock", "hayBlockSW"],
+pling: "glowstone"
+})
 },
 {
 name:"jukebox",
@@ -7640,10 +7706,11 @@ rock2: ["stonePickaxe","ironPickaxe","diamondPickaxe","netheritePickaxe"],
 rock3: ["ironPickaxe","diamondPickaxe","netheritePickaxe"],
 rock4: ["diamondPickaxe","netheritePickaxe"],
 ground: "shovel",
-plant2: "hoe"
+plant2: "hoe",
+wool:"air"
 }
 var handBreakable = [
-"plant","wood","plant2","ground"
+"plant","wood","plant2","ground","wool"
 ]
 var allPickaxes = ["woodenPickaxe","stonePickaxe","ironPickaxe","diamondPickaxe","netheritePickaxe","goldenPickaxe"]
 var allShovels = ["woodenShovel","stoneShovel","ironShovel","diamondShovel","netheriteShovel","goldenShovel"]
@@ -12374,13 +12441,12 @@ if(baseBlock.torch || baseBlock.chain){
 slabBlock.drop = i
 }
 if(baseBlock.door){//doesn't work: open and close weirdly
-var doorType = baseBlock.id
 var func = function(x,y,z){
 var o = world.getTagByName(x,y,z,"open")
 var b = world.getBlock(x,y,z)
 var door2 = (b & SLAB) === SLAB
-var shapeId = door2 ? (this.doorType | SLAB) : (this.doorType | DOOR)
-var setId = door2 ? (this.doorType | SLAB) : (this.doorType | DOOR)
+var shapeId = door2 ? (this.id | SLAB) : (this.id | DOOR)
+var setId = door2 ? (this.id | SLAB) : (this.id | DOOR)
 var set
 if(door2 ? !o : o){
 if((shapeId | NORTH) === b){
@@ -12406,9 +12472,23 @@ set = setId | SOUTH
 world.setBlock(x,y,z,set)
 world.setTagByName(x,y,z,"open",!o)
 }
-baseBlock.onclick = func.bind({doorType:doorType})
+var onclick = baseBlock.name === "ironDoor" ? emptyFunc : function(x,y,z){
+this.toggle(x,y,z)
+}
+var onpowerupdate = function(x,y,z){
+var power = world.getRedstonePower(x,y,z) || world.getSurroundingBlockPower(x,y,z) ? true : false
+var open = world.getTagByName(x,y,z,"open") ? true : false
+if(power !== open) this.toggle(x,y,z)
+}
+baseBlock.toggle = func.bind(baseBlock)
+baseBlock.onclick = onclick.bind(baseBlock)
+baseBlock.onpowerupdate = onpowerupdate.bind(baseBlock)
 slabBlock.shape = shapes.door2
 slabBlock.drop = i
+doorBlock.onclick = onclick.bind(baseBlock)
+doorBlock.onpowerupdate = onpowerupdate.bind(baseBlock)
+slabBlock.onclick = onclick.bind(baseBlock)
+slabBlock.onpowerupdate = onpowerupdate.bind(baseBlock)
 }
 if(baseBlock.bed) baseBlock.shape = shapes.bed
 if(baseBlock.rotate) baseBlock.shape = shapes.rotate
@@ -20961,10 +21041,10 @@ if(bx === x && by === y && bz === z) continue
 var l = this.getRedstoneWirePower(bx,by,bz)
 this.setPower(bx,by,bz, l)
 }
-this.powerChangeUpdate(x+1,y,z)
+/*this.powerChangeUpdate(x+1,y,z)
 this.powerChangeUpdate(x-1,y,z)
 this.powerChangeUpdate(x,y,z+1)
-this.powerChangeUpdate(x,y,z-1)
+this.powerChangeUpdate(x,y,z-1)*/
 }
 unspreadPower(x,y,z, level, includeSource){
 var spread = this.getRedstoneConnectedTo(x,y,z,level)
@@ -20979,10 +21059,10 @@ var l = this.getRedstoneWirePower(bx,by,bz)
 this.setPower(bx,by,bz, l, !update)
 }
 }
-this.powerChangeUpdate(x+1,y,z)
+/*this.powerChangeUpdate(x+1,y,z)
 this.powerChangeUpdate(x-1,y,z)
 this.powerChangeUpdate(x,y,z+1)
-this.powerChangeUpdate(x,y,z-1)
+this.powerChangeUpdate(x,y,z-1)*/
 }
 getRedstoneWirePower(x,y,z){
 var right = this.getPower(x+1,y,z)
@@ -21001,7 +21081,9 @@ var right = this.getPower(x+1,y,z)
 var left = this.getPower(x-1,y,z)
 var down = this.getPower(x,y,z+1)
 var up = this.getPower(x,y,z-1)
-var level = max(right,left,down,up)
+var top = this.getPower(x,y+1,z)
+var bottom = this.getPower(x,y-1,z)
+var level = max(right,left,down,up,top,bottom)
 return level
 }
 getPower(x,y,z){
@@ -21021,6 +21103,8 @@ this.powerChangeUpdate(x+1,y,z, x,y,z, false)
 this.powerChangeUpdate(x-1,y,z, x,y,z, false)
 this.powerChangeUpdate(x,y,z+1, x,y,z, false)
 this.powerChangeUpdate(x,y,z-1, x,y,z, false)
+this.powerChangeUpdate(x,y+1,z, x,y,z, false)
+this.powerChangeUpdate(x,y-1,z, x,y,z, false)
 }
 setBlockPower(x,y,z, type, fromDir){
 var block = this.getBlock(x,y,z)
@@ -25521,7 +25605,25 @@ eat: {
 2: "random/eat2.ogg",
 3: "random/eat3.ogg",
 burp:"random/burp.ogg"
-}
+},
+note: {
+banjo: "note/banjo.ogg",
+bass: "note/bass.ogg",
+bd: "note/bd.ogg",
+bell: "note/bell.ogg",
+bit: "note/bit.ogg",
+cow_bell: "note/cow_bell.ogg",
+didgeridoo: "note/didgeridoo.ogg",
+flute: "note/flute.ogg",
+guitar: "note/guitar.ogg",
+harp: "note/harp.ogg",
+hat: "note/hat.ogg",
+icechime: "note/icechime.ogg",
+iron_xylophone: "note/iron_xylophone.ogg",
+pling: "note/pling.ogg",
+snare: "note/snare.ogg",
+xylobone: "note/xylobone.ogg",
+},
 }
 var soundVolumes = {
 }
