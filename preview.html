@@ -680,7 +680,7 @@ vTint = aTint;
 gl_Position = uView * vec4(aVertex, 1.0);
 float range = max(uDist / 5.0, 8.0);
 vFog = clamp((length(uPos.xz - aVertex.xz) - uDist + range) / range, 0.0, 1.0);
-waterFog = min(gl_Position.z / 150.0, 1.0);
+waterFog = clamp(gl_Position.z / 150.0, 0.0, 1.0);
 lightTint = vec3(1.,1.,1.);
 if(isInWorld){
 vec3 blockLightColor = flicker ? vec3(0.98, 0.95, 0.87) : vec3(1.,0.98,0.9);
@@ -708,14 +708,15 @@ varying float waterFog;
 varying vec3 lightTint;
 varying vec3 vTint;
 vec4 blueShift(vec4 color) {
-color.rg *= 1.0 - waterFog;
-color.r = color.r * (50.0/255.0) * max(waterFog/2., 1.);
-color.g = color.g * (210.0/255.0) * max(waterFog/2., 1.);
-color.b += (0.9 - color.b) * waterFog;
-return vec4(color.r * 0.9, color.g * 0.9, min(color.b + 0.3, 1.0), color.a);
+//color.rg *= 1.0 - waterFog;
+//color.r = color.r * (50.0/255.0) * max(waterFog/2., 1.);
+//color.g = color.g * (210.0/255.0) * max(waterFog/2., 1.);
+//color.b += (0.9 - color.b) * waterFog;
+//return vec4(color.r * 0.9, color.g * 0.9, min(color.b + 0.3, 1.0), color.a);
+return vec4(mix(color.rgb, skyColor, waterFog), color.a);
 }
 vec4 redShift(vec4 color) {
-return vec4(mix(color.rgb, vec3(255.,0.,0.), min(waterFog*12., 1.)), color.a);
+return vec4(mix(color.rgb, skyColor, min(waterFog*8., 1.)), color.a);
 }
 void main(){
 vec4 color = texture2D(uSampler, vTexture);
@@ -2925,14 +2926,14 @@ stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","blo
 { name: "stone", Name:"Stone", drop:"cobblestone", type:"rock1", breakTime:7.5, stoneSound:true},
 { name: "bedrock", Name:"Bedrock", breakTime:89000000, stoneSound:true},
 { name: "sand", Name:"Sand", breakTime:0.75,
-onupdate: function(x,y,z,b){
-fall(x,y,z,b)
+onupdate: function(x,y,z,b,world){
+fall(x,y,z,b,world)
 },
 digSound: ["block.sand.dig1", "block.sand.dig2", "block.sand.dig3", "block.sand.dig4"],
 stepSound: ["block.sand.step1", "block.sand.step2","block.sand.step3","block.sand.step4","block.sand.step5"]},
 { name: "gravel", Name:"Gravel", breakTime:0.9, type:"ground",
-onupdate: function(x,y,z){
-fall(x,y,z,blockIds.gravel)
+onupdate: function(x,y,z,b,world){
+fall(x,y,z,blockIds.gravel,world)
 },
 drop: function(){
 if(round(random(10)) === 1) return "flint"
@@ -3818,8 +3819,8 @@ transparent: true,
 cactus: true,
 damage: 1,
 potCross: true,
-onupdate:function(x,y,z,b){
-needsSupportingBlocks(x,y,z,b)
+onupdate:function(x,y,z,b,world){
+needsSupportingBlocks(x,y,z,b,world)
 }
 },
 {
@@ -4541,8 +4542,8 @@ transparent: true,
 anvil: true,
 digSound: "block.anvil.land",
 stepSound: ["block.stone.step1", "block.stone.step2","block.stone.step3","block.stone.step4","block.stone.step5","block.stone.step6"],
-onupdate: function(x,y,z,b){
-fall(x,y,z,b)
+onupdate: function(x,y,z,b,world){
+fall(x,y,z,b,world)
 },
 },
 { name: "slime",
@@ -5042,8 +5043,8 @@ layers: true,
 transparent:true,
 drop:"snowball",
 breakTime: 0.5,
-onupdate: function(x,y,z,b){
-fall(x,y,z,b)
+onupdate: function(x,y,z,b,world){
+fall(x,y,z,b,world)
 },
 },
 {
@@ -6225,8 +6226,8 @@ Name:"End Stone",
 name:"redSand",
 Name:"Red Sand",
 breakTime:0.75,
-onupdate: function(x,y,z,block){
-fall(x,y,z,block)
+onupdate: function(x,y,z,block,world){
+fall(x,y,z,block,world)
 },
 digSound: ["block.sand.dig1", "block.sand.dig2", "block.sand.dig3", "block.sand.dig4"],
 stepSound: ["block.sand.step1", "block.sand.step2","block.sand.step3","block.sand.step4","block.sand.step5"]
@@ -6875,8 +6876,8 @@ potCross:true,
 transparent:true,
 drop:"bambooStalk",
 breakTime:1.5,
-onupdate:function(x,y,z,b){
-needsSupportingBlocks(x,y,z,b)
+onupdate:function(x,y,z,b,world){
+needsSupportingBlocks(x,y,z,b,world)
 }
 },
 {
@@ -6983,8 +6984,8 @@ flatIcon:true,
 shadow:false,
 transparent:true,
 solid:false,
-onupdate:function(x,y,z,b){
-needsSupportingBlocks(x,y,z,b)
+onupdate:function(x,y,z,b,world){
+needsSupportingBlocks(x,y,z,b,world)
 }
 },
 {
@@ -9592,7 +9593,7 @@ let m = split[1]
 p.spectator = false
 if(m === "creative") survival = false
 else if(m === "survival") survival = true
-else if(m === "spectator") p.spectator = p.flying = true
+else if(m === "spectator") {p.spectator = p.flying = true; survival = false}
 else Messages.add("Game mode doesn't exsist: "+m)
 }
 },
@@ -10071,7 +10072,10 @@ let place
 let liquid = false
 let powder = false
 let inWater = 0 //head is in liquid
+let waterFogColor = [1,1,1]
 let wet = false
+let blockHere = 0
+let blockHereEntity = null
 let tick = false
 let standingOn = 0 //block id you are standing on
 let lastTick = 0
@@ -14206,9 +14210,9 @@ maxZ = max[2]
 if (face[1] > py && face[1] < pyy && minX < pxx && maxX > px && minZ < pzz && maxZ > pz) {
 if (vy <= 0) {
 p.onGround = true
-/*var target = round((face[1] + y + p.bottomH) * 10000) / 10000
-if(target - p.y < 1) p.y = target*/
-p.y = round((face[1] + y + p.bottomH) * 10000) / 10000
+var target = round((face[1] + y + p.bottomH) * 10000) / 10000
+if(!blockHere/*target - p.y < 1*/) p.y = target
+//p.y = round((face[1] + y + p.bottomH) * 10000) / 10000
 return false
 } else {
 //if(blockObj.damage > takeDamage){
@@ -14328,6 +14332,9 @@ blocksSize ++
 p.previousX = p.x
 p.previousY = p.y
 p.previousZ = p.z
+blockHere = world.getBlock(round(p.x),round(p.y),round(p.z))
+var pblockHere = blockHere
+blockHere = blockHere && blockData[blockHere].solid ? true : false
 var ontouch
 var x
 var y
@@ -14434,6 +14441,7 @@ if(!survival && p.y <= -40){
 p.y = -40
 p.onGround = true
 }
+blockHere = pblockHere
 if (!p.flying) {
 if (liquid){
 //p.jumpSpeed = 0.135;
@@ -15363,25 +15371,26 @@ damage(damageTook, username+" blew up.")
 }
 explodeSound(x,y,z)
 }
-function fall(x,y,z,b){
+function fall(x,y,z,b,world){
 if(!worldSettings.blocksFall || world.getBlock(x,y-1,z)) return
 setTimeout(() => {
 world.setBlock(x,y,z, 0)
 world.addEntity(new BlockEntity(b, x,y,z, true))
 }, tickTime)
 }
-function needsSupportingBlocks(x,y,z, b){ // if block under is gone, dissapear
+function needsSupportingBlocks(x,y,z, b,world){ // if block under is gone, dissapear
 var under = world.getBlock(x,y-1,z)
 if(!under || !blockData[under].solid){
 setTimeout(() => {
 world.setBlock(x,y,z, 0)
 world.addEntity(new Item(x,y,z,0,0,0,b,true))
-blockParticles(b,x,y,z,30)
+blockParticles(b,x,y,z,30,world)
 blockSound(b, "dig", x,y,z)
 }, tickTime)
 }
 }
-function blockParticles(block,x,y,z,amount, type){
+function blockParticles(block,x,y,z,amount, type, w = world){
+var world = w
 for(var i=0; i<amount; i++) world.particles.push(new BlockParticle(blockData[block].textures[2], x,y,z, type))
 }
 // Save the coords for a small sphere used to carve out caves
@@ -16600,7 +16609,7 @@ this.hasVisibleBlocks = true
 }
 this.renderData[index] = 1 << 31 | pos | visible << 13 | this.palleteMap[blockState]
 var block = world.getBlock(x,y,z)
-if(!noOnupdate && blockData[block]) blockData[block].onupdate(x,y,z,block);
+if(!noOnupdate && blockData[block]) blockData[block].onupdate(x,y,z,block,this.world);
 }
 genMesh(barray, index) {
 if (!this.renderLength) {
@@ -18639,6 +18648,7 @@ this.cached[blockID] = this.vao
 }
 }
 changeBlock(blockID){
+this.block = blockID
 if(this.cached[blockID]){
 this.vao = this.cached[blockID]
 return
@@ -21788,20 +21798,30 @@ gl.useProgram(program3D);
 initModelView(p)
 if(this.type === "nether"){
 skyLight = 0
-if(inWater === 1) gl.clearColor(0,0,255,1)
-else if(inWater === 2) gl.clearColor(255,0,0,1)
-else gl.clearColor(0, 0, 0, 1)
-gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT)
 }else{
 skyLight = min(max(abs(worldTime % (Math.PId*1.2) - Math.PI) / Math.PI - 0.04, 0.1), 1)
+}
+if(inWater === 1){
+sky[0] = waterFogColor[0]
+sky[1] = waterFogColor[1]
+sky[2] = waterFogColor[2]
+}else if(inWater === 2){
+sky[0] = 0.8
+sky[1] = 0
+sky[2] = 0
+}else{
 /*var redTintAmount = min(abs(skyLight - 0.5), 1)
 sky[0] = lerp(redTintAmount, defaultSky[0], 255)
 sky[1] = lerp(redTintAmount, defaultSky[1], 0)
 sky[2] = lerp(redTintAmount, defaultSky[2], 0)*/
-if(inWater === 1) gl.clearColor(0,0,255,1)
-else if(inWater === 2) gl.clearColor(255,0,0,1)
+sky[0] = defaultSky[0]
+sky[1] = defaultSky[1]
+sky[2] = defaultSky[2]
+}
+if(inWater) gl.clearColor(sky[0], sky[1], sky[2], 1)
 else gl.clearColor(sky[0] * skyLight, sky[1] * skyLight, sky[2] * skyLight, 1)
 gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT)
+if(this.type !== "nether"){
 //skybox render
 if(inWater === 0){
 /*gl.useProgram(skyboxProgram);
@@ -21833,8 +21853,7 @@ gl.uniform1f(glCache.uDist, fogDist)
 // if you are going to change this to use actual time change line 4487 as well
 // since it depends on it
 gl.uniform1f(glCache.uTime, skyLight)
-if(inWater) gl.uniform3f(glCache.skyColor, 0, 0, 255)
-else gl.uniform3f(glCache.skyColor, sky[0], sky[1], sky[2])
+gl.uniform3f(glCache.skyColor, sky[0], sky[1], sky[2])
 gl.uniform1i(glCache.inWater, inWater)
 let c = this.sortedChunks
 for (let chunk of c) {
@@ -21873,6 +21892,11 @@ crack.entity.render()
 }
 }
 renderPlayer()
+if(blockHereEntity.show){
+gl.disable(gl.CULL_FACE)
+blockHereEntity.render()
+gl.enable(gl.CULL_FACE)
+}
 if(crack.idx > -1 && survival){
 crack.entity.x = crack.pos[0]
 crack.entity.y = crack.pos[1]
@@ -26752,6 +26776,7 @@ message.innerHTML = ".>a/<etisbew ym>'oc.lper.rekamgniht.www//:sptth'=ferh a< tu
 crack.entity = new crackEntity("crack1",0,0,0)
 for(var i=0; i<crack.length; i++){crack.entity.cacheTexture(crack[i])}
 entityFire = new EntityFire()
+blockHereEntity = new BlockEntity(0,0,0,0)
 initBackgrounds()
 initParticles()
 initPanorama()
@@ -27154,7 +27179,7 @@ damage(1, username+" burned up.")
 }
 p.burning = p.burnTimer > 0
 if(!survival) p.burnTimer = 0
-var blockHere = world.getBlock(p2.x, p2.y, p2.z)
+blockHere = world.getBlock(p2.x, p2.y, p2.z)
 inWater = 0
 if(blockHere === blockIds.Water) inWater = 1
 if(blockHere === blockIds.Lava) inWater = 2
@@ -27166,6 +27191,7 @@ p.velocity.y = 0.2
 p.velocity.y *= 0.8
 }
 }
+blockHereEntity.show = false
 if(survival){
 if(liquid && blockHere === blockIds.Water){
 if(p.oxygen > 0){
@@ -27179,6 +27205,32 @@ updateHUD = true
 if(now-lastBlockHarm > 500){
 lastBlockHarm = now
 damage(1, username+" drowned.",false, "drown")
+}
+}
+}/*suffoacting*/else if(blockHere && blockData[blockHere].solid && !blockData[blockHere].transparent){
+if(blockHereEntity.block !== blockHere){
+blockHereEntity.changeBlock(blockHere)
+}
+blockHereEntity.show = true
+blockHereEntity.x = p2.x
+blockHereEntity.y = p2.y
+blockHereEntity.z = p2.z
+if(p.oxygen > 0){
+var time = floor(p.oxygen / 2) * 2 === p.oxygen ? 250 : 125
+if(now - lastLoseOxygen > time){
+p.oxygen --
+lastLoseOxygen = now
+updateHUD = true
+}
+}else{
+if(now-lastBlockHarm > 500){
+lastBlockHarm = now
+var msg = username+" was suffocated by "
+var name = blockData[blockHere].Name
+if("aeiouAEIOU".includes(name[0])) msg += "an " //check for vowels
+else msg += "a "
+msg += name+"."
+damage(1, msg)
 }
 }
 }else if(p.oxygen < 20 && now - lastGetOxygen > 300){
@@ -27246,6 +27298,14 @@ if(p.lastTemperature !== round(p.temperature)){
 p.lastTemperature = round(p.temperature)
 updateHUD = true
 }
+}
+if(inWater === 1 && tick){
+var b = world.getBiome(p2.x,p2.y,p2.z)
+var w = blockData[blockIds.Water]
+var t = w.tint[b] || w.tint.default
+waterFogColor[0] = t[0]
+waterFogColor[1] = t[1]
+waterFogColor[2] = t[2]
 }
 if(p.health < 5 && tick) updateHUD = true //for hearts shaking
 if (updateHUD) {
