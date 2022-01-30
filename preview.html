@@ -482,6 +482,14 @@ right:0;
 font-size:14px;
 }
 </style>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VRNT3CCCGH"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-VRNT3CCCGH');
+</script>
 <body>
 <img style="display:none;" src="https://data.thingmaker.repl.co/images/minekhan.png" alt="MineKhan"><!--Image is for search engines and stuff-->
 <div id="errorScreen" style="display:none;"></div>
@@ -980,7 +988,7 @@ window.loadBar = document.querySelector("#loadBar div")
 window.themeColor = document.getElementById("themeColor")
 let touchScreen = "ontouchstart" in document
 if(!touchScreen) onscreenControl_Element.style.display = "none"
-var preVersion = true //preview version
+var preVersion = false //preview version
 function MineKhan() {
 window.console.log("%cWhat are you doing?\n%cHacking?\n%cDON'T DO THAT!\n%cIf you are not a developer, %cGET OUT OF HERE!!!", "font-size:20px;font-weight:bold;", "background:lightgreen;padding:10px;", "color:red;font-weight:bold;", "text-decoration:underline;","text-decoration:underline;color:red;font-weight:bold;")
 // cache Math object
@@ -3441,10 +3449,15 @@ world.unspreadPower(x,y,z,15,true)
 }
 }
 },
-connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch", "lever", "redstoneConnector"],
+connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch", "lever", "redstoneConnector","is:button"],
 connectable: function(x,y,z, d) {
 var id = world.getBlock(x,y,z)
 if(this.connectables.includes(blockData[id].name)) return true
+for(var i of this.connectables){
+if(i.startsWith("is:")){
+if(blockData[id][i.replace("is:","")]) return true
+}
+}
 if(id === blockIds.redstoneRepeater){//for later
 var tags = world.getTags(x,y,z)
 var canIt = false
@@ -4043,7 +4056,7 @@ crossShape: true,
 digSound: ["block.nether_sprouts.dig1", "block.nether_sprouts.dig2", "block.nether_sprouts.dig3", "block.nether_sprouts.dig4"],
 stepSound: ["block.nether_sprouts.step1", "block.nether_sprouts.step2","block.nether_sprouts.step3","block.nether_sprouts.step4","block.nether_sprouts.step5"]
 },
-{ name: "stoneButton", textures:"stone", button:true, transparent: true },
+{ name: "stoneButton", textures:"stone", button:true, transparent: true, shadow:false, stone:true },
 { 
 name: "RespawnAnchorOff",
 textures: ["respawnAnchorBottom", "respawnAnchorTopOff", "respawnAnchorSide0"],
@@ -5882,55 +5895,65 @@ pressurePlate: true
 name:"oakButton",
 textures:"oakPlanks",
 button:true,
-transparent: true
+transparent: true,
+shadow:false
 },
 {
 name:"birchButton",
 textures:"birchPlanks",
 button:true,
-transparent: true
+transparent: true,
+shadow:false
 },
 {
 name:"acaciaButton",
 textures:"acaciaPlanks",
 button:true,
-transparent: true
+transparent: true,
+shadow:false
 },
 {
 name:"darkOakButton",
 textures:"darkOakPlanks",
 button:true,
-transparent: true
+transparent: true,
+shadow:false
 },
 {
 name:"jungleButton",
 textures:"junglePlanks",
 button:true,
-transparent: true
+transparent: true,
+shadow:false
 },
 {
 name:"spruceButton",
 textures:"sprucePlanks",
 button:true,
-transparent: true
+transparent: true,
+shadow:false
 },
 {
 name:"warpedButton",
 textures:"warpedPlanks",
 button:true,
-transparent: true
+transparent: true,
+shadow:false
 },
 {
 name:"crimsonButton",
 textures:"crimsonPlanks",
 button:true,
-transparent: true
+transparent: true,
+shadow:false
 },
 {
 name:"polishedBlackstoneButton",
 textures:"polishedBlackstone",
 button:true,
-transparent:true
+transparent:true,
+shadow:false,
+stone:true
 },
 {
 name:"copperBlock",
@@ -10937,11 +10960,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-buffer: null,
-size: 6,
-varients: [],
-flip: true,
 rotate: true
 },
 chain: {
@@ -11874,6 +11892,25 @@ east: 0,
 west: 0
 },
 },
+buttonPushed:{
+verts:[
+[objectify(5,6,15,6,1,5,6)],
+[objectify(5,10,16,6,1,5,6)],
+[objectify(11,10,16,6,4,5,6)],
+[objectify(5,10,15,6,4,5,6)],
+[objectify(11,10,15,1,4,5,6)],
+[objectify(5,10,16,1,4,5,6)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+rotate: true
+},
 playerHand: {
 verts: [
 [objectify( 6,  6,  6, 4,  4, 0, 0)], //bottom
@@ -12491,6 +12528,88 @@ tex[4] = temp // East = North
 return tex
 }
 win.initBlockData = function(){
+var buttonOnclick = function(x,y,z){
+var off = this.id | BUTTON
+var on = this.id | SLAB
+var target = null
+switch(world.getBlock(x,y,z)){
+case off | NORTH:
+target = on | NORTH
+break
+case off | SOUTH:
+target = on | SOUTH
+break
+case off | EAST:
+target = on | EAST
+break
+case off | WEST:
+target = on | WEST
+}
+if(target){
+world.setBlock(x,y,z,target)
+}
+}
+var buttonOnupdate = function(x,y,z){
+var off = this.id | BUTTON
+var on = this.id | SLAB
+var target = null
+var ax=x,ay=y,az=z, dir
+var block = world.getBlock(x,y,z)
+switch(block){
+case on | NORTH:
+case off | NORTH:
+az++
+dir = "south"
+break
+case on | SOUTH:
+case off | SOUTH:
+az--
+dir = "north"
+break
+case on | EAST:
+case off | EAST:
+ax++
+dir = "west"
+break
+case on | WEST:
+case off | WEST:
+ax--
+dir = "east"
+break
+}
+var hasPower
+switch(block){
+case on | NORTH:
+target = off | NORTH
+hasPower = true
+break
+case on | SOUTH:
+target = off | SOUTH
+hasPower = true
+break
+case on | EAST:
+target = off | EAST
+hasPower = true
+break
+case on | WEST:
+target = off | WEST
+hasPower = true
+break
+}
+if(target){
+setTimeout(function(){
+world.setBlock(x,y,z,target)
+world.setPower(x,y,z,0)
+world.unspreadPower(x,y,z,16)
+world.setBlockPower(ax,ay,az,null,dir)
+},this.stone ? tickTime*20 : tickTime*30)
+}
+if(hasPower){
+world.setPower(x,y,z,16)
+world.spreadPower(x,y,z,16)
+world.setBlockPower(ax,ay,az,"strong",dir)
+}
+}
 for (let i = 0; i < BLOCK_COUNT; i++) {
 let baseBlock = blockData[i]
 for(var t=0; t<baseBlock.textures.length; t++){
@@ -12865,6 +12984,11 @@ makeBlock(baseBlock.textures, shapes.leverFloor, stairBlock, baseBlock)
 makeBlock(baseBlock.textures, shapes.leverFloorOn, crossBlock, baseBlock)
 makeBlock(baseBlock.textures, shapes.leverCeil, tallcrossBlock, baseBlock)
 makeBlock(baseBlock.textures, shapes.leverCeilOn, doorBlock, baseBlock)
+}
+if(baseBlock.button){
+makeBlock(baseBlock.textures, shapes.buttonPushed, slabBlock, baseBlock)
+baseBlock.onclick = buttonOnclick.bind(baseBlock)
+baseBlock.onupdate = buttonOnupdate.bind(baseBlock)
 }
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
