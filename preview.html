@@ -2722,6 +2722,7 @@ redstoneConnector: "0g0gbŒĖYZZZKÎYĮsHŊ÷WÆ0Wľ;Z]0WĢåZđŎYāVH1hhyyhhh)
 leverBase: "0g0g6ÚĞZÎðWĎĂHÁ?WĞłHóoY5C^óăl!ÈŋÄě?!ĈVĐmÕCíÕĈļ_KĿöCAđì_TãĬ?UļÕA!cĜbTęh|6wdþĹÆMÁSĜîÁĊó_wmüĈi$QģBmwÏĐr?MÈVmíÕ^ó8ĜlP)úT4ĿĐ",
 lever: "0g0gc000éŞZÞĮWí8WýĻHÚÃHąŜWSĹWViZ;ĨZ-ęY)ĉH0000000000000000000000000000000000000000000000000001w0000003w0000004À0000006Ý0000006ë0000004ë0000004ë0000005ù0000006Ĉ0000005Ę000",
 note:"0g0g6000ĚĲWJPWÖĎYÁ?WŚĶW02ë00002ķ00002w0000400000400000400002þ00001į0000000000000000000000000000000000000000000000000000",
+slingshot: "0g0g6000ĚĲW]ĘHŖĦZłÚYÎ0Y00000000002ë0Cħ2gë0wrù0ë0w00aë0U00U00aë2Ĉ001Úĝ00005Đ00000Đ00005S00005S00005Đ00000Đ00000Đ00005Đ00",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -7125,15 +7126,26 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 },
-{
+/*{
 name:"gun",
 Name:"gun: something dangerous you should never use",
 flatIcon:true,
-onuse: function(x,y,z){
+onuse: function(){
 dieMessage = username+" died because he used a gun backwards. guns are dangerous and stuff"
 die()
 },
 useAnywhere:true
+},*/
+{
+name:"slingshot",
+Name:"Slingshot",
+item:true,
+onuse: function(x,y,z){
+var pd = p.direction
+world.addEntity(new SlingshotShot(p.x,p.y,p.z,pd.x,pd.y,pd.z))
+},
+useAnywhere:true,
+stackSize:1
 },
 {
 name:"redstoneTorch",
@@ -14211,7 +14223,7 @@ if (face[1] > py && face[1] < pyy && minX < pxx && maxX > px && minZ < pzz && ma
 if (vy <= 0) {
 p.onGround = true
 var target = round((face[1] + y + p.bottomH) * 10000) / 10000
-if(!blockHere/*target - p.y < 1*/) p.y = target
+if(!blockHere/*target - p.y < 1*/ || !survival) p.y = target
 //p.y = round((face[1] + y + p.bottomH) * 10000) / 10000
 return false
 } else {
@@ -18412,6 +18424,11 @@ glExtensions.vertex_array_object.bindVertexArrayOES(part.vao)
 gl.drawElements(gl.TRIANGLES, 6 * part.size, gl.UNSIGNED_INT, 0)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
+facePlayer(){
+this.yaw = Math.PId - (atan2(p.z - this.z, p.x - this.x) + Math.PI2 + Math.PI)
+var adjacent = dist2(this.x,this.z,p.x,p.z)
+this.pitch = Math.PId - atan2(p.y - this.y, adjacent)
+}
 }
 class Item extends Entity {
 constructor(x, y, z, velx, vely, velz, blockID, autoSetVel, amount, durability = null) {
@@ -18843,6 +18860,167 @@ var fromMe = this.from === achexUsername
 if (fromMe && (now - this.spawn > this.despawns || this.hasCollided)) {
 this.canDespawn = true
 }
+}
+}
+class SlingshotShot extends BlockEntity{
+constructor(x,y,z,velx,vely,velz){
+super(blockIds.ironNugget, x,y,z)
+this.type = "SlingshotShot"
+this.velx = velx
+this.vely = vely
+this.velz = velz
+this.despawns = 10000
+this.gravityStrength = -0.01
+}
+update() {
+let now = performance.now()
+this.updateVelocity(now)
+this.move(now)
+if (now - this.spawn > this.despawns && this.onGround) {
+this.canDespawn = true
+//world.addEntity(new Item(this.x,this.y,this.z,0,0,0,blockIds.ironNugget))
+}
+var collided = entityRayTrace(this.x,this.y,this.z,true)
+if(collided && collided !== this){
+if(!entPlayerCollided){
+if(collided.onhit) collided.onhit(5)
+}
+this.canDespawn = true
+}else if(collidedWithMe && survival){
+damage(5, username+" got killed by a slingshot.")
+this.canDespawn = true
+}
+this.canFacePlayer = true
+}
+move(now) {
+let pminX = floor(this.x - this.width / 2)
+let pmaxX = ceil(this.x + this.width / 2)
+let pminY = floor(this.y - this.height / 2)
+let pmaxY = ceil(this.y + this.height / 2)
+let pminZ = floor(this.z - this.depth / 2)
+let pmaxZ = ceil(this.z + this.depth / 2)
+let block = null
+this.liquid = false
+for (let x = pminX; x <= pmaxX; x++) {
+for (let y = pminY; y <= pmaxY; y++) {
+for (let z = pminZ; z <= pmaxZ; z++) {
+let block = world.getBlock(x, y, z)
+if (block && blockData[block].solid && !blockData[block].liquid) {
+this.contacts.add(x, y, z, block)
+}
+if(x === round(this.x) && z === round(this.z) && blockData[block].liquid){
+this.liquid = true
+}
+}
+}
+}
+this.previousX = this.x
+this.previousY = this.y
+this.previousZ = this.z
+var xBounce, yBounce, zBounce, pvelx = this.velx, pvely = this.vely, pvelz = this.velz
+this.canStepX = false
+this.canStepY = false
+this.onGround = false
+this.hasCollided = false
+//Check collisions in the Y direction
+this.y += this.vely
+for (let i = 0; i < this.contacts.size; i++) {
+block = this.contacts.array[i]
+if (this.collided(block[0], block[1], block[2], 0, this.vely, 0, block[3])) {
+this.y = this.previousY
+this.vely = 0
+this.hasCollided = true
+yBounce = true
+break
+}
+}
+if (this.y === this.previousY) {
+this.canStepX = true
+this.canStepZ = true
+}
+//Check collisions in the X direction
+this.x += this.velx
+for (let i = 0; i < this.contacts.size; i++) {
+block = this.contacts.array[i]
+if (this.collided(block[0], block[1], block[2], this.velx, 0, 0, block[3])) {
+if (this.canStepX && !world.getBlock(block[0], block[1] + 1, block[2]) && !world.getBlock(block[0], block[1] + 2, block[2])) {
+continue
+}
+this.x = this.previousX
+this.velx = 0
+this.hasCollided = true
+xBounce = true
+break
+}
+}
+//Check collisions in the Z direction
+this.z += this.velz
+for (let i = 0; i < this.contacts.size; i++) {
+block = this.contacts.array[i]
+if (this.collided(block[0], block[1], block[2], 0, 0, this.velz, block[3])) {
+if (this.canStepZ && !world.getBlock(block[0], block[1] + 1, block[2]) && !world.getBlock(block[0], block[1] + 2, block[2])) {
+continue
+}
+this.z = this.previousZ
+this.velz = 0
+this.hasCollided = true
+zBounce = true
+break
+}
+}
+if(this.onGround){
+this.hasCollided = true
+}
+if(xBounce) this.velx = -pvelx
+if(yBounce) this.vely = -pvely
+if(zBounce) this.velz = -pvelz
+this.lastUpdate = now
+this.contacts.clear()
+}
+render(){
+if(this.canFacePlayer) {
+this.facePlayer()
+this.canFacePlayer = false
+}
+let diff = (performance.now() - this.lastUpdate) / tickTime
+if (diff > 1) diff = 1
+const offsetY = this.offsetY
+let renderx = (this.x - this.previousX) * diff + this.previousX
+let rendery = ((this.y - this.previousY) * diff + this.previousY) + offsetY
+let renderz = (this.z - this.previousZ) * diff + this.previousZ
+const modelMatrix = entityMatrices.modelMatrix;
+modelMatrix.identity()
+modelMatrix.translate(renderx, rendery, renderz)
+modelMatrix.rotZ(this.dieEffect)
+modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
+modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
+const viewMatrix = p.transformation.elements
+const proj = p.projection
+let projectionMatrix = entityMatrices.projectionMatrix
+projectionMatrix.set(proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0)
+projectionMatrix = projectionMatrix.elements
+const modelViewProjectionMatrix = entityMatrices.modelViewProjectionMatrix
+modelViewProjectionMatrix.identity()
+modelViewProjectionMatrix.mult(projectionMatrix)
+modelViewProjectionMatrix.mult(viewMatrix)
+modelViewProjectionMatrix.mult(modelMatrix.elements)
+// row major to column major
+modelViewProjectionMatrix.transpose()
+const x = round(this.x)
+const y = round(this.y)
+const z = round(this.z)
+const blockLight = world.getLight(x, y, z, 1)
+const skysLight = world.getLight(x, y, z, 0)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
+gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
+gl.uniform1i(glCache.uSamplerEntity, 0)
+gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
+gl.uniform1f(glCache.harmEffectEntity, this.harmEffect || this.dieEffect)
+gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
+glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
 }
 class ExperienceOrb extends Entity{
@@ -21497,6 +21675,9 @@ ent = new EnderPearl(0,0,0,0,0,0)
 break
 case "Snowball":
 ent = new Snowball(0,0,0,0,0,0)
+break
+case "SlingshotShot":
+ent = new SlingshotShot(0,0,0,0,0,0)
 break
 case "ExperienceOrb":
 ent = new ExperienceOrb(0,0,0,p.value)
