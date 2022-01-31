@@ -988,7 +988,7 @@ window.loadBar = document.querySelector("#loadBar div")
 window.themeColor = document.getElementById("themeColor")
 let touchScreen = "ontouchstart" in document
 if(!touchScreen) onscreenControl_Element.style.display = "none"
-var preVersion = false //preview version
+var preVersion = true //preview version
 function MineKhan() {
 window.console.log("%cWhat are you doing?\n%cHacking?\n%cDON'T DO THAT!\n%cIf you are not a developer, %cGET OUT OF HERE!!!", "font-size:20px;font-weight:bold;", "background:lightgreen;padding:10px;", "color:red;font-weight:bold;", "text-decoration:underline;","text-decoration:underline;color:red;font-weight:bold;")
 // cache Math object
@@ -3192,8 +3192,9 @@ lightLevel: 11,
 ontouch: function(){
 touchingPortal = true
 portalEffect += 2
-if(portalEffect >= 100){
-portalEffect = 0
+if(portalEffect >= 100 && portalFadeOutEffect <= 0){
+//portalEffect = 0
+portalFadeOutEffect = 100
 if(world.type === "nether"){
 world = dimensions.overworld
 if(!world.hasLoaded){
@@ -10130,6 +10131,7 @@ let freezeEffect = 0
 let lastFreezeHealth = 0
 let loseHealthEffect = 0
 let portalEffect = 0
+let portalFadeOutEffect = 0
 let portalTriggerSound = null
 let portalTriggerSoundGain = null
 let touchingPortal = false
@@ -20130,8 +20132,8 @@ gl.uniform1i(glCache.isTextureAtlasParticle, 1)
 }
 }
 win.PoofParticle = PoofParticle
-function poof(x,y,z){
-for(var i=0; i<20; i++){
+function poof(x,y,z,amount = 20){
+for(var i=0; i<amount; i++){
 world.particles.push(new PoofParticle(x,y,z))
 }
 }
@@ -27470,11 +27472,14 @@ p.foodJitter = -1
 }
 }
 }
-if(p.touchingBurnBlock){
+if(p.touchingBurnBlock && tick){
 p.burnStart = now
-p.burnTimer += 0.1
+p.burnTimer += 0.2
 }
-if(wet || freezeEffect > 0) p.burnTimer = 0
+if((wet || freezeEffect > 0) && p.burnTimer > 0 && tick) {
+p.burnTimer = 0
+poof(p.x,p.y-p.bottomH+0.25,p.z, 8)
+}
 if(survival && p.burnTimer > 0){
 if(now - p.burnStart > 500){
 p.burnStart = now
@@ -27482,8 +27487,10 @@ p.burnTimer --
 damage(1, username+" burned up.")
 }
 }
+if(tick) {
 p.burning = p.burnTimer > 0
 if(!survival) p.burnTimer = 0
+}
 blockHere = world.getBlock(p2.x, p2.y, p2.z)
 inWater = 0
 if(blockHere === blockIds.Water) inWater = 1
@@ -27543,7 +27550,7 @@ lastGetOxygen = now
 p.oxygen = (Math.floor(p.oxygen/2)*2) + 2
 updateHUD = true
 }
-}
+}else p.oxygen = 20
 if(p.health > 20) {
 p.health = 20;
 }
@@ -27632,7 +27639,13 @@ ctx.fillRect(0,0,width,height)
 if(p.burning && !p.thirdPerson){
 updateHUD = true
 }
-if(portalEffect > 0){
+if(portalFadeOutEffect > 0){
+if(tick) {
+portalFadeOutEffect -= 2
+portalEffect = portalFadeOutEffect
+}
+updateHUD = true
+}else if(portalEffect > 0){
 if(tick){
 portalEffect --
 }
