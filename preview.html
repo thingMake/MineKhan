@@ -4030,7 +4030,8 @@ transparent: true,
 solid: false,
 shadow: false,
 transparent: true,
-crossShape: true
+crossShape: true,
+ladder:true
 },
 { 
 name: "twistingVinesPlant",
@@ -4038,21 +4039,24 @@ transparent: true,
 solid: false,
 shadow: false,
 transparent: true,
-crossShape: true
+crossShape: true,
+ladder:true
 },
 { 
 name: "weepingVines",
 transparent: true,
 solid: false,
 shadow: false,
-crossShape: true
+crossShape: true,
+ladder:true
 },
 { 
 name: "weepingVinesPlant",
 transparent: true,
 solid: false,
 shadow: false,
-crossShape: true
+crossShape: true,
+ladder:true
 },
 { 
 name: "netherSprouts",
@@ -7629,9 +7633,10 @@ world.setBlockPower(tx,ty,tz,"strong",side)
 world.setBlockPower(tx,ty,tz,null,side)
 }
 }
-setTimeout(function(){
+var shouldBeOn = world.getRepeaterPower(x,y,z,fx,fy,fz) || world.getBlockPower(fx,fy,fz) ? true : false
+if(on !== shouldBeOn) setTimeout(function(){
 block = world.getBlock(x,y,z)
-var on = world.getPower(fx,fy,fz) || world.getBlockPower(fx,fy,fz) ? true : false //should it be on?
+var on = world.getRepeaterPower(x,y,z,fx,fy,fz) || world.getBlockPower(fx,fy,fz) ? true : false //should it be on?
 var isOn = false
 switch(block){ //todo: make it an if loop
 case D1 | NORTH:
@@ -22598,6 +22603,11 @@ this.repeaterIsPowering(x,y,z,x-1,y,z) ||
 this.repeaterIsPowering(x,y,z,x,y,z+1) ||
 this.repeaterIsPowering(x,y,z,x,y,z-1)
 ) level = 15
+return level
+}
+getRepeaterPower(x,y,z,fx,fy,fz){
+var level = world.getPower(fx,fy,fz)
+if(this.repeaterIsPowering(x,y,z,fx,fy,fz)) level = 15
 return level
 }
 getPower(x,y,z){
