@@ -2938,6 +2938,16 @@ biomeTintEast:true,
 biomeTintWest:true,
 biomeTintNorth:true,
 biomeTintSouth:true,
+onupdate:function(x,y,z){
+var b = world.getBlock(x,y,z)
+var top = world.getBlock(x,y+1,z)
+var isSnow = blockData[top].name === "snow" || blockData[top].name === "snowBlock"
+if(b === blockIds.grass && isSnow){
+world.setBlock(x,y,z,blockIds.grass | CROSS)
+}else if(b === (blockIds.grass | CROSS) && !isSnow){
+world.setBlock(x,y,z,blockIds.grass)
+}
+}
 },
 { name: "dirt", Name:"Dirt", breakTime:0.75, type:"ground",
 digSound: ["block.gravel.dig1", "block.gravel.dig2", "block.gravel.dig3", "block.gravel.dig4"],
@@ -4774,7 +4784,7 @@ attackDamage: 3
 },
 {
 name:"goldenPickaxe",
-Name:"Golden Pickax",
+Name:"Golden Pickaxe",
 item: true,
 pickaxe: true,
 mineSpeed: 12,
@@ -9455,6 +9465,7 @@ biomeSmooth: 0.007, // Smoothness of biomes
 }
 win.generator = generator //for mods
 let maxHeight = 255
+let netherHeight = 127
 let blockOutlines = false
 let blockFill = true
 let updateHUD = true
@@ -9761,7 +9772,7 @@ exit: [window.controls, window.controlDetect]
 enter: [window.narratorVoiceSelect],
 exit: [window.narratorVoiceSelect]
 },
-help:{
+"options help":{
 enter: [window.help],
 exit: [window.help]
 }
@@ -10985,6 +10996,25 @@ south: 3,
 east: 3,
 west: 3
 }
+},
+SW:{
+verts: [
+[objectify( 0,  0,  0, 16, 16, 0, 0)], //bottom
+[objectify( 0, 16, 16, 16, 16, 0, 0, false,false, 2)], //top
+[objectify(16, 16, 16, 16, 16, 0, 0)], //north
+[objectify( 0, 16,  0, 16, 16, 0, 0)], //south
+[objectify(16, 16,  0, 16, 16, 0, 0, false,false, 1)], //east
+[objectify( 0, 16, 16, 16, 16, 0, 0, false,false, -1)]  //west
+],
+cull: {
+top: 3,
+bottom: 3,
+north: 3,
+south: 3,
+east: 3,
+west: 3
+},
+rotate:true
 },
 _1PixLower:{
 verts: [
@@ -12610,6 +12640,61 @@ west: 0
 },
 rotate: true
 },
+//the piston shapes come from https://minekhan-testing.lukep0wers.repl.co
+pistonOpen: {
+verts: [
+[objectify(0,0,0,16,16,0,0)], //bottom
+[objectify(0,12,16,16,16,0,0)], //top
+[objectify(16,12,16,16,12,0,4)], //north
+[objectify(0,12,0,16,12,0,4)], //south
+[objectify(16,12,0,16,12,0,4)], //east
+[objectify(0,12,16,16,12,0,4)]  //west
+],
+cull: {
+top: 0,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+pistonHead: {
+verts: [
+[objectify(0,12,0,16,16,0,0)], //b
+[objectify(0,16,16,16,16,0,0)], //t
+[objectify(16,16,16,16,4,0,0), objectify(10,12,10,4,16,6,4)], //n
+[objectify(0,16,0,16,4,0,0), objectify(6,12,6,4,16,6,4)], //s
+[objectify(16,16,0,16,4,0,0), objectify(10,12,6,4,16,6,4)], //e
+[objectify(0,16,16,16,4,0,0), objectify(6,12,10,4,16,6,4)] //w
+],
+cull: {
+top: 3,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+pistonHeadCut: {
+verts: [
+[objectify(0,12,0,16,16,0,0)], //b
+[objectify(0,16,16,16,16,0,0)], //t
+[objectify(16,16,16,16,4,0,0), objectify(10,12,10,4,12,6,4)], //n
+[objectify(0,16,0,16,4,0,0), objectify(6,12,6,4,12,6,4)], //s
+[objectify(16,16,0,16,4,0,0), objectify(10,12,6,4,12,6,4)], //e
+[objectify(0,16,16,16,4,0,0), objectify(6,12,10,4,12,6,4)] //w
+],
+cull: {
+top: 3,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
 playerHand: {
 verts: [
 [objectify( 6,  6,  6, 4,  4, 0, 0)], //bottom
@@ -13528,6 +13613,11 @@ tallcrossBlock.textures = ["dirt","dirtPathTop","dirtPathSide","dirtPathSide","d
 tallcrossBlock.solid = true
 tallcrossBlock.transparent = true
 tallcrossBlock.shadow = true
+tallcrossBlock.biomeTintTop = false
+tallcrossBlock.biomeTintNorth = false
+tallcrossBlock.biomeTintSouth = false
+tallcrossBlock.biomeTintEast = false
+tallcrossBlock.biomeTintWest = false
 }
 if(baseBlock.name === "farmland"){
 slabBlock.textures = []
@@ -13713,6 +13803,10 @@ textures[1] = t
 var flipped = Object.create(baseBlock)
 makeBlock(textures, shapes.flipped, flipped, baseBlock)
 blockData[i | FLIP] = flipped
+var shape = shapes.SW
+t = baseBlock.textures
+textures = [t[2],t[2],t[0],t[1],t[2],t[2]]
+makeBlock(textures, shape, slabBlock, baseBlock)
 }
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
@@ -15998,6 +16092,7 @@ else if(hitBox.face === "bottom") blockMode = TALLCROSS
 if(blockData[holding].piston){
 if(hitBox.face === "top") blockMode = CUBE
 else if(hitBox.face === "bottom") blockMode = FLIP
+else if(side) blockMode = SLAB
 }
 if(side && blockIds[blockData[block].name+"SW"]){
 block = blockIds[blockData[block].name+"SW"]
@@ -17779,6 +17874,7 @@ let s = y >> 4
 return s < this.sections.length && s >= 0 ? this.sections[s].getBlock(x, y & 15, z) : 0
 }
 setBlock(x, y, z, blockID, user) {
+if(y<0) return
 if (!this.sections[y >> 4]) {
 do {
 this.sections.push(new Section(this.x, this.sections.length * 16, this.z, 16, this))
@@ -21981,17 +22077,17 @@ let biomeSmooth = generator.biomeSmooth
 const biomeSize = 1//0.001 // smaller = bigger
 const flatness = 40 // bigger = flatter
 const overhang = 3 // bigger = more overhang; flatter = less overhang
-const bottom = 4 // Minimum height of the ground
-const hillSize = 0.006 // smaller = bigger; 0.005 to 0.01 seems the be a reasonable range
+const bottom = 0 // Minimum height of the ground
+const hillSize = 0.004 // smaller = bigger; 0.005 to 0.01 seems the be a reasonable range
 //}
 let gen = 0, floatGen = 0
 for (let i = 0; i < 16; i++) {
 for (let k = 0; k < 16; k++) {
 floatGen = noiseProfile.noise((trueX + i) * smoothness, (trueZ + k) * smoothness) * hilliness + generator.extra
 gen = superflat === "island" && this.type === "" ? win.islandGenerator.GetHeight(x*16+i, z*16+k) : (superflat ? 4 : Math.round(floatGen))
-if(this.type === "nether" && superflat){
+/*if(this.type === "nether" && superflat){
 gen = Math.round(floatGen)
-}
+}*/
 chunk.tops[k * 16 + i] = gen
 if(this.type === "nether"){
 let biome = noiseProfile.noise((trueX + i) * biomeSmooth, (trueZ + k) * biomeSmooth)
@@ -22003,33 +22099,38 @@ block = blockIds.warpedNylium
 }else if(b === 2){
 block = blockIds.crimsonNylium
 }
-const smo = noise((trueX + i) * biomeSize, (trueZ + k) * biomeSize) * flatness + 40
+//const smo = noise((trueX + i) * biomeSize, (trueZ + k) * biomeSize) * flatness + 40
+const smo = 40
 let top = 0
-let solid = true
-for (let j = 1; j < 128; j++) {
-if (noise((trueX + i)/smo, overhang*j/smo, (trueZ + k)/smo) - (j - bottom) * hillSize > 0) {
+let solid = false
+for (let j = 1; j < netherHeight; j++) {
+var noiseRes = noise((trueX + i)/smo, overhang*j/smo, (trueZ + k)/smo) - ((110 + j/4) - bottom) * hillSize
+if(j > netherHeight - 10){
+noiseRes = lerp((j - (netherHeight - 10)) / 10, noiseRes, 0.1)
+}
+if (noiseRes > 0) {
 chunk.setBlock(i, j, k, blockIds.netherrack)
-top = j
-solid = true
-} else if (solid) {
+if(!solid) chunk.ceils[k * 16 + i] = j
+if(j > 31) solid = true
+} else if (solid && j > 31) {
 chunk.setBlock(i, j - 1, k, block)
 /*if (chunk.getBlock(i, j - 2, k)) chunk.setBlock(i, j - 2, k, block)
 if (chunk.getBlock(i, j - 3, k)) chunk.setBlock(i, j - 3, k, block)
 if (chunk.getBlock(i, j - 4, k)) chunk.setBlock(i, j - 4, k, block)*/
 solid = false
-} else if(j < 80){
-chunk.setBlock(i, j-1, k, blockIds.Lava)
-if(chunk.getBlock(i, j - 2, k) === block) chunk.setBlock(i, j-2, k, blockIds.netherrack)
+top = j
+} else if(j < 32){
+chunk.setBlock(i, j, k, blockIds.Lava)
+if(chunk.getBlock(i, j - 1, k) === block) chunk.setBlock(i, j-2, k, blockIds.netherrack)
 }
 }
-chunk.tops[k * 16 + i] = top
+chunk.tops[k * 16 + i] = top-1
 chunk.setBlock(i, 0, k, blockIds.bedrock)
-block = blockIds.netherrack
+/*block = blockIds.netherrack
 for(let j=1; j<gen; j++){
-chunk.setBlock(i, maxHeight - 50 - j, k, block)
-}
-chunk.setBlock(i,maxHeight-50,k, blockIds.bedrock)
-chunk.ceils[k * 16 + i] = maxHeight - 50 - gen
+chunk.setBlock(i, netherHeight - j, k, block)
+}*/
+chunk.setBlock(i,netherHeight,k, blockIds.bedrock)
 }else if (superflat === "island") {
 if (win.islandGenerator.GetWaterDepth(x*16+i, z*16+k) > 0) {
 chunk.setBlock(i, gen, k, blockIds.Water);
@@ -23598,7 +23699,7 @@ close()
 location.href = "https://www.thingmaker.repl.co"
 }
 })
-Button.add(width / 2 - 235, height / 2 + 160, 40, 40, "?", "main menu", r => changeScene("help"))
+Button.add(width / 2 - 235, height / 2 + 160, 40, 40, "?", "main menu", r => changeScene("options help"))
 // Creation menu buttons
 Button.add(width / 2, 135, 300, 40, ["World Type: Normal", "World Type: Superflat", "World Type: Island"], "creation menu", r => {superflat = r === "World Type: Superflat"; if(r==="World Type: Island")superflat="island"})
 Button.add(width / 2, 185, 300, 40, ["Trees: On", "Trees: Off"], "creation menu", r => trees = r === "Trees: On", function() {
@@ -23736,7 +23837,7 @@ updateHUD = true
 play()
 })
 //Help buttons
-Button.add(60, 30, 80, 30, "Back", "help", r => changeScene(previousScreen))
+Button.add(60, 30, 80, 30, "Back", "options help", r => changeScene(previousScreen))
 // Marketplace buttons
 Button.add(60, 40, 80, 30, "Back", "marketplace", r => changeScene("main menu"))
 Button.add(mid - x2, height - 75, w2, 40, "Download", "marketplace", saveFromMarketplace, () => !marketplace[selectedWorld])
@@ -23769,6 +23870,7 @@ window.open("https://www.thingmaker.repl.co/website/login.html?redirect=account.
 })
 Button.add(width * 0.75, height/2 + -245, width / 3, 40, "World Options", "options", r => changeScene("options worldSettings"), () => beforeOptionsScreen !== "pause")
 Button.add(width * 0.75, height/2 + -185, width / 3, 40, "Narrator Options", "options", r => changeScene("options narrator"))
+Button.add(width * 0.75, height/2 + -125, width / 3, 40, "Help", "options", r => changeScene("options help"))
 Button.add(width / 2, height - 50, width / 3, 40, "Back", "options", r => changeScene(beforeOptionsScreen))
 // World settings buttons
 var needsCheats = () => !cheats
@@ -28640,7 +28742,7 @@ textSize(18)
 fill(255)
 text("Narrator stuff (it basically reads chat)", width / 2, 25)
 }
-drawScreens.help = () => {
+drawScreens["options help"] = () => {
 dirt()
 ctx.textAlign = 'center'
 textSize(25)
