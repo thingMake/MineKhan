@@ -7161,7 +7161,7 @@ const crafts = {
 "netheriteIngot,netheriteIngot,air,netheriteIngot,stick,air,air,stick":{name:"netheriteAxe"},
 "netheriteIngot,netheriteIngot,air,air,stick,air,air,stick":{name:"netheriteHoe"},
 "netheriteIngot,netheriteIngot,netheriteIngot,netheriteIngot,netheriteIngot,netheriteIngot,netheriteIngot,netheriteIngot,netheriteIngot":{name:"netheriteBlock"},
-"netheriteBlock":{name:"netheriteIngot",amount:9},
+"netheriteBlock":{name:"netheriteIngot",amount:9,shapeless:true},
 "wheat,wheat,wheat,wheat,wheat,wheat,wheat,wheat,wheat":{name:"hayBlock"},
 "hayBlock":{name:"wheat",amount:9,shapeless:true},
 "ironIngot":{name:"ironNugget",amount:9,shapeless:true},
@@ -7241,6 +7241,7 @@ var smelts = {
 rawIron: {name:"ironIngot", time:200, xp:0.7},
 rawCopper: {name:"copperIngot", time:200, xp:0.7},
 rawGold: {name:"goldIngot", time:200, xp:1},
+ancientDebris: {name:"netheriteScrap", time:200, xp:1},
 sand: {name:"glass",time:200,xp:0.1, furnace:true},//furnace propertie means it can only be smelted in furnace
 cobblestone: {name:"stone",time:200,xp:0.1, furnace:true},
 stone: {name:"smoothStone", time:200, xp:0.1, furnace:true},
@@ -7250,8 +7251,18 @@ clayBall: {name:"brick",time:200,xp:0.3}
 }
 var smeltFuel = { //time is in seconds
 oakLog: {time:15},
+birchLog: {time:15},
+spruceLog: {time:15},
+jungleLog: {time:15},
+darkOakLog: {time:15},
+acaciaLog: {time:15},
 coal: {time:80},
 oakPlanks: {time:15},
+birchPlanks: {time:15},
+sprucePlanks: {time:15},
+junglePlanks: {time:15},
+darkOakPlanks: {time:15},
+acaciaPlanks: {time:15},
 stick: {time:5},
 }
 var achievementTypes = {
@@ -7298,6 +7309,10 @@ description:"Make a Hoe."
 "Time to plant tomatoes!":{
 score:10,
 description:"Get tomato seeds from Tall Grass."
+},
+"Hidden In The Depths":{
+score:20,
+description:"Get Ancient Debris"
 }
 }
 for(var a in achievementTypes){
@@ -17425,6 +17440,9 @@ achievment("Getting Wood")
 }
 if(this.block === blockIds.diamond){
 achievment("DIAMONDS!")
+}
+if(this.block === blockIds.ancientDebris){
+achievment("Hidden In The Depths")
 }
 if(multiplayer && this.block === blockIds.diamond && this.from !== achexUsername){
 //that achivement
