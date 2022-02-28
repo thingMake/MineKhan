@@ -1189,6 +1189,7 @@ ironBlock: "0g0gbĺ;ZĪcWŚĶWŖĦZŒĖYŎĆHĢŒYĚĲWņéZŊ÷WľËH1g0001hgiy
 goldBlock: "0g0g9ŞNHšřWĹÃWZŠWZŢZZĜZZÐZZXYĵNH00h01hg23QVO*ÄÐN4ÓàVKh7N4Ô*ÅK0GÂlâVã0ÔãÂlVÅK6VKo3VGãÒÄ1o3ÅGÓGK18lGãÔãK0ÏlGÓGÓÓ7ÏmãÒÄÓÓÅ8gÓVK65Ä8gÒÄ1gGKÏhGKh6Ó0ßgg1gÓ0ÔÆyíEIyIyI",
 diamondBlock: "0g0g9_ĦHW÷HncHľZHZZZćťYÔŅWàŖWeŒZ00h01hg23QVO*ÄÐN4ÓàVKh7N4Ô*ÅK0GÂlâVã0ÔãÂlVÅK6VKo3VGãÒÄ1o3ÅGÓGK18lGãÔãK0ÏlGÓGÓÓ7ÏmãÒÄÓÓÅ8gÓVK65Ä8gÒÄ1gGKÏhGKh6Ó0ßgg1gÓ0ÔÆyíEIyIyI",
 redstoneBlock: "0g0g5ŋëYĤëYČKYÝ(WüÀW0000004íÂQí]4XĂPyI4ċzßCI0đs}Q05@łÚĘI5ĐłÚİ8a@łÚĠù9ołÚİ859q÷]I5]łdīë4đsÛ]į5BAJAù0īköyI4ù9]J]000000",
+netheriteBlock: "0g0gN)ĚZ(ĊY-ĪH(ĊZ$ĊYwÎY?4WV?WV?H|kHwÎZV*WSśWP4HPkH|AY|AZ?4HPkYwÞZQśWT4H|kYSŚZ;ŊY|kZPAZ-ĺH)ĪH;śW?kY;ŊZ-ĪW?kHT4W-ŊY-ĺY)ĪWwßW-ŊZ(JY$íW$JHAßW;ĺZPkWwÞYEJH$JYsÎY0gí8wí8wî8x5gÎĮsß8sÞİsÞó8ěd-śg?zö*zû8âl)Òþ?ÒöËXÃ8à{pÐÇTĎÁËěj8áVoĺÀx6JËĪ4ÙáËMmÇSñú?îj8áąéCÇÒü{VŚûëáþÒýĉïEðNMXëágx3cMlľpìXdÑm-ŊtMŀrüxĎüĞ|ÆŋÑąŀr2ìĎ4ō6?jAÚŝħĎċØgōręŢsgT!Ē3QgÎÿ(ĺöÊÐ|qļŕĦĜĺ~1jġM4|MÞ"
 lapisBlock: "0g0gdB×YxPZ*āWMIYtFHxEYsŐWt8HoĿHoĿYt7ZFÆZkĮW100gzkkkljÁÄâÓâÆ5MnVâåÒæ7ÁVÒÁãÔæ5ÞÅGÒrãÈbVVGÔĝÄä5ĝââåÔÅ×7ÅÔGğþÔĂDÔããÅãýÈDÓÞÄãÓþÆ7ÖÒlÔÅÖÆnâāÔÓlãä5ãÇþÖâÅÙlÅÓÓþÔGÆ@ÅGÓãÓâÊoIIñõāĳĳ",
 emeraldBlock: "0g0g6nkHqěHîŁZ>įHnãWuÏY0000019AĂÖ]ń800w0Ëc)ûJ@Ë8w00mV8wJÚoÒcwăúĀ?c(ĂúĀ?8(ŋ4gÒc(ŋCgÒcħĄim?gĩPAþ?cB01ĠÒgJPAJËg]4ù8ļ+łÚĞłÖ",
 tntTop: "0g0g7ĿęYŐ1Y÷-ZĘÂHVVHùęWgTZ4ë]4ë]FNûFNû!ÂĎĸËýÛĮĕÜÓŔ4œ]4Ň]FNěó;û!]ĞŀÇýÛľ+Ĺ[ĕ4òĞłc]!{ĞĹ;û!ÃþĸÖlÛŀĔøÄŔ4ħÝĿį]!NċMOjFÂýFÂýÛĽŔÛĽŔ",
@@ -2919,9 +2920,15 @@ glassSound: true
 { name: "ironBlock", Name:"Block of Iron", breakTime:25, type:"metal2", stoneSound:true},
 { name: "goldBlock", Name:"Block of Gold", breakTime:15, type:"metal3", stoneSound:true},
 { name: "diamondBlock", Name:"Block of Diamond", breakTime:25, type:"metal3", stoneSound:true},
+{ name: "netheriteBlock", Name:"Block of Netherite", breakTime:35, type:"metal3", stoneSound:true},
 { name: "redstoneBlock", Name:"Block of Redstone", breakTime:25, type:"metal1", stoneSound:true},
 { name: "lapisBlock", Name:"Block of Lapis Lazuli", breakTime:15, type:"metal2", stoneSound:true},
 { name: "emeraldBlock", Name:"Block of Emerald", breakTime:25, type:"metal3", stoneSound:true},
+{
+name:"copperBlock",
+Name:"Block of Copper",
+breakTime: 15
+},
 { name: "oakPlanks", Name:"Oak Planks", type:"wood", breakTime:3, woodSound:true},
 {
 name: "oakLog",
@@ -4448,7 +4455,7 @@ attackDamage: 3
 },
 {
 name:"goldenPickaxe",
-Name:"Golden Pickax",
+Name:"Golden Pickaxe",
 item: true,
 pickaxe: true,
 mineSpeed: 12,
@@ -4463,6 +4470,15 @@ pickaxe: true,
 mineSpeed: 8,
 durability: 1561,
 attackDamage: 5
+},
+{
+name:"netheritePickaxe",
+Name:"Netherite Pickaxe",
+item: true,
+pickaxe: true,
+mineSpeed: 9,
+durability: 2031,
+attackDamage: 6
 },
 { name:"flint", Name:"Flint", item:true },
 {
@@ -4650,6 +4666,14 @@ item: true,
 sword: true,
 durability: 1561,
 attackDamage: 7
+},
+{
+name:"netheriteSword",
+Name:"Netherite Sword",
+item: true,
+sword: true,
+durability: 2031,
+attackDamage: 8
 },
 { name:"azaleaLeaves",
 transparent: true,
@@ -4867,6 +4891,15 @@ mineSpeed:8,
 attackDamage: 5
 },
 {
+name:"netheriteShovel",
+Name:"Netherite Shovel",
+item: true,
+shovel: true,
+durability: 2031,
+mineSpeed:9,
+attackDamage: 6
+},
+{
 name:"woodenAxe",
 Name:"Wooden Axe",
 item: true,
@@ -4914,6 +4947,16 @@ axe: true,
 durability: 1561,
 mineSpeed:8,
 attackDamage: 9,
+attackSpeed:1
+},
+{
+name:"netheriteAxe",
+Name:"Netherite Axe",
+item: true,
+axe: true,
+durability: 2031,
+mineSpeed:9,
+attackDamage: 10,
 attackSpeed:1
 },
 {
@@ -5636,10 +5679,6 @@ button:true,
 transparent:true
 },
 {
-name:"copperBlock",
-Name:"Block of Copper"
-},
-{
 name:"crackedPolishedBlackstoneBricks",
 Name:"Cracked Polished Blackstone Bricks"
 },
@@ -5698,6 +5737,16 @@ attackDamage: 1,
 attackSpeed:4
 },
 {
+name:"netheriteHoe",
+Name:"Nethrite Hoe",
+item: true,
+hoe: true,
+durability: 2031,
+mineSpeed:9,
+attackDamage: 1,
+attackSpeed:4
+},
+{
 name:"podzol",
 Name:"Podzol",
 textures:["dirt","podzolTop","podzolSide"]
@@ -5729,52 +5778,6 @@ item:true
 name:"netheriteIngot",
 Name:"Netherite Ingot",
 item:true
-},
-{
-name:"netheritePickaxe",
-Name:"Netherite Pickaxe",
-item: true,
-pickaxe: true,
-mineSpeed: 9,
-durability: 2031,
-attackDamage: 6
-},
-{
-name:"netheriteSword",
-Name:"Netherite Sword",
-item: true,
-sword: true,
-durability: 2031,
-attackDamage: 8
-},
-{
-name:"netheriteAxe",
-Name:"Netherite Axe",
-item: true,
-axe: true,
-durability: 2031,
-mineSpeed:9,
-attackDamage: 10,
-attackSpeed:1
-},
-{
-name:"netheriteShovel",
-Name:"Netherite Shovel",
-item: true,
-shovel: true,
-durability: 2031,
-mineSpeed:9,
-attackDamage: 6
-},
-{
-name:"netheriteHoe",
-Name:"Nethrite Hoe",
-item: true,
-hoe: true,
-durability: 2031,
-mineSpeed:9,
-attackDamage: 1,
-attackSpeed:4
 },
 {
 name:"cartographyTable",
