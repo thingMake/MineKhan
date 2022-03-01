@@ -3035,7 +3035,7 @@ stepSound: ["block.soul_sand.step1", "block.soul_sand.step2","block.soul_sand.st
 {
 name: "glowstone",
 Name:"Glowstone",
-lightLevel: 15,breakTime:3,type:"rock1",
+lightLevel: 15,breakTime:3,
 glassSound: true,
 shadow:false,
 drop: "glowstoneDust",
@@ -3058,30 +3058,30 @@ dropAmount: [1,2]
 },
 {
 name: "quartzBlock",
-Name:"Block of Quartz",
+Name:"Block of Quartz",breakTime:12,type:"rock1",
 textures: ["quartzBlockBottom", "quartzBlockTop", "quartzBlockSide"],
 stoneSound: true
 },
 {
 name: "quartzPillar",
-Name:"Quartz Pillar",
+Name:"Quartz Pillar",breakTime:12,type:"rock1",
 textures: ["quartzPillarTop", "quartzPillar"],
 stoneSound: true
 },
 {
 name: "chiseledQuartzBlock",
-Name:"Chiseled Quartz Block",
+Name:"Chiseled Quartz Block",breakTime:12,type:"rock1",
 textures: ["chiseledQuartzBlock", "chiseledQuartzBlockTop"],
 stoneSound: true
 },
-{ name: "chiseledStoneBricks", Name:"Chiseled Stone Bricks", stoneSound:true},
-{ name: "smoothStone", Name:"Smooth Stone (it doesn't really look like stone)", stoneSound:true},
-{ name: "andesite", Name:"Andesite", stoneSound:true},
-{ name: "polishedAndesite", Name:"Polished Andesite", stoneSound:true},
-{ name: "diorite", Name:"Diorite", stoneSound:true},
-{ name: "polishedDiorite", Name:"Polished Diorite", stoneSound:true},
-{ name: "granite", Name:"Granite", stoneSound:true},
-{ name: "polishedGranite", Name:"Polished Granite", stoneSound:true},
+{ name: "chiseledStoneBricks", Name:"Chiseled Stone Bricks", stoneSound:true,breakTime:10,type:"rock1"},
+{ name: "smoothStone", Name:"Smooth Stone (it doesn't really look like stone)", stoneSound:true,breakTime:10,type:"rock1"},
+{ name: "andesite", Name:"Andesite", stoneSound:true,breakTime:10,type:"rock1"},
+{ name: "polishedAndesite", Name:"Polished Andesite", stoneSound:true,breakTime:10,type:"rock1"},
+{ name: "diorite", Name:"Diorite", stoneSound:true,breakTime:10,type:"rock1"},
+{ name: "polishedDiorite", Name:"Polished Diorite", stoneSound:true,breakTime:10,type:"rock1"},
+{ name: "granite", Name:"Granite", stoneSound:true,breakTime:10,type:"rock1"},
+{ name: "polishedGranite", Name:"Polished Granite", stoneSound:true,breakTime:10,type:"rock1"},
 { // I swear, if y'all don't stop asking about TNT every 5 minutes!
 name: "tnt",
 Name:"Trinitrotoluene",
@@ -3148,7 +3148,7 @@ if(multiplayer) send({type:"playSound", data:"block.portal.travel", x:p.x,y:p.y,
 glassSound: true,
 ambientSound:"block.portal.portal"
 },
-{ name: "obsidian", Name:"Obsidian", stoneSound:true},
+{ name: "obsidian", Name:"Obsidian", stoneSound:true,breakTime:45,type:"rock1"},
 //the old redstone dust added before this version of minekhan was public (early 2021)
 /*{
 name:"redstoneDust",
@@ -3628,7 +3628,7 @@ transparent: true,
 shadow: false,
 lightLevel: 13,
 iconTexture: "lanternIcon",
-lantern: true,
+lantern: true,breakTime:3,type:"rock1",
 digSound: ["block.lantern.dig1", "block.lantern.dig2", "block.lantern.dig3", "block.lantern.dig4", "block.lantern.dig5", "block.lantern.dig6"],
 placeSound: ["block.lantern.place1", "block.lantern.place2","block.lantern.place3","block.lantern.place4","block.lantern.place5","block.lantern.place6"]
 },
@@ -3639,7 +3639,7 @@ transparent: true,
 shadow: false,
 lightLevel: 10,
 iconTexture:"soulLanternIcon",
-lantern: true,
+lantern: true,breakTime:3,type:"rock1",
 digSound: ["block.lantern.dig1", "block.lantern.dig2", "block.lantern.dig3", "block.lantern.dig4", "block.lantern.dig5", "block.lantern.dig6"],
 placeSound: ["block.lantern.place1", "block.lantern.place2","block.lantern.place3","block.lantern.place4","block.lantern.place5","block.lantern.place6"]
 },
@@ -3650,7 +3650,7 @@ transparent: true,
 shadow: false,
 beacon: true,
 lightLevel: 15,
-glassSound: true
+glassSound: true,breakTime:20
 },
 {
 name: "cactus",
@@ -3716,35 +3716,35 @@ name: "craftingTable",
 Name:"Crafting Table",
 textures: ["oakPlanks","craftingTableTop","craftingTableFront","craftingTableSide"],
 onclick: () => {changeScene("crafting"); releasePointer()},
-woodSound: true
+woodSound: true,breakTime:3
 },
 {
 name: "crimsonNylium",Name:"Crimson Nylium",
 textures: ["netherrack", "crimsonNyliumTop", "crimsonNyliumSide"],
-nyliumSound: true
+nyliumSound: true,breakTime:3
 },
 {
 name: "warpedNylium",Name:"Warped Nylium",
 textures: ["netherrack", "warpedNyliumTop", "warpedNyliumSide"],
-nyliumSound: true
+nyliumSound: true,breakTime:3
 },
 {
 name: "crimsonStem",Name:"Crimson Stem",
 textures: ["crimsonStemTop", "crimsonStemSide"],
-stemSound: true
+stemSound: true,breakTime:3,type:"wood"
 },
 {
 name: "warpedStem",Name:"Warped Stem",
 textures: ["warpedStemTop", "warpedStemSide"],
-stemSound: true
+stemSound: true,breakTime:3,type:"wood"
 },
-{ name: "netherWartBlock",Name:"Nether Wart Block",
+{ name: "netherWartBlock",Name:"Nether Wart Block",breakTime:2,
 digSound: ["block.netherwart.dig1", "block.netherwart.dig2", "block.netherwart.dig3", "block.netherwart.dig4", "block.netherwart.dig5", "block.netherwart.dig6"],
 stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"]},
-{ name: "warpedWartBlock",Name:"Warped Wart Block",
+{ name: "warpedWartBlock",Name:"Warped Wart Block",breakTime:2,
 digSound: ["block.netherwart.dig1", "block.netherwart.dig2", "block.netherwart.dig3", "block.netherwart.dig4", "block.netherwart.dig5", "block.netherwart.dig6"],
 stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"]},
-{ name: "shroomlight", Name:"Shroomlight",lightLevel:15,
+{ name: "shroomlight", Name:"Shroomlight",lightLevel:15,breakTime:3,
 digSound: ["block.shroomlight.dig1", "block.shroomlight.dig2", "block.shroomlight.dig3", "block.shroomlight.dig4", "block.shroomlight.dig5"],
 stepSound: ["block.shroomlight.step1", "block.shroomlight.step2","block.shroomlight.step3","block.shroomlight.step4","block.shroomlight.step5","block.shroomlight.step6"]},
 { 
@@ -3759,11 +3759,11 @@ digSound: ["block.fungus.dig1", "block.fungus.dig2", "block.fungus.dig3", "block
 {
 name: "blackstone",Name:"Blackstone",
 textures: ["blackstoneTop", "blackstone" ],
-stoneSound: true
+stoneSound: true,breakTime:10,type:"rock1"
 },
-{ name: "gildedBlackstone", Name:"Gilded Blackstone",stoneSound: true},
-{ name: "polishedBlackstoneBricks", Name:"Polished Blackstone Bricks",stoneSound: true},
-{ name: "chiseledPolishedBlackstone", Name:"Chiseled Polished Blackstone",stoneSound: true},
+{ name: "gildedBlackstone", Name:"Gilded Blackstone",stoneSound: true,breakTime:20,type:"rock1"},
+{ name: "polishedBlackstoneBricks", Name:"Polished Blackstone Bricks",stoneSound: true,breakTime:10,type:"rock1"},
+{ name: "chiseledPolishedBlackstone", Name:"Chiseled Polished Blackstone",stoneSound: true,breakTime:10,type:"rock1"},
 {
 name: "netheriteBlock",
 Name:"Netherite Block",
@@ -3776,13 +3776,13 @@ stepSound: ["block.netherite.step1", "block.netherite.step2","block.netherite.st
 name: "basalt",
 Name: "Basalt",
 textures: [ "basaltTop", "basaltSide" ],
-basaltSound: true
+basaltSound: true,breakTime:10,type:"rock1"
 },
 {
 name: "polishedBasalt",
 Name: "Polished Basalt",
 textures: [ "polishedBasaltTop", "polishedBasaltSide" ],
-basaltSound: true
+basaltSound: true,breakTime:10,type:"rock1"
 },
 { name: "chain", Name:"Chain",transparent:true, shadow:false, chain:true, iconTexture:"chainIcon",
 digSound: ["block.chain.dig1", "block.chain.dig2", "block.chain.dig3", "block.chain.dig4"],
