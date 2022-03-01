@@ -3296,17 +3296,17 @@ setTimeout(function(){world.setBlock(x,y-1,z, blockIds.redstoneDustOn)}, 500);
 }, 10)
 }
 },
-{ name: "soup"},
-{ name: "soup2"},
+{ name: "soup",hidden:true},
+{ name: "soup2",hidden:true},
 {
 name: "soup3",
-transparent:true,
+transparent:true,,hidden:true
 },
-{ name: "soup4"},
-{ name: "randomSoup"},
+{ name: "soup4",hidden:true},
+{ name: "randomSoup",hidden:true},
 {
-name: "redStain",
-transparent: true,
+name: "redStain",Name:"Red Stain",
+transparent: true,hidden:true
 },
 {
 name:"poision potion",
@@ -3714,36 +3714,36 @@ onclick: () => {changeScene("crafting"); releasePointer()},
 woodSound: true
 },
 {
-name: "crimsonNylium",
+name: "crimsonNylium",Name:"Crimson Nylium",
 textures: ["netherrack", "crimsonNyliumTop", "crimsonNyliumSide"],
 nyliumSound: true
 },
 {
-name: "warpedNylium",
+name: "warpedNylium",Name:"Warped Nylium",
 textures: ["netherrack", "warpedNyliumTop", "warpedNyliumSide"],
 nyliumSound: true
 },
 {
-name: "crimsonStem",
+name: "crimsonStem",Name:"Crimson Stem",
 textures: ["crimsonStemTop", "crimsonStemSide"],
 stemSound: true
 },
 {
-name: "warpedStem",
+name: "warpedStem",Name:"Warped Stem",
 textures: ["warpedStemTop", "warpedStemSide"],
 stemSound: true
 },
-{ name: "netherWartBlock",
+{ name: "netherWartBlock",Name:"Nether Wart Block",
 digSound: ["block.netherwart.dig1", "block.netherwart.dig2", "block.netherwart.dig3", "block.netherwart.dig4", "block.netherwart.dig5", "block.netherwart.dig6"],
 stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"]},
-{ name: "warpedWartBlock",
+{ name: "warpedWartBlock",Name:"Warped Wart Block",
 digSound: ["block.netherwart.dig1", "block.netherwart.dig2", "block.netherwart.dig3", "block.netherwart.dig4", "block.netherwart.dig5", "block.netherwart.dig6"],
 stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"]},
-{ name: "shroomlight", lightLevel:15,
+{ name: "shroomlight", Name:"Shroomlight",lightLevel:15,
 digSound: ["block.shroomlight.dig1", "block.shroomlight.dig2", "block.shroomlight.dig3", "block.shroomlight.dig4", "block.shroomlight.dig5"],
 stepSound: ["block.shroomlight.step1", "block.shroomlight.step2","block.shroomlight.step3","block.shroomlight.step4","block.shroomlight.step5","block.shroomlight.step6"]},
 { 
-name: "warpedFungus",
+name: "warpedFungus",Name:"Warped Fungus",
 solid: false,
 shadow: false,
 transparent: true,
@@ -3752,13 +3752,13 @@ potCross: true,
 digSound: ["block.fungus.dig1", "block.fungus.dig2", "block.fungus.dig3", "block.fungus.dig4", "block.fungus.dig5", "block.fungus.dig6"]
 },
 {
-name: "blackstone",
+name: "blackstone",Name:"Blackstone",
 textures: ["blackstoneTop", "blackstone" ],
 stoneSound: true
 },
-{ name: "gildedBlackstone", stoneSound: true},
-{ name: "polishedBlackstoneBricks", stoneSound: true},
-{ name: "chiseledPolishedBlackstone", stoneSound: true},
+{ name: "gildedBlackstone", Name:"Gilded Blackstone",stoneSound: true},
+{ name: "polishedBlackstoneBricks", Name:"Polished Blackstone Bricks",stoneSound: true},
+{ name: "chiseledPolishedBlackstone", Name:"Chiseled Polished Blackstone",stoneSound: true},
 {
 name: "netheriteBlock",
 Name:"Netherite Block",
@@ -3822,7 +3822,7 @@ rootSound: true
 },
 { 
 name: "twistingVines",
-Name: "Twisting Vines",
+Name: "Twisting Vines Top",
 transparent: true,
 solid: false,
 shadow: false,
@@ -3831,7 +3831,7 @@ crossShape: true
 },
 { 
 name: "twistingVinesPlant",
-Name: "Twisting Vines Plant",
+Name: "Twisting Vines",
 transparent: true,
 solid: false,
 shadow: false,
@@ -3840,7 +3840,7 @@ crossShape: true
 },
 { 
 name: "weepingVines",
-Name: "Weeping Vines",
+Name: "Weeping Vines Bottom",
 transparent: true,
 solid: false,
 shadow: false,
@@ -3848,7 +3848,7 @@ crossShape: true
 },
 { 
 name: "weepingVinesPlant",
-Name: "Weeping Vines Plant",
+Name: "Weeping Vines",
 transparent: true,
 solid: false,
 shadow: false,
@@ -4722,7 +4722,7 @@ sword: true,
 durability: 2031,
 attackDamage: 8
 },
-{ name:"azaleaLeaves",
+{ name:"azaleaLeaves",Name:"Azalea Leaves",
 transparent: true,
 breakTime: 0,
 type:"plant2",
@@ -4736,7 +4736,7 @@ else return "floweringAzalea"
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
-{ name:"floweringAzaleaLeaves",
+{ name:"floweringAzaleaLeaves",Name:"Flowering Azalea Leaves",
 transparent: true,
 breakTime: 0,
 type:"plant2",
@@ -4751,7 +4751,7 @@ digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.gr
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
 {
-name: "pigSpawnEgg",
+name: "pigSpawnEgg",Name:"minekhan:pig_spawn_egg",
 item: true,
 onuse: (x,y,z, block, replaceItem) => {
 world.addEntity(new Pig(p2.x,p2.y,p2.z))
@@ -4863,7 +4863,7 @@ food: 6,
 saturation: 11
 },
 {
-name:"boneBlock",
+name:"boneBlock",Name:"Bone Block",
 textures:["boneBlockTop","boneBlockSide"]
 },
 {
@@ -5941,7 +5941,7 @@ name:"redstoneLamp",
 Name:"Redstone Lamp",
 },
 {
-name:"glowstoneDust",
+name:"glowstoneDust",Name:"Glowstone Dust",
 item:true
 },
 {
@@ -6004,7 +6004,7 @@ Name:"Purpur Pillar",
 textures:["purpurPillarTop","purpurPillar"]
 },
 {
-name:"purpurPillarSW",
+name:"purpurPillarSW",Name:"Purpur Pillar (SW)",
 textures:["purpurPillar","purpurPillar","purpurPillarTop","purpurPillarSW"],
 rotate:true
 },
@@ -6220,7 +6220,7 @@ textures: "largeFernTop",
 tallcrossShape: true,
 },
 {
-name:"fire",
+name:"fire",Name:"Fire",
 fire:true,
 damage:1,
 burnPlayer:true,
@@ -6402,7 +6402,7 @@ textures:"warpedPlanks",
 fenceGate:true
 },
 { 
-name: "kelp",
+name: "kelp",Name:"Kelp Top",
 transparent: true,
 solid: false,
 shadow: false,
@@ -6574,7 +6574,7 @@ woodSound:true,
 drop:"soulCampfire"
 },
 {
-name:"bambooShoot",
+name:"bambooShoot",Name:"Bamboo Shoot",
 textures:"bambooStage0",
 solid: false,
 transparent: true,
