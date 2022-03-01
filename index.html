@@ -3059,7 +3059,7 @@ stoneSound: true
 },
 {
 name: "quartzPillar",
-Name:"Pillar",
+Name:"Quartz Pillar",
 textures: ["quartzPillarTop", "quartzPillar"],
 stoneSound: true
 },
@@ -3112,6 +3112,7 @@ stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.
 },
 {
 name: "portal",
+Name: "Nether Portal",
 solid:false,
 shadow: false,
 portal: true,
@@ -3314,6 +3315,7 @@ crossShape:true,
 },
 {
 name: "light",
+Name: "Light",
 textures: "none",
 transparent:true,
 lightLevel: 15,
@@ -3325,26 +3327,31 @@ noHitbox:true
 },
 {
 name: "autumnLeaves",
+Name: "Autumn Leaves",
 transparent: true,
 },
 {
 name: "darkLeaves",
+Name: "Dark Leaves",
 transparent: true,
 },
 {
 name: "redBerryLeaves",
+Name: "Red Berry Leaves",
 transparent: true,
 },
 {
 name: "blueBerryLeaves",
+Name: "Blue Berry Leaves",
 transparent: true,
 },
 {
 name: "pinkLeaves",
+Name: "Pink Leaves",
 transparent: true,
 },
 { name: "flowerOftheValley",
-Name:"Flower of The Valley",
+Name:"Lily of The Valley",
 solid: false,
 transparent: true,
 shadow: false,
@@ -3423,7 +3430,7 @@ potCross: true,
 crossShape: true,
 },
 { name: "purpleFlower",
-Name:"Purple Flower (i don't think this exsists in minecraft)",
+Name:"Purple Flower (i don't think this exsists in minecraft) (does it???)",
 solid: false,
 transparent: true,
 shadow: false,
@@ -3471,7 +3478,7 @@ textures: "peonyTop",
 tallcrossShape: true,
 },
 { name: "witherRose",
-Name:"Wither Rose",
+Name:"Wither Rose (good for pvp)",
 solid: false,
 transparent: true,
 shadow: false,
@@ -3480,7 +3487,7 @@ crossShape: true,
 ontouch: () => {witherEffect = 120; witherDamage = 1; witherTime = 2000}
 },
 { name: "TallGrass",
-Name:"Grass",
+Name:"Tall Grass",
 solid: false,
 transparent: true,
 shadow: false,
@@ -3497,7 +3504,9 @@ transparent: true,
 shadow: false,
 textures: "oakDoorBottom",
 door:true,
-woodSound:true
+breakTime:3,
+woodSound:true,
+type:"wood",
 },
 {
 name: "spruceDoor",
@@ -3506,7 +3515,9 @@ transparent: true,
 shadow: false,
 textures:"spruceDoorBottom",
 door:true,
-woodSound:true
+breakTime:3,
+woodSound:true,
+type:"wood",
 },
 {
 name: "ironDoor",
@@ -3515,7 +3526,9 @@ transparent: true,
 shadow: false,
 textures:"ironDoorBottom",
 door:true,
-woodSound:true
+woodSound:true,
+breakTime: 15,
+type:"rock1"
 },
 {
 name: "darkOakDoor",
@@ -3524,7 +3537,9 @@ transparent: true,
 shadow: false,
 textures:"darkOakDoorBottom",
 door:true,
-woodSound:true
+breakTime:3,
+woodSound:true,
+type:"wood",
 },
 {
 name: "birchDoor",
@@ -3533,7 +3548,9 @@ transparent: true,
 shadow: false,
 textures:"birchDoorBottom",
 door:true,
-woodSound:true
+breakTime:3,
+woodSound:true,
+type:"wood",
 },
 {
 name: "jungleDoor",
@@ -3542,7 +3559,9 @@ transparent: true,
 shadow: false,
 textures:"jungleDoorBottom",
 door:true,
-woodSound:true
+breakTime:3,
+woodSound:true,
+type:"wood",
 },
 {
 name: "acaciaDoor",
@@ -3551,7 +3570,9 @@ transparent: true,
 shadow: false,
 textures:"acaciaDoorBottom",
 door:true,
-woodSound:true
+breakTime:3,
+woodSound:true,
+type:"wood",
 },
 {
 name: "warpedDoor",
@@ -3560,7 +3581,9 @@ transparent: true,
 shadow: false,
 textures:"warpedDoorBottom",
 door:true,
-woodSound:true
+breakTime:3,
+woodSound:true,
+type:"wood",
 },
 {
 name: "crimsonDoor",
@@ -3569,7 +3592,9 @@ transparent: true,
 shadow: false,
 textures:"crimsonDoorBottom",
 door:true,
-woodSound:true
+breakTime:3,
+woodSound:true,
+type:"wood",
 },
 {
 name: "torch",
@@ -3736,6 +3761,7 @@ stoneSound: true
 { name: "chiseledPolishedBlackstone", stoneSound: true},
 {
 name: "netheriteBlock",
+Name:"Netherite Block",
 type:"rock4",
 breakTime:250,
 digSound: ["block.netherite.dig1", "block.netherite.dig2", "block.netherite.dig3", "block.netherite.dig4"],
@@ -3743,20 +3769,23 @@ stepSound: ["block.netherite.step1", "block.netherite.step2","block.netherite.st
 },
 {
 name: "basalt",
+Name: "Basalt",
 textures: [ "basaltTop", "basaltSide" ],
 basaltSound: true
 },
 {
 name: "polishedBasalt",
+Name: "Polished Basalt",
 textures: [ "polishedBasaltTop", "polishedBasaltSide" ],
 basaltSound: true
 },
-{ name: "chain", transparent:true, shadow:false, chain:true, iconTexture:"chainIcon",
+{ name: "chain", Name:"Chain",transparent:true, shadow:false, chain:true, iconTexture:"chainIcon",
 digSound: ["block.chain.dig1", "block.chain.dig2", "block.chain.dig3", "block.chain.dig4"],
 stepSound: ["block.chain.step1", "block.chain.step2","block.chain.step3","block.chain.step4","block.chain.step5","block.chain.step6"]},
-{ name: "warpedPlanks", woodSound:true},
+{ name: "warpedPlanks", woodSound:true, Name:"Warped Planks"},
 { 
 name: "warpedTrapdoor",
+Name: "Warped Trapdoor",
 transparent: true,
 shadow: false,
 trapdoor: true,
@@ -3765,6 +3794,7 @@ woodSound:true
 { name: "magma", Name:"Magma Block", lightLevel:15},
 {
 name: "crimsonFungus",
+Name: "Crimson Fungus",
 solid: false,
 shadow: false,
 transparent: true,
@@ -3774,6 +3804,7 @@ digSound: ["block.fungus.dig1", "block.fungus.dig2", "block.fungus.dig3", "block
 },
 { 
 name: "warpedRoots",
+Name: "Warped Roots",
 transparent: true,
 solid: false,
 shadow: false,
@@ -3782,6 +3813,7 @@ rootSound: true
 },
 { 
 name: "crimsonRoots",
+Name: "Crimson Roots",
 transparent: true,
 solid: false,
 shadow: false,
@@ -3790,6 +3822,7 @@ rootSound: true
 },
 { 
 name: "twistingVines",
+Name: "Twisting Vines",
 transparent: true,
 solid: false,
 shadow: false,
@@ -3798,6 +3831,7 @@ crossShape: true
 },
 { 
 name: "twistingVinesPlant",
+Name: "Twisting Vines Plant",
 transparent: true,
 solid: false,
 shadow: false,
@@ -3806,6 +3840,7 @@ crossShape: true
 },
 { 
 name: "weepingVines",
+Name: "Weeping Vines",
 transparent: true,
 solid: false,
 shadow: false,
@@ -3813,6 +3848,7 @@ crossShape: true
 },
 { 
 name: "weepingVinesPlant",
+Name: "Weeping Vines Plant",
 transparent: true,
 solid: false,
 shadow: false,
@@ -3820,6 +3856,7 @@ crossShape: true
 },
 { 
 name: "netherSprouts",
+Name: "Nether Sprouts",
 solid: false,
 shadow: false,
 transparent: true,
@@ -3827,29 +3864,34 @@ crossShape: true,
 digSound: ["block.nether_sprouts.dig1", "block.nether_sprouts.dig2", "block.nether_sprouts.dig3", "block.nether_sprouts.dig4"],
 stepSound: ["block.nether_sprouts.step1", "block.nether_sprouts.step2","block.nether_sprouts.step3","block.nether_sprouts.step4","block.nether_sprouts.step5"]
 },
-{ name: "stoneButton", textures:"stone", button:true, transparent: true },
+{ name: "stoneButton", Name:"Stone Button",textures:"stone", button:true, transparent: true },
 { 
 name: "RespawnAnchorOff",
+Name: "Respawn Anchor (Off)",
 textures: ["respawnAnchorBottom", "respawnAnchorTopOff", "respawnAnchorSide0"],
 //onupdate: (x,y,z) => {if(world.type !== "nether"){explode(x,y,z,2)}}
 },
 { 
 name: "RespawnAnchor1",
+Name: "Respawn Anchor (#1)",
 textures: ["respawnAnchorBottom", "respawnAnchorTop1", "respawnAnchorSide1"],
 //hidden: true
 },
 { 
 name: "RespawnAnchor2",
+Name: "Respawn Anchor (#2)",
 textures: ["respawnAnchorBottom", "respawnAnchorTop2", "respawnAnchorSide2"],
 //hidden: true
 },
 { 
 name: "RespawnAnchor3",
+Name: "Respawn Anchor (#3)",
 textures: ["respawnAnchorBottom", "respawnAnchorTop3", "respawnAnchorSide3"],
 //hidden: true
 },
 { 
 name: "RespawnAnchor",
+Name: "Respawn Anchor (filled)",
 textures: ["respawnAnchorBottom", "respawnAnchorTop", "respawnAnchorSide4"],
 //hidden: true
 },
@@ -3896,7 +3938,8 @@ Name:"That Invisible Block with a 🚫 Icon",
 textures: "none",
 iconTexture: "barrier",
 flatIcon:true,
-transparent:true
+transparent:true,
+breakTime:99999,
 },
 {
 name: "oakSapling",
@@ -4165,6 +4208,7 @@ potCross: true
 },
 {
 name: "blueOrchidPot",
+Name: "Blue Orchid Pot",
 transparent: true,
 shadow: false,
 solid: false,
@@ -4172,6 +4216,7 @@ potCross: true
 },
 {
 name: "warpedRootsPot",
+Name: "Warped Roots Pot",
 transparent: true,
 shadow: false,
 solid: false,
@@ -4179,86 +4224,87 @@ potCross: true
 },
 {
 name: "crimsonRootsPot",
+Name: "Crimson Roots Pot",
 transparent: true,
 shadow: false,
 solid: false,
 potCross: true
 },
-{ name: "whiteCarpet", textures: "whiteWool", carpet: true, clothSound:true},
-{ name: "orangeCarpet", textures: "orangeWool", carpet: true, clothSound:true},
-{ name: "magentaCarpet", textures: "magentaWool", carpet: true, clothSound:true},
-{ name: "lightBlueCarpet", textures: "lightBlueWool", carpet: true, clothSound:true},
-{ name: "yellowCarpet", textures: "yellowWool", carpet: true, clothSound:true},
-{ name: "limeCarpet", textures: "limeWool", carpet: true, clothSound:true},
-{ name: "pinkCarpet", textures: "pinkWool", carpet: true, clothSound:true},
-{ name: "grayCarpet", textures: "grayWool", carpet: true, clothSound:true},
-{ name: "lightGrayCarpet", textures: "lightGrayWool", carpet: true, clothSound:true},
-{ name: "cyanCarpet", textures: "cyanWool", carpet: true, clothSound:true},
-{ name: "purpleCarpet", textures: "purpleWool", carpet: true, clothSound:true},
-{ name: "blueCarpet", textures: "blueWool", carpet: true, clothSound:true},
-{ name: "brownCarpet", textures: "brownWool", carpet: true, clothSound:true},
-{ name: "greenCarpet", textures: "greenWool", carpet: true, clothSound:true},
-{ name: "redCarpet", textures: "redWool", carpet: true, clothSound:true},
-{ name: "blackCarpet", textures: "blackWool", carpet: true, clothSound:true},
-{ name: "polishedBlackstone", stoneSound:true},
-{ name: "chiseledNetherBricks",
+{ name: "whiteCarpet", Name: "White Carpet",textures: "whiteWool", carpet: true, clothSound:true},
+{ name: "orangeCarpet", Name: "Orange Carpet",textures: "orangeWool", carpet: true, clothSound:true},
+{ name: "magentaCarpet", Name: "Magenta Carpet",textures: "magentaWool", carpet: true, clothSound:true},
+{ name: "lightBlueCarpet", Name: "Light Blue Carpet",textures: "lightBlueWool", carpet: true, clothSound:true},
+{ name: "yellowCarpet", Name: "Yellow Carpet",textures: "yellowWool", carpet: true, clothSound:true},
+{ name: "limeCarpet", Name: "Lime Carpet",textures: "limeWool", carpet: true, clothSound:true},
+{ name: "pinkCarpet", Name: "Pink Carpet",textures: "pinkWool", carpet: true, clothSound:true},
+{ name: "grayCarpet", Name: "Gray Carpet",textures: "grayWool", carpet: true, clothSound:true},
+{ name: "lightGrayCarpet", Name: "Light Gray Carpet",textures: "lightGrayWool", carpet: true, clothSound:true},
+{ name: "cyanCarpet", Name: "Cyan Carpet",textures: "cyanWool", carpet: true, clothSound:true},
+{ name: "purpleCarpet", Name: "Purple Carpet",textures: "purpleWool", carpet: true, clothSound:true},
+{ name: "blueCarpet", Name: "Blue Carpet",textures: "blueWool", carpet: true, clothSound:true},
+{ name: "brownCarpet", Name: "Brown Carpet",textures: "brownWool", carpet: true, clothSound:true},
+{ name: "greenCarpet", Name: "Green Carpet",textures: "greenWool", carpet: true, clothSound:true},
+{ name: "redCarpet", Name: "Red Carpet",textures: "redWool", carpet: true, clothSound:true},
+{ name: "blackCarpet", Name: "Black Carpet",textures: "blackWool", carpet: true, clothSound:true},
+{ name: "polishedBlackstone", Name: "Polished Blackstone",stoneSound:true},
+{ name: "chiseledNetherBricks",Name: "Chiseled Nether Bricks",
 digSound: ["block.nether_bricks.dig1", "block.nether_bricks.dig2", "block.nether_bricks.dig3", "block.nether_bricks.dig4", "block.nether_bricks.dig5", "block.nether_bricks.dig6"],
 stepSound: ["block.nether_bricks.step1", "block.nether_bricks.step2","block.nether_bricks.step3","block.nether_bricks.step4","block.nether_bricks.step5","block.nether_bricks.step6"]},
-{ name: "crackedNetherBricks",
+{ name: "crackedNetherBricks",Name: "Cracked Nether Bricks",
 digSound: ["block.nether_bricks.dig1", "block.nether_bricks.dig2", "block.nether_bricks.dig3", "block.nether_bricks.dig4", "block.nether_bricks.dig5", "block.nether_bricks.dig6"],
 stepSound: ["block.nether_bricks.step1", "block.nether_bricks.step2","block.nether_bricks.step3","block.nether_bricks.step4","block.nether_bricks.step5","block.nether_bricks.step6"]},
-{ name: "smoothBasalt", basaltSound: true},
+{ name: "smoothBasalt", Name: "Smooth Basalt",basaltSound: true},
 {
-name: "oakLogSW",
+name: "oakLogSW",Name: "Oak Log (SW)",
 textures: ["logSide","logSide","logTop","oakLogSW"],
 rotate: true, woodSound:true
 },
 {
-name: "acaciaLogSW",
+name: "acaciaLogSW",Name: "Acacia Log (SW)",
 textures: ["acaciaLogSide","acaciaLogSide","acaciaLogTop","acaciaLogSW"],
 rotate: true, woodSound:true
 },
 {
-name: "birchLogSW",
+name: "birchLogSW",Name: "Birch Log (SW)",
 textures: ["birchLogSide","birchLogSide","birchLogTop","birchLogSW"],
 rotate: true, woodSound:true
 },
 {
-name: "darkOakLogSW",
+name: "darkOakLogSW",Name: "Dark Oak Log (SW)",
 textures: ["darkOakLogSide","darkOakLogSide","darkOakLogTop","darkOakLogSW"],
 rotate: true, woodSound:true
 },
 {
-name: "jungleLogSW",
+name: "jungleLogSW",Name: "Jungle Log (SW)",
 textures: ["jungleLogSide","jungleLogSide","jungleLogTop","jungleLogSW"],
 rotate: true, woodSound:true
 },
 {
-name: "spruceLogSW",
+name: "spruceLogSW",Name: "Spruce Log (SW)",
 textures: ["spruceLogSide","spruceLogSide","spruceLogTop","spruceLogSW"],
 rotate: true, woodSound:true
 },
 {
-name: "crimsonStemSW",
+name: "crimsonStemSW",Name: "Crimson Stem (SW)",
 textures: ["crimsonStemSide","crimsonStemSide","crimsonStemTop","crimsonStemSW"],
 rotate: true, stemSound:true
 },
 {
-name: "warpedStemSW",
+name: "warpedStemSW",Name: "Warped Stem (SW)",
 textures: ["warpedStemSide","warpedStemSide","warpedStemTop","warpedStemSW"],
 rotate: true, stemSound:true
 },
 {
-name: "basaltSW",
+name: "basaltSW",Name: "Basalt (SW)",
 textures: ["basaltSide","basaltSide","basaltTop","basaltSideSW"],
 rotate: true, basaltSound:true
 },
 {
-name: "polishedBasaltSW",
+name: "polishedBasaltSW",Name: "Polished Basalt (SW)",
 textures: ["polishedBasaltSide","polishedBasaltSide","polishedBasaltTop","polishedBasaltSideSW"],
 rotate: true, basaltSound: true
 },
-{ name:"crimsonPlanks",woodSound:true },
+{ name:"crimsonPlanks",Name: "Crimson Planks",woodSound:true },
 {
 name:"deadBush",
 Name:"Dead Bush",
@@ -4483,32 +4529,32 @@ attackDamage: 6
 },
 { name:"flint", Name:"Flint", item:true },
 {
-name:"mossBlock",
+name:"mossBlock",Name: "Moss Block",
 breakTime:0.15,
 type: "plant2"
 },
 {
-name:"mossCarpet",
+name:"mossCarpet",Name: "Moss Carpet",
 textures: "mossBlock",
 breakTime:0.15,
 carpet: true
 },
 {
-name: "caveVines",
+name: "caveVines",Name: "Cave Vines",
 solid: false,
 transparent: true,
 shadow: false,
 crossShape: true,
 },
 {
-name: "caveVinesPlant",
+name: "caveVinesPlant",Name: "Cave Vines Plant",
 solid: false,
 transparent: true,
 shadow: false,
 crossShape: true,
 },
 {
-name: "caveVinesLit",
+name: "caveVinesLit",Name: "Lit Cave Vines",
 solid: false,
 transparent: true,
 shadow: false,
@@ -4516,7 +4562,7 @@ crossShape: true,
 lightLevel: 14
 },
 {
-name: "caveVinesPlantLit",
+name: "caveVinesPlantLit",Name: "Lit Cave Vines Plant",
 solid: false,
 transparent: true,
 shadow: false,
@@ -4531,10 +4577,10 @@ shadow:false,
 transparent: true
 },
 {
-name: "rootedDirt",
+name: "rootedDirt",Name: "Rooted Dirt",
 },
 {
-name: "hangingRoots",
+name: "hangingRoots",Name: "Hanging Roots",
 solid: false,
 transparent: true,
 shadow: false,
@@ -4612,7 +4658,7 @@ world.setBlock(pos[0],pos[1],pos[2],blockIds.Lava)
 stackSize: 1
 },
 {
-name: "cowSpawnEgg",
+name: "cowSpawnEgg",Name: "minekhan:cow_spawn_egg",
 item: true,
 onuse: (x,y,z, block, replaceItem) => {
 world.addEntity(new Cow(p2.x,p2.y,p2.z))
@@ -4630,7 +4676,7 @@ shadow: false,
 },
 {
 name:"woodenSword",
-Name:"Wooden Swords aren't even sharp!",
+Name:"Wooden Swords (not sharp)",
 item: true,
 sword: true,
 durability: 59,
@@ -4842,7 +4888,7 @@ textures:["hayBlockTop","hayBlockSide"],
 type:"plant2"
 },
 {
-name:"hayBlockSW",
+name:"hayBlockSW",Name: "Hay Bale (SW)",
 textures: ["hayBlockSide","hayBlockSide","hayBlockTop","hayBlockSW"],
 rotate: true,
 },
@@ -4961,14 +5007,14 @@ attackDamage: 10,
 attackSpeed:1
 },
 {
-name: "strippedOakLog",
+name: "strippedOakLog",Name: "Stripped Oak Log",
 textures: ["strippedOakLogTop", "strippedOakLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
 },
 {
-name: "strippedOakLogSW",
+name: "strippedOakLogSW",Name: "Stripped Oak Log (SW)",
 textures: ["strippedOakLog", "strippedOakLog", "strippedOakLogTop","strippedOakLogSW"],
 breakTime:3,
 woodSound:true,
@@ -4976,14 +5022,14 @@ type:"wood",
 rotate:true
 },
 {
-name: "strippedBirchLog",
+name: "strippedBirchLog",Name: "Stripped Birch Log",
 textures: ["strippedBirchLogTop", "strippedBirchLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
 },
 {
-name: "strippedBirchLogSW",
+name: "strippedBirchLogSW",Name: "Stripped Birch Log (SW)",
 textures: ["strippedBirchLog", "strippedBirchLog", "strippedBirchLogTop","strippedBirchLogSW"],
 breakTime:3,
 woodSound:true,
@@ -4991,14 +5037,14 @@ type:"wood",
 rotate:true
 },
 {
-name: "strippedAcaciaLog",
+name: "strippedAcaciaLog",Name: "Stripped Acacia Log",
 textures: ["strippedAcaciaLogTop", "strippedAcaciaLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
 },
 {
-name: "strippedAcaciaLogSW",
+name: "strippedAcaciaLogSW",Name: "Stripped Acacia Log (SW)",
 textures: ["strippedAcaciaLog", "strippedAcaciaLog", "strippedAcaciaLogTop","strippedAcaciaLogSW"],
 breakTime:3,
 woodSound:true,
@@ -5006,14 +5052,14 @@ type:"wood",
 rotate:true
 },
 {
-name: "strippedJungleLog",
+name: "strippedJungleLog",Name: "Stripped Jungle Log",
 textures: ["strippedJungleLogTop", "strippedJungleLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
 },
 {
-name: "strippedJungleLogSW",
+name: "strippedJungleLogSW",Name: "Stripped Jungle Log (SW)",
 textures: ["strippedJungleLog", "strippedJungleLog", "strippedJungleLogTop","strippedJungleLogSW"],
 breakTime:3,
 woodSound:true,
@@ -5021,14 +5067,14 @@ type:"wood",
 rotate:true
 },
 {
-name: "strippedSpruceLog",
+name: "strippedSpruceLog",Name: "Stripped Spruce Log",
 textures: ["strippedSpruceLogTop", "strippedSpruceLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
 },
 {
-name: "strippedSpruceLogSW",
+name: "strippedSpruceLogSW",Name: "Stripped Spruce Log (SW)",
 textures: ["strippedSpruceLog", "strippedSpruceLog", "strippedSpruceLogTop","strippedSpruceLogSW"],
 breakTime:3,
 woodSound:true,
@@ -5036,14 +5082,14 @@ type:"wood",
 rotate:true
 },
 {
-name: "strippedDarkOakLog",
+name: "strippedDarkOakLog",Name: "Stripped Dark Oak Log",
 textures: ["strippedDarkOakLogTop", "strippedDarkOakLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
 },
 {
-name: "strippedDarkOakLogSW",
+name: "strippedDarkOakLogSW",Name: "Stripped Dark Oak Log (SW)",
 textures: ["strippedDarkOakLog", "strippedDarkOakLog", "strippedDarkOakLogTop","strippedDarkOakLogSW"],
 breakTime:3,
 woodSound:true,
@@ -5051,7 +5097,7 @@ type:"wood",
 rotate:true
 },
 {
-name:"boneBlockSW",
+name:"boneBlockSW",Name: "Bone Block (SW)",
 textures:["boneBlockSide","boneBlockSide","boneBlockTop","boneBlockSW"],
 rotate:true
 },
@@ -5076,15 +5122,15 @@ crossShape: true,
 lightLevel:1
 },
 {
-name:"mushroomStem",
+name:"mushroomStem",Name: "Mushroom Stem",
 mushroomBlock:true
 },
 {
-name:"redMushroomBlock",
+name:"redMushroomBlock",Name: "Red Mushroom Block",
 mushroomBlock:true
 },
 {
-name:"brownMushroomBlock",
+name:"brownMushroomBlock",Name: "Brown Mushroom Block",
 mushroomBlock:true
 },
 {
@@ -5256,7 +5302,7 @@ if(face === "top" && blockData[block].name === "farmland") return "wheat"
 }
 },
 {
-name:"yellowStainedGlass",
+name:"yellowStainedGlass",Name: "Yellow Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5264,7 +5310,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"whiteStainedGlass",
+name:"whiteStainedGlass",Name: "White Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5272,7 +5318,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"redStainedGlass",
+name:"redStainedGlass",Name: "Red Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5280,7 +5326,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"purpleStainedGlass",
+name:"purpleStainedGlass",Name: "Purple Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5288,7 +5334,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"pinkStainedGlass",
+name:"pinkStainedGlass",Name: "Pink Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5296,7 +5342,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"orangeStainedGlass",
+name:"orangeStainedGlass",Name: "Orange Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5304,7 +5350,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"magentaStainedGlass",
+name:"magentaStainedGlass",Name: "Magenta Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5312,7 +5358,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"limeStainedGlass",
+name:"limeStainedGlass",Name: "Lime Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5320,7 +5366,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"lightGrayStainedGlass",
+name:"lightGrayStainedGlass",Name: "Light Gray Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5328,7 +5374,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"lightBlueStainedGlass",
+name:"lightBlueStainedGlass",Name: "Light Blue Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5336,7 +5382,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"greenStainedGlass",
+name:"greenStainedGlass",Name: "Green Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5344,7 +5390,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"grayStainedGlass",
+name:"grayStainedGlass",Name: "Gray Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5352,7 +5398,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"cyanStainedGlass",
+name:"cyanStainedGlass",Name: "Cyan Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5360,7 +5406,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"brownStainedGlass",
+name:"brownStainedGlass",Name: "Brown Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5368,7 +5414,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"blueStainedGlass",
+name:"blueStainedGlass",Name: "Blue Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5376,7 +5422,7 @@ type:"glass",
 glassSound: true
 },
 {
-name:"blackStainedGlass",
+name:"blackStainedGlass",Name: "Black Stained Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5384,7 +5430,7 @@ type:"glass",
 glassSound: true
 },
 {
-name: "yellowStainedGlassPane",
+name: "yellowStainedGlassPane",Name: "Yellow Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5393,7 +5439,7 @@ textures: ["yellowStainedGlassPaneTop","yellowStainedGlassPaneTop","yellowStaine
 glassSound: true
 },
 {
-name: "whiteStainedGlassPane",
+name: "whiteStainedGlassPane",Name: "White Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5402,7 +5448,7 @@ textures: ["whiteStainedGlassPaneTop","whiteStainedGlassPaneTop","whiteStainedGl
 glassSound: true
 },
 {
-name: "redStainedGlassPane",
+name: "redStainedGlassPane",Name: "Red Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5411,7 +5457,7 @@ textures: ["redStainedGlassPaneTop","redStainedGlassPaneTop","redStainedGlass","
 glassSound: true
 },
 {
-name: "purpleStainedGlassPane",
+name: "purpleStainedGlassPane",Name: "Purple Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5420,7 +5466,7 @@ textures: ["purpleStainedGlassPaneTop","purpleStainedGlassPaneTop","purpleStaine
 glassSound: true
 },
 {
-name: "pinkStainedGlassPane",
+name: "pinkStainedGlassPane",Name: "Pink Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5429,7 +5475,7 @@ textures: ["pinkStainedGlassPaneTop","pinkStainedGlassPaneTop","pinkStainedGlass
 glassSound: true
 },
 {
-name: "orangeStainedGlassPane",
+name: "orangeStainedGlassPane",Name: "Orange Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5438,7 +5484,7 @@ textures: ["orangeStainedGlassPaneTop","orangeStainedGlassPaneTop","orangeStaine
 glassSound: true
 },
 {
-name: "magentaStainedGlassPane",
+name: "magentaStainedGlassPane",Name: "Magenta Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5447,7 +5493,7 @@ textures: ["magentaStainedGlassPaneTop","magentaStainedGlassPaneTop","magentaSta
 glassSound: true
 },
 {
-name: "limeStainedGlassPane",
+name: "limeStainedGlassPane",Name: "Lime Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5456,7 +5502,7 @@ textures: ["limeStainedGlassPaneTop","limeStainedGlassPaneTop","limeStainedGlass
 glassSound: true
 },
 {
-name: "lightGrayStainedGlassPane",
+name: "lightGrayStainedGlassPane",Name: "Light Gray Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5465,7 +5511,7 @@ textures: ["lightGrayStainedGlassPaneTop","lightGrayStainedGlassPaneTop","lightG
 glassSound: true
 },
 {
-name: "lightBlueStainedGlassPane",
+name: "lightBlueStainedGlassPane",Name: "Light Blue Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5474,7 +5520,7 @@ textures: ["lightBlueStainedGlassPaneTop","lightBlueStainedGlassPaneTop","lightB
 glassSound: true
 },
 {
-name: "greenStainedGlassPane",
+name: "greenStainedGlassPane",Name: "Green Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5483,7 +5529,7 @@ textures: ["greenStainedGlassPaneTop","greenStainedGlassPaneTop","greenStainedGl
 glassSound: true
 },
 {
-name: "grayStainedGlassPane",
+name: "grayStainedGlassPane",Name: "Gray Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5492,7 +5538,7 @@ textures: ["grayStainedGlassPaneTop","grayStainedGlassPaneTop","grayStainedGlass
 glassSound: true
 },
 {
-name: "cyanStainedGlassPane",
+name: "cyanStainedGlassPane",Name: "Cyan Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5501,7 +5547,7 @@ textures: ["cyanStainedGlassPaneTop","cyanStainedGlassPaneTop","cyanStainedGlass
 glassSound: true
 },
 {
-name: "brownStainedGlassPane",
+name: "brownStainedGlassPane",Name: "Brown Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5510,7 +5556,7 @@ textures: ["brownStainedGlassPaneTop","brownStainedGlassPaneTop","brownStainedGl
 glassSound: true
 },
 {
-name: "blueStainedGlassPane",
+name: "blueStainedGlassPane",Name: "Blue Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5519,7 +5565,7 @@ textures: ["blueStainedGlassPaneTop","blueStainedGlassPaneTop","blueStainedGlass
 glassSound: true
 },
 {
-name: "blackStainedGlassPane",
+name: "blackStainedGlassPane",Name: "Black Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -5540,144 +5586,149 @@ dropSelfWhenSheared:true,
 shearBreakTime:0.4
 },
 {
-name: "strippedCrimsonStem",
+name: "strippedCrimsonStem",Name: "Stripped Crimson Stem",
 textures: ["strippedCrimsonStemTop", "strippedCrimsonStem"],
 breakTime:2,
 stemSound:true
 },
 {
-name: "strippedCrimsonStemSW",
+name: "strippedCrimsonStemSW",Name: "Stripped Crimson Stem (SW)",
 textures: ["strippedCrimsonStem", "strippedCrimsonStem", "strippedCrimsonStemTop","strippedCrimsonStemSW"],
 breakTime:2,
 stemSound:true,
 rotate:true
 },
 {
-name: "strippedWarpedStem",
+name: "strippedWarpedStem",Name: "Stripped Warped Stem",
 textures: ["strippedWarpedStemTop", "strippedWarpedStem"],
 breakTime:2,
 stemSound:true
 },
 {
-name: "strippedWarpedStemSW",
+name: "strippedWarpedStemSW",Name: "Stripped Warped Stem (SW)",
 textures: ["strippedWarpedStem", "strippedWarpedStem", "strippedWarpedStemTop","strippedWarpedStemSW"],
 breakTime:2,
 stemSound:true,
 rotate:true
 },
 {
-name: "oakPressurePlate",
+name: "oakPressurePlate",Name: "Oak Pressure Plate",
 textures: "oakPlanks",
 pressurePlate: true
 },
 {
-name: "birchPressurePlate",
+name: "birchPressurePlate",Name: "Birch Pressure Plate",
 textures: "birchPlanks",
 pressurePlate: true
 },
 {
-name: "sprucePressurePlate",
+name: "sprucePressurePlate",Name: "Spruce Pressure Plate",
 textures: "sprucePlanks",
 pressurePlate: true
 },
 {
-name: "junglePressurePlate",
+name: "junglePressurePlate",Name: "Jungle Pressure Plate",
 textures: "junglePlanks",
 pressurePlate: true
 },
 {
-name: "acaciaPressurePlate",
+name: "acaciaPressurePlate",Name: "Acacia Pressure Plate",
 textures: "acaciaPlanks",
 pressurePlate: true
 },
 {
-name:"darkOakPressurePlate",
+name:"darkOakPressurePlate",Name: "Dark Oak Pressure Plate",
 textures: "darkOakPlanks",
 pressurePlate: true
 },
 {
-name: "warpedPressurePlate",
+name: "warpedPressurePlate",Name: "Warped Pressure Plate",
 textures: "warpedPlanks",
 pressurePlate: true
 },
 {
-name: "crimsonPressurePlate",
+name: "crimsonPressurePlate",Name: "Crimson Pressure Plate",
 textures: "crimsonPlanks",
 pressurePlate: true
 },
 {
-name: "stonePressurePlate",
+name: "stonePressurePlate",Name: "Stone Pressure Plate",
 textures: "stone",
-pressurePlate: true
+pressurePlate: true,
+breakTime: 3
 },
 {
-name: "polishedBlackstonePressurePlate",
+name: "polishedBlackstonePressurePlate",Name: "Polished Blackstone Pressure Plate",
 textures: "polishedBlackstone",
-pressurePlate: true
+pressurePlate: true,
+breakTime: 3
 },
 {
-name: "lightWeightedPressurePlate",
+name: "lightWeightedPressurePlate",Name: "Light Weighted Pressure Plate",
 textures: "goldBlock",
-pressurePlate: true
+pressurePlate: true,
+breakTime: 3
 },
 {
-name: "heavyWeightedPressurePlate",
+name: "heavyWeightedPressurePlate",Name: "Heavy Weighted Pressure Plate",
 textures: "ironBlock",
-pressurePlate: true
+pressurePlate: true,
+breakTime: 3,
 },
 {
-name:"oakButton",
+name:"oakButton",Name: "Oak Button",
 textures:"oakPlanks",
 button:true,
 transparent: true
 },
 {
-name:"birchButton",
+name:"birchButton",Name: "Birch Button",
 textures:"birchPlanks",
 button:true,
 transparent: true
 },
 {
-name:"acaciaButton",
+name:"acaciaButton",Name: "Acacia Button",
 textures:"acaciaPlanks",
 button:true,
 transparent: true
 },
 {
-name:"darkOakButton",
+name:"darkOakButton",Name: "Dark Oak Button",
 textures:"darkOakPlanks",
 button:true,
 transparent: true
 },
 {
-name:"jungleButton",
+name:"jungleButton",Name: "Jungle Button",
 textures:"junglePlanks",
 button:true,
 transparent: true
 },
 {
-name:"spruceButton",
+name:"spruceButton",Name: "Spruce Button",
 textures:"sprucePlanks",
 button:true,
 transparent: true
 },
 {
-name:"warpedButton",
+name:"warpedButton",Name: "Warped Button",
 textures:"warpedPlanks",
 button:true,
 transparent: true
 },
 {
-name:"crimsonButton",
+name:"crimsonButton",Name: "Crimson Button",
 textures:"crimsonPlanks",
 button:true,
 transparent: true
 },
 {
-name:"polishedBlackstoneButton",
+name:"polishedBlackstoneButton",Name: "Polished Blackstone Button",
 textures:"polishedBlackstone",
 button:true,
-transparent:true
+transparent:true,
+breakTime: 3,
 },
 {
 name:"crackedPolishedBlackstoneBricks",
@@ -6358,7 +6409,7 @@ shadow: false,
 crossShape: true
 },
 { 
-name: "kelpPlant",
+name: "kelpPlant",Name: "Kelp",
 transparent: true,
 solid: false,
 shadow: false,
@@ -6374,7 +6425,7 @@ shadow: false,
 crop:true
 },
 {
-name:"tallSeagrass",
+name:"tallSeagrass",Name: "Seagrass Top",
 textures:"tallSeagrassTop",
 transparent: true,
 solid: false,
