@@ -3796,7 +3796,9 @@ shadow: false,
 trapdoor: true,
 woodSound:true
 },
-{ name: "magma", Name:"Magma Block", lightLevel:15},
+{ name: "magma", Name:"Magma Block", lightLevel:15,
+damage:1,
+dieMessage: () => username+" discovered the floor was lava."},
 {
 name: "crimsonFungus",
 Name: "Crimson Fungus",
@@ -14601,7 +14603,9 @@ world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z))
 setTimeout(() => world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z)), time)
 }
 }
+if(world.getBlock(X + x, Y + y, Z + z) !== blockIds.bedrock) {
 if(!liquid)world.setBlock(X + x, Y + y, Z + z, 0)
+}
 }
 }
 }
@@ -19558,7 +19562,7 @@ multiplayerError = e
 multiplayer.close()
 }
 win.ban = (username, why) => {
-if(!host) return alert("Only the host can ban")
+if(!host) return alert("Only the host can ban players.")
 send({
 type: "ban",
 data: username,
@@ -19567,7 +19571,7 @@ reason:why
 if(!ban.includes(username)) ban.push(username)
 }
 win.unban = username => {
-if(!host) return alert("Only the host can unban")
+if(!host) return alert("Only the host can unban players.")
 if(ban.includes(username)) {
 var i = ban.indexOf(username)
 if(i === -1) return
@@ -21124,7 +21128,7 @@ const always = () => true
 Button.add(width / 2, height / 2 - 40, 400, 40, "Singleplayer", "main menu", r => changeScene("loadsave menu"))
 Button.add(width / 2, height / 2 + 15, 400, 40, "Multiplayer", "main menu", r => {
 changeScene("multiplayer menu")
-}, null, "If you want multiplayer, why don't you head over to willard.fun/minekhan?")
+}, null, "A better alternative to willard.fun/minekhan!")
 Button.add(width / 2, height / 2 + 70, 400, 40, "Marketplace", "main menu", r => changeScene("marketplace"))
 Button.add(width / 2 - 105, height / 2 + 160, 190, 40, "Options", "main menu", r => changeScene("options"))
 Button.add(width / 2 + 105, height / 2 + 160, 190, 40, "Quit", "main menu", r => {
