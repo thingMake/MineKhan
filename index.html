@@ -2928,7 +2928,7 @@ glassSound: true
 {
 name:"copperBlock",
 Name:"Block of Copper",
-breakTime: 15
+breakTime: 15,type:"metal1"
 },
 { name: "oakPlanks", Name:"Oak Planks", type:"wood", breakTime:3, woodSound:true},
 {
@@ -3024,7 +3024,7 @@ stoneSound: true,
 type:"wood", 
 },
 { name: "netherrack",
-Name:"Netherrack",
+Name:"Netherrack",breakTime:3,type:"rock1",
 digSound: ["block.netherrack.dig1", "block.netherrack.dig2", "block.netherrack.dig3", "block.netherrack.dig4", "block.netherrack.dig5", "block.netherrack.dig6"],
 stepSound: ["block.netherrack.step1", "block.netherrack.step2","block.netherrack.step3","block.netherrack.step4","block.netherrack.step5","block.netherrack.step6"]},
 { name: "soulSand",
@@ -3035,22 +3035,27 @@ stepSound: ["block.soul_sand.step1", "block.soul_sand.step2","block.soul_sand.st
 {
 name: "glowstone",
 Name:"Glowstone",
-lightLevel: 15,
+lightLevel: 15,breakTime:3,type:"rock1",
 glassSound: true,
-shadow:false
+shadow:false,
+drop: "glowstoneDust",
+dropAmount: [1,3]
 },
 { name: "netherBricks",
-Name:"Nether Bricks",
+Name:"Nether Bricks",breakTime:12,type:"rock1",
 digSound: ["block.nether_bricks.dig1", "block.nether_bricks.dig2", "block.nether_bricks.dig3", "block.nether_bricks.dig4", "block.nether_bricks.dig5", "block.nether_bricks.dig6"],
 stepSound: ["block.nether_bricks.step1", "block.nether_bricks.step2","block.nether_bricks.step3","block.nether_bricks.step4","block.nether_bricks.step5","block.nether_bricks.step6"]},
 { name: "redNetherBricks",
-Name:"Red Nether Bricks",
+Name:"Red Nether Bricks",breakTime:12,type:"rock1",
 digSound: ["block.nether_bricks.dig1", "block.nether_bricks.dig2", "block.nether_bricks.dig3", "block.nether_bricks.dig4", "block.nether_bricks.dig5", "block.nether_bricks.dig6"],
 stepSound: ["block.nether_bricks.step1", "block.nether_bricks.step2","block.nether_bricks.step3","block.nether_bricks.step4","block.nether_bricks.step5","block.nether_bricks.step6"]},
 { name: "netherQuartzOre", 
-Name:"Nether Quartz Ore",
+Name:"Nether Quartz Ore",breakTime:12,type:"rock1",
 digSound: ["block.nether_ore.dig1", "block.nether_ore.dig2", "block.nether_ore.dig3", "block.nether_ore.dig4"],
-stepSound: ["block.nether_ore.step1", "block.nether_ore.step2","block.nether_ore.step3","block.nether_ore.step4","block.nether_ore.step5"]},
+stepSound: ["block.nether_ore.step1", "block.nether_ore.step2","block.nether_ore.step3","block.nether_ore.step4","block.nether_ore.step5"],
+drop: "quartz",
+dropAmount: [1,2]
+},
 {
 name: "quartzBlock",
 Name:"Block of Quartz",
@@ -3875,18 +3880,21 @@ textures: ["respawnAnchorBottom", "respawnAnchorTopOff", "respawnAnchorSide0"],
 name: "RespawnAnchor1",
 Name: "Respawn Anchor (#1)",
 textures: ["respawnAnchorBottom", "respawnAnchorTop1", "respawnAnchorSide1"],
+drop: "RespawnAnchorOff",
 //hidden: true
 },
 { 
 name: "RespawnAnchor2",
 Name: "Respawn Anchor (#2)",
 textures: ["respawnAnchorBottom", "respawnAnchorTop2", "respawnAnchorSide2"],
+drop: "RespawnAnchorOff",
 //hidden: true
 },
 { 
 name: "RespawnAnchor3",
 Name: "Respawn Anchor (#3)",
 textures: ["respawnAnchorBottom", "respawnAnchorTop3", "respawnAnchorSide3"],
+drop: "RespawnAnchorOff",
 //hidden: true
 },
 { 
@@ -4474,6 +4482,54 @@ saturation: 2.4,
 eatResult: "appleCore"
 },
 {
+name:"woodenSword",
+Name:"Wooden Swords (not sharp)",
+item: true,
+sword: true,
+durability: 59,
+attackDamage: 4
+},
+{
+name:"stoneSword",
+Name:"Stone Sword",
+item: true,
+sword: true,
+durability: 131,
+attackDamage: 5
+},
+{
+name:"ironSword",
+Name:"Iron Sword",
+item: true,
+sword: true,
+durability: 250,
+attackDamage: 6
+},
+{
+name:"goldenSword",
+Name:"Golden Sword",
+item: true,
+sword: true,
+durability: 32,
+attackDamage: 4
+},
+{
+name:"diamondSword",
+Name:"Diamond Sword",
+item: true,
+sword: true,
+durability: 1561,
+attackDamage: 7
+},
+{
+name:"netheriteSword",
+Name:"Netherite Sword",
+item: true,
+sword: true,
+durability: 2031,
+attackDamage: 8
+},
+{
 name:"woodenPickaxe",
 Name:"Wooden Pickaxe",
 item: true,
@@ -4526,6 +4582,180 @@ pickaxe: true,
 mineSpeed: 9,
 durability: 2031,
 attackDamage: 6
+},
+{
+name:"woodenAxe",
+Name:"Wooden Axe",
+item: true,
+axe: true,
+durability: 59,
+mineSpeed:2,
+attackDamage: 7,
+attackSpeed:0.8
+},
+{
+name:"stoneAxe",
+Name:"Stone Axe",
+item: true,
+axe: true,
+durability: 131,
+mineSpeed:4,
+attackDamage: 9,
+attackSpeed:0.8
+},
+{
+name:"ironAxe",
+Name:"Iron Axe",
+item: true,
+axe: true,
+durability: 250,
+mineSpeed:6,
+attackDamage: 9,
+attackSpeed:0.9
+},
+{
+name:"goldenAxe",
+Name:"Golden Axe",
+item: true,
+axe: true,
+durability: 32,
+mineSpeed:12,
+attackDamage: 7,
+attackSpeed:1
+},
+{
+name:"diamondAxe",
+Name:"Diamond Axe",
+item: true,
+axe: true,
+durability: 1561,
+mineSpeed:8,
+attackDamage: 9,
+attackSpeed:1
+},
+{
+name:"netheriteAxe",
+Name:"Netherite Axe",
+item: true,
+axe: true,
+durability: 2031,
+mineSpeed:9,
+attackDamage: 10,
+attackSpeed:1
+},
+{
+name:"woodenShovel",
+Name:"Wooden Shovel",
+item: true,
+shovel: true,
+durability: 59,
+mineSpeed:2,
+attackDamage: 2
+},
+{
+name:"stoneShovel",
+Name:"Stone Shovel",
+item: true,
+shovel: true,
+durability: 131,
+mineSpeed:3.6,
+attackDamage: 4
+},
+{
+name:"ironShovel",
+Name:"Iron Shovel",
+item: true,
+shovel: true,
+durability: 250,
+mineSpeed:6,
+attackDamage: 4
+},
+{
+name:"goldenShovel",
+Name:"Golden Shovel",
+item: true,
+shovel: true,
+durability: 32,
+mineSpeed:12,
+attackDamage: 2
+},
+{
+name:"diamondShovel",
+Name:"Diamond Shovel",
+item: true,
+shovel: true,
+durability: 1561,
+mineSpeed:8,
+attackDamage: 5
+},
+{
+name:"netheriteShovel",
+Name:"Netherite Shovel",
+item: true,
+shovel: true,
+durability: 2031,
+mineSpeed:9,
+attackDamage: 6
+},
+{
+name:"woodenHoe",
+Name:"Wooden Hoe",
+item: true,
+hoe: true,
+durability: 59,
+mineSpeed:2,
+attackDamage: 1,
+attackSpeed:1
+},
+{
+name:"stoneHoe",
+Name:"Stone Hoe",
+item: true,
+hoe: true,
+durability: 131,
+mineSpeed:4,
+attackDamage: 1,
+attackSpeed:2
+},
+{
+name:"ironHoe",
+Name:"Iron Hoe",
+item: true,
+hoe: true,
+durability: 250,
+mineSpeed:6,
+attackDamage: 1,
+attackSpeed:3
+},
+{
+name:"goldenHoe",
+Name:"Golden Hoe",
+item: true,
+hoe: true,
+durability: 32,
+mineSpeed:12,
+attackDamage: 1,
+attackSpeed:1
+},
+{
+name:"diamondHoe",
+Name:"Diamond Hoe",
+item: true,
+hoe: true,
+durability: 1561,
+mineSpeed:8,
+attackDamage: 1,
+attackSpeed:4
+},
+{
+name:"netheriteHoe",
+Name:"Nethrite Hoe",
+item: true,
+hoe: true,
+durability: 2031,
+mineSpeed:9,
+attackDamage: 1,
+attackSpeed:4
 },
 { name:"flint", Name:"Flint", item:true },
 {
@@ -4666,6 +4896,14 @@ world.addEntity(new Cow(p2.x,p2.y,p2.z))
 minusOnUse:true
 },
 {
+name: "pigSpawnEgg",Name:"minekhan:pig_spawn_egg",
+item: true,
+onuse: (x,y,z, block, replaceItem) => {
+world.addEntity(new Pig(p2.x,p2.y,p2.z))
+},
+minusOnUse:true
+},
+{
 name:"sugarCane",
 Name:"Sugarcane",
 iconTexture: "sugarCaneIcon",
@@ -4673,54 +4911,6 @@ crossShape: true,
 solid: false,
 transparent: true,
 shadow: false,
-},
-{
-name:"woodenSword",
-Name:"Wooden Swords (not sharp)",
-item: true,
-sword: true,
-durability: 59,
-attackDamage: 4
-},
-{
-name:"stoneSword",
-Name:"Stone Sword",
-item: true,
-sword: true,
-durability: 131,
-attackDamage: 5
-},
-{
-name:"ironSword",
-Name:"Iron Sword",
-item: true,
-sword: true,
-durability: 250,
-attackDamage: 6
-},
-{
-name:"goldenSword",
-Name:"Golden Sword",
-item: true,
-sword: true,
-durability: 32,
-attackDamage: 4
-},
-{
-name:"diamondSword",
-Name:"Diamond Sword",
-item: true,
-sword: true,
-durability: 1561,
-attackDamage: 7
-},
-{
-name:"netheriteSword",
-Name:"Netherite Sword",
-item: true,
-sword: true,
-durability: 2031,
-attackDamage: 8
 },
 { name:"azaleaLeaves",Name:"Azalea Leaves",
 transparent: true,
@@ -4749,14 +4939,6 @@ else return "floweringAzalea"
 },
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
-},
-{
-name: "pigSpawnEgg",Name:"minekhan:pig_spawn_egg",
-item: true,
-onuse: (x,y,z, block, replaceItem) => {
-world.addEntity(new Pig(p2.x,p2.y,p2.z))
-},
-minusOnUse:true
 },
 {name:"tuff",Name:"Tuff",breakTime:1.5},
 {name:"deepslate", Name:"Deepslate", textures:["deepslateTop","deepslate"],breakTime:3,deepslateSound:true},
@@ -4891,120 +5073,6 @@ type:"plant2"
 name:"hayBlockSW",Name: "Hay Bale (SW)",
 textures: ["hayBlockSide","hayBlockSide","hayBlockTop","hayBlockSW"],
 rotate: true,
-},
-{
-name:"woodenShovel",
-Name:"Wooden Shovel",
-item: true,
-shovel: true,
-durability: 59,
-mineSpeed:2,
-attackDamage: 2
-},
-{
-name:"stoneShovel",
-Name:"Stone Shovel",
-item: true,
-shovel: true,
-durability: 131,
-mineSpeed:3.6,
-attackDamage: 4
-},
-{
-name:"ironShovel",
-Name:"Iron Shovel",
-item: true,
-shovel: true,
-durability: 250,
-mineSpeed:6,
-attackDamage: 4
-},
-{
-name:"goldenShovel",
-Name:"Golden Shovel",
-item: true,
-shovel: true,
-durability: 32,
-mineSpeed:12,
-attackDamage: 2
-},
-{
-name:"diamondShovel",
-Name:"Diamond Shovel",
-item: true,
-shovel: true,
-durability: 1561,
-mineSpeed:8,
-attackDamage: 5
-},
-{
-name:"netheriteShovel",
-Name:"Netherite Shovel",
-item: true,
-shovel: true,
-durability: 2031,
-mineSpeed:9,
-attackDamage: 6
-},
-{
-name:"woodenAxe",
-Name:"Wooden Axe",
-item: true,
-axe: true,
-durability: 59,
-mineSpeed:2,
-attackDamage: 7,
-attackSpeed:0.8
-},
-{
-name:"stoneAxe",
-Name:"Stone Axe",
-item: true,
-axe: true,
-durability: 131,
-mineSpeed:4,
-attackDamage: 9,
-attackSpeed:0.8
-},
-{
-name:"ironAxe",
-Name:"Iron Axe",
-item: true,
-axe: true,
-durability: 250,
-mineSpeed:6,
-attackDamage: 9,
-attackSpeed:0.9
-},
-{
-name:"goldenAxe",
-Name:"Golden Axe",
-item: true,
-axe: true,
-durability: 32,
-mineSpeed:12,
-attackDamage: 7,
-attackSpeed:1
-},
-{
-name:"diamondAxe",
-Name:"Diamond Axe",
-item: true,
-axe: true,
-durability: 1561,
-mineSpeed:8,
-attackDamage: 9,
-attackSpeed:1
-},
-{
-name:"netheriteAxe",
-Name:"Netherite Axe",
-item: true,
-axe: true,
-durability: 2031,
-mineSpeed:9,
-attackDamage: 10,
-attackSpeed:1
 },
 {
 name: "strippedOakLog",Name: "Stripped Oak Log",
@@ -5737,66 +5805,6 @@ Name:"Cracked Polished Blackstone Bricks"
 {
 name:"crackedStoneBricks",
 Name:"Cracked Stone Bricks"
-},
-{
-name:"woodenHoe",
-Name:"Wooden Hoe",
-item: true,
-hoe: true,
-durability: 59,
-mineSpeed:2,
-attackDamage: 1,
-attackSpeed:1
-},
-{
-name:"stoneHoe",
-Name:"Stone Hoe",
-item: true,
-hoe: true,
-durability: 131,
-mineSpeed:4,
-attackDamage: 1,
-attackSpeed:2
-},
-{
-name:"ironHoe",
-Name:"Iron Hoe",
-item: true,
-hoe: true,
-durability: 250,
-mineSpeed:6,
-attackDamage: 1,
-attackSpeed:3
-},
-{
-name:"goldenHoe",
-Name:"Golden Hoe",
-item: true,
-hoe: true,
-durability: 32,
-mineSpeed:12,
-attackDamage: 1,
-attackSpeed:1
-},
-{
-name:"diamondHoe",
-Name:"Diamond Hoe",
-item: true,
-hoe: true,
-durability: 1561,
-mineSpeed:8,
-attackDamage: 1,
-attackSpeed:4
-},
-{
-name:"netheriteHoe",
-Name:"Nethrite Hoe",
-item: true,
-hoe: true,
-durability: 2031,
-mineSpeed:9,
-attackDamage: 1,
-attackSpeed:4
 },
 {
 name:"podzol",
