@@ -14578,6 +14578,8 @@ crack.delayStart = now
 }
 }
 function explode(x,y,z, r, liquid){
+function explode(x,y,z, r, liquid){
+if (worldSettings.tntExplode) {
 /*world.setBlock(x,y,z,blockIds.air);
 for(var i=radius; i>0; i--){
 sphereoidAt(x,y,z,i,i,i, blockIds.air)
@@ -14603,7 +14605,7 @@ world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z))
 setTimeout(() => world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z)), time)
 }
 }
-if(world.getBlock(X + x, Y + y, Z + z) !== blockIds.bedrock) {
+if(world.getBlock(X + x, Y + y, Z + z) !== blockIds.bedrock && world.getBlock(X + x, Y + y, Z + z) !== blockIds.barrier && world.getBlock(X + x, Y + y, Z + z) !== blockIds.obsidian && world.getBlock(X + x, Y + y, Z + z) !== blockIds.endPortalFrame) {
 if(!liquid)world.setBlock(X + x, Y + y, Z + z, 0)
 }
 }
@@ -14635,6 +14637,7 @@ damage(damageTook, username+" blew up.")
 }
 }
 explodeSound(x,y,z)
+}
 }
 function fall(x,y,z,b){
 if(!worldSettings.blocksFall || world.getBlock(x,y-1,z)) return
