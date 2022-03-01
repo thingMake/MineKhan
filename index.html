@@ -14603,7 +14603,7 @@ world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z))
 setTimeout(() => world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z)), time)
 }
 }
-if(world.getBlock(X + x, Y + y, Z + z) !== blockIds.bedrock) {
+if(world.getBlock(X + x, Y + y, Z + z) !== blockIds.bedrock && world.getBlock(X + x, Y + y, Z + z) !== blockIds.barrier && world.getBlock(X + x, Y + y, Z + z) !== blockIds.endPortalFrame && world.getBlock(X + x, Y + y, Z + z) !== blockIds.obsidian) {
 if(!liquid)world.setBlock(X + x, Y + y, Z + z, 0)
 }
 }
