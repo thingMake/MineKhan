@@ -1491,7 +1491,6 @@ gildedBlackstone: "0g0gaAìZ(ěHkMW;ŋHQKWŁSZégZsTYZĜY|BH1g0whjkTiÄRwhjMTBÝ
 chiseledPolishedBlackstone: "0g0g6|BH;ŋHAìZ(ěHkMWsTY0g002RcĚÉÚþĳeŁĒP!teë00Xd6íPBü|B6ÉÚüt6Ę00Ģd5hSk)d5MT)ĢtdNPAĜË56ĹPĂd5i_BĢt&ČýÄŁtÙ0S0ít|ĚİÚĞŁ^ēAJĬV",
 blackstone: "0g0g6AìZ(ěHkMW;ŋHsTY|BH4ëgAěxF]ùAĞÎÂ1h%ĚySJT%ŀ4XĞĪãò4ÛĚx094%ù4A8Aë0úgúxùiôM]1AĬ8ói20gČ6Ğ^XğgúŁĳBĞKJRŇÛķ401gÛā2ÂQ{wP20gS",
 blackstoneTop: "0g0g5AìZ(ěH;ŋHsTYkMW5yÆEëÑòirKñaIĈa%ĚìKI^TČÀ2]iik_0xpJR>ÎyõÎįrÒk_]8İ0ĉ2AĀa2+2QòrÂ2I]-ĨQiJiNíÀč1e4ùÎyoÛ2IÑĈTQSSxĚTP]õ",
-netheriteBlock: "0g0ga;ĪW(ĊYAÞZPkYÇVY|AZ-ŊYT4W|4W$ĊY1000010ijQQQQ?QÂ4Ð*VàIOÂ4àIV*ÆãÂ4,ïïVÃÝN4àä*?VÝM4GàVUO+N4,ÒVV,+Â4*VÃ*àãM4V?GàG+MlVïGGÓ0Â4ÆÆ+ÔÓ9ÂlÐOãÔKāÂlKÓKāāùÁlO*V*VVNiyxiyhyy",
 basaltSide: "0g0g5|AZoûW-ŋYËâZ(ĪZ50ĪÙ(wðSĪÙ(iN0łÙ(ëA6łc-ëQ(ĩ1waÂ+icxaJ)ķÙxgùQëÎĨ2ë(ĀÚĩëë6rÚĠăù6rdírù+rTĚs0+2ìXkëQgëwĹì6ăgAħ46rÎXo",
 basaltTop: "0g0g7ËâZâľH|AZ)ĻWóEY;śZoûW0üÉA636mĹKÈŁč+ëeĪÀ{qì{ĀqĭhSÙJ&ħìØ5ìSĿdĀ0Ģý%ŋĐ4Ĥđ1Č5DÙįĞĈ?ġJħSKocëÈ0ĄĨwëO4ăTPëŝī(×~Ó6ĴëeÑĘ]Kwe(wS",
 polishedBasaltSide: "0g0g6(ĪZ-ŋY|AZâľHËâZoûW5.júF8č-ĺ÷B9č-Ŋ÷*99+łöġ95@ŊöĠúB]ŊöĠú5QłòįI1AłÖįIĉ)ŊÞĎIĉ)ŊÚĭöĊ-ŊÚįï6]ŊÚĠïa-ĺÛ)I!-ĺÛ-ù!-ĺ÷-ù!.j÷Ph",
@@ -2921,7 +2920,7 @@ glassSound: true
 { name: "ironBlock", Name:"Block of Iron", breakTime:25, type:"metal2", stoneSound:true},
 { name: "goldBlock", Name:"Block of Gold", breakTime:15, type:"metal3", stoneSound:true},
 { name: "diamondBlock", Name:"Block of Diamond", breakTime:25, type:"metal3", stoneSound:true},
-{ name: "netheriteBlock", Name:"Block of Netherite", breakTime:35, type:"metal3", stoneSound:true},
+{name: "netheriteBlock",Name:"Netherite Block",type:"rock4",breakTime:250,digSound: ["block.netherite.dig1", "block.netherite.dig2", "block.netherite.dig3", "block.netherite.dig4"],stepSound: ["block.netherite.step1", "block.netherite.step2","block.netherite.step3","block.netherite.step4","block.netherite.step5","block.netherite.step6"]},
 { name: "redstoneBlock", Name:"Block of Redstone", breakTime:25, type:"metal1", stoneSound:true},
 { name: "lapisBlock", Name:"Block of Lapis Lazuli", breakTime:15, type:"metal2", stoneSound:true},
 { name: "emeraldBlock", Name:"Block of Emerald", breakTime:25, type:"metal3", stoneSound:true},
@@ -3764,14 +3763,6 @@ stoneSound: true,breakTime:10,type:"rock1"
 { name: "gildedBlackstone", Name:"Gilded Blackstone",stoneSound: true,breakTime:20,type:"rock1"},
 { name: "polishedBlackstoneBricks", Name:"Polished Blackstone Bricks",stoneSound: true,breakTime:10,type:"rock1"},
 { name: "chiseledPolishedBlackstone", Name:"Chiseled Polished Blackstone",stoneSound: true,breakTime:10,type:"rock1"},
-{
-name: "netheriteBlock",
-Name:"Netherite Block",
-type:"rock4",
-breakTime:250,
-digSound: ["block.netherite.dig1", "block.netherite.dig2", "block.netherite.dig3", "block.netherite.dig4"],
-stepSound: ["block.netherite.step1", "block.netherite.step2","block.netherite.step3","block.netherite.step4","block.netherite.step5","block.netherite.step6"]
-},
 {
 name: "basalt",
 Name: "Basalt",
@@ -14603,7 +14594,7 @@ world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z))
 setTimeout(() => world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z)), time)
 }
 }
-if(world.getBlock(X + x, Y + y, Z + z) !== blockIds.bedrock && world.getBlock(X + x, Y + y, Z + z) !== blockIds.barrier && world.getBlock(X + x, Y + y, Z + z) !== blockIds.endPortalFrame && world.getBlock(X + x, Y + y, Z + z) !== blockIds.obsidian) {
+if(worldSettings.tntExplode && world.getBlock(X + x, Y + y, Z + z) !== blockIds.bedrock && world.getBlock(X + x, Y + y, Z + z) !== blockIds.barrier && world.getBlock(X + x, Y + y, Z + z) !== blockIds.endPortalFrame && world.getBlock(X + x, Y + y, Z + z) !== blockIds.obsidian) {
 if(!liquid)world.setBlock(X + x, Y + y, Z + z, 0)
 }
 }
