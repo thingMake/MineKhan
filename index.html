@@ -14611,6 +14611,12 @@ if(!controlMap.break.pressed){
 crack.delayStart = now
 }
 }
+var nonExplodes = [
+blockIds.bedrock,
+blockIds.barrier,
+blockIds.endPortalFrame,
+blockIds.obsidian
+]
 function explode(x,y,z, r, liquid){
 /*world.setBlock(x,y,z,blockIds.air);
 for(var i=radius; i>0; i--){
@@ -14637,7 +14643,7 @@ world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z))
 setTimeout(() => world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z)), time)
 }
 }
-if(worldSettings.tntExplode && world.getBlock(X + x, Y + y, Z + z) !== blockIds.bedrock && world.getBlock(X + x, Y + y, Z + z) !== blockIds.barrier && world.getBlock(X + x, Y + y, Z + z) !== blockIds.endPortalFrame && world.getBlock(X + x, Y + y, Z + z) !== blockIds.obsidian) {
+if(worldSettings.tntExplode && !nonExplodes.contains( world.getBlock(X + x, Y + y, Z + z) ) ) {
 if(!liquid)world.setBlock(X + x, Y + y, Z + z, 0)
 }
 }
