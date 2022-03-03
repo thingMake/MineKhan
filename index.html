@@ -14643,7 +14643,7 @@ world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z))
 setTimeout(() => world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z)), time)
 }
 }
-if(worldSettings.tntExplode && !nonExplodes.contains( world.getBlock(X + x, Y + y, Z + z) ) ) {
+if(worldSettings.tntExplode && nonExplodes.indexOf( world.getBlock(X + x, Y + y, Z + z) ) === -1 ) {
 if(!liquid)world.setBlock(X + x, Y + y, Z + z, 0)
 }
 }
