@@ -16822,6 +16822,18 @@ if(world.getBlock(wx+x,y,wz+z) === blockIds.netherrack && world.getBlock(wx+x,y+
 world.setBlock(wx+x,y,wz+z, blockIds.netherGoldOre)
 }
 }
+for(l=0; l<5; l++){
+let x = random(0, 16)
+if (random(0,2) < 1) {
+let y = random(5, 20)
+} else {
+let y = random(100, 115)
+}
+let z = random(0, 16)
+if(world.getBlock(wx+x,y,wz+z) === blockIds.netherrack && world.getBlock(wx+x,y+1,wz+z) === blockIds.netherrack && world.getBlock(wx+x,y-1,wz+z) === blockIds.netherrack){
+world.setBlock(wx+x,y,wz+z, blockIds.ancientDebris)
+}
+}
 }else{
 // Blocks of each per chunk in Minecraft
 // Coal: 185.5
