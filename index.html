@@ -8263,7 +8263,8 @@ let defaultWorldSettings = {
 tntExplode:true,
 killCmdOff:false,
 dayNightCycle: true,
-blocksFall: true
+blocksFall: true,
+pvp: true,
 }
 let worldSettings = Object.assign({}, defaultWorldSettings)
 win.worldSettings = worldSettings
@@ -14509,7 +14510,9 @@ if(critical) damage *= 1.5
 }else damage = 1
 if(entHitbox.player){
 var pd = p.direction
+if (worldSettings.pvp) {
 send({type:"hit", username:username, damage:damage, velx:pd.x/2, velz:pd.z/2}, ent.id)
+}
 }else{
 if(ent.onhit){
 ent.onhit(damage)
@@ -21354,6 +21357,7 @@ Button.add(width / 2, height - 50, width / 3, 40, "Back", "options", r => change
 var needsCheats = () => !cheats
 var noCheatsThenSayIt = () => !cheats && "This requires cheats."
 Button.add(width / 2, height/2 + -245, width / 4, 40, ["TNT Explodes: On","TNT Explodes: Off"], "options worldSettings", r => worldSettings.tntExplode = r === "TNT Explodes: On", null, null, () => worldSettings.tntExplode ? 0 : 1)
+Button.add(width / 2, height/2 + -5, width / 4, 40, ["PVP: On","PVP: Off"], "options worldSettings", r => worldSettings.pvp = r === "PVP: On", null, null, () => worldSettings.pvp ? 0 : 1)
 Button.add(width / 2, height/2 + -185, width / 4, 40, ["Kill command enabled","Kill command disabled"], "options worldSettings", r => worldSettings.killCmdOff = r === "Kill command disabled", null, null, () => worldSettings.killCmdOff ? 1 : 0)
 Button.add(width / 2, height/2 + -125, width / 4, 40, ["Day/Night Cycle: On", "Day/Night Cycle: Off"], "options worldSettings", r => worldSettings.dayNightCycle = r === "Day/Night Cycle: On", needsCheats, noCheatsThenSayIt, () => worldSettings.dayNightCycle ? 0 : 1)
 Button.add(width / 2, height/2 + -65, width / 4, 40, ["Blocks Fall: On", "Blocks Fall: Off"], "options worldSettings", r => worldSettings.blocksFall = r === "Blocks Fall: On", needsCheats, noCheatsThenSayIt, () => worldSettings.blocksFall ? 0 : 1)
