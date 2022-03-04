@@ -16917,7 +16917,7 @@ if (this.getBlock(i, y, k)) {
 this.generateBlob(blockIds.stone, blockIds.lapisOre, round(random(1, 9)), i,y,k, 9)
 }
 }
-//clay & dirt
+//clay & dirt (& lava)
 if (random() < 0.1) {
 let y = random() * ground | 0 + 1
 y = y < ground ? y : ground
@@ -16930,6 +16930,13 @@ let y = random() * ground | 0 + 1
 y = y < ground ? y : ground
 if (this.getBlock(i, y, k)) {
 this.generateBlob(dirtReplaceable, blockIds.dirt, round(random(20, 40)), i,y,k, 5)
+}
+}
+if (random() < 0.1) {
+let y = random() * ground | 0 + 1
+y = y < ground ? y : ground
+if (this.getBlock(i, y, k)) {
+this.generateBlob(dirtReplaceable, blockIds.Lava, round(random(10, 30)), i,y,k, 5)
 }
 }
 }
@@ -21577,7 +21584,7 @@ if(trans) semiTransTextures.push(t)
 let arr = new Float32Array(192)
 for (let i = 0; i < 192; i += 2) {
 arr[i] = textureCoords[textureMap.hitbox][0] + 0.01
-arr[i + 1] = textureCoords[textureMap.hitbox][1] + 0.01
+arr[i + 1] = textureCoords[textureMap.hitbox][1] + 0fcopp.01
 }
 textureCoords[textureMap.hitbox] = arr
 }
