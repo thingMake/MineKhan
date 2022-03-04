@@ -16932,11 +16932,16 @@ if (this.getBlock(i, y, k)) {
 this.generateBlob(dirtReplaceable, blockIds.dirt, round(random(20, 40)), i,y,k, 5)
 }
 }
-if (random() < 0.1) {
-let y = random() * ground | 0 + 1
-y = y < ground ? y : ground
-if (this.getBlock(i, y, k)) {
-this.generateBlob(dirtReplaceable, blockIds.Lava, round(random(10, 30)), i,y,k, 5)
+let x = random(0, 16)
+let y = random(5, 10)
+let z = random(0, 16)
+for(l=0; l<10; l++){
+let xx = random(-2,2)
+let zz = random(-2,2)
+if(world.getBlock(wx+x+xx,y,wz+z+zz) === blockIds.stone){
+world.setBlock(wx+x+xx,y,wz+z+zz, blockIds.Lava)
+} else if (world.getBlock(wx+x+xx,y+1,wz+z+zz) === blockIds.stone){
+world.setBlock(wx+x+xx,y+1,wz+z+zz, blockIds.Lava)
 }
 }
 }
