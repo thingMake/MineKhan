@@ -24044,7 +24044,7 @@ p.x = 8
 p.y = 0
 p.z = 8
 p.previousX = 8
-p.previousY = 70
+p.previousY = 1
 p.previousZ = 8
 p.w = 3 / 8
 p.bottomH = 1.62
@@ -24126,6 +24126,7 @@ setLevel()
 freezeEffect = 0
 p.burnTime = 0
 dieMessage = username+" died because ¯\\_(ツ)_/¯"
+world = dimensions.overworld
 }
 function initWorldsMenu() {
 while (window.worlds.firstChild) {
@@ -24232,7 +24233,7 @@ let br = "<br>"
 div.id = id
 div.innerHTML = "<div class='ping'>Pinging...</div>"
 div.innerHTML += "<strong>" + Messages.format(name)+ "</strong>" + br
-div.innerHTML += "Hosted by "+host + br
+div.innerHTML += "World Owner: "+host + br
 div.innerHTML += players.length+" player"+(players.length===1 ? "" : "s")+" online"
 servers[id] = {
 id:id,
