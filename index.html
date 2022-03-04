@@ -16410,6 +16410,9 @@ for (let j = ground + 1; j <= top; j++) {
 this.setBlock(i, j, k, tree);
 }
 this.setBlock(i, ground, k, blockIds.sand);
+for (let j = 5; j <= 10; j++) {
+this.setBlock(1, ground-j, k, blockIds.Lava);
+}
 //Fruit
 switch(round(rnd*4)){
 case 0:
