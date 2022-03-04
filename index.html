@@ -3709,7 +3709,11 @@ lightLevel:15,
 damage:4,
 burnPlayer:true,
 dieMessage: () => username+" tried to swim in lava.",
-shadow: false
+shadow: false,
+onupdate:function(x,y,z,b){
+if (world.getBlock(x,y+1,z) === blockIds.Water) {
+world.setblock(x,y,z,blockIds.obsidian)
+}
 },
 {
 name: "craftingTable",
@@ -4888,7 +4892,11 @@ item: true,
 onuse: (x,y,z, block, replaceItem) => {
 if(survival)replaceItem(blockIds.bucket)
 var pos = getPosition()
+if (world.getBlock(pos[0],pos[1]+1,pos[2]) === blockIds.Water) {
+world.setBlock(pos[0],pos[1],pos[2],blockIds.obsidian)
+} else {
 world.setBlock(pos[0],pos[1],pos[2],blockIds.Lava)
+}
 },
 stackSize: 1
 },
@@ -14615,10 +14623,11 @@ crack.delayStart = now
 }
 }
 var nonExplodes = [
-blockIds.bedrock,
-blockIds.barrier,
-blockIds.endPortalFrame,
-blockIds.obsidian
+  blockIds.bedrock,
+  blockIds.barrier,
+  blockIds.endPortalFrame,
+  blockIds.obsidian,
+  blockIds.netheriteBlock,
 ]
 function explode(x,y,z, r, liquid){
 /*world.setBlock(x,y,z,blockIds.air);
