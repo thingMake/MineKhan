@@ -2853,20 +2853,21 @@ breakTime: 0.9,
 drop:"dirt",
 type:"ground",
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
-stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
+stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],menu:1
 },
 { name: "dirt", Name:"Dirt", breakTime:0.75, type:"ground",
 digSound: ["block.gravel.dig1", "block.gravel.dig2", "block.gravel.dig3", "block.gravel.dig4"],
-stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","block.gravel.step4"]
+stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","block.gravel.step4"],menu:1
 },
-{ name: "stone", Name:"Stone", drop:"cobblestone", type:"rock1", breakTime:7.5, stoneSound:true},
-{ name: "bedrock", Name:"Bedrock", breakTime:89000000, stoneSound:true},
+{ name: "stone", Name:"Stone", drop:"cobblestone", type:"rock1", breakTime:7.5, stoneSound:true,menu:1},
+{ name: "bedrock", Name:"Bedrock", breakTime:89000000, stoneSound:true,menu:1},
 { name: "sand", Name:"Sand", breakTime:0.75,
 onupdate: function(x,y,z,b){
 fall(x,y,z,b)
 },
 digSound: ["block.sand.dig1", "block.sand.dig2", "block.sand.dig3", "block.sand.dig4"],
-stepSound: ["block.sand.step1", "block.sand.step2","block.sand.step3","block.sand.step4","block.sand.step5"]},
+stepSound: ["block.sand.step1", "block.sand.step2","block.sand.step3","block.sand.step4","block.sand.step5"],menu:1
+},
 { name: "gravel", Name:"Gravel", breakTime:0.9, type:"ground",
 onupdate: function(x,y,z){
 fall(x,y,z,blockIds.gravel)
@@ -2876,7 +2877,8 @@ if(round(random(10)) === 1) return "flint"
 else return "gravel"
 },
 digSound: ["block.gravel.dig1", "block.gravel.dig2", "block.gravel.dig3", "block.gravel.dig4"],
-stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","block.gravel.step4"]},
+stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","block.gravel.step4"],menu:1
+},
 {
 name: "leaves",
 Name: "Leaves",
@@ -2894,7 +2896,7 @@ else return "apple"
 dropSelfWhenSheared:true,
 shearBreakTime:0.05,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
-stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
+stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],menu:1
 },
 {
 name: "glass",
@@ -2903,13 +2905,13 @@ transparent: true,
 shadow: false,
 breakTime: 0.45,
 type: "glass",
-glassSound: true
+glassSound: true,menu:1
 },
-{ name: "cobblestone", Name:"Cobblestone", breakTime:10, type:"rock1", stoneSound:true},
-{ name: "mossyCobble", Name:"Mossy Cobblestone", breakTime:10, type:"rock1", stoneSound:true},
-{ name: "stoneBricks", Name:"Stone Bricks", breakTime:7.5, type:"rock1", stoneSound:true},
-{ name: "mossyStoneBricks", Name:"Mossy Stone Bricks", breakTime:7.5, type:"rock1", stoneSound:true},
-{ name: "bricks", Name:"Bricks", breakTime:10, type:"rock1", stoneSound:true},
+{ name: "cobblestone", Name:"Cobblestone", breakTime:10, type:"rock1", stoneSound:true,menu:1},
+{ name: "mossyCobble", Name:"Mossy Cobblestone", breakTime:10, type:"rock1", stoneSound:true,menu:1},
+{ name: "stoneBricks", Name:"Stone Bricks", breakTime:7.5, type:"rock1", stoneSound:true,menu:1},
+{ name: "mossyStoneBricks", Name:"Mossy Stone Bricks", breakTime:7.5, type:"rock1", stoneSound:true,menu:1},
+{ name: "bricks", Name:"Bricks", breakTime:10, type:"rock1", stoneSound:true,menu:1},
 { name: "coalOre", Name:"Coal Ore", breakTime:15, type:"rock1", drop:"coal", stoneSound:true, experience:0.1},
 { name: "ironOre", Name:"Iron Ore", breakTime:15, type:"rock2", drop:"rawIron", stoneSound:true},
 { name: "goldOre", Name:"Gold Ore", breakTime:15, type:"rock3", drop:"rawGold", stoneSound:true},
@@ -22143,7 +22145,7 @@ ctx.lineTo(50.5 - s2 + s * x, 50.5 - s2 + y * s)
 }
 ctx.translate(0, invScroll % s)
 // Hotbar
-x = width / 2 - inventory.hotbar.length / 2 * s + 0.5 + 25
+x = width / 2 - inventory.hotbar.length / 2 * s + 0.5 + 25z
 y = height - s * 1.5 + 0.5
 ctx.moveTo(x, y)
 ctx.lineTo(x + s * 9, y)
@@ -22299,7 +22301,15 @@ idx = wrongidx - 1
 }else{
 for(var i=1; i<wrongidx; i++){
 idx++;
-if(blockData[i+1] && blockData[i+1].hidden){
+var temp2 = false;
+if (p.creativeMenu===0) {
+temp2=true;
+} else if (blockData[i+1].menu !== undefined) {
+if (blockData[i+1].menu === p.creativeMenu) {
+temp2=true;
+}
+}
+if((blockData[i+1] && blockData[i+1].hidden) || (temp2 === false)){
 /*let i2 = idx
 while(blockData[i2] && blockData[i2].hidden){
 i2++
@@ -24095,6 +24105,7 @@ p.walking = false
 p.punchEffect = 0
 p.temperature = 10 // 0 to 20
 p.lastTemperature = 10
+p.creativeMenu = 0
 win.player = p
 win.p2 = p2
 }
