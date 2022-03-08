@@ -22303,17 +22303,17 @@ idx = wrongidx - 1
 ctx2.fillStyle = "white"
 ctx2.font = "14px VT323"
 ctx2.textAlign = "left"
-//ctx2.fillText("creativeMenu: "+p.creativeMenu,50,20)
+ctx2.fillText("creativeMenu: "+p.creativeMenu,50,20)
 for(var i=1; i<wrongidx; i++){
 idx++;
 var temp2 = false;
-//if (p.creativeMenu===0) {
+if (p.creativeMenu===0) {
 temp2=true;
-//} else if (blockData[i+1].menu !== undefined) {
-//if (blockData[i+1].menu === p.creativeMenu) {
-//temp2=true;
-//}
-//}
+} else if (blockData[i+1].menu !== undefined) {
+if (blockData[i+1].menu === p.creativeMenu) {
+temp2=true;
+}
+}
 if(blockData[i+1] && (blockData[i+1].hidden || temp2 === false)){
 /*let i2 = idx
 while(blockData[i2] && blockData[i2].hidden){
