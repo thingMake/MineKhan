@@ -22218,6 +22218,7 @@ drawIcon(x, y, i)
 }
 }
 if(screen === "inventory"){
+
 let offX = width - s*4
 let offY = s*2
 //draw grid
@@ -23280,6 +23281,13 @@ initTextures()
 if (k === controlMap.cycleBlockShapes.key) {
 blockMode = blockMode === CUBE ? SLAB : (blockMode === SLAB ? STAIR : (blockMode === STAIR ? FENCE : (blockMode === FENCE ? WALLPOST : (blockMode === WALLPOST ? WALL : (blockMode === WALL ? WALLU : (blockMode === WALLU ? FENCQ : CUBE))))))
 updateHUD = true
+}
+if (screen === "inventory") {
+for (var temp3=0;temp3<=9;temp3++) {
+if (k === temp3) {
+p.creativeMenu = temp3
+}
+}
 }
 if (screen === "play") {
 if(k === controlMap.pause.key) {
