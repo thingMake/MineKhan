@@ -2912,25 +2912,25 @@ glassSound: true,menu:1
 { name: "stoneBricks", Name:"Stone Bricks", breakTime:7.5, type:"rock1", stoneSound:true,menu:1},
 { name: "mossyStoneBricks", Name:"Mossy Stone Bricks", breakTime:7.5, type:"rock1", stoneSound:true,menu:1},
 { name: "bricks", Name:"Bricks", breakTime:10, type:"rock1", stoneSound:true,menu:1},
-{ name: "coalOre", Name:"Coal Ore", breakTime:15, type:"rock1", drop:"coal", stoneSound:true, experience:0.1},
-{ name: "ironOre", Name:"Iron Ore", breakTime:15, type:"rock2", drop:"rawIron", stoneSound:true},
-{ name: "goldOre", Name:"Gold Ore", breakTime:15, type:"rock3", drop:"rawGold", stoneSound:true},
-{ name: "diamondOre", Name:"Diamond Ore", breakTime:15, type:"rock3", drop:"diamond", stoneSound:true, experience:1},
-{ name: "redstoneOre", Name:"Redstone Ore", breakTime:15, type:"rock3", stoneSound:true, drop:"redstoneDust", dropAmount:[4,5], experience:0.3},
-{ name: "lapisOre", Name:"Lapis Lazuli Ore", breakTime:15, type:"rock2", drop:"lapisLazuli", stoneSound:true, experience:0.5},
-{ name: "emeraldOre", Name:"Emerald Ore", breakTime:15, type:"rock3", drop:"emerald", stoneSound:true, experience:1.5},
-{ name: "coalBlock", Name:"Block of Coal", breakTime:25, type:"rock1", stoneSound:true},
-{ name: "ironBlock", Name:"Block of Iron", breakTime:25, type:"metal2", stoneSound:true},
-{ name: "goldBlock", Name:"Block of Gold", breakTime:15, type:"metal3", stoneSound:true},
-{ name: "diamondBlock", Name:"Block of Diamond", breakTime:25, type:"metal3", stoneSound:true},
-{ name: "netheriteBlock", Name:"Block of Netherite", breakTime:35, type:"metal3", stoneSound:true},
-{ name: "redstoneBlock", Name:"Block of Redstone", breakTime:25, type:"metal1", stoneSound:true},
-{ name: "lapisBlock", Name:"Block of Lapis Lazuli", breakTime:15, type:"metal2", stoneSound:true},
-{ name: "emeraldBlock", Name:"Block of Emerald", breakTime:25, type:"metal3", stoneSound:true},
+{ name: "coalOre", Name:"Coal Ore", breakTime:15, type:"rock1", drop:"coal", stoneSound:true, experience:0.1,menu:2},
+{ name: "ironOre", Name:"Iron Ore", breakTime:15, type:"rock2", drop:"rawIron", stoneSound:true,menu:2},
+{ name: "goldOre", Name:"Gold Ore", breakTime:15, type:"rock3", drop:"rawGold", stoneSound:true,menu:2},
+{ name: "diamondOre", Name:"Diamond Ore", breakTime:15, type:"rock3", drop:"diamond", stoneSound:true, experience:1,menu:2},
+{ name: "redstoneOre", Name:"Redstone Ore", breakTime:15, type:"rock3", stoneSound:true, drop:"redstoneDust", dropAmount:[4,5], experience:0.3,menu:2},
+{ name: "lapisOre", Name:"Lapis Lazuli Ore", breakTime:15, type:"rock2", drop:"lapisLazuli", stoneSound:true, experience:0.5,menu:2},
+{ name: "emeraldOre", Name:"Emerald Ore", breakTime:15, type:"rock3", drop:"emerald", stoneSound:true, experience:1.5,menu:2},
+{ name: "coalBlock", Name:"Block of Coal", breakTime:25, type:"rock1", stoneSound:true,menu:2},
+{ name: "ironBlock", Name:"Block of Iron", breakTime:25, type:"metal2", stoneSound:true,menu:2},
+{ name: "goldBlock", Name:"Block of Gold", breakTime:15, type:"metal3", stoneSound:true,menu:2},
+{ name: "diamondBlock", Name:"Block of Diamond", breakTime:25, type:"metal3", stoneSound:true,menu:2},
+{ name: "netheriteBlock", Name:"Block of Netherite", breakTime:35, type:"metal3", stoneSound:true,menu:2},
+{ name: "redstoneBlock", Name:"Block of Redstone", breakTime:25, type:"metal1", stoneSound:true,menu:2},
+{ name: "lapisBlock", Name:"Block of Lapis Lazuli", breakTime:15, type:"metal2", stoneSound:true,menu:2},
+{ name: "emeraldBlock", Name:"Block of Emerald", breakTime:25, type:"metal3", stoneSound:true,menu:2},
 {
 name:"copperBlock",
 Name:"Block of Copper",
-breakTime: 15,type:"metal1"
+breakTime: 15,type:"metal1",menu:2
 },
 { name: "oakPlanks", Name:"Oak Planks", type:"wood", breakTime:3, woodSound:true},
 {
@@ -22318,11 +22318,6 @@ temp2=true;
 }
 }
 if(blockData[i+1] && (blockData[i+1].hidden || temp2 === false)){
-/*let i2 = idx
-while(blockData[i2] && blockData[i2].hidden){
-i2++
-idx++
-}*/
 idx++
 i++
 temp4 = false;
