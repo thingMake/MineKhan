@@ -22306,6 +22306,9 @@ ctx2.textAlign = "left"
 ctx2.fillText("creativeMenu: "+p.creativeMenu,50,20)
 for(var i=1; i<wrongidx; i++){
 idx++;
+var temp4 = false;
+while (blockData[i+1] !== undefined && temp4 === false) {
+temp4 = true;
 var temp2 = false;
 if (p.creativeMenu===0) {
 temp2=true;
@@ -22321,6 +22324,8 @@ i2++
 idx++
 }*/
 idx++
+temp4 = false;
+}
 }
 }
 }
