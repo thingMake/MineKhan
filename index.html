@@ -22305,7 +22305,15 @@ ctx2.font = "14px VT323"
 ctx2.textAlign = "left"
 ctx2.fillText("creativeMenu: "+p.creativeMenu,50,20)
 for(var i=1; i<wrongidx; i++){
+
+if (p.creativeMenu===0) {
 idx++;
+} else if (blockData[i+1].menu !== undefined) {
+if (blockData[i+1].menu === p.creativeMenu) {
+idx++;
+}
+}
+
 var temp4 = false;
 while (blockData[i+1] !== undefined && temp4 === false && i<wrongidx) {
 temp4 = true;
