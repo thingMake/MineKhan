@@ -4790,10 +4790,11 @@ shadow: false,
 textures: "tallGrassTop",
 tallcrossShape: true,
 drop:function(){
-if(rand() > 0.9){
+var r = rand()
+if(r > 0.9){
 return "tomatoSeeds"
-}else{
-return "DoubleTallGrass"
+}else if(r > 0.5){
+return "wheatSeeds"
 }
 },
 invTint:[foliageColor.r,foliageColor.g,foliageColor.b],
@@ -10512,7 +10513,7 @@ cmdList.appendChild(option)
 })
 function getCmd(name){
 for(var i=0; i<cmds.length; i++){
-if(cmds[i].name === name){
+if(cmds[i].name.toLowerCase() === name.toLowerCase()){
 return cmds[i]
 }
 }
@@ -10533,26 +10534,16 @@ if(cmd.info) str += "Description: "+cmd.info
 Messages.add(str)
 }else Messages.add("There is no information for /"+split[1])
 }else{
-if(cheats){
-var str = "List of commands:<br>"
+var str = "List of "+(cheats?"":"available ")+"commands:<br>"
 str += "Use <span style='color:lime;'>/? command_name</span> to get information about a command<br>"
+str += "The capitalization of command names do not matter."
 cmds.forEach(r => {
+if(!cheats && !r.noCheats) return
 str += "<span style='color:lightblue;'>/"+r.name+"</span> "
 if(r.args) str += r.args.join(" ")
 str += "<br>"
 })
 Messages.add(str)
-}else{
-var str = "List of available commands:<br>"
-str += "Use <span style='color:lime;'>/? command_name</span> to get information about a command<br>"
-cmds.forEach(r => {
-if(!r.noCheats) return
-str += "<span style='color:lightblue;'>/"+r.name+"</span> "
-if(r.args) str += r.args.join(" ")
-str += "<br>"
-})
-Messages.add(str)
-}
 }
 }else{
 var cmd = getCmd(name)
@@ -15856,7 +15847,7 @@ p.character.sneaking = p.sneaking
 p.character.walking = p.walking
 p.character.sprinting = p.sprinting
 if(p.thirdPerson) p.character.holding = holding || 0
-p.character.punchEffect = p.punchEffect + 3
+p.character.punchEffect = p.punchEffect + 2
 p.character.update()
 //p.hand.update()
 }
@@ -19595,6 +19586,7 @@ this.parts[name] = {
 name,
 size,vao,
 x,y,z,w,h,d,rx,ry,rz, //x,y,z,rx,ry are relative to entity position
+px:x,py:y,pz:z,prx:rx,pry:ry,prz:rz,
 originalX:x, originalY:y, originalZ:z
 }
 }
@@ -19737,7 +19729,7 @@ playSound("entity.item.pickup")
 }else this.updateShape()*/
 if(newInvItem(this.block, this.durability)){
 this.canDespawn = true
-if(this.block === blockIds.oakLog || this.block === blockIds.birchLog || this.block === blockIds.jungleLog){
+if(this.block === blockIds.oakLog || this.block === blockIds.birchLog || this.block === blockIds.jungleLog || this.block === blockIds.spruceLog || this.block === blockIds.darkOakLog || this.block === blockIds.acaciaLog){
 achievment("Getting Wood")
 }
 if(this.block === blockIds.diamond){
@@ -20550,6 +20542,7 @@ part = this.generateBlockVAO(this.holding)
 this.addPart("holding",part.size,part.vao,0, 0, 0, 1,1,1, 0, 0)
 this.walkRot = 0
 this.punchEffect = 0
+this.pOffsetry = this.offsetry = 0
 this.skinSet = false
 this.skinURL = null
 this.skinImg = images.skin
@@ -20622,6 +20615,14 @@ this.die = false
 this.dieEffect = 0
 }
 }
+for(var p in this.parts){
+var part = this.parts[p]
+part.prx = part.rx
+part.pry = part.ry
+part.prz = part.rz
+part.pry2 = part.ry2
+}
+this.pOffsetry = this.offsetry
 this.parts.head.rx = this.headPitch
 this.parts.head.ry = this.headYaw - this.yaw
 if(this.sneaking){
@@ -20635,6 +20636,10 @@ this.offsetY = this.defaultOffsetY
 this.pitch = 0
 this.parts.leftLeg.rx = this.parts.rightLeg.rx = 0
 }
+//head shouldn't be smooth because if previous rotation was 360 and now it is 0, weird things will happen
+this.parts.head.prx = this.parts.head.rx
+this.parts.head.pry = this.parts.head.ry
+this.parts.head.prz = this.parts.head.rz
 this.parts.leftArm.rz = armRot
 this.parts.rightArm.rz = -armRot
 var part = this.parts.holding
@@ -20688,11 +20693,12 @@ this.parts.rightLeg.rx -= this.walkRot
 this.parts.leftArm.rx += this.walkRot
 this.parts.rightArm.rx -= this.walkRot
 if(this.punchEffect > 0){
-this.punchEffect -= 3
+this.punchEffect -= 2
 if(this.punchEffect < 0) this.punchEffect = 0
-var punchEffect = this.punchEffect/6
-this.parts.rightArm.rx -= punchEffect
-this.parts.rightArm.ry2 = punchEffect/2
+var punchEffect = this.punchEffect
+this.parts.rightArm.rx -= punchEffect/6
+this.parts.rightArm.ry2 = sin(punchEffect*Math.PI/10)
+this.offsetry = this.parts.rightArm.ry2 / 3
 }else this.parts.rightArm.ry2 = 0
 }
 setPos(x,y,z){
@@ -20767,6 +20773,7 @@ const offsetY = this.offsetY
 let renderx = (this.x - this.previousX) * diff + this.previousX
 let rendery = ((this.y - this.previousY) * diff + this.previousY) + offsetY
 let renderz = (this.z - this.previousZ) * diff + this.previousZ
+var offsetry = lerp(diff, this.pOffsetry, this.offsetry)
 //set texture to skin
 gl.activeTexture(gl.TEXTURE7)
 gl.bindTexture(gl.TEXTURE_2D, skinTexture)
@@ -20775,7 +20782,7 @@ const modelMatrix = new Matrix();
 modelMatrix.identity()
 modelMatrix.translate(renderx, rendery, renderz)
 modelMatrix.rotZ(this.dieEffect)
-modelMatrix.rotY(this.yaw)
+modelMatrix.rotY(this.yaw + offsetry)
 modelMatrix.rotX(this.pitch)
 modelMatrix.scale(this.width, this.height, this.depth)
 const viewMatrix = p.transformation.elements
@@ -20819,6 +20826,8 @@ gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 gl.uniform1i(glCache.uSamplerEntity, 0)
 gl.uniform1i(glCache.isTextureAtlasEntity,1)
 }
+let diff = (performance.now() - this.lastUpdate) / tickTime
+if (diff > 1) diff = 1
 modelMatrix.identity()
 modelMatrix.translate(x, y, z)
 modelMatrix.rotZ(this.dieEffect)
@@ -20827,16 +20836,16 @@ modelMatrix.rotX(this.pitch)
 if(part.name === "holding"){
 var arm = this.parts.rightArm
 modelMatrix.translate(arm.x, arm.y, arm.z)
-modelMatrix.rotZ(arm.rz)
-if(arm.ry2) modelMatrix.rotY(arm.ry2)
-modelMatrix.rotX(arm.rx)
-modelMatrix.rotY(arm.ry)
+modelMatrix.rotZ(lerp(diff,arm.prz,arm.rz))
+if(arm.ry2) modelMatrix.rotY(lerp(diff,arm.pry2,arm.ry2))
+modelMatrix.rotX(lerp(diff,arm.prx,arm.rx))
+modelMatrix.rotY(lerp(diff,arm.pry,arm.ry))
 }
 modelMatrix.translate(part.x, part.y, part.z)
-modelMatrix.rotZ(part.rz)
-if(part.ry2) modelMatrix.rotY(part.ry2)
-modelMatrix.rotX(part.rx)
-modelMatrix.rotY(part.ry)
+modelMatrix.rotZ(lerp(diff,part.prz,part.rz))
+if(part.ry2) modelMatrix.rotY(lerp(diff,part.pry2,part.ry2))
+modelMatrix.rotX(lerp(diff,part.prx,part.rx))
+modelMatrix.rotY(lerp(diff,part.pry,part.ry))
 modelMatrix.scale(part.w, part.h, part.d)
 modelViewProjectionMatrix.identity()
 modelViewProjectionMatrix.mult(projectionMatrix)
@@ -28708,8 +28717,8 @@ if(loseHealthEffect > 0){
 loseHealthEffect --
 updateHUD = true
 }
-if(p.punchEffect > 0){
-p.punchEffect --
+if(p.punchEffect > 0 && tick){
+p.punchEffect -= 2
 }
 if(p.punchEffect < 0) p.punchEffect = 0
 if(tick){
