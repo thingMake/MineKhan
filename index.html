@@ -22304,7 +22304,7 @@ ctx2.fillStyle = "white"
 ctx2.font = "14px VT323"
 ctx2.textAlign = "left"
 ctx2.fillText("creativeMenu: "+p.creativeMenu,50,20)
-for(var i=1; i<wrongidx; i++){
+var doMenuStuff = function(i) {
 idx++
   /*
 if (blockData[i+1].hidden) {
@@ -22368,6 +22368,9 @@ temp4 = false;
 }
 }
 */
+};
+for(var i=1; i<wrongidx; i++){
+doMenuStuff(i)
 }
 }
 let name;
@@ -22413,9 +22416,7 @@ if(!survival){
 var idx = 0;
 for(var i=1; i<over+1; i++){
 if(!blockData[i]) break;
-idx ++;
-if(blockData[i+1] && blockData[i+1].hidden)idx++;
-}
+doMenuStuff(i);
 over = idx;
 }
 let count = survival ? invLength : BLOCK_COUNT - 1
