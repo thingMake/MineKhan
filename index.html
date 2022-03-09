@@ -22307,7 +22307,7 @@ ctx2.fillText("creativeMenu: "+p.creativeMenu,50,20)
 for(var i=1; i<wrongidx; i++){
 idx++
 var temp5 = false;
-while (temp5===false) {
+while (temp5===false && i<wrongidx) {
   
 if (p.creativeMenu===0) {
 temp5 = true;
@@ -22318,6 +22318,7 @@ temp5 = true;
 }
 if (blockData[i+1] && (blockData[i+1].hidden || temp5 === false)) {
 idx++
+i++
 }
 
 }
