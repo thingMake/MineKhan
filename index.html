@@ -22393,6 +22393,7 @@ ctx2.font = "14px VT323"
 ctx2.textAlign = "left"
 ctx2.fillText("creativeMenu: "+p.creativeMenu,50,20)
 for(var i=1; i<wrongidx; i++){
+if(!blockData[i]) break;
 doMenuStuff(i);
 }
 }
