@@ -22089,6 +22089,71 @@ let invHeight = 0
 var barW = 20
 var invBarOffset = 0
 var barH = 0
+var doMenuStuff = function(i) {
+idx++
+  /*
+if (blockData[i+1].hidden) {
+idx++
+} */
+
+var temp5 = false;
+if (p.creativeMenu===0) {
+temp5 = true;
+} else if (blockData[i+1].menu !== undefined) {
+if (blockData[i+1].menu === p.creativeMenu) {
+temp5 = true;
+}
+}
+if (temp5===false) {
+while (temp5===false && i<wrongidx) {
+  
+if (p.creativeMenu===0) {
+temp5 = true;
+} else if (blockData[i+1].menu !== undefined) {
+if (blockData[i+1].menu === p.creativeMenu) {
+temp5 = true;
+}
+}
+if (blockData[i+1] && (blockData[i+1].hidden || temp5 === false)) {
+idx++
+i++
+} else {
+temp5 = true;
+}
+
+}
+}
+  
+/*
+if (p.creativeMenu===0) {
+idx++;
+} else if (blockData[i+1].menu !== undefined) {
+if (blockData[i+1].menu === p.creativeMenu) {
+idx++;
+}
+}
+
+}
+
+var temp4 = false;
+while (blockData[i+1] !== undefined && temp4 === false && i<wrongidx) {
+temp4 = true;
+var temp2 = false;
+if (p.creativeMenu===0) {
+temp2=true;
+} else if (blockData[i+1].menu !== undefined) {
+if (blockData[i+1].menu === p.creativeMenu) {
+temp2=true;
+}
+}
+if(blockData[i+1] && (blockData[i+1].hidden || temp2 === false)){
+idx++
+i++
+temp4 = false;
+}
+}
+*/
+};
 function drawInv(nodraw) {
 let x = 0
 let y = 0
@@ -22109,7 +22174,14 @@ if(survival){
 count = invLength
 }else{
 for (let i = 1; i < BLOCK_COUNT; i++) {
-if(!blockData[i].hidden)count ++;
+if (p.creativeMenu===0) {
+temp5 = true;
+} else if (blockData[i+1].menu !== undefined) {
+if (blockData[i+1].menu === p.creativeMenu) {
+temp5 = true;
+}
+}
+if(!blockData[i].hidden && temp5)count ++;
 }
 }
 invHeight = (Math.ceil(count / perRow) * s)
@@ -22204,9 +22276,25 @@ ctx.fillRect(x+1-s2,y+1-s2,s-2,s-2)
 }else{
 let invIdx = 0;
 for (let i = 1; i < BLOCK_COUNT; i++) {
+if (p.creativeMenu===0) {
+temp5 = true;
+} else if (blockData[i].menu !== undefined) {
+if (blockData[i].menu === p.creativeMenu) {
+temp5 = true;
+}
+}
 invIdx ++;
-if(blockData[i].hidden){
-while(blockData[i] && blockData[i].hidden) i++
+if(blockData[i+1] && (blockData[i+1].hidden || temp5 === false)){
+while(blockData[i+1] && (blockData[i+1].hidden || temp5 === false)) {
+if (p.creativeMenu===0) {
+temp5 = true;
+} else if (blockData[i].menu !== undefined) {
+if (blockData[i].menu === p.creativeMenu) {
+temp5 = true;
+}
+}
+  i++
+}
 if(!blockData[i]) break
 }
 x = (invIdx - 1) % perRow * s + 50
@@ -22304,71 +22392,6 @@ ctx2.fillStyle = "white"
 ctx2.font = "14px VT323"
 ctx2.textAlign = "left"
 ctx2.fillText("creativeMenu: "+p.creativeMenu,50,20)
-var doMenuStuff = function(i) {
-idx++
-  /*
-if (blockData[i+1].hidden) {
-idx++
-} */
-
-var temp5 = false;
-if (p.creativeMenu===0) {
-temp5 = true;
-} else if (blockData[i+1].menu !== undefined) {
-if (blockData[i+1].menu === p.creativeMenu) {
-temp5 = true;
-}
-}
-if (temp5===false) {
-while (temp5===false && i<wrongidx) {
-  
-if (p.creativeMenu===0) {
-temp5 = true;
-} else if (blockData[i+1].menu !== undefined) {
-if (blockData[i+1].menu === p.creativeMenu) {
-temp5 = true;
-}
-}
-if (blockData[i+1] && (blockData[i+1].hidden || temp5 === false)) {
-idx++
-i++
-} else {
-temp5 = true;
-}
-
-}
-}
-  
-/*
-if (p.creativeMenu===0) {
-idx++;
-} else if (blockData[i+1].menu !== undefined) {
-if (blockData[i+1].menu === p.creativeMenu) {
-idx++;
-}
-}
-
-}
-
-var temp4 = false;
-while (blockData[i+1] !== undefined && temp4 === false && i<wrongidx) {
-temp4 = true;
-var temp2 = false;
-if (p.creativeMenu===0) {
-temp2=true;
-} else if (blockData[i+1].menu !== undefined) {
-if (blockData[i+1].menu === p.creativeMenu) {
-temp2=true;
-}
-}
-if(blockData[i+1] && (blockData[i+1].hidden || temp2 === false)){
-idx++
-i++
-temp4 = false;
-}
-}
-*/
-};
 for(var i=1; i<wrongidx; i++){
 doMenuStuff(i)
 }
@@ -22538,8 +22561,7 @@ if(!survival){
 var idx = 0;
 for(var i=1; i<over+1; i++){
 if(!blockData[i]) break;
-idx ++;
-if(blockData[i+1] && blockData[i+1].hidden)idx++;
+doMenuStuff(i);
 }
 over = idx;
 }
@@ -22581,8 +22603,7 @@ if(!survival){
 var idx = 0;
 for(var i=1; i<over+1; i++){
 if(!blockData[i]) break;
-idx ++;
-if(blockData[i+1] && blockData[i+1].hidden)idx++;
+doMenuStuff(i);
 }
 over = idx;
 }
