@@ -22305,13 +22305,29 @@ ctx2.font = "14px VT323"
 ctx2.textAlign = "left"
 ctx2.fillText("creativeMenu: "+p.creativeMenu,50,20)
 for(var i=1; i<wrongidx; i++){
-
+idx++
+var temp5 = false;
+while (temp5===false) {
+  
+if (p.creativeMenu===0) {
+temp5 = true;
+} else if (blockData[i+1].menu !== undefined) {
+if (blockData[i+1].menu === p.creativeMenu) {
+temp5 = true;
+}
+}
+if (blockData[i+1] && (blockData[i+1].hidden || temp5 === false)) {
+idx++
+}
+/*
 if (p.creativeMenu===0) {
 idx++;
 } else if (blockData[i+1].menu !== undefined) {
 if (blockData[i+1].menu === p.creativeMenu) {
 idx++;
 }
+}
+
 }
 
 var temp4 = false;
@@ -22331,6 +22347,7 @@ i++
 temp4 = false;
 }
 }
+*/
 }
 }
 let name;
