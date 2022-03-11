@@ -5,7 +5,7 @@ Notes and accreditation:
 My credits (not Willard's)
 * Red Monster (https://www.khanacademy.org/profile/monsterred) made the shapes for the blocks
 * Shoos10 (https://www.khanacademy.org/profile/kaid_651789387350300127259402) created the Island World type
-* Repeat (https://www.khanacademy.org/profile/kaid_730847189850789421961173) suggested a few fixes/changes here and there
+* Repeat (https://www.khanacademy.org/profile/kaid_730847189850789421961173) made a few fixes/changes here and there
 * I created the survival mode
 Willard's credits
 * This program (MineKhan) was made by Willard (me). The original is https://www.khanacademy.org/cs/mc/5647155001376768 (just adding this so that spin-offs have it)
@@ -2960,11 +2960,17 @@ stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","blo
 onupdate: function(x,y,z,b,world){
 fall(x,y,z,b,world)
 },
+ongetexploded:function(x,y,z,b,world){
+fall(x,y,z,b,world,true)
+},
 digSound: ["block.sand.dig1", "block.sand.dig2", "block.sand.dig3", "block.sand.dig4"],
 stepSound: ["block.sand.step1", "block.sand.step2","block.sand.step3","block.sand.step4","block.sand.step5"]},
 { name: "gravel", Name:"Gravel", breakTime:0.9, type:"ground",
 onupdate: function(x,y,z,b,world){
 fall(x,y,z,blockIds.gravel,world)
+},
+ongetexploded:function(x,y,z,b,world){
+fall(x,y,z,b,world,true)
 },
 drop: function(){
 if(round(random(10)) === 1) return "flint"
@@ -3173,7 +3179,7 @@ stoneSound: true
 {
 name: "chiseledQuartzBlock",
 Name:"Chiseled Quartz Block",
-textures: ["chiseledQuartzBlock", "chiseledQuartzBlockTop"],
+textures: ["chiseledQuartzBlockTop", "chiseledQuartzBlock"],
 stoneSound: true
 },
 { name: "chiseledStoneBricks", Name:"Chiseled Stone Bricks", stoneSound:true},
@@ -4643,6 +4649,9 @@ stepSound: ["block.stone.step1", "block.stone.step2","block.stone.step3","block.
 onupdate: function(x,y,z,b,world){
 fall(x,y,z,b,world)
 },
+ongetexploded:function(x,y,z,b,world){
+fall(x,y,z,b,world,true)
+},
 },
 { name: "slime",
 Name:"Slime",
@@ -5150,6 +5159,9 @@ drop:"snowball",
 breakTime: 0.5,
 onupdate: function(x,y,z,b,world){
 fall(x,y,z,b,world)
+},
+ongetexploded:function(x,y,z,b,world){
+fall(x,y,z,b,world,true)
 },
 },
 {
@@ -6431,6 +6443,9 @@ Name:"Red Sand",
 breakTime:0.75,
 onupdate: function(x,y,z,block,world){
 fall(x,y,z,block,world)
+},
+ongetexploded:function(x,y,z,b,world){
+fall(x,y,z,b,world,true)
 },
 digSound: ["block.sand.dig1", "block.sand.dig2", "block.sand.dig3", "block.sand.dig4"],
 stepSound: ["block.sand.step1", "block.sand.step2","block.sand.step3","block.sand.step4","block.sand.step5"]
@@ -8224,7 +8239,14 @@ return true
 name:"piston",
 Name:"Piston",
 textures:["pistonBack","pistonFront","pistonSide"],
-piston:true
+piston:true,
+headSideTexture:"pistonHeadSide",
+},
+{
+name:"smoothQuartz",
+Name:"Smooth Quartz Block",
+textures:"quartzBlockBottom",
+stoneSound:true
 },
 /*
 { name: "pigFace" },
@@ -9427,7 +9449,7 @@ var obj = {
 id: world.id,
 edited: Date.now(),
 name: world.name,
-version: world.version || version,
+version: verMoreThan(world.version, "1.0.2") ? version : world.version, //old saves don't work if you change version number
 code: world.getSaveString(),
 nether: world.getNetherSaveString(),
 inv: world.getInv(),
@@ -12895,10 +12917,10 @@ pistonHead: {
 verts: [
 [objectify(0,12,0,16,16,0,0)], //b
 [objectify(0,16,16,16,16,0,0)], //t
-[objectify(16,16,16,16,4,0,0), objectify(10,12,10,4,16,6,4)], //n
-[objectify(0,16,0,16,4,0,0), objectify(6,12,6,4,16,6,4)], //s
-[objectify(16,16,0,16,4,0,0), objectify(10,12,6,4,16,6,4)], //e
-[objectify(0,16,16,16,4,0,0), objectify(6,12,10,4,16,6,4)] //w
+[objectify(16,16,16,16,4,0,0), objectify(10,12,10,4,12,6,4), objectify(10,0,10,4,4,6,9)], //n
+[objectify(0,16,0,16,4,0,0), objectify(6,12,6,4,12,6,4), objectify(6,0,6,4,4,6,9)], //s
+[objectify(16,16,0,16,4,0,0), objectify(10,12,6,4,12,6,4), objectify(10,0,6,4,4,6,9)], //e
+[objectify(0,16,16,16,4,0,0), objectify(6,12,10,4,12,6,4), objectify(6,0,10,4,4,6,9)] //w
 ],
 cull: {
 top: 3,
@@ -12908,6 +12930,43 @@ south: 0,
 east: 0,
 west: 0
 }
+},
+pistonHeadFlipped: {
+verts: [
+[objectify(0,0,0,16,16,0,0)], //b
+[objectify(0,4,16,16,16,0,0)], //t
+[objectify(16,4,16,16,4,0,0), objectify(10,20,10,4,12,6,4), objectify(10,8,10,4,4,6,9)], //n
+[objectify(0,4,0,16,4,0,0), objectify(6,20,6,4,12,6,4), objectify(6,8,6,4,4,6,9)], //s
+[objectify(16,4,0,16,4,0,0), objectify(10,20,6,4,12,6,4), objectify(10,8,6,4,4,6,9)], //e
+[objectify(0,4,16,16,4,0,0), objectify(6,20,10,4,12,6,4), objectify(6,8,10,4,4,6,9)] //w
+],
+cull: {
+top: 3,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+pistonHeadSW: {
+verts: [
+[objectify(0,0,0,16,4,0,0),objectify(6,6,4,4,12,6,4),objectify(6,6,16,4,4,6,9)],
+[objectify(0,16,4,16,4,0,0),objectify(6,10,16,4,12,6,4, false,true),objectify(6,10,20,4,4,6,9, false,true)],
+[objectify(16,16,4,16,16,0,0)],
+[objectify(0,16,0,16,16,0,0)],
+[objectify(16,16,0,4,16,0,0, false,false,true),objectify(10,10,4,12,4,6,4, false,false,1),objectify(10,10,16,4,4,6,9, false,false,1)],
+[objectify(0,16,4,4,16,0,0, false,false,true),objectify(6,10,16,12,4,6,4, false,false,-1),objectify(6,10,20,4,4,6,9, false,false,-1)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+rotate:true
 },
 pistonHeadCut: {
 verts: [
@@ -13127,12 +13186,18 @@ west: 3
 },
 entityFire: {
 verts: [
-[], //bottom
+/*[], //bottom
 [], //top
 [customFace(0,16,0, 16,16,16, 16,0,16, 0,0,0, 0,0), objectify(16, 16,  8, 16, 16, 0, 0)], //north
 [customFace(16,16,0, 0,16,16, 0,0,16, 16,0,0, 0,0), objectify(0,  16,  8, 16, 16, 0, 0)], //south
 [customFace(16,16,16, 0,16,0, 0,0,0, 16,0,16, 0,0), objectify(8,  16,  0, 16, 16, 0, 0)], //east
-[customFace(0,16,16, 16,16,0, 16,0,0, 0,0,16, 0,0), objectify(8,  16, 16, 16, 16, 0, 0)]  //west
+[customFace(0,16,16, 16,16,0, 16,0,0, 0,0,16, 0,0), objectify(8,  16, 16, 16, 16, 0, 0)]  //west*/
+[],
+[],
+[objectify(16,20,8, 16,20, 0,0, false,false,false, 16,16),objectify(14,8,8.1, 12,8, 0,0, false,false,false, 16,16)],
+[],
+[],
+[]
 ],
 cull: {
 top: 0,
@@ -13310,10 +13375,18 @@ tex[7] = ty
 }
 if(rect.rt){
 if(rect.rt === -1){
+tex[0] = tx+th
+tex[5] = ty+tw
+tex[6] = tx+th
+tex[7] = ty+tw
 tex.unshift(...tex.splice(tex.length-2,2))
 }else if(rect.rt === 2){
 tex.push(...tex.splice(0,4))
 }else{
+tex[0] = tx+th
+tex[5] = ty+tw
+tex[6] = tx+th
+tex[7] = ty+tw
 tex.push(...tex.splice(0,2))
 }
 }
@@ -14028,6 +14101,7 @@ makeBlock(baseBlock.textures, shapes.repeaterOn3, wallFlatBlock, baseBlock)
 makeBlock(baseBlock.textures, shapes.repeaterOn4, openTrapdoor, baseBlock)
 }
 if(baseBlock.piston){
+//not extended
 var textures = baseBlock.textures.slice()
 var t = textures[0]
 textures[0] = textures[1]
@@ -14039,6 +14113,14 @@ var shape = shapes.SW
 t = baseBlock.textures
 textures = [t[2],t[2],t[0],t[1],t[2],t[2]]
 makeBlock(textures, shape, slabBlock, baseBlock)
+//head
+t = baseBlock.textures[1]
+var t2 = baseBlock.headSideTexture
+makeBlock([t,t,t2,t2,t2,t2], shapes.pistonHead, stairBlock, baseBlock)
+flipped = Object.create(baseBlock)
+makeBlock(stairBlock.textures, shapes.pistonHeadFlipped, flipped, baseBlock)
+blockData[i | STAIR | FLIP] = flipped
+makeBlock([t2,t2,t,t,t2,t2], shapes.pistonHeadSW, doorBlock, baseBlock)
 }
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
@@ -16507,7 +16589,8 @@ if(!controlMap.break.pressed){
 crack.delayStart = now
 }
 }
-function explode(x,y,z, r, liquid){
+function explode(x,y,z, r, liquid, w = world){
+var world = w
 /*world.setBlock(x,y,z,blockIds.air);
 for(var i=radius; i>0; i--){
 sphereoidAt(x,y,z,i,i,i, blockIds.air)
@@ -16533,7 +16616,13 @@ world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z))
 setTimeout(() => world.particles.push(new ExplodeParticle(X + x, Y + y, Z + z)), time)
 }
 }
-if(!liquid)world.setBlock(X + x, Y + y, Z + z, 0)
+if(!liquid){
+var block = world.getBlock(X+x,Y+y,Z+z)
+if(blockData[block].ongetexploded){
+blockData[block].ongetexploded(x+X,y+Y,z+Z,block,world)
+}
+world.setBlock(X + x, Y + y, Z + z, 0)
+}
 }
 }
 }
@@ -16564,12 +16653,17 @@ damage(damageTook, username+" blew up.")
 }
 explodeSound(x,y,z)
 }
-function fall(x,y,z,b,world){
+function fall(x,y,z,b,world, instant){
 if(!worldSettings.blocksFall || world.getBlock(x,y-1,z)) return
+if(instant){
+world.setBlock(x,y,z, 0)
+world.addEntity(new BlockEntity(b, x,y,z, true))
+}else{
 setTimeout(() => {
 world.setBlock(x,y,z, 0)
 world.addEntity(new BlockEntity(b, x,y,z, true))
 }, tickTime)
+}
 }
 function needsSupportingBlocks(x,y,z, b,world){ // if block under is gone, dissapear
 var under = world.getBlock(x,y-1,z)
@@ -20484,11 +20578,14 @@ super(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, new Float32Array(shapeVerts.flat(Infinity
 }
 render(ent){ //for burning entities
 if(!ent) return
+var yaw = Math.PId - (atan2(p.z - ent.z, p.x - ent.x) + Math.PI2 + Math.PI) //point to player
+//var adjacent = dist2(ent.x,ent.z,p.x,p.z)
+//var pitch = Math.PId - atan2(p.y - ent.y, adjacent)
 const modelMatrix = new Matrix();
 modelMatrix.identity()
 modelMatrix.translate(ent.x, ent.y+ent.offsetY+(ent.height*0.25), ent.z)
-//modelMatrix.rotX(0)
-modelMatrix.rotY(ent.yaw)
+modelMatrix.rotY(yaw)
+//modelMatrix.rotX(pitch)
 modelMatrix.scale(ent.width*1.5, ent.height*1.5, ent.depth*1.5) //taller than the entity
 const viewMatrix = p.transformation.elements
 const proj = p.projection
@@ -22292,6 +22389,7 @@ x: 8,
 y: p.y,
 z: 8
 }
+this.version = version
 //Initialize the world's arrays
 this.chunks = []
 this.loaded = []
@@ -23456,7 +23554,7 @@ let options = p.flying | (superflat==="island" ? 2 : superflat) << 1 | p.spectat
 let str = world.name + ";" + worldSeed.toString(36) + ";"
 + rnd(p.x).toString(36) + "," + rnd(p.y).toString(36) + "," + rnd(p.z).toString(36) + ","
 + (p.rx * 100 | 0).toString(36) + "," + (p.ry * 100 | 0).toString(36) + "," + options.toString(36) + ";"
-+ (this.version || version) + ";"
++ (verMoreThan(this.version, "1.0.2") ? version : this.version) + ";"
 + blocks.map(b => b.toString(36)).join(",") + ";"
 for (let i = 0; i < edited.length; i++) {
 if (!edited[i][0].edited) {
@@ -24017,7 +24115,7 @@ playSelectedWorld()
 Button.add(mid + x2, height - 75, w2, 40, "Create New World", "loadsave menu", r => changeScene("creation menu"))
 //broken world buttons
 Button.add(mid, height / 2 + 50, w2, 40, "Cancel", "broken world", r => {changeScene("loadsave menu")})
-Button.add(mid, height / 2 + 105, w2, 40, "Load anyways", "broken world", r => {
+Button.add(mid, height / 2 + 105, w2, 40, "Load Anyways", "broken world", r => {
 try{
 playSelectedWorld()
 }catch(e){
