@@ -3017,12 +3017,13 @@ type:"wood",
 { name: "brownConcrete", Name:"Brown Concrete",breakTime:9, type:"rock1", stoneSound:true},
 { name: "greenConcrete", Name:"Green Concrete",breakTime:9, type:"rock1", stoneSound:true},
 { name: "redConcrete", Name:"Red Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "blackConcrete", Name:"Blck Concrete",breakTime:9, type:"rock1", stoneSound:true},
+{ name: "blackConcrete", Name:"Black Concrete",breakTime:9, type:"rock1", stoneSound:true},
 {
 name: "bookshelf",
 Name:"Bookshelf",
 textures: [ "oakPlanks", "bookshelf" ],
 stoneSound: true,
+breakTime: 3,
 type:"wood", 
 },
 { name: "netherrack",
@@ -3032,6 +3033,7 @@ stepSound: ["block.netherrack.step1", "block.netherrack.step2","block.netherrack
 { name: "soulSand",
 Name:"Soul Sand",
 speedFactor: 0.5,
+breakTime:1,
 digSound: ["block.soul_sand.dig1", "block.soul_sand.dig2", "block.soul_sand.dig3", "block.soul_sand.dig4", "block.soul_sand.dig5", "block.soul_sand.dig6","block.soul_sand.step7","block.soul_sand.step8","block.soul_sand.step9"],
 stepSound: ["block.soul_sand.step1", "block.soul_sand.step2","block.soul_sand.step3","block.soul_sand.step4","block.soul_sand.step5","block.soul_sand.step6"]},
 {
@@ -3123,6 +3125,8 @@ Name: "Nether Portal",
 solid:false,
 shadow: false,
 portal: true,
+breakTime: 5,
+type: "rock1",
 transparent:true,
 lightLevel: 11,
 ontouch: function(){
@@ -3629,6 +3633,8 @@ Name:"Lantern",
 transparent: true,
 shadow: false,
 lightLevel: 13,
+breakTime: 3,
+type: "rock1",
 iconTexture: "lanternIcon",
 lantern: true,
 digSound: ["block.lantern.dig1", "block.lantern.dig2", "block.lantern.dig3", "block.lantern.dig4", "block.lantern.dig5", "block.lantern.dig6"],
@@ -3640,6 +3646,8 @@ Name:"Soul Lantern",
 transparent: true,
 shadow: false,
 lightLevel: 10,
+breakTime: 3,
+type: "rock1",
 iconTexture:"soulLanternIcon",
 lantern: true,
 digSound: ["block.lantern.dig1", "block.lantern.dig2", "block.lantern.dig3", "block.lantern.dig4", "block.lantern.dig5", "block.lantern.dig6"],
@@ -3728,30 +3736,30 @@ woodSound: true,breakTime:3,type:"wood"
 {
 name: "crimsonNylium",Name:"Crimson Nylium",
 textures: ["netherrack", "crimsonNyliumTop", "crimsonNyliumSide"],
-nyliumSound: true
+nyliumSound: true,breakTime:3,type:"wood"
 },
 {
 name: "warpedNylium",Name:"Warped Nylium",
 textures: ["netherrack", "warpedNyliumTop", "warpedNyliumSide"],
-nyliumSound: true
+nyliumSound: true,breakTime:3,type:"wood"
 },
 {
 name: "crimsonStem",Name:"Crimson Stem",
 textures: ["crimsonStemTop", "crimsonStemSide"],
-stemSound: true,breaktime:3,type:"wood"
+stemSound: true,breakTime:3,type:"wood"
 },
 {
 name: "warpedStem",Name:"Warped Stem",
 textures: ["warpedStemTop", "warpedStemSide"],
-stemSound: true,breaktime:3,type:"wood"
+stemSound: true,breakTime:3,type:"wood"
 },
-{ name: "netherWartBlock",Name:"Nether Wart Block",breaktime:1,
+{ name: "netherWartBlock",Name:"Nether Wart Block",breakTime:1,
 digSound: ["block.netherwart.dig1", "block.netherwart.dig2", "block.netherwart.dig3", "block.netherwart.dig4", "block.netherwart.dig5", "block.netherwart.dig6"],
 stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"]},
-{ name: "warpedWartBlock",Name:"Warped Wart Block",breaktime:1,
+{ name: "warpedWartBlock",Name:"Warped Wart Block",breakTime:1,
 digSound: ["block.netherwart.dig1", "block.netherwart.dig2", "block.netherwart.dig3", "block.netherwart.dig4", "block.netherwart.dig5", "block.netherwart.dig6"],
 stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"]},
-{ name: "shroomlight", Name:"Shroomlight",lightLevel:15,breaktime:2,
+{ name: "shroomlight", Name:"Shroomlight",lightLevel:15,breakTime:2,
 digSound: ["block.shroomlight.dig1", "block.shroomlight.dig2", "block.shroomlight.dig3", "block.shroomlight.dig4", "block.shroomlight.dig5"],
 stepSound: ["block.shroomlight.step1", "block.shroomlight.step2","block.shroomlight.step3","block.shroomlight.step4","block.shroomlight.step5","block.shroomlight.step6"]},
 { 
