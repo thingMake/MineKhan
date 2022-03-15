@@ -14637,6 +14637,7 @@ if(!controlMap.break.pressed){
 crack.delayStart = now
 }
 }
+// REPLACE THE EXPLODE FUNCTION IN preview.html WITH THIS BELOW
 var nonExplodes = [
   blockIds.bedrock,
   blockIds.barrier,
@@ -14703,6 +14704,9 @@ damage(damageTook, username+" blew up.")
 }
 explodeSound(x,y,z)
 }
+// REPLACE THE EXPLODE FUNCTION IN preview.html WITH THE ABOVE FUNCTION
+  
+  
 function fall(x,y,z,b){
 if(!worldSettings.blocksFall || world.getBlock(x,y-1,z)) return
 setTimeout(() => {
