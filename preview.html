@@ -2743,6 +2743,9 @@ pistonHeadSide:"0g0gcĲ$ĦĊó=ĢÓ=ıðĦí8=ĚB=āī=ÞĮ=Ă4ĦÖ>=åîĦ0001y
 pistonBack:"0g0g8T4=(Ī=EĊĦÁ?=í8=ÞĮ=ÖĎĦJP=0iú001e_àġĥK+^Ņě,Ĉ/ŎČýŃŗ%ĢţĖİÇ|ŐÌçŢā}ĶàZĳřeĲàĦÓřfÉĆğ:āhōŋÚŀÆi<ÑėPomÓŜýłār.ŅÚœődİ#Ľ,ĉLÇàæĥKBi002S",
 pistonFront:"0g0g8łÚĦĲc=åîĦÖ>=ĢÓ=ĚB=ÞÐĦĂ4Ħ5AĿdAICPÞNP9ãłÅğŢæÚŔěåĞŚÄ_BŅİ!ÍłÜÄņŢP+ĽİAă6ĮÑÿP]CŤÜZHİåCŁÖ+JÄÇ&ĚŀyÅZØŞZ×ÜÓĺĴōŁÂŀBĽPÐ7ZÕuņįBÙŀ%Ōò",
 pistonFrontOpen:"0g0gaT4=(Ī=Á?=í8=ÞĮ=ÖĎĦJP=EĊĦĊó=ĚĲ=01hh00012OQÂ?yU(kO?B>ÂB(l?yO)AÂÀiyRÐÂ>)xßV+òāÓ?xâÃÕGGîÂÅ5QFGhýyÅ2UÇhnJ?x3y]GGX)w3NÄāĀÐOw4*yU)A?x5Â+ByBÂ[2zORUNBMiU)ÂBRU(hÞg000h0",
+superTntBottom: "0g0g4ÈMW}ęH÷-ZBķZkkkkØØØØØØØØZZZZkkkkØØØØØØØØZZZZkkkkØØØØØØØØZZZZkkkkØØØØØØØØZZZZ",
+superTntTop: "0g0g7RúW+ęW÷-Z}gZVVHxĘZgTZ4ë]4ë]FNûFNû!ÂĎĸËýÛĮĕÜÓŔ4œ]4Ň]FNěó;û!]ĞŀÇýÛľ+Ĺ[ĕ4òĞłc]!{ĞĹ;û!ÃþĸÖlÛŀĔøÄŔ4ħÝĿį]!NċMOjFÂýFÂýÛĽŔÛĽŔ",
+superTnt: "0g0ga@ęWÂúWÈgZFĘZZZZĶ;ZņÚY)ļHoÐZĦĲW0i0i0i0ihzhzhzhzhzhzhzhzyOyOyOyO0i0i0i0i?ÓVÓÒÄÓÑ@GðâÆÔäUÖÆVGÅÄãÓ?ÔÓãGVïþ@ÆÄâÆVðUāāāāāāāāyOyOyOyO0i0i0i0ihzhzhzhzhzhzhzhzyzyzyzyz",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -2921,6 +2924,7 @@ name: "grass",
 Name: "Grass Block",
 textures: [ "dirt", "grassTop", "grassSide" ],
 breakTime: 0.9,
+blastResistance:0.6,
 drop:"dirt",
 type:"ground",
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
@@ -2950,13 +2954,13 @@ world.setBlock(x,y,z,blockIds.grass)
 }
 }
 },
-{ name: "dirt", Name:"Dirt", breakTime:0.75, type:"ground",
+{ name: "dirt", Name:"Dirt", breakTime:0.75, blastResistance:0.5, type:"ground",
 digSound: ["block.gravel.dig1", "block.gravel.dig2", "block.gravel.dig3", "block.gravel.dig4"],
 stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","block.gravel.step4"]
 },
-{ name: "stone", Name:"Stone", drop:"cobblestone", type:"rock1", breakTime:7.5, stoneSound:true},
-{ name: "bedrock", Name:"Bedrock", breakTime:89000000, stoneSound:true},
-{ name: "sand", Name:"Sand", breakTime:0.75,
+{ name: "stone", Name:"Stone", drop:"cobblestone", type:"rock1", breakTime:7.5, blastResistance:6, stoneSound:true},
+{ name: "bedrock", Name:"Bedrock", breakTime:89000000, blastResistance:3600000, stoneSound:true},
+{ name: "sand", Name:"Sand", breakTime:0.75, blastResistance:0.5,
 onupdate: function(x,y,z,b,world){
 fall(x,y,z,b,world)
 },
@@ -2965,7 +2969,7 @@ fall(x,y,z,b,world,true)
 },
 digSound: ["block.sand.dig1", "block.sand.dig2", "block.sand.dig3", "block.sand.dig4"],
 stepSound: ["block.sand.step1", "block.sand.step2","block.sand.step3","block.sand.step4","block.sand.step5"]},
-{ name: "gravel", Name:"Gravel", breakTime:0.9, type:"ground",
+{ name: "gravel", Name:"Gravel", breakTime:0.9, blastResistance:0.6, type:"ground",
 onupdate: function(x,y,z,b,world){
 fall(x,y,z,blockIds.gravel,world)
 },
@@ -2983,6 +2987,7 @@ name: "leaves",
 Name: "Leaves",
 transparent: true,
 breakTime: 0.3,
+blastResistance:0.2,
 type:"plant2",
 drop: function(){
 if(rand() > 0.8){
@@ -3003,11 +3008,12 @@ Name:"Glass",
 transparent: true,
 shadow: false,
 breakTime: 0.45,
+blastResistance:0.3,
 type: "glass",
 glassSound: true
 },
-{ name: "cobblestone", Name:"Cobblestone", breakTime:10, type:"rock1", stoneSound:true},
-{ name: "mossyCobble", Name:"Mossy Cobblestone", breakTime:10, type:"rock1", stoneSound:true},
+{ name: "cobblestone", Name:"Cobblestone", breakTime:10, blastResistance:6, type:"rock1", stoneSound:true},
+{ name: "mossyCobble", Name:"Mossy Cobblestone", breakTime:10, blastResistance:6, type:"rock1", stoneSound:true},
 { name: "stoneBricks", Name:"Stone Bricks", breakTime:7.5, type:"rock1", stoneSound:true},
 { name: "mossyStoneBricks", Name:"Mossy Stone Bricks", breakTime:7.5, type:"rock1", stoneSound:true},
 { name: "bricks", Name:"Bricks", breakTime:10, type:"rock1", stoneSound:true},
@@ -3120,7 +3126,7 @@ type:"wood",
 { name: "brownConcrete", Name:"Brown Concrete",breakTime:9, type:"rock1", stoneSound:true},
 { name: "greenConcrete", Name:"Green Concrete",breakTime:9, type:"rock1", stoneSound:true},
 { name: "redConcrete", Name:"Red Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "blackConcrete", Name:"Blck Concrete",breakTime:9, type:"rock1", stoneSound:true},
+{ name: "blackConcrete", Name:"Black Concrete",breakTime:9, type:"rock1", stoneSound:true},
 {
 name: "bookshelf",
 Name:"Bookshelf",
@@ -3194,6 +3200,7 @@ stoneSound: true
 name: "tnt",
 Name:"Trinitrotoluene",
 textures: ["tntBottom", "tntTop", "tntSides"],
+superTntTextures: ["superTntBottom","superTntTop","superTnt"],
 //onupdate: function(x,y,z){
 //  explode(x,y,z,5)
 //}, flint and steel explodes it
@@ -3206,6 +3213,12 @@ switch(how){
 case "explosion":
 e.timeLimit = rand(10,30)
 }
+},
+superTntExplode: function(x,y,z){
+world.setBlock(x,y,z,0)
+var e = new PrimedSuperTNT(x,y,z)
+world.addEntity(e)
+playSound("entity.tnt.fuse", 0, posSound(x,y,z))
 },
 onpowerupdate:function(x,y,z){
 var power = world.getRedstonePower(x,y,z)
@@ -3251,7 +3264,7 @@ if(multiplayer) send({type:"playSound", data:"block.portal.travel", x:p.x,y:p.y,
 glassSound: true,
 ambientSound:"block.portal.portal"
 },
-{ name: "obsidian", Name:"Obsidian", stoneSound:true},
+{ name: "obsidian", Name:"Obsidian", stoneSound:true, type:"rock4", breakTime:250, blastResistance:1200},
 //the old redstone dust added before this version of minekhan was public (early 2021)
 /*{
 name:"redstoneDust",
@@ -3938,6 +3951,7 @@ wet:true,
 solid:false,
 shadow: false, //to hide faces
 semiTrans: true,
+blastResistance:100,
 tint:{
 default:[68/255,175/255,245/255],
 snowyField:[20/255,85/255,155/255],
@@ -3966,7 +3980,8 @@ lightLevel:15,
 damage:4,
 burnPlayer:true,
 dieMessage: () => username+" tried to swim in lava.",
-shadow: false
+shadow: false,
+blastResistance:100
 },
 {
 name: "craftingTable",
@@ -4038,6 +4053,7 @@ name: "netheriteBlock",
 Name:"Netherite Block",
 type:"rock4",
 breakTime:250,
+blastResistance:1200,
 digSound: ["block.netherite.dig1", "block.netherite.dig2", "block.netherite.dig3", "block.netherite.dig4"],
 stepSound: ["block.netherite.step1", "block.netherite.step2","block.netherite.step3","block.netherite.step4","block.netherite.step5","block.netherite.step6"]
 },
@@ -4194,6 +4210,8 @@ item: true,
 onuse: (x,y,z, block, replaceItem, useDurability) => {
 if(block === blockIds.tnt){
 blockData[blockIds.tnt].explode(x,y,z)
+}else if(block === blockIds.tnt | SLAB){
+blockData[blockIds.tnt].superTntExplode(x,y,z)
 }else{
 var pos = getPosition()
 world.setBlock(pos[0],pos[1],pos[2],blockIds.fire)
@@ -10706,8 +10724,16 @@ p3.y = 0
 if(multiplayer) send({type:"die", id:achexUsername, message:dieMessage})
 }
 function damage(amount, why, nosound,type){
+var prev = amount
+if(harmEffect > 0){
+//when your red, you are immune to most damage
+if(amount > lastDamage){
+amount -= lastDamage
+}else return
+}
 p.health -= amount
 harmEffect = 40
+lastDamage = prev
 if(!nosound){
 if(p.health <= 0){
 oofSound()
@@ -10942,7 +10968,7 @@ let standingOn = 0 //block id you are standing on
 let lastTick = 0
 let lastLiquid = false
 let attackCooldown = 0, attackCooldownStart = 0, attackCooldownTime = 0 //for swords
-let harmEffect = 0
+let harmEffect = 0, lastDamage = 0
 //let healTime = 5000 // miliseconds between each heal
 let healEffect = 0 // health bar outline flash white
 let lastHeal = 0
@@ -13596,12 +13622,13 @@ obj.buffer = gl.createBuffer()
 gl.bindBuffer(gl.ARRAY_BUFFER, obj.buffer)
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts.flat(2)), gl.STATIC_DRAW)
 }
-function makeBlock(tex,shape,Block, base){
+function makeBlock(tex,shape,Block, base, Name){
 Block.textures = tex
 Block.shape = shape
 Block.shadow = base ? base.shadow : true
 Block.transparent = base ? base.transparent : false
 Block.solid = base ? base.solid : true
+if(Name) Block.Name = Name
 }
 function rotTex(tex,n){
 tex = tex.slice()
@@ -14121,6 +14148,9 @@ flipped = Object.create(baseBlock)
 makeBlock(stairBlock.textures, shapes.pistonHeadFlipped, flipped, baseBlock)
 blockData[i | STAIR | FLIP] = flipped
 makeBlock([t2,t2,t,t,t2,t2], shapes.pistonHeadSW, doorBlock, baseBlock)
+}
+if(baseBlock.name === "tnt"){
+makeBlock(fillTextureArray(baseBlock.superTntTextures), shapes.cube, slabBlock, baseBlock, "Super TNT")
 }
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
@@ -16516,7 +16546,7 @@ if(block.pickaxe || block.sword || block.shovel || block.axe){
 attackCooldownStart = Date.now()
 attackCooldownTime = atime
 }
-console.log(damage)
+//console.log(damage)
 p.foodExhaustion += 0.1
 p.lastBreak = Date.now()
 }
@@ -16597,7 +16627,7 @@ sphereoidAt(x,y,z,i,i,i, blockIds.air)
 }*/
 //ball(x,y,z,r,r,r,0)
 if(!liquid)world.setBlock(x,y,z, 0)
-let w2 = r * r
+/*let w2 = r * r
 let h2 = w2
 let d2 = w2
 for (let Y = -r; Y < r; Y++) {
@@ -16626,7 +16656,55 @@ world.setBlock(X + x, Y + y, Z + z, 0)
 }
 }
 }
+}*/
+//create rays rays coming from the center of the cube to each outer edge
+for(var cx=0; cx<16; cx++){
+for(var cy=0; cy<16; cy++){
+for(var cz=0; cz<16; cz++){
+if((cx === 0 || cx === 15) || (cy === 0 || cy === 15) || (cz === 0 || cz === 15)){
+continue
 }
+var intensity =  (0.7 + rand(0.6)) * r
+var x2 = cx / 16, y2 = cy / 16, z2 = cz / 16
+//step 0.3 blocks each time
+var d = abs(dist3(0,0,0, (x2-0.5)*2*r,(y2-0.5)*2*r,(z2-0.5)*2*r))
+var step = (0.3/d)/2 //how much to go along ray
+for(var i=0; i<1; i+=step){
+var sx = round(lerp(i, x, (x2-0.5)*2*r+x))
+var sy = round(lerp(i, y, (y2-0.5)*2*r+y))
+var sz = round(lerp(i, z, (z2-0.5)*2*r+z))
+intensity -= 0.3 * 0.75
+var block = world.getBlock(sx,sy,sz)
+//if block isn't air, reduce intensity based on blast resistance
+if(block){
+var br = blockData[block].blastResistance || 0
+intensity -= (br + 0.3) * 0.3
+if(intensity > 0) {
+if(!liquid){
+if(blockData[block].ongetexploded){
+blockData[block].ongetexploded(sx,sy,sz,block,world)
+}
+world.setBlock(sx, sy, sz, 0)
+}
+if(block === blockIds.tnt){
+blockData[blockIds.tnt].explode(sx,sy,sz, "explosion")
+}
+if(rand() > 0.5){
+var time = rand()*1000
+world.particles.push(new ShockwaveParticle(sx, sy, sz, time))
+}
+if(round(rand(r-1)) === 0){
+world.addEntity(new Item(sx, sy, sz, 0, 0, 0, block, true))
+}
+}/*end if(intensity > 0)*/else{
+continue
+}
+}
+}
+}//end for loop
+}
+}
+//the calculation below is not from minecraft
 for(var i=0; i<world.entities.length; i++){
 var ent = world.entities[i]
 var dist = dist3(x,y,z, ent.x, ent.y, ent.z)
@@ -16651,8 +16729,9 @@ var damageTook = round((r - dist) * 6)
 damage(damageTook, username+" blew up.")
 }
 }
-explodeSound(x,y,z)
+explodeSound(x,y,z, r)
 }
+win.explode = explode
 function fall(x,y,z,b,world, instant){
 if(!worldSettings.blocksFall || world.getBlock(x,y-1,z)) return
 if(instant){
@@ -20028,17 +20107,22 @@ this.canDespawn = true
 }
 win.BlockEntity = BlockEntity
 class PrimedTNT extends BlockEntity{
-constructor(x,y,z, timerStart){
-super(blockIds.tnt, x,y,z)
+constructor(x,y,z, timerStart, tntBlockId = blockIds.tnt){
+super(tntBlockId, x,y,z)
 this.type = "PrimedTNT"
 this.velx = (Math.random() * 0.1) - 0.05
 this.vely = Math.random() * 0.1
 this.velz = (Math.random() * 0.1) - 0.05
-this.prevTex = blockIds.tnt
+this.prevTex = tntBlockId
 this.tex = this.prevTex
 this.timerStart = timerStart || this.spawn
 this.lastCollidedY = this.timerStart
 this.timeLimit = 80
+this.tntBlockId = tntBlockId
+}
+explode(){
+var x = round(this.x), y = round(this.y), z = round(this.z)
+explode(x,y,z,4, blockData[world.getBlock(x,y,z)].liquid || !worldSettings.tntExplode)
 }
 update() {
 let now = performance.now()
@@ -20054,7 +20138,7 @@ this.timerStart -= 1000
 }
 var i = Math.floor((now - this.timerStart) / 250)
 if(i%2){
-this.tex = blockIds.tnt
+this.tex = this.tntBlockId
 }else{
 this.tex = blockIds.whiteConcrete
 world.particles.push(new TNTSmokeParticle(this.x,this.y+0.5-0.125,this.z))
@@ -20069,9 +20153,18 @@ this.extraSize = -((this.timeLimit - 10) - ((now - this.spawn) / tickTime)) / 40
 }
 if((now - this.spawn) / tickTime >= this.timeLimit){
 this.canDespawn = true
-var x = round(this.x), y = round(this.y), z = round(this.z)
-explode(x,y,z,4, blockData[world.getBlock(x,y,z)].liquid || !worldSettings.tntExplode)
+this.explode()
 }
+}
+}
+class PrimedSuperTNT extends PrimedTNT{
+constructor(x,y,z, timerStart){
+super(x,y,z, timerStart, blockIds.tnt | SLAB)
+this.type = "PrimedSuperTNT"
+}
+explode(){
+var x = round(this.x), y = round(this.y), z = round(this.z)
+explode(x,y,z,8, blockData[world.getBlock(x,y,z)].liquid || !worldSettings.tntExplode)
 }
 }
 class MovingBlock extends BlockEntity{
@@ -20971,6 +21064,7 @@ this.spin = 0
 this.dirx = 0
 this.dirz = 0
 this.health = 0
+this.lastDamage = 0
 this.lastY = this.y
 }
 AI(now){
@@ -21040,8 +21134,15 @@ this.canDespawn = true
 }
 }
 onhit(damage){
+var prev = damage
+if(this.harmEffect > 0){
+if(damage > this.lastDamage){
+damage -= this.lastDamage
+}else return
+}
 this.health -= damage
 this.harmEffect = 40
+this.lastDamage = prev
 }
 }
 class Cow extends Mob{
@@ -21359,17 +21460,25 @@ world.particles.push(new PoofParticle(x+X,y+Y,z+Z))
 }
 }
 win.playerPoof = playerPoof
-class ExplodeParticle extends Particle{
-constructor(x,y,z){
+class ShockwaveParticle extends Particle{
+constructor(x,y,z, delay){
 var vao = explodeVaos[8]
 var frameTime = 25
 super(x, y, z, 0, 0, 0, 0, 0, 2, 2, 2, null, null, explodeVaos.size, explodeVaos.length*frameTime, vao)
 this.index = 0
 this.brightness = (Math.random()/2)+0.5
 this.frameTime = frameTime
+this.delay = delay || 0
+this.hidden = true
 }
 update(){
 let now = performance.now()
+if(this.hidden){
+if(now - this.spawn > this.delay){
+this.hidden = false
+this.spawn = now
+}else return
+}
 if (now - this.spawn > this.despawns) {
 this.canDespawn = true
 }
@@ -21378,6 +21487,7 @@ this.vao = explodeVaos[this.index]
 this.canFacePlayer = true
 }
 render(){
+if(this.hidden) return
 if(this.canFacePlayer){
 this.facePlayer()
 this.canFacePlayer = false
@@ -21415,7 +21525,7 @@ glExtensions.vertex_array_object.bindVertexArrayOES(null)
 gl.uniform1i(glCache.isTextureAtlasParticle, 1)
 }
 }
-win.ExplodeParticle = ExplodeParticle
+win.ShockwaveParticle = ShockwaveParticle
 class TNTSmokeParticle extends Particle {
 constructor(x,y,z){
 var frameTime = tickTime
@@ -23002,6 +23112,9 @@ ent = new BlockEntity(p.block, 0,0,0, p.solidOnGround)
 break
 case "PrimedTNT":
 ent = new PrimedTNT(0,0,0)
+break
+case "PrimedSuperTNT":
+ent = new PrimedSuperTNT(0,0,0)
 break
 case "EnderPearl":
 ent = new EnderPearl(0,0,0,0,0,0)
@@ -24854,7 +24967,11 @@ ctx.globalAlpha = inventory.showName > 1 ? 1 : inventory.showName
 var Y = y - (s*1.5)
 ctx.font = "18px VT323"
 var slot = inventory.hotbar[inventory.hotbarSlot]
-var name = slot && slot.id && (blockData[slot.id].Name || blockData[slot.id].name)
+var id = slot && slot.id
+if(slot && slot.id && slot.id < isCube) {
+id = slot.id | blockMode
+}
+var name = slot && slot.id && (blockData[id].Name || blockData[id].name)
 if(name){
 var w = ctx.measureText(name).width + 20
 var X = (width / 2) - (w/2)
@@ -27914,10 +28031,16 @@ playSound("damage.classic_hurt")
 if(multiplayer) send({type:"playSound", data:"damage.classic_hurt", x:p.x,y:p.y,z:p.z})
 }
 var explodeSounds = ["entity.generic.explode1", "entity.generic.explode2", "entity.generic.explode3", "entity.generic.explode4"]
-function explodeSound(x,y,z){
-var sound = explodeSounds[Math.floor(Math.random()*explodeSounds.length)]
-playSound(sound, 0, posSound(x,y,z))
-if(multiplayer) send({type:"playSound", data:sound, x:x,y:y,z:z})
+function explodeSound(x,y,z, power = 1){
+var sound, soundPower
+//explodeSounds[Math.floor(Math.random()*explodeSounds.length)]
+if(power >= 10) {sound = explodeSounds[0], soundPower = 10}
+else if(power >= 8) {sound = explodeSounds[1], soundPower = 8}
+else if(power >= 4) {sound = explodeSounds[2], soundPower = 4}
+else {sound = explodeSounds[3], soundPower = 1}
+var pitch = 1 - ((power - soundPower) / 10)
+playSound(sound, 0, posSound(x,y,z), pitch)
+if(multiplayer) send({type:"playSound", data:sound, x:x,y:y,z:z, pitch:pitch})
 }
 win.explodeSound = explodeSound
 function posSound(x,y,z){
