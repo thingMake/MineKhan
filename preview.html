@@ -8259,6 +8259,56 @@ Name:"Piston",
 textures:["pistonBack","pistonFront","pistonSide"],
 piston:true,
 headSideTexture:"pistonHeadSide",
+frontOpenTexture:"pistonFrontOpen",
+extend:function(x,y,z, facing){
+var tx = x, ty = y, tz = z
+var head, headCut
+switch(facing){
+case "top":
+world.setBlock(x,y,z, this.id | TALLCROSS)
+head = this.id | STAIR
+headCut = this.id | CROSS
+ty ++
+break
+case "bottom":
+world.setBlock(x,y,z, this.id | TALLCROSS | FLIP)
+head = this.id | STAIR | FLIP
+headCut = this.id | CROSS | FLIP
+ty --
+break
+case "north":
+world.setBlock(x,y,z, this.id | PORTAL | NORTH)
+head = this.id | DOOR | NORTH
+headCut = this.id | PANE | NORTH
+tz ++
+break
+case "south":
+world.setBlock(x,y,z, this.id | PORTAL | SOUTH)
+head = this.id | DOOR | SOUTH
+headCut = this.id | PANE | SOUTH
+tz --
+break
+case "east":
+world.setBlock(x,y,z, this.id | PORTAL | EAST)
+head = this.id | DOOR | EAST
+headCut = this.id | PANE | EAST
+tx ++
+break
+case "west":
+world.setBlock(x,y,z, this.id | PORTAL | WEST)
+head = this.id | DOOR | WEST
+headCut = this.id | PANE | WEST
+tx --
+break
+default:
+return console.log("oh no! piston isn't facing anywhere")
+}
+var e = new MovingBlock(headCut,x,y,z,tx,ty,tz, tickTime*2, true)
+world.addEntity(e)
+setTimeout(function(){
+e.changeBlock(head)
+}, tickTime)
+}
 },
 {
 name:"smoothQuartz",
@@ -10745,6 +10795,12 @@ break
 case "freeze":
 freezeHurtSound()
 break
+case "fire":
+fireHurtSound()
+break
+case "berrybush":
+berrybushHurtSound()
+break
 case "smallfall":
 playSound("damage.smallfall")
 break
@@ -12939,6 +12995,43 @@ east: 0,
 west: 0
 }
 },
+pistonOpenFlipped: {
+verts: [
+[objectify(0,4,0,16,16,0,0, false,true)],
+[objectify(0,16,16,16,16,0,0, false,true)],
+[objectify(16,16,16,16,12,0,4, false,true)],
+[objectify(0,16,0,16,12,0,4, false,true)],
+[objectify(16,16,0,16,12,0,4, false,true)],
+[objectify(0,16,16,16,12,0,4, false,true)]
+],
+cull: {
+top: 3,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+pistonOpenSW: {
+verts: [
+[objectify(0,0,4,16,12,0,4)],
+[objectify(0,16,16,16,12,0,4)],
+[objectify(16,16,16,16,16,0,0)],
+[objectify(0,16,4,16,16,0,0)],
+[objectify(16,16,4,12,16,0,4, false,false,-1)],
+[objectify(0,16,16,12,16,0,4, false,false,-1)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 3,
+south: 0,
+east: 0,
+west: 0
+},
+rotate:true
+},
 pistonHead: {
 verts: [
 [objectify(0,12,0,16,16,0,0)], //b
@@ -12967,8 +13060,8 @@ verts: [
 [objectify(0,4,16,16,4,0,0), objectify(6,20,10,4,12,6,4), objectify(6,8,10,4,4,6,9)] //w
 ],
 cull: {
-top: 3,
-bottom: 0,
+top: 0,
+bottom: 3,
 north: 0,
 south: 0,
 east: 0,
@@ -12988,7 +13081,7 @@ cull: {
 top: 0,
 bottom: 0,
 north: 0,
-south: 0,
+south: 3,
 east: 0,
 west: 0
 },
@@ -13011,6 +13104,43 @@ south: 0,
 east: 0,
 west: 0
 }
+},
+pistonHeadCutFlipped: {
+verts: [
+[objectify(0,0,0,16,16,0,0)], //b
+[objectify(0,4,16,16,16,0,0)], //t
+[objectify(16,4,16,16,4,0,0), objectify(10,16,10,4,12,6,4)], //n
+[objectify(0,4,0,16,4,0,0), objectify(6,16,6,4,12,6,4)], //s
+[objectify(16,4,0,16,4,0,0), objectify(10,16,6,4,12,6,4)], //e
+[objectify(0,4,16,16,4,0,0), objectify(6,16,10,4,12,6,4)] //w
+],
+cull: {
+top: 0,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+pistonHeadCutSW: {
+verts: [
+[objectify(0,0,0,16,4,0,0),objectify(6,6,4,4,12,6,4)],
+[objectify(0,16,4,16,4,0,0),objectify(6,10,16,4,12,6,4, false,true)],
+[objectify(16,16,4,16,16,0,0)],
+[objectify(0,16,0,16,16,0,0)],
+[objectify(16,16,0,4,16,0,0, false,false,true),objectify(10,10,4,12,4,6,4, false,false,1)],
+[objectify(0,16,4,4,16,0,0, false,false,true),objectify(6,10,16,12,4,6,4, false,false,-1)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 3,
+east: 0,
+west: 0
+},
+rotate:true
 },
 playerHand: {
 verts: [
@@ -14148,6 +14278,27 @@ flipped = Object.create(baseBlock)
 makeBlock(stairBlock.textures, shapes.pistonHeadFlipped, flipped, baseBlock)
 blockData[i | STAIR | FLIP] = flipped
 makeBlock([t2,t2,t,t,t2,t2], shapes.pistonHeadSW, doorBlock, baseBlock)
+//head cut
+makeBlock(stairBlock.textures, shapes.pistonHeadCut, crossBlock, baseBlock)
+flipped = Object.create(baseBlock)
+makeBlock(stairBlock.textures, shapes.pistonHeadCutFlipped, flipped, baseBlock)
+blockData[i | CROSS | FLIP] = flipped
+makeBlock(doorBlock.textures, shapes.pistonHeadCutSW, paneBlock, baseBlock)
+//open
+var textures = baseBlock.textures.slice()
+textures[1] = baseBlock.frontOpenTexture
+makeBlock(textures, shapes.pistonOpen, tallcrossBlock, baseBlock)
+textures = blockData[i | FLIP].textures
+textures[0] = baseBlock.frontOpenTexture
+flipped = Object.create(baseBlock)
+makeBlock(textures, shapes.pistonOpenFlipped, flipped, baseBlock)
+blockData[i | TALLCROSS | FLIP] = flipped
+var textures = baseBlock.textures.slice()
+var temp = textures[2] //side with piston head
+textures[2] = textures[0]
+textures[3] = baseBlock.frontOpenTexture
+textures[0] = textures[1] = temp
+makeBlock(textures, shapes.pistonOpenSW, portalBlock, baseBlock)
 }
 if(baseBlock.name === "tnt"){
 makeBlock(fillTextureArray(baseBlock.superTntTextures), shapes.cube, slabBlock, baseBlock, "Super TNT")
@@ -14231,7 +14382,7 @@ blockData[i | PANE | v[j].bit] = block
 v = portalBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
 if (v[j]) {
-let block = Object.create(baseBlock)
+let block = Object.create(portalBlock)
 block.shape = v[j]
 blockData[i | PORTAL | v[j].bit] = block
 }
@@ -20168,7 +20319,7 @@ explode(x,y,z,8, blockData[world.getBlock(x,y,z)].liquid || !worldSettings.tntEx
 }
 }
 class MovingBlock extends BlockEntity{
-constructor(block,x,y,z,mx,my,mz,despawns){
+constructor(block,x,y,z,mx,my,mz,despawns, solidWhenDone = false){
 super(block, x,y,z)
 this.sx = x //s stands for start
 this.sy = y
@@ -20177,11 +20328,15 @@ this.mx = mx //m stands for end
 this.my = my
 this.mz = mz
 this.despawns = despawns //also tells how much time for it to move
+this.solidWhenDone = solidWhenDone
 }
 update() {
 let now = performance.now()
 if (now - this.spawn > this.despawns) {
 this.canDespawn = true
+if(this.solidWhenDone){
+world.setBlock(this.block)
+}
 }
 var prog = (now - this.spawn) / this.despawns
 this.x = lerp(prog, this.sx, this.mx)
@@ -26224,6 +26379,9 @@ initTextures()
 }*/
 if (k === controlMap.cycleBlockShapes.key) {
 blockMode = blockMode === CUBE ? SLAB : (blockMode === SLAB ? STAIR : (blockMode === STAIR ? FENCE : (blockMode === FENCE ? WALLPOST : (blockMode === WALLPOST ? WALL : (blockMode === WALL ? WALLU : (blockMode === WALLU ? FENCQ : CUBE))))))
+if(screen === "play"){
+inventory.showName = 1.5
+}
 updateHUD = true
 }
 if (screen === "play") {
@@ -27086,7 +27244,7 @@ p.totalXP = 0
 setLevel()
 freezeEffect = 0
 p.burnTime = 0
-dieMessage = username+" died because ¯\_(ツ)_/¯"
+dieMessage = username+" died because ¯\\_(ツ)_/¯" //the \\ actually shows up as \
 world = dimensions.overworld
 }
 function initWorldsMenu() {
@@ -27407,6 +27565,11 @@ freeze2: "damage/freeze2.ogg",
 freeze3: "damage/freeze3.ogg",
 freeze4: "damage/freeze4.ogg",
 freeze5: "damage/freeze5.ogg",
+fire1: "damage/fire1.ogg",
+fire2: "damage/fire2.ogg",
+fire3: "damage/fire3.ogg",
+berrybush1: "damage/berrybush1.ogg",
+berrybush2: "damage/berrybush2.ogg",
 classic_hurt: "damage/classic_hurt.ogg",
 },
 block: {
@@ -28026,6 +28189,16 @@ var i = Math.ceil(Math.random()*5)
 playSound("damage.freeze"+i)
 if(multiplayer) send({type:"playSound", data:"damage.freeze"+i, x:p.x,y:p.y,z:p.z})
 }
+function fireHurtSound(){
+var i = Math.ceil(Math.random()*3)
+playSound("damage.fire"+i)
+if(multiplayer) send({type:"playSound", data:"damage.fire"+i, x:p.x,y:p.y,z:p.z})
+}
+function berrybushHurtSound(){
+var i = Math.ceil(Math.random()*2)
+playSound("damage.berrybush"+i)
+if(multiplayer) send({type:"playSound", data:"damage.berrybush"+i, x:p.x,y:p.y,z:p.z})
+}
 function oofSound(){
 playSound("damage.classic_hurt")
 if(multiplayer) send({type:"playSound", data:"damage.classic_hurt", x:p.x,y:p.y,z:p.z})
@@ -28039,6 +28212,7 @@ else if(power >= 8) {sound = explodeSounds[1], soundPower = 8}
 else if(power >= 4) {sound = explodeSounds[2], soundPower = 4}
 else {sound = explodeSounds[3], soundPower = 1}
 var pitch = 1 - ((power - soundPower) / 10)
+if(pitch <= 0) return
 playSound(sound, 0, posSound(x,y,z), pitch)
 if(multiplayer) send({type:"playSound", data:sound, x:x,y:y,z:z, pitch:pitch})
 }
@@ -28810,11 +28984,14 @@ if(heal){
 lastHeal = now
 p.health += heal
 healEffect = 40
+if(p.health >= 18){
+p.foodExhaustion += heal * 6
+}
 updateHUD = true
 }
 if(p.food < 18 && p.food > 0) lastHeal = now
 }
-if(p.health > 1 && p.food <= 0 && healTimer >= 4000){
+if(p.health > 0 && p.food <= 0 && healTimer >= 4000){
 lastHeal = now
 damage(1, username+" starved to death.")
 }
@@ -28851,7 +29028,7 @@ if(survival && p.burnTimer > 0){
 if(now - p.burnStart > 500){
 p.burnStart = now
 p.burnTimer --
-damage(1, username+" burned up.")
+damage(1, username+" burned up.", false, "fire")
 }
 }
 if(tick) {
