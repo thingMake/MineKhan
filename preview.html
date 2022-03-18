@@ -2959,7 +2959,7 @@ digSound: ["block.gravel.dig1", "block.gravel.dig2", "block.gravel.dig3", "block
 stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","block.gravel.step4"]
 },
 { name: "stone", Name:"Stone", drop:"cobblestone", type:"rock1", breakTime:7.5, blastResistance:6, stoneSound:true},
-{ name: "bedrock", Name:"Bedrock", breakTime:89000000, blastResistance:3600000, stoneSound:true},
+{ name: "bedrock", Name:"Bedrock", breakTime:89000000, blastResistance:3600000, stoneSound:true, pistonPush:false, pistonPull:false},
 { name: "sand", Name:"Sand", breakTime:0.75, blastResistance:0.5,
 onupdate: function(x,y,z,b,world){
 fall(x,y,z,b,world)
@@ -3262,9 +3262,11 @@ if(multiplayer) send({type:"playSound", data:"block.portal.travel", x:p.x,y:p.y,
 }
 },
 glassSound: true,
-ambientSound:"block.portal.portal"
+ambientSound:"block.portal.portal",
+pistonPush:false,
+pistonPull:false
 },
-{ name: "obsidian", Name:"Obsidian", stoneSound:true, type:"rock4", breakTime:250, blastResistance:1200},
+{ name: "obsidian", Name:"Obsidian", stoneSound:true, type:"rock4", breakTime:250, blastResistance:1200, pistonPush:false, pistonPull:false},
 //the old redstone dust added before this version of minekhan was public (early 2021)
 /*{
 name:"redstoneDust",
@@ -3499,7 +3501,7 @@ world.unspreadPower(x,y,z,15,true)
 }
 }
 },
-connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch", "lever", "redstoneConnector","is:button"],
+connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch", "lever", "redstoneConnector","is:button","piston"],
 connectable: function(x,y,z, d) {
 var id = world.getBlock(x,y,z)
 if(this.connectables.includes(blockData[id].name)) return true
@@ -3567,7 +3569,9 @@ solid: false,
 iconTexture: "light_15",
 flatIcon: true,
 shadow: false,
-noHitbox:true
+noHitbox:true,
+pistonPush:false,
+pistonPull:false
 },
 {
 name: "autumnLeaves",
@@ -3891,7 +3895,9 @@ transparent: true,
 shadow: false,
 beacon: true,
 lightLevel: 15,
-glassSound: true
+glassSound: true,
+pistonPush:false,
+pistonPull:false
 },
 {
 name: "cactus",
@@ -4210,7 +4216,7 @@ item: true,
 onuse: (x,y,z, block, replaceItem, useDurability) => {
 if(block === blockIds.tnt){
 blockData[blockIds.tnt].explode(x,y,z)
-}else if(block === blockIds.tnt | SLAB){
+}else if(block === (blockIds.tnt | SLAB)){
 blockData[blockIds.tnt].superTntExplode(x,y,z)
 }else{
 var pos = getPosition()
@@ -4230,7 +4236,9 @@ textures: "none",
 iconTexture: "barrier",
 flatIcon:true,
 transparent:true,
-breakTime:Infinity
+breakTime:Infinity,
+pistonPush:false,
+pistonPull:false
 },
 {
 name: "oakSapling",
@@ -4369,7 +4377,13 @@ stoneSound: true
 name: "cryingObsidian",
 Name:"Obsidian: 😢",
 shadow: false,
-lightLevel: 10
+lightLevel: 10,
+stoneSound:true,
+type:"rock4",
+breakTime:250,
+blastResistance:1200,
+pistonPush:false,
+pistonPull:false
 },
 { name: "netherGoldOre",
 Name:"Nether Gold Ore",
@@ -8260,54 +8274,186 @@ textures:["pistonBack","pistonFront","pistonSide"],
 piston:true,
 headSideTexture:"pistonHeadSide",
 frontOpenTexture:"pistonFrontOpen",
+onpowerupdate: function(x,y,z,sx,sy,sz){
+var block = world.getBlock(x,y,z)
+var extended = false, facing
+switch(block){
+case this.id:
+facing = "top"
+break
+case this.id | FLIP:
+facing = "bottom"
+break
+case this.id | SLAB | NORTH:
+facing = "north"
+break
+case this.id | SLAB | SOUTH:
+facing = "south"
+break
+case this.id | SLAB | EAST:
+facing = "east"
+break
+case this.id | SLAB | WEST:
+facing = "west"
+break
+case this.id | TALLCROSS:
+facing = "top"
+extended = true
+break
+case this.id | TALLCROSS | FLIP:
+facing = "bottom"
+extended = true
+break
+case this.id | PORTAL | NORTH:
+facing = "north"
+extended = true
+break
+case this.id | PORTAL | SOUTH:
+facing = "south"
+extended = true
+break
+case this.id | PORTAL | EAST:
+facing = "east"
+extended = true
+break
+case this.id | PORTAL | WEST:
+facing = "west"
+extended = true
+break
+default:
+return //parts like piston heads shouldn't do the calculations when power changes
+}
+var power = world.getRedstonePower(x,y,z) || world.getSurroundingBlockPower(x,y,z)
+if(power && !extended){
+this.extend(x,y,z,facing)
+}else if(!power && extended){
+this.retract(x,y,z,facing)
+}
+},
+onplace:function(x,y,z){
+this.onpowerupdate(x,y,z)
+},
+/*onupdate:function(x,y,z){
+//dissapear if it isn't connected (it = piston heads and piston open)
+var block = world.getBlock(x,y,z)
+switch(block){
+}
+},*/
 extend:function(x,y,z, facing){
-var tx = x, ty = y, tz = z
-var head, headCut
+var tx = x, ty = y, tz = z, mx = 0, my = 0, mz = 0
+var head, headCut, open
 switch(facing){
 case "top":
-world.setBlock(x,y,z, this.id | TALLCROSS)
+open = this.id | TALLCROSS
+head = this.id | STAIR
+headCut = this.id | CROSS
+ty ++
+my = 1
+break
+case "bottom":
+open = this.id | TALLCROSS | FLIP
+head = this.id | STAIR | FLIP
+headCut = this.id | CROSS | FLIP
+ty --
+my = -1
+break
+case "north":
+open = this.id | PORTAL | NORTH
+head = this.id | DOOR | NORTH
+headCut = this.id | PANE | NORTH
+tz --
+mz = -1
+break
+case "south":
+open = this.id | PORTAL | SOUTH
+head = this.id | DOOR | SOUTH
+headCut = this.id | PANE | SOUTH
+tz ++
+mz = 1
+break
+case "east":
+open = this.id | PORTAL | EAST
+head = this.id | DOOR | EAST
+headCut = this.id | PANE | EAST
+tx --
+mx = -1
+break
+case "west":
+open = this.id | PORTAL | WEST
+head = this.id | DOOR | WEST
+headCut = this.id | PANE | WEST
+tx ++
+mx = 1
+break
+default:
+return console.log("oh no! piston isn't facing anywhere")
+}
+var push = getPistonPushedBlocks(x,y,z,mx,my,mz)
+if(push === false) return
+world.setBlock(x,y,z,open)
+var e = new MovingBlock(headCut,x,y,z,tx,ty,tz, tickTime*2, true)
+world.addEntity(e)
+setTimeout(function(){
+e.changeBlock(head)
+}, tickTime*1.5)
+for(var i=0; i<push.length; i+=4){
+var bx = push[i], by = push[i+1], bz = push[i+2]
+world.setBlock(bx,by,bx,0)
+world.addEntity(new MovingBlock(push[i+3],bx,by,bz,bx+mx,by+my,bz+mz, tickTime*2, true))
+}
+},
+retract:function(x,y,z, facing){
+var tx = x, ty = y, tz = z
+var head, headCut, body
+switch(facing){
+case "top":
+body = this.id
 head = this.id | STAIR
 headCut = this.id | CROSS
 ty ++
 break
 case "bottom":
-world.setBlock(x,y,z, this.id | TALLCROSS | FLIP)
+body = this.id | FLIP
 head = this.id | STAIR | FLIP
 headCut = this.id | CROSS | FLIP
 ty --
 break
 case "north":
-world.setBlock(x,y,z, this.id | PORTAL | NORTH)
+body = this.id | SLAB | NORTH
 head = this.id | DOOR | NORTH
 headCut = this.id | PANE | NORTH
-tz ++
-break
-case "south":
-world.setBlock(x,y,z, this.id | PORTAL | SOUTH)
-head = this.id | DOOR | SOUTH
-headCut = this.id | PANE | SOUTH
 tz --
 break
+case "south":
+body = this.id | SLAB | SOUTH
+head = this.id | DOOR | SOUTH
+headCut = this.id | PANE | SOUTH
+tz ++
+break
 case "east":
-world.setBlock(x,y,z, this.id | PORTAL | EAST)
+body = this.id | SLAB | EAST
 head = this.id | DOOR | EAST
 headCut = this.id | PANE | EAST
-tx ++
+tx --
 break
 case "west":
-world.setBlock(x,y,z, this.id | PORTAL | WEST)
+body = this.id | SLAB | WEST
 head = this.id | DOOR | WEST
 headCut = this.id | PANE | WEST
-tx --
+tx ++
 break
 default:
 return console.log("oh no! piston isn't facing anywhere")
 }
-var e = new MovingBlock(headCut,x,y,z,tx,ty,tz, tickTime*2, true)
+world.setBlock(tx,ty,tz,0)
+var e = new MovingBlock(head,tx,ty,tz,x,y,z, tickTime*2)
 world.addEntity(e)
 setTimeout(function(){
-e.changeBlock(head)
-}, tickTime)
+e.changeBlock(headCut)
+}, tickTime*0.5)
+setTimeout(function(){
+world.setBlock(x,y,z,body)
+}, tickTime*2)
 }
 },
 {
@@ -8479,6 +8625,8 @@ data.placeSound = deepslateBricksPlaceSound
 data.stepSound = deepslateBricksStepSound
 }
 data.Name = data.Name || data.name
+data.pistonPush = data.pistonPush !== undefined ? data.pistonPush : true
+data.pistonPull = data.pistonPull !== undefined ? data.pistonPull : true
 }
 // survival inventory
 let invItems = [];
@@ -8864,6 +9012,24 @@ achievments.push(name)
 sideMessage("Achievment made: "+a.name, a.description)
 if(multiplayer) send({type:"achievment",data:a.name})
 }
+//piston extend & retract
+var pistonPushLimit = 12
+function getPistonPushedBlocks(x,y,z,tx,ty,tz){
+var blocks = []
+var cx = x, cy = y, cz = z  //current position
+for(var i=0; i<pistonPushLimit+1; i++){
+cx += tx
+cy += ty
+cz += tz
+var block = world.getBlock(cx,cy,cz)
+if(block && !blockData[block].pistonPush) return false
+if(block) blocks.push(cx,cy,cz,block)
+else break
+}
+if((blocks.length / 4) > pistonPushLimit) return false
+return blocks
+}
+window.getPistonPushedBlocks = getPistonPushedBlocks
 // implementation of xxHash
 const {
 seedHash,
@@ -14258,6 +14424,8 @@ makeBlock(baseBlock.textures, shapes.repeaterOn3, wallFlatBlock, baseBlock)
 makeBlock(baseBlock.textures, shapes.repeaterOn4, openTrapdoor, baseBlock)
 }
 if(baseBlock.piston){
+var baseBlockTransparent = Object.create(baseBlock)
+baseBlockTransparent.transparent = true
 //not extended
 var textures = baseBlock.textures.slice()
 var t = textures[0]
@@ -14273,11 +14441,11 @@ makeBlock(textures, shape, slabBlock, baseBlock)
 //head
 t = baseBlock.textures[1]
 var t2 = baseBlock.headSideTexture
-makeBlock([t,t,t2,t2,t2,t2], shapes.pistonHead, stairBlock, baseBlock)
+makeBlock([t,t,t2,t2,t2,t2], shapes.pistonHead, stairBlock, baseBlockTransparent)
 flipped = Object.create(baseBlock)
-makeBlock(stairBlock.textures, shapes.pistonHeadFlipped, flipped, baseBlock)
+makeBlock(stairBlock.textures, shapes.pistonHeadFlipped, flipped, baseBlockTransparent)
 blockData[i | STAIR | FLIP] = flipped
-makeBlock([t2,t2,t,t,t2,t2], shapes.pistonHeadSW, doorBlock, baseBlock)
+makeBlock([t2,t2,t,t,t2,t2], shapes.pistonHeadSW, doorBlock, baseBlockTransparent)
 //head cut
 makeBlock(stairBlock.textures, shapes.pistonHeadCut, crossBlock, baseBlock)
 flipped = Object.create(baseBlock)
@@ -14287,18 +14455,18 @@ makeBlock(doorBlock.textures, shapes.pistonHeadCutSW, paneBlock, baseBlock)
 //open
 var textures = baseBlock.textures.slice()
 textures[1] = baseBlock.frontOpenTexture
-makeBlock(textures, shapes.pistonOpen, tallcrossBlock, baseBlock)
-textures = blockData[i | FLIP].textures
+makeBlock(textures, shapes.pistonOpen, tallcrossBlock, baseBlockTransparent)
+textures = blockData[i | FLIP].textures.slice()
 textures[0] = baseBlock.frontOpenTexture
 flipped = Object.create(baseBlock)
-makeBlock(textures, shapes.pistonOpenFlipped, flipped, baseBlock)
+makeBlock(textures, shapes.pistonOpenFlipped, flipped, baseBlockTransparent)
 blockData[i | TALLCROSS | FLIP] = flipped
 var textures = baseBlock.textures.slice()
 var temp = textures[2] //side with piston head
 textures[2] = textures[0]
 textures[3] = baseBlock.frontOpenTexture
 textures[0] = textures[1] = temp
-makeBlock(textures, shapes.pistonOpenSW, portalBlock, baseBlock)
+makeBlock(textures, shapes.pistonOpenSW, portalBlock, baseBlockTransparent)
 }
 if(baseBlock.name === "tnt"){
 makeBlock(fillTextureArray(baseBlock.superTntTextures), shapes.cube, slabBlock, baseBlock, "Super TNT")
@@ -14371,7 +14539,7 @@ blockData[i | DOOR | v[j].bit] = block
 }
 v = paneBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
-let t = baseBlock.textures
+let t = paneBlock.textures
 if (v[j]) {
 let block = Object.create(paneBlock)
 block.shape = v[j]
@@ -14381,9 +14549,11 @@ blockData[i | PANE | v[j].bit] = block
 }
 v = portalBlock.shape.varients
 for (let j = 0; j < v.length; j++) {
+let t = portalBlock.textures
 if (v[j]) {
 let block = Object.create(portalBlock)
 block.shape = v[j]
+if(v[j].rotated) block.textures = rotTex(t, v[j].rotateTimes)
 blockData[i | PORTAL | v[j].bit] = block
 }
 }
@@ -15931,8 +16101,9 @@ contacts.clear()
 lookingAt()
 if(takeDamage > 0 && now - lastBlockHarm > 500 && survival){
 lastBlockHarm = now
-dieMessage = damageBlock.dieMessage ? damageBlock.dieMessage() : (username+" died because of "+damageBlock.name+". You should avoid it next time.")
-damage(takeDamage, dieMessage)
+dieMessage = damageBlock.dieMessage ? damageBlock.dieMessage() : damageBlock.burnPlayer ? (username+" burned up while touching "+damageBlock.Name) : (username+" died because of "+damageBlock.name+". You should avoid it next time.")
+var type = damageBlock.burnPlayer ? "fire" : ""
+damage(takeDamage, dieMessage, false, type)
 }
 p.touchingBurnBlock = damageBlock && damageBlock.burnPlayer && true
 if(ontouch){
@@ -20214,10 +20385,9 @@ index += 8
 }
 texNum++
 }
-var vertices = new Float32Array(shapeVerts.flat(Infinity)),
-faces = size
-texture = new Float32Array(texture),
-this.vao = glExtensions.vertex_array_object.createVertexArrayOES()
+var vertices = new Float32Array(shapeVerts.flat(Infinity))
+texture = new Float32Array(texture)
+if(this.cacheBlocks) this.vao = glExtensions.vertex_array_object.createVertexArrayOES()
 const verticesBuffer = gl.createBuffer()
 const textureBuffer = gl.createBuffer()
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
@@ -20231,6 +20401,7 @@ gl.vertexAttribPointer(glCache.aTextureEntity, 2, gl.FLOAT, false, 0, 0)
 gl.enableVertexAttribArray(glCache.aVertexEntity)
 gl.enableVertexAttribArray(glCache.aTextureEntity)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
+this.faces = size
 if(this.cacheBlocks){
 this.cached[blockID] = this.vao
 }
@@ -20335,9 +20506,13 @@ let now = performance.now()
 if (now - this.spawn > this.despawns) {
 this.canDespawn = true
 if(this.solidWhenDone){
-world.setBlock(this.block)
+world.setBlock(round(this.x),round(this.y),round(this.z),this.block)
 }
 }
+this.previousX = this.x
+this.previousY = this.y
+this.previousZ = this.z
+this.lastUpdate = now
 var prog = (now - this.spawn) / this.despawns
 this.x = lerp(prog, this.sx, this.mx)
 this.y = lerp(prog, this.sy, this.my)
@@ -22965,8 +23140,15 @@ let xm = x & 15
 let zm = z & 15
 var prev = chunk.getBlock(xm,y,zm)
 if (blockID) {
-chunk.setBlock(xm, y, zm, blockID, !lazy)
+if(prev){ //block gets replaced
+let prevData = blockData[prev]
+chunk.deleteBlock(xm, y, zm, !lazy)
+if (!lazy && chunk.buffer && (!prevData.transparent || prevData.lightLevel) && screen !== "loading") {
+this.updateLight(x, y, z, false, prevData.lightLevel)
+}
+}
 let data = blockData[blockID]
+chunk.setBlock(xm, y, zm, blockID, !lazy)
 if (!lazy && chunk.buffer && (!data.transparent || data.lightLevel) && screen !== "loading") {
 this.updateLight(x, y, z, true, data.lightLevel)
 }
@@ -23381,7 +23563,8 @@ var left = this.getPower(x-1,y,z)
 var down = this.getPower(x,y,z+1)
 var up = this.getPower(x,y,z-1)
 var top = this.getPower(x,y+1,z)
-var level = max(right,left,down,up, top) - 1
+var bottom = this.getPower(x,y-1,z)
+var level = max(right,left,down,up, top,bottom) - 1
 if(world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong" || world.getBlockPower(x,y+1,z) === "strong"){
 level = 15
 }
@@ -27243,7 +27426,7 @@ p.level = 0
 p.totalXP = 0
 setLevel()
 freezeEffect = 0
-p.burnTime = 0
+p.burnTimer = 0
 dieMessage = username+" died because ¯\\_(ツ)_/¯" //the \\ actually shows up as \
 world = dimensions.overworld
 }
