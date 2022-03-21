@@ -254,6 +254,7 @@ color:white;
 font:14px 'VT323';
 overflow-wrap:anywhere;
 max-height:100vh;
+max-width: calc(50% - 30px);
 overflow:hidden;
 }
 #messageInput{
@@ -8398,8 +8399,9 @@ e.changeBlock(head)
 }, tickTime*1.5)
 for(var i=0; i<push.length; i+=4){
 var bx = push[i], by = push[i+1], bz = push[i+2]
+var tags = world.getTags(bx,by,bz)
 world.setBlock(bx,by,bx,0)
-world.addEntity(new MovingBlock(push[i+3],bx,by,bz,bx+mx,by+my,bz+mz, tickTime*2, true))
+world.addEntity(new MovingBlock(push[i+3],bx,by,bz,bx+mx,by+my,bz+mz, tickTime*2, true, tags))
 }
 },
 retract:function(x,y,z, facing){
@@ -9738,7 +9740,6 @@ let caves = true
 let survival = false;
 let cheats = false
 let dieMessage = ""
-let touchMoveLimit = 500 //(touch screen only) miliseconds before it decides you want to break a block
 let blockIds = {}
 blockData.forEach(block => blockIds[block.name] = block.id)
 blockData.forEach(block => {
@@ -10237,7 +10238,7 @@ send({
 username: username
 })
 }
-Messages.add("<span style='color:lime;'>Press / to open chat. "+(cheats ? "Type /? for help with commands." : "")+"</span>")
+Messages.add("<span style='color:lime;'>Press t to open chat. "+(cheats ? "Type /? for help with commands." : "")+"</span>")
 }
 },
 netherLoading: {
@@ -16937,7 +16938,7 @@ crack.idx = -1
 crack.breakStart = now
 pTouch.digProg = 0
 }
-if(!controlMap.break.pressed){
+if(!controlMap.break.pressed && !touchBreak){
 crack.delayStart = now
 }
 }
@@ -20490,7 +20491,7 @@ explode(x,y,z,8, blockData[world.getBlock(x,y,z)].liquid || !worldSettings.tntEx
 }
 }
 class MovingBlock extends BlockEntity{
-constructor(block,x,y,z,mx,my,mz,despawns, solidWhenDone = false){
+constructor(block,x,y,z,mx,my,mz,despawns, solidWhenDone = false, tags = null){
 super(block, x,y,z)
 this.sx = x //s stands for start
 this.sy = y
@@ -20500,6 +20501,7 @@ this.my = my
 this.mz = mz
 this.despawns = despawns //also tells how much time for it to move
 this.solidWhenDone = solidWhenDone
+this.tags = tags
 }
 update() {
 let now = performance.now()
@@ -20507,6 +20509,7 @@ if (now - this.spawn > this.despawns) {
 this.canDespawn = true
 if(this.solidWhenDone){
 world.setBlock(round(this.x),round(this.y),round(this.z),this.block)
+if(this.tags) world.setTags(round(this.x),round(this.y),round(this.z), this.tags)
 }
 }
 this.previousX = this.x
@@ -23681,13 +23684,14 @@ this.loadChunks()
 this.chunkGenQueue.sort(sortChunks)
 }
 if(worldSettings.dayNightCycle) worldTime += 0.0005
-if (controlMap.break.pressed && !Key.control && p.lastBreak < Date.now() - 250 && screen === "play" && !survival && !entHitbox.ent) { // survival breaking isn't instant
+var touchBreak = pTouch.touching && pTouch.canDig && Date.now() - pTouch.touchStart > touchMoveLimit
+if (((controlMap.break.pressed && !Key.control) || touchBreak) && p.lastBreak < Date.now() - 250 && screen === "play" && !survival && !entHitbox.ent) { // survival breaking isn't instant
 changeWorldBlock(0)
 }
 if ((controlMap.place.pressed || Key.leftMouse && Key.control) && p.lastPlace < Date.now() - 250 && !p.autoBuild) {
 newWorldBlock()
 }
-if (controlMap.break.pressed && p.autoBreak && !Key.control) {
+if (((controlMap.break.pressed && !Key.control) || touchBreak) && p.autoBreak) {
 changeWorldBlock(0)
 }
 if ((controlMap.place.pressed || Key.leftMouse && Key.control) && p.autoBuild) {
@@ -24505,23 +24509,33 @@ location.href = "https://www.thingmaker.repl.co"
 })
 Button.add(width / 2 - 235, height / 2 + 160, 40, 40, "?", "main menu", r => changeScene("options help"))
 // Creation menu buttons
-Button.add(width / 2, 135, 300, 40, ["World Type: Normal", "World Type: Superflat", "World Type: Island"], "creation menu", r => {superflat = r === "World Type: Superflat"; if(r==="World Type: Island")superflat="island"})
-Button.add(width / 2, 185, 300, 40, ["Trees: On", "Trees: Off"], "creation menu", r => trees = r === "Trees: On", function() {
+Button.add(width / 2-155, 135, 300, 40, ["World Type: Normal", "World Type: Superflat", "World Type: Island"], "creation menu", r => {superflat = r === "World Type: Superflat"; if(r==="World Type: Island")superflat="island"})
+Button.add(width / 2-155, 185, 300, 40, ["Trees: On", "Trees: Off"], "creation menu", r => trees = r === "Trees: On", function() {
 if (superflat === true) {
-this.index = 1
 trees = false
+}else if(!cheats){
+trees = true
 }
-return superflat === true
-})
-Button.add(width / 2, 235, 300, 40, ["Caves: On", "Caves: Off"], "creation menu", r => caves = r === "Caves: On", function() {
+return superflat === true || !cheats
+}, null, () => trees ? 0 : 1)
+Button.add(width / 2-155, 235, 300, 40, ["Caves: On", "Caves: Off"], "creation menu", r => caves = r === "Caves: On", function() {
 if (superflat === true) {
-this.index = 1
 caves = false
+}else if(!cheats){
+caves = true
 }
-return superflat === true
+return superflat === true || !cheats
+}, null, () => caves ? 0 : 1)
+Button.add(width / 2+155, 135, 300, 40, ["Game Mode: Creative", "Game Mode: Survival"], "creation menu", r => {
+survival = r === "Game Mode: Survival"
+if(!survival) cheats = true
+else cheats = false
 })
-Button.add(width / 2, 285, 300, 40, ["Game Mode: Creative", "Game Mode: Survival"], "creation menu", r => survival = r === "Game Mode: Survival")
-Button.add(width / 2, 335, 300, 40, "Difficulty: Peaceful", "creation menu", nothing, always, "Coming soon\n\nPlease stop asking for mobs. Adding them will take a very long time. I know a lot of people want them, so just be patient.")
+Button.add(width / 2+155, 185, 300, 40, "Difficulty: Peaceful", "creation menu", nothing, always, "Coming soon\n\nPlease stop asking for mobs. Adding them will take a very long time. I know a lot of people want them, so just be patient.")
+Button.add(width / 2+155, 235, 300, 40, ["Cheats: On", "Cheats: Off"], "creation menu", r => cheats = r === "Cheats: On", () => {
+if(!survival) cheats = true
+return !survival
+}, "Cheats allow you to use many commands but disables achievments.", () => cheats ? 0 : 1)
 Button.add(width / 2, height - 90, 300, 40, "Create New World", "creation menu", r => {
 if(boxCenterTop.value.startsWith("JSON")){
 alert("That name is not allowed")
@@ -24603,32 +24617,32 @@ Button.add(mid-14, 14, 20,20, "/", "play", Messages.showInput)
 Button.add(mid+14, 14, 20,20, "❚❚", "play", r => changeScene("pause"))
 }
 // Pause buttons
-Button.add(width / 2, 175, 300, 40, "Resume", "pause", play)
-Button.add(width / 2, 225, 300, 40, "Options", "pause", r => changeScene("options"))
-Button.add(width / 2, 275, 300, 40, "Save", "pause", () => save(), nothing, () => `Save the world to your computer/browser. Doesn't work in incognito.\n\nLast saved ${timeString(Date.now() - world.edited)}.`)
-Button.add(width / 2, 325, 300, 40, "Get Save Code", "pause", r => {
+Button.add(width / 2, height / 2 + -175, 300, 40, "Resume", "pause", play)
+Button.add(width / 2, height / 2 + -125, 300, 40, "Options", "pause", r => changeScene("options"))
+Button.add(width / 2, height / 2 + -75, 300, 40, "Save", "pause", () => save(), nothing, () => `Save the world to your computer/browser. Doesn't work in incognito.\n\nLast saved ${timeString(Date.now() - world.edited)}.`)
+Button.add(width / 2, height / 2 + -25, 300, 40, "Get Save Code", "pause", r => {
 savebox.classList.remove("hidden")
 saveDirections.classList.remove("hidden")
 savebox.value = world.getSaveString()
 })
-Button.add(width / 2, 375, 300, 40, "Exit Without Saving", "pause", r => {
+Button.add(width / 2, height / 2 + 25, 300, 40, "Exit Without Saving", "pause", r => {
 savebox.value = world.getSaveString()
 initWorldsMenu()
 if(multiplayer) multiplayer.close()
 changeScene("main menu")
 })
-Button.add(width / 2, 425, 300, 40, "Enable Multiplayer", "pause", async r => {
+Button.add(width / 2, height / 2 + 75, 300, 40, "Enable Multiplayer", "pause", async r => {
 var logged
 await loggedIn().then(r => logged = r)
 if(logged){
 initMultiplayer()
 }
 }, () => multiplayer || preVersion)
-Button.add(width / 2, 475, 300, 40, "Get Invite Link", "pause", r => {
+Button.add(width / 2, height / 2 + 125, 300, 40, "Get Invite Link", "pause", r => {
 savebox.classList.remove("hidden")
 savebox.value = "https://minekhan.thingmaker.repl.co/?target="+world.id
 }, () => !multiplayer, () => "Invite someone to this world if it is multiplayer.")
-Button.add(width / 2, 525, 300, 40, "Download This World", "pause", r => {
+Button.add(width / 2, height / 2 + 175, 300, 40, "Download This World", "pause", r => {
 var a = document.createElement("a")
 a.href = "data:text/plain,"+getSaveJSON()
 a.download = world.name+".minekhan"
@@ -25110,7 +25124,7 @@ if(survival && inventory.hotbar[i].amount>1) ctx2.fillText(inventory.hotbar[i].a
 }
 }
 if(touchScreen && screen === "play"){
-i++
+var i = inventory.hotbar.length
 let x = width / 2 - inventory.hotbar.length / 2 * inventory.size + (i + 0.5) * inventory.size + 25
 let y = height - inventory.size
 ctx.fillStyle = "#0a0"
@@ -26351,6 +26365,7 @@ document.onmousemove = trackMouse
 //added by me from mobile test minekhan with more code
 //https://www.khanacademy.org/computer-programming/mobile-test-minekhan/5100360783052800
 win.pTouch = {x: -100, y: 0};
+let touchMoveLimit = 500 //(touch screen only) miliseconds before it decides you want to break a block
 canvas.addEventListener("touchstart", function(e) {
 pTouch.x = e.changedTouches[0].pageX;
 pTouch.y = e.changedTouches[0].pageY;
@@ -26360,19 +26375,24 @@ pTouch.moved = false
 pTouch.canDig = true
 }, false);
 canvas.addEventListener("touchmove", function(e) {
-e.movementY = -(e.changedTouches[0].pageY - pTouch.y);
-e.movementX = -(e.changedTouches[0].pageX - pTouch.x);
+e.movementY = e.changedTouches[0].pageY - pTouch.y;
+e.movementX = e.changedTouches[0].pageX - pTouch.x;
 pTouch.x = e.changedTouches[0].pageX;
 pTouch.y = e.changedTouches[0].pageY;
 mmoved(e);
 pTouch.moved = true
-if(Date.now() - pTouch.touchStart < touchMoveLimit && e.movementX < 10 && e.movementY < 10){
+if(Date.now() - pTouch.touchStart < touchMoveLimit && (e.movementX > 10 || e.movementY > 10 || e.movementX < -10 || e.movementY < -10)){
 pTouch.canDig = false
 }
 e.preventDefault();
 }, false);
 var touchend = e => {
+if(screen === "play" && Date.now() - pTouch.touchStart < touchMoveLimit && pTouch.canDig){
+holding = inventory.hotbar[inventory.hotbarSlot].id
+placeKeyPressed()
+}
 pTouch.touching = mouseDown = false
+pTouch.canDig = false
 }
 canvas.addEventListener("touchend",touchend,false)
 canvas.addEventListener("touchcancel",touchend,false)
@@ -26389,6 +26409,18 @@ unpauseDelay = Date.now() + 1000
 for (let key in Key) {
 Key[key] = false
 }
+}
+let breakKeyPressed = () => {
+if(entHitbox.ent){
+holding = inventory.hotbar[inventory.hotbarSlot].id
+entClick()
+}else if(!survival){
+changeWorldBlock(0)
+}
+}
+let placeKeyPressed = () => {
+p.spyglassStart = Date.now()
+newWorldBlock()
 }
 canvas.onmousedown = function(e) {
 mouseX = e.x
@@ -26434,20 +26466,14 @@ place = false
 if(mouseKey === controlMap.break.key) {
 if(Key.control) {
 place = true
-} else if(entHitbox.ent){
-holding = inventory.hotbar[inventory.hotbarSlot].id
-entClick()
-}else if(!survival){
-changeWorldBlock(0)
-}
+}else	breakKeyPressed()
 }
 holding = inventory.hotbar[inventory.hotbarSlot].id
 if(mouseKey === controlMap.place.key && holding) {
 place = true
 }
 if(place) {
-p.spyglassStart = Date.now()
-newWorldBlock()
+placeKeyPressed()
 }
 }
 } else if (screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest") {
@@ -26537,7 +26563,7 @@ holding = inventory.hotbar[inventory.hotbarSlot].id
 updateHUD = true
 }
 }
-i ++
+i = inventory.hotbar.length
 let x = width / 2 - inventory.hotbar.length / 2 * inventory.size + (i + 0.5) * inventory.size + 25
 let y = height - inventory.size
 x -= inventory.size/2
@@ -28515,7 +28541,7 @@ break
 world.name = name.replace(/;/g, "\u037e")
 world.loadChunks()
 world.chunkGenQueue.sort(sortChunks)
-cheats = !survival
+//cheats = !survival
 p.x = p.z = 8
 if(survival) {
 setHotbar([0,0,0,0,0,0,0,0,0])
@@ -29382,15 +29408,16 @@ ctx.fillRect(0,0,width,height)*/
 //portal texture update in updateTextures
 //code in hud
 }
-if(mouseDown && touchScreen){
+if(pTouch.touching){
 ctx.beginPath()
 fill(255)
+stroke(255)
 strokeWeight(2)
 ellipse(pTouch.x, pTouch.y, 70,70)
 ctx.stroke()
 if(pTouch.digProg > 0){
 ctx.beginPath()
-let r = pTouch.digProg * 70
+let r = pTouch.digProg * 68 //70 - 2
 ellipse(pTouch.x, pTouch.y, r,r)
 ctx.fill()
 }
