@@ -21238,23 +21238,10 @@ location.href = "https://www.thingmaker.repl.co"
 })
 Button.add(width / 2 - 235, height / 2 + 160, 40, 40, "?", "main menu", r => changeScene("help"))
 // Creation menu buttons
-Button.add(width / 2, 135, 300, 40, ["World Type: Normal", "World Type: Superflat", "World Type: Island"], "creation menu", r => {superflat = r === "World Type: Superflat"; if(r==="World Type: Island")superflat="island"})
-Button.add(width / 2, 185, 300, 40, ["Trees: On", "Trees: Off"], "creation menu", r => trees = r === "Trees: On", function() {
-if (superflat === true) {
-this.index = 1
-trees = false
-}
-return superflat === true
-})
-Button.add(width / 2, 235, 300, 40, ["Caves: On", "Caves: Off"], "creation menu", r => caves = r === "Caves: On", function() {
-if (superflat === true) {
-this.index = 1
-caves = false
-}
-return superflat === true
-})
-Button.add(width / 2, 285, 300, 40, ["Game Mode: Creative", "Game Mode: Survival"], "creation menu", r => survival = r === "Game Mode: Survival")
-Button.add(width / 2, 335, 300, 40, "Difficulty: Peaceful", "creation menu", nothing, always, "Coming soon\n\nPlease stop asking for mobs. Adding them will take a very long time. I know a lot of people want them, so just be patient.")
+Button.add(width / 2+160, 185, 300, 40, ["World Type: Normal", "World Type: Superflat", "World Type: Island"], "creation menu", r => {superflat = r === "World Type: Superflat"; if(r==="World Type: Island")superflat="island"})
+Button.add(width / 2-160, 135, 300, 40, ["Game Mode: Creative", "Game Mode: Survival"], "creation menu", r => survival = r === "Game Mode: Survival")
+Button.add(width / 2+160, 135, 300, 40, "Difficulty: Peaceful", "creation menu", nothing, always, "Coming soon\n\nPlease stop asking for mobs. Adding them will take a very long time. I know a lot of people want them, so just be patient.")
+Button.add(width / 2-160, 185, 300, 40, "Cheats:", "creation menu", nothing, always, "If you have creative mode on, cheats are on. Otherwise, cheats are off.")
 Button.add(width / 2, height - 90, 300, 40, "Create New World", "creation menu", r => {
 if(boxCenterTop.value.startsWith("JSON")){
 alert("That name is not allowed")
