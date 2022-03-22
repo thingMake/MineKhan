@@ -9283,7 +9283,7 @@ for(var regex of this.remove){ //remove bad words
 msg = msg.replace(regex, "<span style='color:black; background:black;'>$1</span>")
 }
 }
-this.add((from || username)+": "+msg)
+this.add("<"+(from || username)+"> "+msg)
 if(!from && multiplayer){
 send({type:"message", data:msg, username:username})
 }
