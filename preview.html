@@ -1019,9 +1019,11 @@ if(arr[i] === x && arr[i+1] === y && z === arr[i+2]){
 return true
 }
 }
+if(arr2){
 for(var i=0; i<arr2.length; i+=4){
 if(arr2[i] === x && arr2[i+1] === y && z === arr[i+2]){
 return true
+}
 }
 }
 }
@@ -2744,6 +2746,7 @@ pistonHeadSide:"0g0gcĲ$ĦĊó=ĢÓ=ıðĦí8=ĚB=āī=ÞĮ=Ă4ĦÖ>=åîĦ0001y
 pistonBack:"0g0g8T4=(Ī=EĊĦÁ?=í8=ÞĮ=ÖĎĦJP=0iú001e_àġĥK+^Ņě,Ĉ/ŎČýŃŗ%ĢţĖİÇ|ŐÌçŢā}ĶàZĳřeĲàĦÓřfÉĆğ:āhōŋÚŀÆi<ÑėPomÓŜýłār.ŅÚœődİ#Ľ,ĉLÇàæĥKBi002S",
 pistonFront:"0g0g8łÚĦĲc=åîĦÖ>=ĢÓ=ĚB=ÞÐĦĂ4Ħ5AĿdAICPÞNP9ãłÅğŢæÚŔěåĞŚÄ_BŅİ!ÍłÜÄņŢP+ĽİAă6ĮÑÿP]CŤÜZHİåCŁÖ+JÄÇ&ĚŀyÅZØŞZ×ÜÓĺĴōŁÂŀBĽPÐ7ZÕuņįBÙŀ%Ōò",
 pistonFrontOpen:"0g0gaT4=(Ī=Á?=í8=ÞĮ=ÖĎĦJP=EĊĦĊó=ĚĲ=01hh00012OQÂ?yU(kO?B>ÂB(l?yO)AÂÀiyRÐÂ>)xßV+òāÓ?xâÃÕGGîÂÅ5QFGhýyÅ2UÇhnJ?x3y]GGX)w3NÄāĀÐOw4*yU)A?x5Â+ByBÂ[2zORUNBMiU)ÂBRU(hÞg000h0",
+pistonFrontSticky: "0g0gełÚYĲsHéîZÖÃWĦÓWñnHĚ*WÞÐY×ŌYÌáZēđZ<ĺWĆkZMíY1yz(3yygh?ÄÞkÆüh.ÈòĤýčòĩ<āăĥłĿąěFïÈòĠÈčă$ĀÆĄġïòĪy%ąģģĀăO1UļčIÆòghòġÇIļĄh,ģńłŀĥĹyC]čËïÈÇRCïVöİïþÏOģËĥĥłńNAÖóþġĐþ>1ĳāKcāĳghDàMj,Dh",
 superTntBottom: "0g0g4ÈMW}ęH÷-ZBķZkkkkØØØØØØØØZZZZkkkkØØØØØØØØZZZZkkkkØØØØØØØØZZZZkkkkØØØØØØØØZZZZ",
 superTntTop: "0g0g7RúW+ęW÷-Z}gZVVHxĘZgTZ4ë]4ë]FNûFNû!ÂĎĸËýÛĮĕÜÓŔ4œ]4Ň]FNěó;û!]ĞŀÇýÛľ+Ĺ[ĕ4òĞłc]!{ĞĹ;û!ÃþĸÖlÛŀĔøÄŔ4ħÝĿį]!NċMOjFÂýFÂýÛĽŔÛĽŔ",
 superTnt: "0g0ga@ęWÂúWÈgZFĘZZZZĶ;ZņÚY)ļHoÐZĦĲW0i0i0i0ihzhzhzhzhzhzhzhzyOyOyOyO0i0i0i0i?ÓVÓÒÄÓÑ@GðâÆÔäUÖÆVGÅÄãÓ?ÔÓãGVïþ@ÆÄâÆVðUāāāāāāāāyOyOyOyO0i0i0i0ihzhzhzhzhzhzhzhzyzyzyzyz",
@@ -2918,7 +2921,7 @@ name: "air",
 id: 0,
 textures: new Array(6).fill("none"),
 transparent: true,
-shadow: false,
+shadow: false
 },
 {
 name: "grass",
@@ -3502,7 +3505,7 @@ world.unspreadPower(x,y,z,15,true)
 }
 }
 },
-connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch", "lever", "redstoneConnector","is:button","piston"],
+connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch", "lever", "redstoneConnector","is:button", "piston","pistonSticky"],
 connectable: function(x,y,z, d) {
 var id = world.getBlock(x,y,z)
 if(this.connectables.includes(blockData[id].name)) return true
@@ -8275,6 +8278,7 @@ textures:["pistonBack","pistonFront","pistonSide"],
 piston:true,
 headSideTexture:"pistonHeadSide",
 frontOpenTexture:"pistonFrontOpen",
+headBackTexture:"pistonFront",
 onpowerupdate: function(x,y,z,sx,sy,sz){
 var block = world.getBlock(x,y,z)
 var extended = false, facing
@@ -8400,7 +8404,7 @@ e.changeBlock(head)
 for(var i=0; i<push.length; i+=4){
 var bx = push[i], by = push[i+1], bz = push[i+2]
 var tags = world.getTags(bx,by,bz)
-world.setBlock(bx,by,bx,0)
+world.setBlock(bx,by,bz,0)
 world.addEntity(new MovingBlock(push[i+3],bx,by,bz,bx+mx,by+my,bz+mz, tickTime*2, true, tags))
 }
 },
@@ -8463,6 +8467,212 @@ name:"smoothQuartz",
 Name:"Smooth Quartz Block",
 textures:"quartzBlockBottom",
 stoneSound:true
+},
+{
+name:"pistonSticky",
+Name:"Sticky Piston",
+textures:["pistonBack","pistonFrontSticky","pistonSide"],
+piston:true,
+headSideTexture:"pistonHeadSide",
+frontOpenTexture:"pistonFrontOpen",
+headBackTexture:"pistonFront",
+onpowerupdate: function(x,y,z,sx,sy,sz){
+var block = world.getBlock(x,y,z)
+var extended = false, facing
+switch(block){
+case this.id:
+facing = "top"
+break
+case this.id | FLIP:
+facing = "bottom"
+break
+case this.id | SLAB | NORTH:
+facing = "north"
+break
+case this.id | SLAB | SOUTH:
+facing = "south"
+break
+case this.id | SLAB | EAST:
+facing = "east"
+break
+case this.id | SLAB | WEST:
+facing = "west"
+break
+case this.id | TALLCROSS:
+facing = "top"
+extended = true
+break
+case this.id | TALLCROSS | FLIP:
+facing = "bottom"
+extended = true
+break
+case this.id | PORTAL | NORTH:
+facing = "north"
+extended = true
+break
+case this.id | PORTAL | SOUTH:
+facing = "south"
+extended = true
+break
+case this.id | PORTAL | EAST:
+facing = "east"
+extended = true
+break
+case this.id | PORTAL | WEST:
+facing = "west"
+extended = true
+break
+default:
+return //parts like piston heads shouldn't do the calculations when power changes
+}
+var power = world.getRedstonePower(x,y,z) || world.getSurroundingBlockPower(x,y,z)
+if(power && !extended){
+this.extend(x,y,z,facing)
+}else if(!power && extended){
+this.retract(x,y,z,facing)
+}
+},
+onplace:function(x,y,z){
+this.onpowerupdate(x,y,z)
+},
+/*onupdate:function(x,y,z){
+//dissapear if it isn't connected (it = piston heads and piston open)
+var block = world.getBlock(x,y,z)
+switch(block){
+}
+},*/
+extend:function(x,y,z, facing){
+var tx = x, ty = y, tz = z, mx = 0, my = 0, mz = 0
+var head, headCut, open
+switch(facing){
+case "top":
+open = this.id | TALLCROSS
+head = this.id | STAIR
+headCut = this.id | CROSS
+ty ++
+my = 1
+break
+case "bottom":
+open = this.id | TALLCROSS | FLIP
+head = this.id | STAIR | FLIP
+headCut = this.id | CROSS | FLIP
+ty --
+my = -1
+break
+case "north":
+open = this.id | PORTAL | NORTH
+head = this.id | DOOR | NORTH
+headCut = this.id | PANE | NORTH
+tz --
+mz = -1
+break
+case "south":
+open = this.id | PORTAL | SOUTH
+head = this.id | DOOR | SOUTH
+headCut = this.id | PANE | SOUTH
+tz ++
+mz = 1
+break
+case "east":
+open = this.id | PORTAL | EAST
+head = this.id | DOOR | EAST
+headCut = this.id | PANE | EAST
+tx --
+mx = -1
+break
+case "west":
+open = this.id | PORTAL | WEST
+head = this.id | DOOR | WEST
+headCut = this.id | PANE | WEST
+tx ++
+mx = 1
+break
+default:
+return console.log("oh no! piston isn't facing anywhere")
+}
+var push = getPistonPushedBlocks(x,y,z,mx,my,mz)
+if(push === false) return
+world.setBlock(x,y,z,open)
+var e = new MovingBlock(headCut,x,y,z,tx,ty,tz, tickTime*2, true)
+world.addEntity(e)
+setTimeout(function(){
+e.changeBlock(head)
+}, tickTime*1.5)
+for(var i=0; i<push.length; i+=4){
+var bx = push[i], by = push[i+1], bz = push[i+2]
+var tags = world.getTags(bx,by,bz)
+world.setBlock(bx,by,bz,0)
+world.addEntity(new MovingBlock(push[i+3],bx,by,bz,bx+mx,by+my,bz+mz, tickTime*2, true, tags))
+}
+},
+retract:function(x,y,z, facing){
+var tx = x, ty = y, tz = z, mx = 0, my = 0, mz = 0
+var head, headCut, body
+switch(facing){
+case "top":
+body = this.id
+head = this.id | STAIR
+headCut = this.id | CROSS
+ty ++
+my = 1
+break
+case "bottom":
+body = this.id | FLIP
+head = this.id | STAIR | FLIP
+headCut = this.id | CROSS | FLIP
+ty --
+my = -1
+break
+case "north":
+body = this.id | SLAB | NORTH
+head = this.id | DOOR | NORTH
+headCut = this.id | PANE | NORTH
+tz --
+mz = -1
+break
+case "south":
+body = this.id | SLAB | SOUTH
+head = this.id | DOOR | SOUTH
+headCut = this.id | PANE | SOUTH
+tz ++
+mz = 1
+break
+case "east":
+body = this.id | SLAB | EAST
+head = this.id | DOOR | EAST
+headCut = this.id | PANE | EAST
+tx --
+mx = -1
+break
+case "west":
+body = this.id | SLAB | WEST
+head = this.id | DOOR | WEST
+headCut = this.id | PANE | WEST
+tx ++
+mx = 1
+break
+default:
+return console.log("oh no! piston isn't facing anywhere")
+}
+world.setBlock(tx,ty,tz,0)
+var e = new MovingBlock(head,tx,ty,tz,x,y,z, tickTime*2)
+world.addEntity(e)
+setTimeout(function(){
+e.changeBlock(headCut)
+}, tickTime*0.5)
+setTimeout(function(){
+world.setBlock(x,y,z,body)
+}, tickTime*2)
+var pull = getPistonPulledBlocks(x,y,z,mx,my,mz)
+if(pull){
+for(var i=0; i<pull.length; i+=4){
+var bx = pull[i], by = pull[i+1], bz = pull[i+2]
+var tags = world.getTags(bx,by,bz)
+world.setBlock(bx,by,bz,0)
+world.addEntity(new MovingBlock(pull[i+3],bx,by,bz,bx-mx,by-my,bz-mz, tickTime*2, true, tags))
+}
+}
+}
 },
 /*
 { name: "pigFace" },
@@ -9016,8 +9226,25 @@ if(multiplayer) send({type:"achievment",data:a.name})
 }
 //piston extend & retract
 var pistonPushLimit = 12
+function pistonFindStickyBlocksConnectedTo(cx,cy,cz,block,blocks,checkProp){
+var spreadAt = [cx,cy,cz,block]
+while(spreadAt.length){
+var sx = spreadAt[0]
+var sy = spreadAt[1]
+var sz = spreadAt[2]
+var block2
+block2 = world.getBlock(sx,sy,sz+1);if(block2 && !blockData[block2][checkProp]){return false};if(block2 && !xyArrayHas(blocks,spreadAt,sx,sy,sz+1)){if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){spreadAt.push(sx,sy,sz+1,block2)};blocks.push(sx,sy,sz+1,block2)}
+block2 = world.getBlock(sx,sy,sz-1);if(block2 && !blockData[block2][checkProp]){return false};if(block2 && !xyArrayHas(blocks,spreadAt,sx,sy,sz-1)){if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){spreadAt.push(sx,sy,sz-1,block2)};blocks.push(sx,sy,sz-1,block2)}
+block2 = world.getBlock(sx,sy+1,sz);if(block2 && !blockData[block2][checkProp]){return false};if(block2 && !xyArrayHas(blocks,spreadAt,sx,sy+1,sz)){if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){spreadAt.push(sx,sy+1,sz,block2)};blocks.push(sx,sy+1,sz,block2)}
+block2 = world.getBlock(sx,sy-1,sz);if(block2 && !blockData[block2][checkProp]){return false};if(block2 && !xyArrayHas(blocks,spreadAt,sx,sy-1,sz)){if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){spreadAt.push(sx,sy-1,sz,block2)};blocks.push(sx,sy-1,sz,block2)}
+block2 = world.getBlock(sx+1,sy,sz);if(block2 && !blockData[block2][checkProp]){return false};if(block2 && !xyArrayHas(blocks,spreadAt,sx+1,sy,sz)){if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){spreadAt.push(sx+1,sy,sz,block2)};blocks.push(sx+1,sy,sz,block2)}
+block2 = world.getBlock(sx-1,sy,sz);if(block2 && !blockData[block2][checkProp]){return false};if(block2 && !xyArrayHas(blocks,spreadAt,sx-1,sy,sz)){if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){spreadAt.push(sx-1,sy,sz,block2)};blocks.push(sx-1,sy,sz,block2)}
+spreadAt.splice(0,4)
+}
+}
+window.pistonFindStickyBlocksConnectedTo = pistonFindStickyBlocksConnectedTo
 function getPistonPushedBlocks(x,y,z,tx,ty,tz){
-var blocks = []
+var blocks = [x,y,z,0]
 var cx = x, cy = y, cz = z  //current position
 for(var i=0; i<pistonPushLimit+1; i++){
 cx += tx
@@ -9025,13 +9252,33 @@ cy += ty
 cz += tz
 var block = world.getBlock(cx,cy,cz)
 if(block && !blockData[block].pistonPush) return false
-if(block) blocks.push(cx,cy,cz,block)
+if(block === blockIds.slime || block === blockIds.honeyBlock){
+if(pistonFindStickyBlocksConnectedTo(cx,cy,cz,block,blocks,"pistonPush") === false) return false
+}
+if(block){if(!xyArrayHas(blocks,null,cx,cy,cz)){blocks.push(cx,cy,cz,block)}}
 else break
 }
+blocks.splice(0,4) //remove the temporary coordinates
 if((blocks.length / 4) > pistonPushLimit) return false
 return blocks
 }
 window.getPistonPushedBlocks = getPistonPushedBlocks
+function getPistonPulledBlocks(x,y,z,tx,ty,tz){
+var blocks = [x,y,z,0]
+var cx = x+tx, cy = y+ty, cz = z+tz
+cx += tx
+cy += ty
+cz += tz
+var block = world.getBlock(cx,cy,cz)
+if(block === blockIds.slime || block === blockIds.honeyBlock){
+if(pistonFindStickyBlocksConnectedTo(cx,cy,cz,block,blocks,"pistonPull") === false) return false
+}
+if(block && !xyArrayHas(blocks,null,cx,cy,cz) && blockData[block].pistonPull) blocks.push(cx,cy,cz,block)
+blocks.splice(0,4)
+if(blocks.length/4 > pistonPushLimit) return false
+return blocks
+}
+window.getPistonPulledBlocks = getPistonPulledBlocks
 // implementation of xxHash
 const {
 seedHash,
@@ -14442,15 +14689,16 @@ makeBlock(textures, shape, slabBlock, baseBlock)
 //head
 t = baseBlock.textures[1]
 var t2 = baseBlock.headSideTexture
-makeBlock([t,t,t2,t2,t2,t2], shapes.pistonHead, stairBlock, baseBlockTransparent)
+var t3 = baseBlock.headBackTexture
+makeBlock([t3,t,t2,t2,t2,t2], shapes.pistonHead, stairBlock, baseBlockTransparent)
 flipped = Object.create(baseBlock)
-makeBlock(stairBlock.textures, shapes.pistonHeadFlipped, flipped, baseBlockTransparent)
+makeBlock([t,t3,t2,t2,t2,t2], shapes.pistonHeadFlipped, flipped, baseBlockTransparent)
 blockData[i | STAIR | FLIP] = flipped
-makeBlock([t2,t2,t,t,t2,t2], shapes.pistonHeadSW, doorBlock, baseBlockTransparent)
+makeBlock([t2,t2,t3,t,t2,t2], shapes.pistonHeadSW, doorBlock, baseBlockTransparent)
 //head cut
 makeBlock(stairBlock.textures, shapes.pistonHeadCut, crossBlock, baseBlock)
 flipped = Object.create(baseBlock)
-makeBlock(stairBlock.textures, shapes.pistonHeadCutFlipped, flipped, baseBlock)
+makeBlock(blockData[i | STAIR | FLIP].textures, shapes.pistonHeadCutFlipped, flipped, baseBlock)
 blockData[i | CROSS | FLIP] = flipped
 makeBlock(doorBlock.textures, shapes.pistonHeadCutSW, paneBlock, baseBlock)
 //open
