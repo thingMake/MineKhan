@@ -8281,7 +8281,7 @@ frontOpenTexture:"pistonFrontOpen",
 headBackTexture:"pistonFront",
 onpowerupdate: function(x,y,z,sx,sy,sz){
 var block = world.getBlock(x,y,z)
-var extended = false, facing
+var extended = false, facing, attachedHead = false
 switch(block){
 case this.id:
 facing = "top"
@@ -8328,22 +8328,42 @@ break
 default:
 return //parts like piston heads shouldn't do the calculations when power changes
 }
+if(extended){
+switch(facing){
+case "top":
+if(world.getBlock(x,y+1,z) === (this.id | STAIR)) attachedHead = true
+break
+case "bottom":
+if(world.getBlock(x,y-1,z) === (this.id | STAIR | FLIP)) attachedHead = true
+break
+case "north":
+if(world.getBlock(x,y,z-1) === (this.id | DOOR | NORTH)) attachedHead = true
+break
+case "south":
+if(world.getBlock(x,y,z+1) === (this.id | DOOR | SOUTH)) attachedHead = true
+break
+case "east":
+if(world.getBlock(x-1,y,z) === (this.id | DOOR | EAST)) attachedHead = true
+break
+case "west":
+if(world.getBlock(x+1,y,z) === (this.id | DOOR | WEST)) attachedHead = true
+break
+}
+}
 var power = world.getRedstonePower(x,y,z) || world.getSurroundingBlockPower(x,y,z)
 if(power && !extended){
 this.extend(x,y,z,facing)
-}else if(!power && extended){
+}else if(!power && extended && attachedHead){
 this.retract(x,y,z,facing)
 }
 },
-onplace:function(x,y,z){
+onupdate:function(x,y,z){ //onupdate is run when placed
 this.onpowerupdate(x,y,z)
-},
-/*onupdate:function(x,y,z){
-//dissapear if it isn't connected (it = piston heads and piston open)
+/*//dissapear if it isn't connected (it = piston heads and piston open)
 var block = world.getBlock(x,y,z)
 switch(block){
-}
-},*/
+}*/
+},
 extend:function(x,y,z, facing){
 var tx = x, ty = y, tz = z, mx = 0, my = 0, mz = 0
 var head, headCut, open
@@ -8478,7 +8498,7 @@ frontOpenTexture:"pistonFrontOpen",
 headBackTexture:"pistonFront",
 onpowerupdate: function(x,y,z,sx,sy,sz){
 var block = world.getBlock(x,y,z)
-var extended = false, facing
+var extended = false, facing, attachedHead = false
 switch(block){
 case this.id:
 facing = "top"
@@ -8525,22 +8545,42 @@ break
 default:
 return //parts like piston heads shouldn't do the calculations when power changes
 }
+if(extended){
+switch(facing){
+case "top":
+if(world.getBlock(x,y+1,z) === (this.id | STAIR)) attachedHead = true
+break
+case "bottom":
+if(world.getBlock(x,y-1,z) === (this.id | STAIR | FLIP)) attachedHead = true
+break
+case "north":
+if(world.getBlock(x,y,z-1) === (this.id | DOOR | NORTH)) attachedHead = true
+break
+case "south":
+if(world.getBlock(x,y,z+1) === (this.id | DOOR | SOUTH)) attachedHead = true
+break
+case "east":
+if(world.getBlock(x-1,y,z) === (this.id | DOOR | EAST)) attachedHead = true
+break
+case "west":
+if(world.getBlock(x+1,y,z) === (this.id | DOOR | WEST)) attachedHead = true
+break
+}
+}
 var power = world.getRedstonePower(x,y,z) || world.getSurroundingBlockPower(x,y,z)
 if(power && !extended){
 this.extend(x,y,z,facing)
-}else if(!power && extended){
+}else if(!power && extended && attachedHead){
 this.retract(x,y,z,facing)
 }
 },
-onplace:function(x,y,z){
+onupdate:function(x,y,z){ //onupdate is run when placed
 this.onpowerupdate(x,y,z)
-},
-/*onupdate:function(x,y,z){
-//dissapear if it isn't connected (it = piston heads and piston open)
+/*//dissapear if it isn't connected (it = piston heads and piston open)
 var block = world.getBlock(x,y,z)
 switch(block){
-}
-},*/
+}*/
+},
 extend:function(x,y,z, facing){
 var tx = x, ty = y, tz = z, mx = 0, my = 0, mz = 0
 var head, headCut, open
@@ -16167,12 +16207,12 @@ this.size = 0
 }
 let blocks = []
 let resolveContactsAndUpdatePosition = function(now) {
-let pminX = p2.x - 1
-let pmaxX = p2.x + 1
-let pminY = p2.y - 2
-let pmaxY = p2.y + 1
-let pminZ = p2.z - 1
-let pmaxZ = p2.z + 1
+let pminX = round(p.x - p.w - 1)
+let pmaxX = round(p.x + p.w + 1)
+let pminY = round(p.y - p.bottomH - 1)
+let pmaxY = round(p.y + p.topH + 1)
+let pminZ = round(p.z - p.w - 1)
+let pmaxZ = round(p.z + p.w + 1)
 let block = null
 let vel = p.velocity
 let blocksSize = 0
@@ -16195,6 +16235,12 @@ blocks.push([x,y,z,block])
 blocksSize ++
 }
 }
+}
+}
+for(var i = 0; i < world.entities.length; i++) {
+var e = world.entities[i]
+if(e.canStandOn && e.block && e.x > pminX && e.x < pmaxX && e.y > pminY && e.y < pmaxY && e.z > pminZ && e.z < pmaxZ) {
+contacts.add(e.x, e.y, e.z, e.block)
 }
 }
 p.previousX = p.x
@@ -20750,12 +20796,16 @@ this.mz = mz
 this.despawns = despawns //also tells how much time for it to move
 this.solidWhenDone = solidWhenDone
 this.tags = tags
+this.canStandOn = true
 }
 update() {
 let now = performance.now()
 if (now - this.spawn > this.despawns) {
 this.canDespawn = true
 if(this.solidWhenDone){
+this.x = this.mx
+this.y = this.my
+this.z = this.mz
 world.setBlock(round(this.x),round(this.y),round(this.z),this.block)
 if(this.tags) world.setTags(round(this.x),round(this.y),round(this.z), this.tags)
 }
