@@ -1169,6 +1169,7 @@ setPixel(n, x, y, 0, 0, 0, 0)
 },*/
 dirt: "0g0g7ĢlZýĜYåÃYÆřYðoHÚĞZâÑH4Č9PČg?ČÐSĈÉ9(J9Cĩ)yķBkaEðÂ%UÈ{üÉÖ)ù9Eù84Á]2Â$üòFkÃQČĂ?ČŁPwh?0ìKNÏFihČĎÃ{ĊRPAë?$ò{)9FXĺ1kòEiĊByÃ",
 stone: "0g0g4÷-ZéŞZâľHÖĎY0ÖĢVÇýÅōÜēđVÀ?5×þĎSB?VØĠü8!VėĢÈý1k5ÄÁÀk1ŀėā×VTV4×@ÿŕ6þčĐÖVV0VÈTÒ",
+string: "0g0g(000ZZħZZĨZZĲZZĪZZĮZZŒZZœZZĭłéłĶ|HĶ|:Ķ|fZņÓĮsèê.W|ðåÁðfņéŀĮ$ģĚŒY?Òģ4íC007ZZįŞĶeZZĴZZıZZŎæEZ?ÒĤMAĂ004ZĶ5ŒĆÔŚĦŝZZśZZřZZĵZZŞŒĦZVþĢ0ÁČZZīĢŢŠľÚYŊĆHņ÷W00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000S001000000002cM0000000405oÝħ000000029Eě000000S0î}<4S000002xAĻVÒħÎþĂ00rÝğÌê0xó.B00CĆó×ëaĹĚłė",
 logSide: "0g0g6âÐH{řHúīW-ĉYËyYāŋY50ķcyX6ħœcy4eSœ4i4{SQgNkQSīĘSÀSXTęgÀëïwT0ÀìXy1Tg5ķyh?g0ķwhko0x3gko4x3Ĉ/8Č5jĘ(wĈX1Àg0SĈj4iëSĊh42X",
 logTop: "0g0g9ËyY{řHâÐHĢVZĖ*HĩãWéîHýĻWĆkZ1210x0g0jO))U>OM3ÓGñIIGÀ3ÒÃO)O,(4àQQQQ-Sjî[äñá,T4á@QQá[(4î[]XX-S4î[]áá,Skî[QQX[T4à[ãäX-S4îQQQQ,Sjî)OO*,T3ññGGGG(3OQ)?QO(1010x0i0",
 bedrock: "0g0g5ÎðW(ĪWVVHþÇHwíW4JĀ|iów(Ī%IÁ(ĀPÒAķ{5j]J^ïJ^A+1FyúMyÎÙwĿTĘĳPkú(üRdĊÂdðłQĩóxiÆ1ùŀïĞ9òyÀÚ0ŃQùòcJ^c*hCkr1iòTĜ^(ĀĿERÀ",
@@ -6080,9 +6081,10 @@ breakTime: 0.3,
 type:"plant2",
 drop: function(){
 if(rand() > 0.8){
-let r = floor(rand(3))
+let r = floor(rand(5))
 if(r === 0) return "stick"
 else if(r === 1) return "oakSapling"
+else if(r === 2) return "string"
 else{
 return rand() > 0.8 ? "orange" : "apple"
 }
@@ -6916,6 +6918,11 @@ die()
 },
 useAnywhere:true
 },
+{
+name:"string",
+Name:"String",
+item:true
+},
 /*
 { name: "pigFace" },
 { 
@@ -7138,6 +7145,7 @@ const crafts = {
 "darkOakPlanks,air,air,darkOakPlanks": {name:"stick", amount:4, shaped:true},
 "junglePlanks,air,air,junglePlanks": {name:"stick", amount:4, shaped:true},
 "sprucePlanks,air,air,sprucePlanks": {name:"stick", amount:4, shaped:true},
+"string,string,string,string": {name:"whiteWool", amount:1, shapeless: false},
 "oakPlanks,oakPlanks,air,oakPlanks,oakPlanks,air,oakPlanks,oakPlanks":{name:"oakDoor", amount:3},
 "acaciaPlanks,acaciaPlanks,air,acaciaPlanks,acaciaPlanks,air,acaciaPlanks,acaciaPlanks":{name:"acaciaDoor", amount:3},
 "birchPlanks,birchPlanks,air,birchPlanks,birchPlanks,air,birchPlanks,birchPlanks":{name:"birchDoor", amount:3},
@@ -7166,6 +7174,7 @@ const crafts = {
 "warpedPlanks,warpedPlanks,air,warpedPlanks,warpedPlanks":{name:"craftingTable"},
 "crimsonPlanks,crimsonPlanks,air,crimsonPlanks,crimsonPlanks":{name:"craftingTable"},
 "coal,air,air,stick":{name:"torch",amount:4},
+"coal,air,stick":{name:"torch",amount:4},
 "coal,coal,coal,coal,coal,coal,coal,coal,coal":{name:"coalBlock"},
 "ironIngot,ironIngot,ironIngot,ironIngot,ironIngot,ironIngot,ironIngot,ironIngot,ironIngot":{name:"ironBlock"},
 "goldIngot,goldIngot,goldIngot,goldIngot,goldIngot,goldIngot,goldIngot,goldIngot,goldIngot":{name:"goldBlock"},
