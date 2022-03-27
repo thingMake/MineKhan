@@ -31,7 +31,17 @@ Willard's credits
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" id="themeColor">
 <link id="vtfont" href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
-<style>@font-face{font-family: 'VT323'; src:url('mojangles.ttf');}</style>
+<style>
+@font-face{
+font-family: 'VT323';
+src:url('mojangles.ttf');
+}
+@font-face{
+font-family: 'VT323';
+src:url('mojanglesBold.ttf');
+font-weight:bold;
+}
+</style>
 <link rel="shortcut icon" type="image/ico" href="favicon.ico?">
 <link rel="manifest" href="manifest.json">
 </head>
@@ -11316,7 +11326,7 @@ span: document.createElement("span"),
 array: [],
 all: [],
 remove: (function(){
-var arr = ["fuck","stupid"]
+var arr = [["k","c","u","f"].reverse().join(""), "stupid","bloody","dumb","bitch"]
 arr.forEach((value, i) => {
 arr[i] = new RegExp("("+value+")", "gi")
 })
@@ -11351,9 +11361,6 @@ this.update()
 write: function(msg, from){
 if(!from){
 if(!msg) return
-for(var regex of this.remove){ //remove bad words
-msg = msg.replace(regex, "<span style='color:black; background:black;'>$1</span>")
-}
 }
 this.add((from || username)+": "+msg)
 if(!from && multiplayer){
@@ -11378,18 +11385,19 @@ canvas.focus()
 }
 },
 format(str){
+for(var regex of this.remove){ //remove bad words
+str = str.replace(regex, "<span style='color:black; background:black;'>$1</span>")
+}
 if(str.includes("§")){
 var arr = str.split("§")
-var res = arr[0]
-var spans = 0
+var res = "<span>"+arr[0]
 for(var i=1; i<arr.length; i++){
 var s = arr[i]
 var col = colors[s.substring(0,1)]
 s = s.substring(1)
-res += "<span style='color:"+col+";'>"+s
-spans ++
+res += "</span><span style='color:"+col+";'>"+s
 }
-for(i=0; i<spans;i++) res += "</span>"
+res += "</span>"
 return res
 }else return str
 }
@@ -16728,7 +16736,18 @@ prevRotY = p.ry
 prevPreviousX = p.previousX
 prevPreviousY = p.previousY
 prevPreviousZ = p.previousZ
-var d = p.thirdPerson === "front" ? 4 : -4
+/*if(!p.thirdPerson){
+p.y -= 0.25
+p.previousY -= 0.25
+getRotation(p.rx+Math.PI2,p.ry)
+p.x += node.x*0.125
+p.y += node.y*0.125
+p.z += node.z*0.125
+p.previousX += node.x*0.125
+p.previousY += node.y*0.125
+p.previousZ += node.z*0.125
+}*/
+var d = p.thirdPerson === "front" ? 4 : /*(!p.thirdPerson ? 0.125 : -4)*/-4
 p.x += p.direction.x*d
 p.y += p.direction.y*d
 p.z += p.direction.z*d
