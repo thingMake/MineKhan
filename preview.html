@@ -3043,7 +3043,7 @@ glassSound: true
 { name: "ironOre", Name:"Iron Ore", breakTime:15, type:"rock2", drop:"rawIron", stoneSound:true},
 { name: "goldOre", Name:"Gold Ore", breakTime:15, type:"rock3", drop:"rawGold", stoneSound:true},
 { name: "diamondOre", Name:"Diamond Ore", breakTime:15, type:"rock3", drop:"diamond", stoneSound:true, experience:1},
-{ name: "redstoneOre", Name:"Redstone Ore", breakTime:15, type:"rock3", stoneSound:true, drop:"redstoneDust", dropAmount:[4,5], experience:0.3},
+{ name: "redstoneOre", Name:"Redstone Ore", breakTime:15, type:"rock3", stoneSound:true, drop:"redstone", dropAmount:[4,5], experience:0.3},
 { name: "lapisOre", Name:"Lapis Lazuli Ore", breakTime:15, type:"rock2", drop:"lapisLazuli", stoneSound:true, experience:0.5},
 { name: "emeraldOre", Name:"Emerald Ore", breakTime:15, type:"rock3", drop:"emerald", stoneSound:true, experience:1.5},
 { name: "coalBlock", Name:"Block of Coal", breakTime:25, type:"rock1", stoneSound:true},
@@ -3360,10 +3360,29 @@ drop: "redstone",
 onupdate: function(x,y,z){
 var tags = world.getTags(x,y,z)
 if(!tags) return
-tags.west = this.connectable(x+1,y,z,"west")
-tags.east = this.connectable(x-1,y,z,"east")
-tags.south = this.connectable(x,y,z-1,"south")
-tags.north = this.connectable(x,y,z+1,"north")
+var pnorthUp = tags.northUp, psouthUp = tags.southUp, peastUp = tags.eastUp, pwestUp = tags.westUp,
+pnorthDown = tags.northDown, psouthDown = tags.southDown, peastDown = tags.eastDown, pwestDown = tags.westDown
+var above = world.getBlock(x,y+1,z)
+if(above && !blockData[above].transparent){
+tags.westUp = tags.eastUp = tags.southUp = tags.northUp = false
+}else{
+tags.westUp = this.connectable(x+1,y+1,z,"westUp")
+tags.eastUp = this.connectable(x-1,y+1,z,"eastUp")
+tags.southUp = this.connectable(x,y+1,z-1,"southUp")
+tags.northUp = this.connectable(x,y+1,z+1,"northUp")
+}
+tags.westDown = this.connectable(x+1,y-1,z,"westDown")
+tags.eastDown = this.connectable(x-1,y-1,z,"eastDown")
+tags.southDown = this.connectable(x,y-1,z-1,"southDown")
+tags.northDown = this.connectable(x,y-1,z+1,"northDown")
+tags.west = this.connectable(x+1,y,z,"west") || tags.westUp || tags.westDown
+tags.east = this.connectable(x-1,y,z,"east") || tags.eastUp || tags.eastDown
+tags.south = this.connectable(x,y,z-1,"south") || tags.southUp || tags.southDown
+tags.north = this.connectable(x,y,z+1,"north") || tags.northUp || tags.northDown
+tags.westTex = tags.westUp && "redstoneDustLine"
+tags.eastTex = tags.eastUp && "redstoneDustLine"
+tags.southTex = tags.northUp && "redstoneDustLine"
+tags.northTex = tags.southUp && "redstoneDustLine"
 if(tags.north + tags.south + tags.east + tags.west === 1){
 //make it a line. it can't be half of a line
 if(tags.north) tags.south = true
@@ -3373,24 +3392,28 @@ if(tags.west) tags.east = true
 }
 world.setTags(x,y,z,tags)
 //set texture and stuff
-var sum = tags.north + tags.south + tags.east + tags.west
+var north = tags.north,
+south = tags.south,
+east = tags.east,
+west = tags.west
+var sum = north + south + east + west
 var block = this.id //dot
 if(sum === 2){
-if(tags.north && tags.west) block = this.id | STAIR | EAST
-else if(tags.west && tags.south) block = this.id | STAIR | SOUTH
-else if(tags.south && tags.east) block = this.id | STAIR | WEST
-else if(tags.east && tags.north) block = this.id | STAIR | NORTH
+if(north && west) block = this.id | STAIR | EAST
+else if(west && south) block = this.id | STAIR | SOUTH
+else if(south && east) block = this.id | STAIR | WEST
+else if(east && north) block = this.id | STAIR | NORTH
 else{
-if(tags.north || tags.south) block = this.id | SLAB | NORTH
-if(tags.east || tags.west) block = this.id | SLAB | EAST
+if(north || south) block = this.id | SLAB | NORTH
+if(east || west) block = this.id | SLAB | EAST
 }
 }
 if(sum === 3){
-if(tags.east && tags.west){
-if(tags.north) block = this.id | DOOR | NORTH
+if(east && west){
+if(north) block = this.id | DOOR | NORTH
 else block = this.id | DOOR | SOUTH
-}else if(tags.north && tags.south){
-if(tags.east) block = this.id | DOOR | WEST
+}else if(north && south){
+if(east) block = this.id | DOOR | WEST
 else block = this.id | DOOR | EAST
 }
 }
@@ -3399,23 +3422,37 @@ if(world.getBlock(x,y,z) !== block){
 world.setBlock(x,y,z,block,true)
 world.updateBlock(x,y,z)
 }
+if(pnorthUp !== tags.northUp) world.updateBlock(x,y+1,z+1)
+if(psouthUp !== tags.southUp) world.updateBlock(x,y+1,z-1)
+if(pwestUp !== tags.westUp) world.updateBlock(x+1,y+1,z)
+if(peastUp !== tags.eastUp) world.updateBlock(x-1,y+1,z)
+if(pnorthDown !== tags.northDown) world.updateBlock(x,y-1,z+1)
+if(psouthDown !== tags.southDown) world.updateBlock(x,y-1,z-1)
+if(pwestDown !== tags.westDown) world.updateBlock(x+1,y-1,z)
+if(peastDown !== tags.eastDown) world.updateBlock(x-1,y-1,z)
 this.onpowerupdate(x,y,z,x,y,z)
 },
 onplace:function(x,y,z){
 var tags = {
 power:0,
-north:0,
-south:0,
-east:0,
-west:0
+north:false,
+south:false,
+east:false,
+west:false,
+northUp:false,
+southUp:false,
+eastUp:false,
+westUp:false,
+northDown:false,
+southDown:false,
+eastDown:false,
+westDown:false
 }
 world.setTags(x,y,z,tags)
+this.onupdate(x,y,z)
 tags.power = world.getRedstoneWirePower(x,y,z)
 var strong = world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong"
-if(strong){
-world.setPower(x,y,z,15)
-world.spreadPower(x,y,z,15)
-}
+if(strong) tags.power = 15
 if(tags.power) world.spreadPower(x,y,z,tags.power)
 },
 ondelete:function(x,y,z,prevTags){
@@ -3449,6 +3486,15 @@ var block = world.getBlock(x,y-1,z)
 if(block && !blockData[block].transparent){
 world.setBlockPower(x,y-1,z, null, "top")
 }
+//update the diagnoally connecting redstone
+if(tags.northUp) world.updateBlock(x,y+1,z+1)
+if(tags.southUp) world.updateBlock(x,y+1,z-1)
+if(tags.westUp) world.updateBlock(x+1,y+1,z)
+if(tags.eastUp) world.updateBlock(x-1,y+1,z)
+if(tags.northDown) world.updateBlock(x,y-1,z+1)
+if(tags.southDown) world.updateBlock(x,y-1,z-1)
+if(tags.westDown) world.updateBlock(x+1,y-1,z)
+if(tags.eastDown) world.updateBlock(x-1,y-1,z)
 },
 onpowerupdate:function(x,y,z,sx,sy,sz,blockPowerChanged){
 if(x===sx && y===sy && z===sz && !blockPowerChanged){
@@ -3526,6 +3572,27 @@ world.unspreadPower(x,y,z,15,true)
 connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch", "lever", "redstoneConnector","is:button", "piston","pistonSticky"],
 connectable: function(x,y,z, d) {
 var id = world.getBlock(x,y,z)
+if(!id) return false
+var up = false, down = false
+switch(d){
+case "northUp":
+case "southUp":
+case "eastUp":
+case "westUp":
+up = true
+break
+case "northDown":
+case "southDown":
+case "eastDown":
+case "westDown":
+down = true
+break
+}
+if(down){
+var block = world.getBlock(x,y+1,z)
+if(block && !blockData[block].transparent) return false
+}
+if(up || down) return blockData[id].name === "redstoneDust"
 if(this.connectables.includes(blockData[id].name)) return true
 for(var i of this.connectables){
 if(i.startsWith("is:")){
@@ -3563,7 +3630,11 @@ return false
 },
 tint:[[75,0,0],[111,0,0],[121,0,0],[130,0,0],[140,0,0],[151,0,0],[161,0,0],[171,0,0],[181,0,0],[191,0,0],[202,0,0],[211,0,0],[221,0,0],[231,6,0],[241,27,0],[252,49,0]].map(v => {v[0]/=255;v[1]/=255;v[2]/=255;return v}),
 tagTintPropertyTop: "power",
-tagTintPropertyBottom: "power"
+tagTintPropertyBottom: "power",
+tagTintPropertyNorth: "power",
+tagTintPropertySouth: "power",
+tagTintPropertyEast: "power",
+tagTintPropertyWest: "power",
 },
 {
 name: "buffer",
@@ -11855,7 +11926,7 @@ throw "Error linking shaders."
 return programObject
 }
 let program3D, program2D, skyboxProgram, programEntity, programParticle
-function objectify(x, y, z, width, height, textureX, textureY, texXFlip,texYFlip,rotateTex,texW,texH) {
+function objectify(x, y, z, width, height, textureX, textureY, texXFlip,texYFlip,rotateTex,texW,texH,textureTag) {
 return {
 x: x,
 y: y,
@@ -11868,7 +11939,8 @@ txf: texXFlip,
 tyf: texYFlip,
 rt:rotateTex,
 tw:texW || width,
-th:texH || height
+th:texH || height,
+texTag:textureTag
 }
 }
 function customFace(x,y,z,x2,y2,z2,x3,y3,z3,x4,y4,z4, tx,ty,tw,th){
@@ -13352,10 +13424,10 @@ redstoneDust:{
 verts:[
 [objectify(0,0.25,0,16,16,0,0,true,false,2)],
 [objectify(0,0.25,16,16,16,0,0)],
-[],
-[],
-[],
-[]
+[objectify(16, 16,  0.25, 16, 16, 0, 0, false,false,false,null,null, "northTex")],
+[objectify( 0, 16, 15.75, 16, 16, 0, 0, false,false,false,null,null, "southTex")],
+[objectify( 0.25, 16,  0, 16, 16, 0, 0, false,false,false,null,null, "eastTex")],
+[objectify(15.75, 16, 16, 16, 16, 0, 0, false,false,false,null,null, "westTex")]
 ],
 cull: {
 top: 0,
@@ -13365,15 +13437,16 @@ south: 0,
 east: 0,
 west: 0
 },
+hitbox:"layer1"
 },
 redstoneDustRotate:{
 verts:[
 [objectify(0,0.25,0,16,16,0,0,true,false,2)],
 [objectify(0,0.25,16,16,16,0,0)],
-[],
-[],
-[],
-[]
+[objectify(16, 16,  0.25, 16, 16, 0, 0, false,false,false,null,null, "northTex")],
+[objectify( 0, 16, 15.75, 16, 16, 0, 0, false,false,false,null,null, "southTex")],
+[objectify( 0.25, 16,  0, 16, 16, 0, 0, false,false,false,null,null, "eastTex")],
+[objectify(15.75, 16, 16, 16, 16, 0, 0, false,false,false,null,null, "westTex")]
 ],
 cull: {
 top: 0,
@@ -13383,7 +13456,8 @@ south: 0,
 east: 0,
 west: 0
 },
-rotate:true
+rotate:true,
+hitbox:"layer1"
 },
 redstoneTorch:{
 verts:[
@@ -14327,7 +14401,9 @@ size: shape.size,
 varients: shape.varients,
 bit: bit,
 rotated: true,
-rotateTimes: (shape.rotateTimes || 0) + 1
+rotateTimes: (shape.rotateTimes || 0) + 1,
+originalVerts: shape.originalVerts,
+hitbox: shape.hitbox
 }
 }
 // Reflect over the y plane; returns a new shape object
@@ -14382,14 +14458,19 @@ flip: shape.flip,
 buffer: buffer,
 size: shape.size,
 varients: shape.varients,
-bit: bit
+bit: bit,
+originalVerts: shape.originalVerts
 }
 }
 for (let shape in shapes) {
 let obj = shapes[shape]
 let verts = obj.verts
+obj.originalVerts = []
+for(let i=0; i<verts.length; i++){
+obj.originalVerts[i] = verts[i].slice()
+}
 // Populate the vertex coordinates
-for (let i = 0; i < verts.length; i++) {
+for (i = 0; i < verts.length; i++) {
 let side = verts[i]
 let texArr = []
 obj.texVerts.push(texArr)
@@ -16774,8 +16855,8 @@ if(p.thirdPerson === "front") p.setDirection() // make it correct
 }
 analytics.totalRenderTime += performance.now() - renderStart
 }
-var ambientDist = 16 + (1*10)
-function updateAmbient(){ //todo: some sounds have different attenuation thingies so update this with that
+var ambientDist = 16
+function updateAmbient(){ //todo: some sounds have different distances you can hear it from
 let pminX = p2.x - ambientDist
 let pmaxX = p2.x + ambientDist
 let pminY = p2.y - ambientDist
@@ -18862,17 +18943,18 @@ let length = this.renderLength
 let rData = this.renderData
 let x = 0, y = 0, z = 0, loc = 0, data = 0,
 sides = 0, tex = null, x2 = 0, y2 = 0, z2 = 0,
-verts = null, texVerts = null, texShapeVerts = null,
+verts = null, texVerts = null, texShapeVerts = null, originalShapeVerts = null,
 tx = 0, ty = 0
 let wx = this.x, wy = this.y, wz = this.z
 let blocks = this.world.getAdjacentSubchunks(wx, wy, wz)
 let lightChunks = this.world.getAdjacentSubchunks(wx, wy, wz, true)
-let block = null
+let block = null, tags = null
 let shadows = null, slights = [0, 0, 0, 0], blights = [0, 0, 0, 0], tints = [1,1,1,1,1,1,1,1,1,1,1,1]
 let blockSides = Object.keys(Block)
 let side = ""
 let shapeVerts = null
 let shapeTexVerts = null
+let shapeOriginalVerts = null
 let pallete = this.pallete
 // let intShad = interpolateShadows
 for (let i = 0; i < length; i++) {
@@ -18887,8 +18969,10 @@ z = loc >> 8 & 15
 x2 = x + this.x
 y2 = y + this.y
 z2 = z + this.z
+tags = this.getTags(x,y,z)
 shapeVerts = block.shape.verts
 shapeTexVerts = block.shape.texVerts
+shapeOriginalVerts = block.shape.originalVerts
 let texNum = 0
 for (let n = 0; n < 6; n++) {
 side = blockSides[n]
@@ -18900,7 +18984,13 @@ tints = getTint[side](x2, y2, z2, tints)
 let directionalFaces = shapeVerts[Sides[side]]
 for (let facei = 0; facei < directionalFaces.length; facei++) {
 verts = directionalFaces[facei]
+originalShapeVerts = shapeOriginalVerts[n][facei]
 texVerts = textureCoords[textureMap[tex[texNum]]]
+if(originalShapeVerts.texTag){
+if(tags[originalShapeVerts.texTag] && textureMap[tags[originalShapeVerts.texTag]]){
+texVerts = textureCoords[textureMap[tags[originalShapeVerts.texTag]]]
+}else continue
+}
 tx = texVerts[0]
 ty = texVerts[1]
 texShapeVerts = shapeTexVerts[n][facei]
@@ -24079,7 +24169,18 @@ if(!xyArrayHas(spreaded,spreadAt,x+1,y,z) && blockData[world.getBlock(x+1,y,z)].
 if(!xyArrayHas(spreaded,spreadAt,x-1,y,z) && blockData[world.getBlock(x-1,y,z)].name === "redstoneDust") spreadAt.push(x-1,y,z,i+1)
 if(!xyArrayHas(spreaded,spreadAt,x,y,z+1) && blockData[world.getBlock(x,y,z+1)].name === "redstoneDust") spreadAt.push(x,y,z+1,i+1)
 if(!xyArrayHas(spreaded,spreadAt,x,y,z-1) && blockData[world.getBlock(x,y,z-1)].name === "redstoneDust") spreadAt.push(x,y,z-1,i+1)
+var tags = world.getTags(x,y,z)
+if(tags){
+if(tags.westUp && !xyArrayHas(spreaded,spreadAt,x+1,y+1,z)) spreadAt.push(x+1,y+1,z,i+1)
+if(tags.eastUp && !xyArrayHas(spreaded,spreadAt,x-1,y+1,z)) spreadAt.push(x-1,y+1,z,i+1)
+if(tags.northUp && !xyArrayHas(spreaded,spreadAt,x,y+1,z+1)) spreadAt.push(x,y+1,z+1,i+1)
+if(tags.southUp && !xyArrayHas(spreaded,spreadAt,x,y+1,z-1)) spreadAt.push(x,y+1,z-1,i+1)
+if(tags.westDown && !xyArrayHas(spreaded,spreadAt,x+1,y-1,z)) spreadAt.push(x+1,y-1,z,i+1)
+if(tags.eastDown && !xyArrayHas(spreaded,spreadAt,x-1,y-1,z)) spreadAt.push(x-1,y-1,z,i+1)
+if(tags.northDown && !xyArrayHas(spreaded,spreadAt,x,y-1,z+1)) spreadAt.push(x,y-1,z+1,i+1)
+if(tags.southDown && !xyArrayHas(spreaded,spreadAt,x,y-1,z-1)) spreadAt.push(x,y-1,z-1,i+1)
 spreaded.push(x,y,z,i)
+}
 }
 spreadAt.splice(0,4)
 }
@@ -24119,13 +24220,22 @@ this.powerChangeUpdate(x,y,z+1)
 this.powerChangeUpdate(x,y,z-1)*/
 }
 getRedstoneWirePower(x,y,z){
+var tags = world.getTags(x,y,z)
 var right = this.getPower(x+1,y,z)
 var left = this.getPower(x-1,y,z)
 var down = this.getPower(x,y,z+1)
 var up = this.getPower(x,y,z-1)
 var top = this.getPower(x,y+1,z)
 var bottom = this.getPower(x,y-1,z)
-var level = max(right,left,down,up, top,bottom) - 1
+var westUp = tags && tags.westUp ? this.getPower(x+1,y+1,z) : 0
+var eastUp = tags && tags.eastUp ? this.getPower(x-1,y+1,z) : 0
+var northUp = tags && tags.northUp ? this.getPower(x,y+1,z+1) : 0
+var southUp = tags && tags.southUp ? this.getPower(x,y+1,z-1) : 0
+var westDown = tags && tags.westDown ? this.getPower(x+1,y-1,z) : 0
+var eastDown = tags && tags.eastDown ? this.getPower(x-1,y-1,z) : 0
+var northDown = tags && tags.northDown ? this.getPower(x,y-1,z+1) : 0
+var southDown = tags && tags.southDown ? this.getPower(x,y-1,z-1) : 0
+var level = max(right,left,down,up, top,bottom, northUp,southUp,eastUp,westUp, northDown,southDown,eastDown,westDown) - 1
 if(world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong" || world.getBlockPower(x,y+1,z) === "strong"){
 level = 15
 }
@@ -28994,12 +29104,13 @@ playSound(sound, 0, posSound(x,y,z), pitch)
 if(multiplayer) send({type:"playSound", data:sound, x:x,y:y,z:z, pitch:pitch})
 }
 win.explodeSound = explodeSound
-function posSound(x,y,z){
+function posSound(x,y,z, hearDist = 16){
 var volume = 1
 if((x || x===0) && (y || y===0) && (z || z===0)){
-var falloff = volume > 16 ? 16*volume : 16
+//var falloff = volume > 16 ? 16*volume : 16
 var dist = dist3(x,y,z, p2.x, p2.y, p2.z)
-volume = dist > falloff ? volume - ((dist - falloff) / 10) : volume
+//volume = dist > falloff ? volume - ((dist - falloff) / 10) : volume
+volume = volume - (dist / 16)
 if(volume < 0) volume = 0
 }
 return volume
