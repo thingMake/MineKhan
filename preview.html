@@ -3422,14 +3422,14 @@ if(world.getBlock(x,y,z) !== block){
 world.setBlock(x,y,z,block,true)
 world.updateBlock(x,y,z)
 }
-if(pnorthUp !== tags.northUp) world.updateBlock(x,y+1,z+1)
-if(psouthUp !== tags.southUp) world.updateBlock(x,y+1,z-1)
-if(pwestUp !== tags.westUp) world.updateBlock(x+1,y+1,z)
-if(peastUp !== tags.eastUp) world.updateBlock(x-1,y+1,z)
-if(pnorthDown !== tags.northDown) world.updateBlock(x,y-1,z+1)
-if(psouthDown !== tags.southDown) world.updateBlock(x,y-1,z-1)
-if(pwestDown !== tags.westDown) world.updateBlock(x+1,y-1,z)
-if(peastDown !== tags.eastDown) world.updateBlock(x-1,y-1,z)
+if(pnorthUp !== tags.northUp) world.updateBlock(x,y+1,z+1), world.unspreadPower(x,y+1,z+1,world.getPower(x,y+1,z+1), true)
+if(psouthUp !== tags.southUp) world.updateBlock(x,y+1,z-1), world.unspreadPower(x,y+1,z-1,world.getPower(x,y+1,z-1), true)
+if(pwestUp !== tags.westUp) world.updateBlock(x+1,y+1,z), world.unspreadPower(x+1,y+1,z,world.getPower(x+1,y+1,z), true)
+if(peastUp !== tags.eastUp) world.updateBlock(x-1,y+1,z), world.unspreadPower(x-1,y+1,z,world.getPower(x-1,y+1,z), true)
+if(pnorthDown !== tags.northDown) world.updateBlock(x,y-1,z+1), world.unspreadPower(x,y-1,z+1,world.getPower(x,y-1,z+1), true)
+if(psouthDown !== tags.southDown) world.updateBlock(x,y-1,z-1), world.unspreadPower(x,y-1,z-1,world.getPower(x,y-1,z-1), true)
+if(pwestDown !== tags.westDown) world.updateBlock(x+1,y-1,z), world.unspreadPower(x+1,y-1,z,world.getPower(x+1,y-1,z), true)
+if(peastDown !== tags.eastDown) world.updateBlock(x-1,y-1,z), world.unspreadPower(x-1,y-1,z,world.getPower(x-1,y-1,z), true)
 this.onpowerupdate(x,y,z,x,y,z)
 },
 onplace:function(x,y,z){
@@ -3487,14 +3487,15 @@ if(block && !blockData[block].transparent){
 world.setBlockPower(x,y-1,z, null, "top")
 }
 //update the diagnoally connecting redstone
-if(tags.northUp) world.updateBlock(x,y+1,z+1)
-if(tags.southUp) world.updateBlock(x,y+1,z-1)
-if(tags.westUp) world.updateBlock(x+1,y+1,z)
-if(tags.eastUp) world.updateBlock(x-1,y+1,z)
-if(tags.northDown) world.updateBlock(x,y-1,z+1)
-if(tags.southDown) world.updateBlock(x,y-1,z-1)
-if(tags.westDown) world.updateBlock(x+1,y-1,z)
-if(tags.eastDown) world.updateBlock(x-1,y-1,z)
+var p
+if(tags.northUp) world.updateBlock(x,y+1,z+1), world.unspreadPower(x,y+1,z+1,world.getPower(x,y+1,z+1), true)
+if(tags.southUp) world.updateBlock(x,y+1,z-1), world.unspreadPower(x,y+1,z-1,world.getPower(x,y+1,z-1), true)
+if(tags.westUp) world.updateBlock(x+1,y+1,z), world.unspreadPower(x+1,y+1,z,world.getPower(x+1,y+1,z), true)
+if(tags.eastUp) world.updateBlock(x-1,y+1,z), world.unspreadPower(x-1,y+1,z,world.getPower(x-1,y+1,z), true)
+if(tags.northDown) world.updateBlock(x,y-1,z+1), world.unspreadPower(x,y-1,z+1,world.getPower(x,y-1,z+1), true)
+if(tags.southDown) world.updateBlock(x,y-1,z-1), world.unspreadPower(x,y-1,z-1,world.getPower(x,y-1,z-1), true)
+if(tags.westDown) world.updateBlock(x+1,y-1,z), world.unspreadPower(x+1,y-1,z,world.getPower(x+1,y-1,z), true)
+if(tags.eastDown) world.updateBlock(x-1,y-1,z), world.unspreadPower(x-1,y-1,z,world.getPower(x-1,y-1,z), true)
 },
 onpowerupdate:function(x,y,z,sx,sy,sz,blockPowerChanged){
 if(x===sx && y===sy && z===sz && !blockPowerChanged){
@@ -3559,12 +3560,12 @@ world.setBlockPower(x,y-1,z, target, "top")
 }
 }
 }else if(blockPowerChanged){
-var strong = world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong" || world.getBlockPower(x,y+1,z) === "strong"
+var shouldBeOn = /*world.getRedstoneWirePower(x,y,z) || */world.getSurroundingBlockPower(x,y,z) === "strong"
 var power = world.getPower(x,y,z)
-if(strong && !power){
+if(shouldBeOn && !power){
 world.setPower(x,y,z,15)
 world.spreadPower(x,y,z,15)
-}else if(!strong && power){
+}else if(!shouldBeOn && power){
 world.unspreadPower(x,y,z,15,true)
 }
 }
@@ -8893,6 +8894,9 @@ default:
 return
 }
 if(!(x+tx === sx && y+ty === sy && z+tz === sz) && !detected) return
+setTimeout(function(){
+var curBlock = world.getBlock(x,y,z)
+if(!(curBlock && blockData[curBlock].name === "observer")) return
 world.setBlock(x,y,z,onBlock, false,true)
 var blockBehind = world.getBlock(x-tx,y-ty,z-tz)
 if(blockBehind && blockData[blockBehind].name === "redstoneDust"){
@@ -8900,9 +8904,12 @@ world.setPower(x-tx,y-ty,z-tz, 15)
 world.spreadPower(x-tx,y-ty,z-tz, 15)
 }
 setTimeout(function(){
+var curBlock = world.getBlock(x,y,z)
+if(!(curBlock && blockData[curBlock].name === "observer")) return
 world.setBlock(x,y,z,block, false,true)
 world.unspreadPower(x-tx,y-ty,z-tz, 15, true)
 }, tickTime*2)
+}, tickTime)
 },
 onupdate:function(x,y,z,block,world,sx,sy,sz){
 this.detected(x,y,z,sx,sy,sz,world)
@@ -13424,10 +13431,10 @@ redstoneDust:{
 verts:[
 [objectify(0,0.25,0,16,16,0,0,true,false,2)],
 [objectify(0,0.25,16,16,16,0,0)],
-[objectify(16, 16,  0.25, 16, 16, 0, 0, false,false,false,null,null, "northTex")],
-[objectify( 0, 16, 15.75, 16, 16, 0, 0, false,false,false,null,null, "southTex")],
-[objectify( 0.25, 16,  0, 16, 16, 0, 0, false,false,false,null,null, "eastTex")],
-[objectify(15.75, 16, 16, 16, 16, 0, 0, false,false,false,null,null, "westTex")]
+[objectify(16, 16,  0.25, 16, 16, 0, 0, false,false,false,null,null, "northTex"), objectify(16, 16,  15.75, 16, 16, 0, 0, false,false,false,null,null, "southTex")],
+[objectify( 0, 16, 15.75, 16, 16, 0, 0, false,false,false,null,null, "southTex"), objectify( 0, 16, 0.25, 16, 16, 0, 0, false,false,false,null,null, "northTex")],
+[objectify( 0.25, 16,  0, 16, 16, 0, 0, false,false,false,null,null, "eastTex"), objectify( 15.75, 16,  0, 16, 16, 0, 0, false,false,false,null,null, "westTex")],
+[objectify(15.75, 16, 16, 16, 16, 0, 0, false,false,false,null,null, "westTex"), objectify(0.25, 16, 16, 16, 16, 0, 0, false,false,false,null,null, "eastTex")]
 ],
 cull: {
 top: 0,
@@ -13443,10 +13450,10 @@ redstoneDustRotate:{
 verts:[
 [objectify(0,0.25,0,16,16,0,0,true,false,2)],
 [objectify(0,0.25,16,16,16,0,0)],
-[objectify(16, 16,  0.25, 16, 16, 0, 0, false,false,false,null,null, "northTex")],
-[objectify( 0, 16, 15.75, 16, 16, 0, 0, false,false,false,null,null, "southTex")],
-[objectify( 0.25, 16,  0, 16, 16, 0, 0, false,false,false,null,null, "eastTex")],
-[objectify(15.75, 16, 16, 16, 16, 0, 0, false,false,false,null,null, "westTex")]
+[objectify(16, 16,  0.25, 16, 16, 0, 0, false,false,false,null,null, "northTex"), objectify(16, 16,  15.75, 16, 16, 0, 0, false,false,false,null,null, "southTex")],
+[objectify( 0, 16, 15.75, 16, 16, 0, 0, false,false,false,null,null, "southTex"), objectify( 0, 16, 0.25, 16, 16, 0, 0, false,false,false,null,null, "northTex")],
+[objectify( 0.25, 16,  0, 16, 16, 0, 0, false,false,false,null,null, "eastTex"), objectify( 15.75, 16,  0, 16, 16, 0, 0, false,false,false,null,null, "westTex")],
+[objectify(15.75, 16, 16, 16, 16, 0, 0, false,false,false,null,null, "westTex"), objectify(0.25, 16, 16, 16, 16, 0, 0, false,false,false,null,null, "eastTex")]
 ],
 cull: {
 top: 0,
@@ -24187,6 +24194,7 @@ spreadAt.splice(0,4)
 return spreaded
 }
 spreadPower(x,y,z, level){
+if(!level) return
 var spread = this.getRedstoneConnectedTo(x,y,z,level)
 for(var i=0; i<spread.length; i+=4){
 var bx = spread[i]
@@ -24202,6 +24210,7 @@ this.powerChangeUpdate(x,y,z+1)
 this.powerChangeUpdate(x,y,z-1)*/
 }
 unspreadPower(x,y,z, level, includeSource){
+if(!level) return
 var spread = this.getRedstoneConnectedTo(x,y,z,level)
 for(var n=0; n<level; n++){
 var update = n === level - 1
@@ -24236,6 +24245,7 @@ var eastDown = tags && tags.eastDown ? this.getPower(x-1,y-1,z) : 0
 var northDown = tags && tags.northDown ? this.getPower(x,y-1,z+1) : 0
 var southDown = tags && tags.southDown ? this.getPower(x,y-1,z-1) : 0
 var level = max(right,left,down,up, top,bottom, northUp,southUp,eastUp,westUp, northDown,southDown,eastDown,westDown) - 1
+if(this.redstoneComponentPowering(x,y,z)) level = 15
 if(world.getBlockPower(x,y,z+1) === "strong" || world.getBlockPower(x,y,z-1) === "strong" || world.getBlockPower(x+1,y,z) === "strong" || world.getBlockPower(x-1,y,z) === "strong" || world.getBlockPower(x,y-1,z) === "strong" || world.getBlockPower(x,y+1,z) === "strong"){
 level = 15
 }
@@ -24253,15 +24263,8 @@ if(block && blockData[block].name === "observer"){
 return blockData[block].canHavePower(rx,ry,rz,x,y,z)
 }
 }
-getRedstonePower(x,y,z){
-var right = this.getPower(x+1,y,z)
-var left = this.getPower(x-1,y,z)
-var down = this.getPower(x,y,z+1)
-var up = this.getPower(x,y,z-1)
-var top = this.getPower(x,y+1,z)
-var bottom = this.getPower(x,y-1,z)
-var level = max(right,left,down,up,top,bottom)
-if(
+redstoneComponentPowering(x,y,z){
+return (
 this.repeaterIsPowering(x,y,z,x+1,y,z) ||
 this.repeaterIsPowering(x,y,z,x-1,y,z) ||
 this.repeaterIsPowering(x,y,z,x,y,z+1) ||
@@ -24270,7 +24273,17 @@ this.observerIsPowering(x,y,z,x+1,y,z) ||
 this.observerIsPowering(x,y,z,x-1,y,z) ||
 this.observerIsPowering(x,y,z,x,y,z+1) ||
 this.observerIsPowering(x,y,z,x,y,z-1)
-) level = 15
+)
+}
+getRedstonePower(x,y,z){
+var right = this.getPower(x+1,y,z)
+var left = this.getPower(x-1,y,z)
+var down = this.getPower(x,y,z+1)
+var up = this.getPower(x,y,z-1)
+var top = this.getPower(x,y+1,z)
+var bottom = this.getPower(x,y-1,z)
+var level = max(right,left,down,up,top,bottom)
+if(this.redstoneComponentPowering(x,y,z)) level = 15
 return level
 }
 getRepeaterPower(x,y,z,fx,fy,fz){
