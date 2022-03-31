@@ -1025,13 +1025,13 @@ Math.PI2 = Math.PI / 2
 Math.PId = Math.PI * 2
 function xyArrayHas(arr,arr2,x,y,z){
 for(var i=0; i<arr.length; i+=4){
-if(arr[i] === x && arr[i+1] === y && z === arr[i+2]){
+if(arr[i] === x && arr[i+1] === y && arr[i+2] === z){
 return true
 }
 }
 if(arr2){
 for(var i=0; i<arr2.length; i+=4){
-if(arr2[i] === x && arr2[i+1] === y && z === arr[i+2]){
+if(arr2[i] === x && arr2[i+1] === y && arr2[i+2] === z){
 return true
 }
 }
@@ -3570,7 +3570,7 @@ world.unspreadPower(x,y,z,15,true)
 }
 }
 },
-connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch", "lever", "redstoneConnector","is:button", "piston","pistonSticky"],
+connectables: ["redstoneDust", "redstoneBlock", "redstoneLamp", "tnt", "redstoneTorch", "lever", "redstoneConnector","is:button", "piston","pistonSticky","is:pressurePlate"],
 connectable: function(x,y,z, d) {
 var id = world.getBlock(x,y,z)
 if(!id) return false
@@ -6202,14 +6202,16 @@ name: "lightWeightedPressurePlate",
 textures: "goldBlock",
 pressurePlate: true,
 type:"stone",
-breakTime:2.5
+breakTime:2.5,
+lightWeighted:true
 },
 {
 name: "heavyWeightedPressurePlate",
 textures: "ironBlock",
 pressurePlate: true,
 type:"stone",
-breakTime:2.5
+breakTime:2.5,
+heavyWeighted:true
 },
 {
 name:"oakButton",
@@ -12041,10 +12043,6 @@ south: 3,
 east: 3,
 west: 3
 },
-texVerts: [],
-varients: [],
-buffer: null,
-size: 6
 },
 rotate: {
 verts: [
@@ -13427,6 +13425,24 @@ east: 0,
 west: 0
 },
 },
+pressurePlateActive:{
+verts:[
+[objectify(1,0,1,14,14,1,1)],
+[objectify(1,0.5,15,14,14,1,1)],
+[objectify(15,0.5,15,14,0.5,0,0)],
+[objectify(1,0.5,1,14,0.5,0,0)],
+[objectify(15,0.5,1,14,0.5,0,0)],
+[objectify(1,0.5,15,14,0.5,0,0)]
+],
+cull: {
+top: 0,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
 redstoneDust:{
 verts:[
 [objectify(0,0.25,0,16,16,0,0,true,false,2)],
@@ -13444,7 +13460,7 @@ south: 0,
 east: 0,
 west: 0
 },
-hitbox:"layer1"
+hitbox:"carpet"
 },
 redstoneDustRotate:{
 verts:[
@@ -13464,7 +13480,7 @@ east: 0,
 west: 0
 },
 rotate:true,
-hitbox:"layer1"
+hitbox:"carpet"
 },
 redstoneTorch:{
 verts:[
@@ -14613,12 +14629,41 @@ world.setBlock(x,y,z,target)
 world.setPower(x,y,z,0)
 world.unspreadPower(x,y,z,16)
 world.setBlockPower(ax,ay,az,null,dir)
+playSound("click",0,1,0.5)
 },this.stone ? tickTime*20 : tickTime*30)
 }
 if(hasPower){
 world.setPower(x,y,z,16)
 world.spreadPower(x,y,z,16)
 world.setBlockPower(ax,ay,az,"strong",dir)
+playSound("click",0,1,0.6)
+}
+}
+var pressurePlateActivate = function(x,y,z){
+if(this.heavyWeighted || this.lightWeighted) return //not going to do those yet
+if(world.getBlock(x,y,z) === this.id && pressurePlateHasPressure(x,y,z)){
+world.setBlock(x,y,z, this.id | SLAB)
+}
+}
+var pressurePlateOnupdate = function(x,y,z){
+var block = world.getBlock(x,y,z)
+if(block === (this.id | SLAB)){
+world.setPower(x,y,z,16)
+world.spreadPower(x,y,z,16)
+world.setBlockPower(x,y-1,z,"strong","top")
+playSound("click",0,1,0.6)
+var me = this
+var i = setInterval(function(){
+if(pressurePlateHasPressure(x,y,z)) return
+clearInterval(i)
+setTimeout(function(){
+world.setBlock(x,y,z,me.id)
+world.setPower(x,y,z,0)
+world.unspreadPower(x,y,z,16)
+world.setBlockPower(x,y-1,z,null,"top")
+playSound("click",0,1,0.5)
+}, tickTime*20)
+}, tickTime*2)
 }
 }
 for (let i = 0; i < BLOCK_COUNT; i++) {
@@ -14954,6 +14999,10 @@ if(baseBlock.pressurePlate){
 baseBlock.shape = shapes.pressurePlate
 baseBlock.transparent = true
 baseBlock.shadow = false
+baseBlock.solid = false
+baseBlock.activate = pressurePlateActivate
+baseBlock.onupdate = pressurePlateOnupdate
+makeBlock(baseBlock.textures, shapes.pressurePlateActive, slabBlock, baseBlock)
 }
 if(baseBlock.name === "tomatoPlant"){
 baseBlock.shape = shapes.cross
@@ -16613,6 +16662,9 @@ if(d && d>takeDamage/* && collided(x,y,z,0,0,0,block[3])*/) {
 takeDamage = d
 damageBlock = blockData[block[3]]
 }
+if(blockData[block[3]].pressurePlate && blockData[block[3]].activate){
+blockData[block[3]].activate(x,y,z)
+}
 }
 //Check collisions in the Y direction
 p.onGround = false
@@ -16923,6 +16975,17 @@ p.character.punchEffect = p.punchEffect + 2
 p.character.update()
 //p.hand.update()
 }
+function pressurePlateHasPressure(x,y,z){
+var collided = false
+if(x - 0.5 < p.x + p.w &&
+x + 0.5 > p.x - p.w &&
+y - 0.5 < p.y + p.topH &&
+y - 0.25 > p.y - p.bottomH &&
+z - 0.5 < p.z + p.w &&
+z + 0.5 > p.z - p.w) collided = true
+return collided
+}
+win.pressurePlateHasPressure = pressurePlateHasPressure
 let controls = function() {
 move.x = 0
 move.z = 0
@@ -18993,7 +19056,7 @@ for (let facei = 0; facei < directionalFaces.length; facei++) {
 verts = directionalFaces[facei]
 originalShapeVerts = shapeOriginalVerts[n][facei]
 texVerts = textureCoords[textureMap[tex[texNum]]]
-if(originalShapeVerts.texTag){
+if(originalShapeVerts && originalShapeVerts.texTag){
 if(tags[originalShapeVerts.texTag] && textureMap[tags[originalShapeVerts.texTag]]){
 texVerts = textureCoords[textureMap[tags[originalShapeVerts.texTag]]]
 }else continue
