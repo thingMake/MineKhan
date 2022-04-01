@@ -23161,7 +23161,7 @@ var host
 function initMultiplayer(target){
 if(preVersion) return alert("Multiplayer is not available on this version")
 if(multiplayer) return
-var ban = []
+//var ban = []
 host = false
 if(!target){
 target = world.id || 0
@@ -23232,12 +23232,13 @@ data:Date.now()
 })
 }else if(data.type === "getSave"){
 if(host){
-if(ban.includes(data.USER)){
+/*if(ban.includes(data.USER)){
 send({
 type: "ban",
 data: data.USER
 }, author)
 }else{
+}*/
 send({
 type:"loadSave",
 data:world.getSaveString(),
@@ -23250,7 +23251,6 @@ dimension: world.type || "overworld",
 cheats:cheats,
 inv: playersInv[data.USER]
 }, author)
-}
 }
 send({type:"mySkin", data:p.character.skinURL})
 }else if(data.type === "loadSave"){
@@ -23447,21 +23447,25 @@ multiplayerError = e
 multiplayer.close()
 }
 win.ban = (username, why) => {
-if(!host) return alert("Only the host can ban")
+//if(!host) return alert("Only the host can ban")
 send({
 type: "ban",
 data: username,
 reason:why
 })
-if(!ban.includes(username)) ban.push(username)
+//if(!ban.includes(username)) ban.push(username)
 }
 win.unban = username => {
-if(!host) return alert("Only the host can unban")
-if(ban.includes(username)) {
+//if(!host) return alert("Only the host can unban")
+/*if(ban.includes(username)) {
 var i = ban.indexOf(username)
 if(i === -1) return
 ban.splice(i,1)
-}
+}*/
+send({
+type:"unban",
+data: username
+})
 }
 }
 function getNetherBiome(biome) {
