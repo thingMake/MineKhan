@@ -14623,7 +14623,11 @@ target = off | WEST
 hasPower = true
 break
 }
-if(target){
+if(hasPower && !world.getPower(x,y,z)){
+world.setPower(x,y,z,16)
+world.spreadPower(x,y,z,16)
+world.setBlockPower(ax,ay,az,"strong",dir)
+playSound("click",0,1,0.6)
 setTimeout(function(){
 world.setBlock(x,y,z,target)
 world.setPower(x,y,z,0)
@@ -14631,12 +14635,6 @@ world.unspreadPower(x,y,z,16)
 world.setBlockPower(ax,ay,az,null,dir)
 playSound("click",0,1,0.5)
 },this.stone ? tickTime*20 : tickTime*30)
-}
-if(hasPower){
-world.setPower(x,y,z,16)
-world.spreadPower(x,y,z,16)
-world.setBlockPower(ax,ay,az,"strong",dir)
-playSound("click",0,1,0.6)
 }
 }
 var pressurePlateActivate = function(x,y,z){
@@ -14647,7 +14645,7 @@ world.setBlock(x,y,z, this.id | SLAB)
 }
 var pressurePlateOnupdate = function(x,y,z){
 var block = world.getBlock(x,y,z)
-if(block === (this.id | SLAB)){
+if(block === (this.id | SLAB) && !world.getPower(x,y,z)){
 world.setPower(x,y,z,16)
 world.spreadPower(x,y,z,16)
 world.setBlockPower(x,y-1,z,"strong","top")
@@ -19057,7 +19055,7 @@ verts = directionalFaces[facei]
 originalShapeVerts = shapeOriginalVerts[n][facei]
 texVerts = textureCoords[textureMap[tex[texNum]]]
 if(originalShapeVerts && originalShapeVerts.texTag){
-if(tags[originalShapeVerts.texTag] && textureMap[tags[originalShapeVerts.texTag]]){
+if(tags && tags[originalShapeVerts.texTag] && textureMap[tags[originalShapeVerts.texTag]]){
 texVerts = textureCoords[textureMap[tags[originalShapeVerts.texTag]]]
 }else continue
 }
