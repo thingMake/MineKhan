@@ -26,8 +26,9 @@ Willard's credits
 <meta charset="utf-8">
 <title>MineKhan</title>
 <base href="https://minekhan.thingmaker.repl.co">
-<meta name="keywords" content="MineKhan, survival, Alpha, nether"> <!--search "MineKhan" on Google-->
-<meta name="description" content="MineKhan with survival and nether and many more features">
+<meta name="keywords" content="MineKhan, survival, nether, redstone"> <!--search "MineKhan" on Google-->
+<meta name="description" content="MineKhan with survival, nether, multiplayer, redstone and many more features">
+<meta property="og:image" content="https://data.thingmaker.repl.co/images/minekhan.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" id="themeColor">
 <link id="vtfont" href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
@@ -503,7 +504,6 @@ gtag('js', new Date());
 gtag('config', 'G-VRNT3CCCGH');
 </script>
 <body>
-<img style="display:none;" src="https://data.thingmaker.repl.co/images/minekhan.png" alt="MineKhan"><!--Image is for search engines and stuff-->
 <div id="errorScreen" style="display:none;"></div>
 <canvas id="overlay" tabindex="0" width="600" height="600" style="position: absolute; top: 0px; left: 0px"></canvas>
 <input type="text" id="savebox" class="hidden" spellcheck="false" style="position: absolute; top: 10px; left: 10px; z-index: 1;">
@@ -3456,6 +3456,7 @@ if(strong) tags.power = 15
 if(tags.power) world.spreadPower(x,y,z,tags.power)
 },
 ondelete:function(x,y,z,prevTags){
+if(!tags) return
 var tags = prevTags
 if(tags.power) world.unspreadPower(x,y,z,tags.power)
 if(tags.north){
