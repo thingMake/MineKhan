@@ -17719,13 +17719,13 @@ world.addEntity(new Item(sx, sy, sz, 0, 0, 0, block, true))
 if(block === blockIds.tnt){
 blockData[blockIds.tnt].explode(sx,sy,sz, "explosion")
 }
-if(rand() > 0.5){
-var time = rand()*1000
-world.particles.push(new ShockwaveParticle(sx, sy, sz, time))
-}
 }/*end if(intensity > 0)*/else{
 continue
 }
+}
+if(intensity > 0 && rand() > 0.995){
+var time = rand()*1000
+world.particles.push(new ShockwaveParticle(sx, sy, sz, time))
 }
 }
 }//end for loop
