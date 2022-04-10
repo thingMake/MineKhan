@@ -21206,6 +21206,7 @@ explode(x,y,z,8, blockData[world.getBlock(x,y,z)].liquid || !worldSettings.tntEx
 class MovingBlock extends BlockEntity{
 constructor(block,x,y,z,mx,my,mz,despawns, solidWhenDone = false, tags = null){
 super(block, x,y,z)
+this.type = "MovingBlock"
 this.sx = x //s stands for start
 this.sy = y
 this.sz = z
@@ -24136,7 +24137,7 @@ return i
 }
 }
 getEntPos(ent){
-return {x:ent.x, y:ent.y, z:ent.z, yaw:ent.yaw, pitch:ent.pitch, block:ent.block, velx:ent.velx, vely:ent.vely, velz:ent.velz, amount:ent.amount, solidOnGround:ent.solidOnGround,harmEffect:ent.harmEffect, health:ent.health, from:ent.from, spawn:ent.spawn, value:ent.value, burning:ent.burning, durability:ent.durability}
+return {x:ent.x, y:ent.y, z:ent.z, yaw:ent.yaw, pitch:ent.pitch, block:ent.block, velx:ent.velx, vely:ent.vely, velz:ent.velz, amount:ent.amount, solidOnGround:ent.solidOnGround,harmEffect:ent.harmEffect, health:ent.health, from:ent.from, spawn:ent.spawn, value:ent.value, burning:ent.burning, durability:ent.durability, sx:ent.sx,sy:ent.sy,sz:ent.sz,mx:ent.mx,my:ent.my,mz:ent.mz,despawns:ent.despawns,solidWhenDone:ent.solidWhenDone}
 }
 addEntity(ent, remote){
 if(!ent.id)ent.id = Date.now()
@@ -24176,6 +24177,9 @@ ent = new PrimedTNT(0,0,0)
 break
 case "PrimedSuperTNT":
 ent = new PrimedSuperTNT(0,0,0)
+break
+case "MovingBlock":
+ent = new MovingBlock(p.block, p.sx,p.sy,p.sz,p.mx,p.my,p.mz,p.despawns,p.solidWhenDone)
 break
 case "EnderPearl":
 ent = new EnderPearl(0,0,0,0,0,0)
