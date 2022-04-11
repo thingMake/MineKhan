@@ -870,7 +870,9 @@ varying vec2 vTexture;
 void main(){
 vec4 color = texture2D(uSampler, vTexture);
 color.rgb *= tint;
-color.rgb = mix(color.rgb, vec3(255.,0.,0.), clamp(harmEffect/255., 0., 1.));
+if(harmEffect > 0.0){
+color.rgb = mix(color.rgb, vec3(255.,0.,0.), .5);
+}
 gl_FragColor = vec4(color.rgb * uLightLevel, color.a);
 if (gl_FragColor.a == 0.0) discard;
 }
@@ -11380,7 +11382,7 @@ Messages.add(str)
 }else{
 var str = "List of "+(cheats?"":"available ")+"commands:<br>"
 str += "Use <span style='color:lime;'>/? command_name</span> to get information about a command<br>"
-str += "The capitalization of command names do not matter."
+str += "The capitalization of command names do not matter.<br>"
 cmds.forEach(r => {
 if(!cheats && !r.noCheats) return
 str += "<span style='color:lightblue;'>/"+r.name+"</span> "
@@ -11534,7 +11536,7 @@ amount -= lastDamage
 }else return
 }
 p.health -= amount
-harmEffect = 40
+harmEffect = 30
 lastDamage = prev
 if(!nosound){
 if(p.health <= 0){
@@ -22165,7 +22167,7 @@ this.lastY = this.y
 if(fall > 3){
 let damage = Math.floor(fall-3)
 this.health -= damage
-this.harmEffect = 40
+this.harmEffect = 30
 }
 }
 if(this.harmEffect > 0){
@@ -22192,7 +22194,7 @@ damage -= this.lastDamage
 }else return
 }
 this.health -= damage
-this.harmEffect = 40
+this.harmEffect = 30
 this.lastDamage = prev
 }
 }
@@ -23388,7 +23390,7 @@ p.velocity.x += data.velx || 0
 p.velocity.z += data.velz || 0
 }
 }else if(data.type === "harmEffect"){
-if(players[data.id]) players[data.id].harmEffect = 40
+if(players[data.id]) players[data.id].harmEffect = 30
 }else if(data.type === "kill"){
 dieMessage = data.data
 die()
@@ -30074,7 +30076,7 @@ p.oxygen = 20;
 }
 if(harmEffect > 0){
 harmEffect --
-p.rz = max(harmEffect-20,0) / 200
+p.rz = max(harmEffect-15,0) / 200
 p.character.harmEffect = harmEffect
 updateHUD = true
 }
@@ -30148,7 +30150,7 @@ gl.clearColor(sky[0], sky[1], sky[2], 1.0)
 defineWorld(tick)
 if(tick) updateAmbient()
 if(harmEffect > 0){
-fill(255,0,0, harmEffect)
+fill(255,0,0, harmEffect*1.2)
 ctx.fillRect(0,0,width,height)
 }
 if(p.burning && !p.thirdPerson){
