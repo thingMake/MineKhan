@@ -23180,6 +23180,7 @@ target = world.id || 0
 host = true
 }
 players = {} //empty
+var canSendPos = true //if internet is slow, don't send positions too fast because it will slow down the connection
 multiplayerError = null
 multiplayer = new WebSocket("wss://server.thingmaker.repl.co/ws?target="+target)
 multiplayer.onopen = e => {
@@ -23224,12 +23225,14 @@ send({type:"entityPosAll", data: world.getEntities()})
 }
 }, 500)
 multiplayer.sendPos = () => {
+if(!canSendPos) return
 var obj = {type:"pos", data:p3, host:host, dimension: world.type}
 if(shouldSendInvStuff){
 obj.inv = invStuff
 obj.worldSettings = worldSettings
 shouldSendInvStuff = false
 }
+canSendPos = false
 send(obj)
 }
 }
@@ -23352,6 +23355,8 @@ thisplayer.setSkin(playerSkins[author])
 if(data.host && data.worldSettings){
 Object.assign(worldSettings, data.worldSettings)
 }
+}else if(data.type === "canSendPos"){
+canSendPos = true
 }else if(data.type === "dc"){
 if(players[data.data]){
 if(world) playerPoof(players[data.data]) //cool effect
