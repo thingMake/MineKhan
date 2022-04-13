@@ -1024,6 +1024,7 @@ res /= arguments.length
 return res
 }
 Math.PI2 = Math.PI / 2
+Math.PI4 = Math.PI / 4
 Math.PId = Math.PI * 2
 function xyArrayHas(arr,arr2,x,y,z){
 for(var i=0; i<arr.length; i+=4){
@@ -1651,7 +1652,7 @@ lodestoneSide: "0g0g8ĒĲYĊĂZ÷-ZéŞZ-ŊZPBWÖĎYâľH42óPk]5İÚľ×İ%ŕŢ
 lodestoneTop: "0g0g5ĒĲYĊĂZéŞZÖĎY÷-Z40]0i09CĺPĞù8080ëh8jc(ĩp$oĉóiÀ8įJÁ]pc?iPEÀc]JPyÀEQJP]oEĀJÁyocİk^]pEoÏÀĩÀcjAðio8090ëg9+ŁÚ)ù0iPwg0",
 anvilTop: "0g0g6000T4WPAY;ŚZ-ŊYÁ?W000000000000000000BmŀBĞŋ!ĊĕFA_^üĒ^ĒôĒĂđÄĒòĞē×ĝÉ_ÄŁĕĜłÁVÈĕĐļÁVÈVĐċÁFkıĝiòBįłöĞ{000000000000000000",
 anvil: "0g0g6;ŚZT4WPAYÇÒYÁ?W-ŊY0üăÛQS5]łJ]I1BAúĝg4đAÚįò9kČJ?wĈČUòy55y1PiÚ4ČòPEï0üò!PgĈČú6QSĈiSFy0Ĉù9]ë5ĞìTw1ÚĈJ%0iSĜiS0úÚĞëP0ÉÚ",
-slime: "0g0g5à6%ÏĻĕçC%ç+ĕÈČ%0Č90kĀdĞħS0z|21AwR$oÀ00Tcį0ySS8iS}g08g0]0S8î000À8ò001g0ëg2igwg04ùìx000įìS)44ĩĀÂi9w4ĀÝXJÚĞĿd0900S",
+slimeBlock: "0g0g5à6%ÏĻĕçC%ç+ĕÈČ%0Č90kĀdĞħS0z|21AwR$oÀ00Tcį0ySS8iS}g08g0]0S8î000À8ò001g0ëg2igwg04ùìx000įìS)44ĩĀÂi9w4ĀÝXJÚĞĿd0900S",
 soulSoil: "0g0g5ÇjY]ĹZ;ĚH)ĊWÖQH4Č^ÖgABNj|24FĘjÕû8PwÉQù1|ùİA2aÖ0]0ë^]20ùiÃwù8ëüúF1wAČP]91Fwag]9]íJJ2óSmķgiJ0Ďõëüŀ1+Qìmĸ5)KXĎòFĊ4",
 blueIce: "0g0g5×HYÛøZãėZ÷ŖZēLZ4ČI9ĭò0ü]2)P0J^x)TwíăSĚ1A5qSĊaQmŊSgJSCŁK6ĹwĞĹA5qx+JBgŊBCÂBwÁ5kÂxgh0kÁ0i94íT0ČIAüI5AùAĎķ9AĂB+ù|Cĸ",
 packedIce: "0g0g6êćHðYYJŖZċfZYÍZĲHZ0ČŁQCĿ5Eİ]ĞSF@aÑù0Pùrwù9Pgh1yJ?A]9AŁBy^PCİ0JŁF+I4ĎùBĭSFAIaĚ0Ö)SÁ0T|Ċ2Õë^Úg9Q2JÙùPFiJÑJ^|kĄAüJÙČŒ",
@@ -4805,12 +4806,14 @@ ongetexploded:function(x,y,z,b,world){
 fall(x,y,z,b,world,true)
 },
 },
-{ name: "slime",
-Name:"Slime",
+{
+name: "slimeBlock",
+Name:"Slime Block",
 transparent: true,
 shadow: false,
 bounciness: 0.6,
-speedFactor: 0.5
+speedFactor: 0.5,
+shapeName:"slimeBlock"
 },
 { 
 name:"soulSoil",
@@ -7156,8 +7159,9 @@ rotate:true
 {
 name:"honeyBlock",
 Name:"Block of Honey",
-textures:["honeyBlockBottom","honeyBlockTop","honeyBlockSide"],
-transparent:true
+textures:"honeyBlockBottom",
+transparent:true,
+shapeName:"honeyBlock"
 },
 {
 name:"honeycomb",
@@ -9234,6 +9238,7 @@ const crafts = {
 "junglePlanks,junglePlanks,junglePlanks,air,stick,air,air,stick":{name:"woodenPickaxe"},
 "darkOakPlanks,darkOakPlanks,darkOakPlanks,air,stick,air,air,stick":{name:"woodenPickaxe"},
 "acaciaPlanks,acaciaPlanks,acaciaPlanks,air,stick,air,air,stick":{name:"woodenPickaxe"},
+"cobblestone,cobblestone,cobblestone,air,stick,air,air,stick":{name:"stonePickaxe"},
 "ironIngot,ironIngot,ironIngot,air,stick,air,air,stick":{name:"ironPickaxe"},
 "goldIngot,goldIngot,goldIngot,air,stick,air,air,stick":{name:"goldenPickaxe"},
 "diamond,diamond,diamond,air,stick,air,air,stick":{name:"diamondPickaxe"},
@@ -9537,7 +9542,7 @@ var block2
 block2 = world.getBlock(sx,sy,sz+1);if(block2 && !blockData[block2][checkProp]){return false}
 if(block2 && !xyArrayHas(blocks,spreadAt,sx,sy,sz+1)){
 blocks.push(sx,sy,sz+1,block2)
-if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){
+if(block2 === blockIds.slimeBlock || block2 === blockIds.honeyBlock){
 spreadAt.push(sx,sy,sz+1,block2)
 }else if(!(!tx && !ty && tz === -1)){
 if(pistonFindStack(sx,sy,sz+1,tx,ty,tz,blocks) === false) return false
@@ -9546,7 +9551,7 @@ if(pistonFindStack(sx,sy,sz+1,tx,ty,tz,blocks) === false) return false
 block2 = world.getBlock(sx,sy,sz-1);if(block2 && !blockData[block2][checkProp]){return false}
 if(block2 && !xyArrayHas(blocks,spreadAt,sx,sy,sz-1)){
 blocks.push(sx,sy,sz-1,block2)
-if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){
+if(block2 === blockIds.slimeBlock || block2 === blockIds.honeyBlock){
 spreadAt.push(sx,sy,sz-1,block2)
 }else if(!(!tx && !ty && tz === 1)){
 if(pistonFindStack(sx,sy,sz-1,tx,ty,tz,blocks) === false) return false
@@ -9555,7 +9560,7 @@ if(pistonFindStack(sx,sy,sz-1,tx,ty,tz,blocks) === false) return false
 block2 = world.getBlock(sx,sy+1,sz);if(block2 && !blockData[block2][checkProp]){return false};
 if(block2 && !xyArrayHas(blocks,spreadAt,sx,sy+1,sz)){
 blocks.push(sx,sy+1,sz,block2)
-if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){
+if(block2 === blockIds.slimeBlock || block2 === blockIds.honeyBlock){
 spreadAt.push(sx,sy+1,sz,block2)
 }else if(!(!tx && ty === -1 && !tz)){
 if(pistonFindStack(sx,sy+1,sz,tx,ty,tz,blocks) === false) return false
@@ -9564,7 +9569,7 @@ if(pistonFindStack(sx,sy+1,sz,tx,ty,tz,blocks) === false) return false
 block2 = world.getBlock(sx,sy-1,sz);if(block2 && !blockData[block2][checkProp]){return false};
 if(block2 && !xyArrayHas(blocks,spreadAt,sx,sy-1,sz)){
 blocks.push(sx,sy-1,sz,block2)
-if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){
+if(block2 === blockIds.slimeBlock || block2 === blockIds.honeyBlock){
 spreadAt.push(sx,sy-1,sz,block2)
 }else if(!(!tx && ty === 1 && !tz)){
 if(pistonFindStack(sx,sy-1,sz,tx,ty,tz,blocks) === false) return false
@@ -9573,7 +9578,7 @@ if(pistonFindStack(sx,sy-1,sz,tx,ty,tz,blocks) === false) return false
 block2 = world.getBlock(sx+1,sy,sz);if(block2 && !blockData[block2][checkProp]){return false};
 if(block2 && !xyArrayHas(blocks,spreadAt,sx+1,sy,sz)){
 blocks.push(sx+1,sy,sz,block2)
-if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){
+if(block2 === blockIds.slimeBlock || block2 === blockIds.honeyBlock){
 spreadAt.push(sx+1,sy,sz,block2)
 }else if(!(tx === -1 && !ty && !tz)){
 if(pistonFindStack(sx+1,sy,sz,tx,ty,tz,blocks) === false) return false
@@ -9582,7 +9587,7 @@ if(pistonFindStack(sx+1,sy,sz,tx,ty,tz,blocks) === false) return false
 block2 = world.getBlock(sx-1,sy,sz);if(block2 && !blockData[block2][checkProp]){return false};
 if(block2 && !xyArrayHas(blocks,spreadAt,sx-1,sy,sz)){
 blocks.push(sx-1,sy,sz,block2)
-if(block2 === blockIds.slime || block2 === blockIds.honeyBlock){
+if(block2 === blockIds.slimeBlock || block2 === blockIds.honeyBlock){
 spreadAt.push(sx-1,sy,sz,block2)
 }else if(!(tx === 1 && !ty && !tz)){
 if(pistonFindStack(sx-1,sy,sz,tx,ty,tz,blocks) === false) return false
@@ -9600,7 +9605,7 @@ cy += ty
 cz += tz
 var block = world.getBlock(cx,cy,cz)
 if(block && !blockData[block].pistonPush) return false
-if(block === blockIds.slime || block === blockIds.honeyBlock){
+if(block === blockIds.slimeBlock || block === blockIds.honeyBlock){
 if(pistonFindStickyBlocksConnectedTo(cx,cy,cz,tx,ty,tz,block,blocks,"pistonPush") === false) return false
 }
 if(block){if(!xyArrayHas(blocks,null,cx,cy,cz)){blocks.push(cx,cy,cz,block)}}
@@ -9622,7 +9627,7 @@ cx += tx
 cy += ty
 cz += tz
 var block = world.getBlock(cx,cy,cz)
-if(block === blockIds.slime || block === blockIds.honeyBlock){
+if(block === blockIds.slimeBlock || block === blockIds.honeyBlock){
 if(pistonFindStickyBlocksConnectedTo(cx,cy,cz,-tx,-ty,-tz,block,blocks,"pistonPull") === false) return false
 }
 if(block && !xyArrayHas(blocks,null,cx,cy,cz) && blockData[block].pistonPull) blocks.push(cx,cy,cz,block)
@@ -13922,6 +13927,42 @@ west: 0
 },
 rotate:true
 },
+slimeBlock:{
+verts: [
+[objectify( 0,  0,  0, 16, 16, 0, 0), objectify( 3,  3,  3, 10, 10, 3, 3)], //bottom
+[objectify( 0, 16, 16, 16, 16, 0, 0), objectify( 3, 13, 13, 10, 10, 3, 3)], //top
+[objectify(16, 16, 16, 16, 16, 0, 0), objectify(13, 13, 13, 10, 10, 3, 3)], //north
+[objectify( 0, 16,  0, 16, 16, 0, 0), objectify( 3, 13,  3, 10, 10, 3, 3)], //south
+[objectify(16, 16,  0, 16, 16, 0, 0), objectify(13, 13,  3, 10, 10, 3, 3)], //east
+[objectify( 0, 16, 16, 16, 16, 0, 0), objectify( 3, 13, 13, 10, 10, 3, 3)]  //west
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+},
+honeyBlock:{
+verts: [
+[objectify( 0,  0,  0, 16, 16, 0, 0), objectify( 1,  1,  1, 14, 14, 1, 1)], //bottom
+[objectify( 0, 16, 16, 16, 16, 0, 0), objectify( 1, 15, 15, 14, 14, -31, 1)], //top
+[objectify(16, 16, 16, 16, 16, 0, 0), objectify(15, 15, 15, 14, 14, -15, 1)], //north
+[objectify( 0, 16,  0, 16, 16, 0, 0), objectify( 1, 15,  1, 14, 14, -15, 1)], //south
+[objectify(16, 16,  0, 16, 16, 0, 0), objectify(15, 15,  1, 14, 14, -15, 1)], //east
+[objectify( 0, 16, 16, 16, 16, 0, 0), objectify( 1, 15, 15, 14, 14, -15, 1)]  //west
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+},
 playerHand: {
 verts: [
 [objectify( 6,  6,  6, 4,  4, 0, 0)], //bottom
@@ -14711,7 +14752,7 @@ let chainBlock = Object.create(baseBlock)
 let potBlock = Object.create(baseBlock)
 let potCrossBlock = Object.create(baseBlock)
 let carpetBlock = Object.create(baseBlock)
-baseBlock.shape = shapes.cube
+baseBlock.shape = baseBlock.shapeName ? shapes[baseBlock.shapeName] : shapes.cube
 slabBlock.shape = shapes.slab
 slabBlock.transparent = true
 slabBlock.drop = d || (i | SLAB)
@@ -16856,6 +16897,7 @@ p3.y = p.y
 p3.z = p.z
 p3.ry = -p.ry
 p3.rx = -p.rx
+p3.bodyRot = p.bodyRot
 p3.sneaking = p.sneaking
 p3.survival = survival
 p3.username = username || ""
@@ -16974,8 +17016,17 @@ p.character.render()
 }
 }
 let updtPlayer = function(){
+if(p.ry - p.bodyRot > Math.PI) p.bodyRot += Math.PId //prevent weird thing happening when rotation was 0 but is now 360
+if(p.ry - p.bodyRot < -Math.PI) p.bodyRot -= Math.PId
+if(p.ry - p.bodyRot > Math.PI2) p.bodyRot = p.ry - Math.PI2//if rotation difference is too much rotate body
+if(p.ry - p.bodyRot < -Math.PI2) p.bodyRot = p.ry + Math.PI2
+if(move.z && !move.x) p.bodyRot = lerp(0.4, p.bodyRot, p.ry) //forward and backward
+if(move.x > 0 && !move.z) p.bodyRot = lerp(0.4, p.bodyRot, p.ry-Math.PI2) //right
+if(move.x < 0 && !move.z) p.bodyRot = lerp(0.4, p.bodyRot, p.ry+Math.PI2) //left
+if((move.x > 0 && move.z > 0) || (move.x < 0 && move.z < 0)) p.bodyRot = lerp(0.4, p.bodyRot, p.ry-Math.PI4) //diagnal
+if((move.x < 0 && move.z > 0) || (move.x > 0 && move.z < 0)) p.bodyRot = lerp(0.4, p.bodyRot, p.ry+Math.PI4) //diagnal
 p.character.setPos(p.x,p.y,p.z)
-p.character.setRot(-p.rx,-p.ry)
+p.character.setRot(-p.rx,-p.ry, -p.bodyRot)
 p.character.burning = p.burning
 p.character.sneaking = p.sneaking
 p.character.walking = p.walking
@@ -21872,7 +21923,8 @@ part.pry2 = part.ry2
 }
 this.pOffsetry = this.offsetry
 this.parts.head.rx = this.headPitch
-this.parts.head.ry = this.headYaw - this.yaw
+this.parts.head.ry = 0
+this.parts.head.ry2 = this.headYaw - this.yaw
 if(this.sneaking){
 this.offsetY = this.sneakingOffsetY
 var rot = Math.PI / 6
@@ -21888,6 +21940,7 @@ this.parts.leftLeg.rx = this.parts.rightLeg.rx = 0
 this.parts.head.prx = this.parts.head.rx
 this.parts.head.pry = this.parts.head.ry
 this.parts.head.prz = this.parts.head.rz
+this.parts.head.pry2 = this.parts.head.ry2
 this.parts.leftArm.rz = armRot
 this.parts.rightArm.rz = -armRot
 var part = this.parts.holding
@@ -21958,9 +22011,10 @@ this.y = y
 this.z = z
 this.lastUpdate = performance.now()
 }
-setRot(rx,ry){
+setRot(rx,ry, bodyRot){
 this.headPitch = rx
-this.headYaw = this.yaw = ry
+this.headYaw = ry
+this.yaw = (bodyRot || bodyRot === 0) ? bodyRot : ry
 }
 changeBlock(blockID){
 return //using skin texture, not block texture
@@ -23328,7 +23382,7 @@ players[author] = new Player(abs( (pos.username || "").hashCode()) % 80 + 1)
 }
 let thisplayer = players[author]
 thisplayer.setPos(pos.x,pos.y,pos.z)
-thisplayer.setRot(pos.rx, pos.ry)
+thisplayer.setRot(pos.rx, pos.ry, pos.bodyRot)
 thisplayer.sneaking = pos.sneaking
 thisplayer.dimension = data.dimension
 thisplayer.id = author
@@ -28188,6 +28242,7 @@ p.walking = false
 p.punchEffect = 0
 p.temperature = 10 // 0 to 20
 p.lastTemperature = 10
+p.bodyRot = 0
 win.player = p
 win.p2 = p2
 }
