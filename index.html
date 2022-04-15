@@ -23102,6 +23102,19 @@ if (ellapsed > 30) {
 console.log(message, ellapsed.toFixed(2), "milliseconds")
 }
 }
+function timeoutPromise(p, time){
+return new Promise((resolve, reject) => {
+var start = Date.now()
+var t = setTimeout(resolve, time)
+p.then(r => {
+if(Date.now() - start < time){
+clearTimeout(t)
+resolve(r)
+}
+})
+})
+}
+win.timeoutPromise = timeoutPromise
 function updateUserTo(fetchRes){
 if(typeof fetchRes === "object"){
 username = fetchRes.username
@@ -23172,8 +23185,34 @@ return "notLoggedIn"
 }
 var worlds
 await fetch("https://server.thingmaker.repl.co/worlds").then(r => r.json()).then(r => worlds=r).catch(e => logError(e))
+await fetch("https://minekhan.repl.co/servers/externalServers.json").then(r => r.json()).then(async r => {
+var promises = []
+var start = Date.now()
+for(var v of r){
+promises.push(
+timeoutPromise(
+fetch("https://"+v+"/info").then(r => r.json()).then(r => worlds.push({
+external: true,
+url:v,
+name:r.name,
+id:"external:"+v,
+description:r.description,
+players:r.players,
+ping: Date.now() - start
+})),
+20000
+)
+)
+}
+await Promise.all(promises)
+})
 if(pingCallback){
-fetch("https://server.thingmaker.repl.co/worldsPing").then(r => r.json()).then(pingCallback).catch(e => logError(e))
+fetch("https://server.thingmaker.repl.co/worldsPing").then(r => r.json()).then(pings => {
+for(var w of worlds){
+if(w.external) pings[w.id] = w.ping
+}
+pingCallback(pings)
+}).catch(e => logError(e))
 }
 return worlds
 }
@@ -23227,6 +23266,7 @@ var host
 function initMultiplayer(target){
 if(preVersion) return alert("Multiplayer is not available on this version")
 if(multiplayer) return
+target = target.startsWith("external:") ? "wss://"+target.replace("external:","") : "wss://server.thingmaker.repl.co/ws?target="+target 
 //var ban = []
 host = false
 if(!target){
@@ -23236,7 +23276,7 @@ host = true
 players = {} //empty
 var canSendPos = true //if internet is slow, don't send positions too fast because it will slow down the connection
 multiplayerError = null
-multiplayer = new WebSocket("wss://server.thingmaker.repl.co/ws?target="+target)
+multiplayer = new WebSocket(target)
 multiplayer.onopen = e => {
 /*multiplayer.send(JSON.stringify({
 "auth": achexUsername,
@@ -28369,7 +28409,8 @@ if (elem && elem[0]) {
 elem[0].classList.remove("selected")
 }
 }
-function addWorld(name, id, host, players) {
+function addWorld(server) {
+var {name,id,host,players,external} = server
 let div = doc.createElement("div")
 div.className = "world"
 div.onclick = e => {
@@ -28381,8 +28422,9 @@ let br = "<br>"
 div.id = id
 div.innerHTML = "<div class='ping'>Pinging...</div>"
 div.innerHTML += "<strong>" + Messages.format(name)+ "</strong>" + br
-div.innerHTML += "Hosted by "+host + br
-div.innerHTML += players.length+" player"+(players.length===1 ? "" : "s")+" online"
+if(external) div.innerHTML += Messages.format(server.description) + br
+else div.innerHTML += "Hosted by "+host + br
+if(players) div.innerHTML += players.length+" player"+(players.length===1 ? "" : "s")+" online"
 servers[id] = {
 id:id,
 name:name,
@@ -28415,7 +28457,7 @@ p.innerHTML = "Error"
 }).then(r => worlds=r)
 if(worlds === "notLoggedIn") return changeScene("main menu")
 if(worlds === "offline") return window.servers.innerHTML = "<div class='message'>You are offline. Connect to the internet first.</div>"
-worlds.forEach(r => addWorld(r.name, r.id, r.host, r.players))
+worlds.forEach(r => addWorld(r))
 var pingStart = Date.now()
 function addPingMsg(msg){
 var div = document.createElement("div")
