@@ -3289,7 +3289,7 @@ shadow: false,
 portal: true,
 transparent:true,
 lightLevel: 11,
-flatIcone:true,
+flatIcon:true,
 ontouch: function(){
 touchingPortal = true
 portalEffect += 2
@@ -18034,6 +18034,7 @@ world.setBlock(x,y,z, 0)
 world.addEntity(new BlockEntity(b, x,y,z, true))
 }else{
 setTimeout(() => {
+if(world.getBlock(x,y-1,z)) return
 world.setBlock(x,y,z, 0)
 world.addEntity(new BlockEntity(b, x,y,z, true))
 }, tickTime)
@@ -18043,6 +18044,8 @@ function needsSupportingBlocks(x,y,z, b,world){ // if block under is gone, dissa
 var under = world.getBlock(x,y-1,z)
 if(!under || !blockData[under].solid){
 setTimeout(() => {
+var under = world.getBlock(x,y-1,z)
+if(under && blockData[under].solid) return
 world.setBlock(x,y,z, 0)
 world.addEntity(new Item(x,y,z,0,0,0,b,true))
 blockParticles(b,x,y,z,30,world)
@@ -19509,6 +19512,13 @@ world.setBlock(x, y, z, blockIds.purpleCactusFruit|CROSS, false)
 let x = (rnd >> 8) + this.x
 let y = (rnd >> 4 & 15) + this.y
 let z = (rnd & 15) + this.z
+var tall = 0
+var maxTall = 3
+for(var t=0; t<maxTall; t++){
+if(world.getBlock(x,y-t,z) === (blockIds.cactus|CACTUS)) tall++
+else break
+}
+if(tall >= maxTall) return
 var above = world.getBlock(x,y+1,z)
 if(blockData[above].cactusFruit){
 if(world.getBlock(x,y+2,z)) return //the cactus fruit can't replace blocks
