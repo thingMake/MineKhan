@@ -20639,7 +20639,7 @@ if (load.x === chunkX && load.z === chunkZ) {
 let y = load.y * 16
 for (let j in load.blocks) {
 if(blockData[load.blocks[j]]){ // if a block doesn't exsist, they won't be generated
-world.setBlock((j >> 8 & 15) + this.x, (j >> 4 & 15) + y, (j & 15) + this.z, load.blocks[j])
+world.setBlock((j >> 8 & 15) + this.x, (j >> 4 & 15) + y, (j & 15) + this.z, load.blocks[j], false,false,true,true)
 }
 }
 world.loadFrom.splice(i--, 1)
@@ -23484,13 +23484,13 @@ var host
 function initMultiplayer(target){
 if(preVersion) return alert("Multiplayer is not available on this version")
 if(multiplayer) return
-target = target.startsWith("external:") ? "wss://"+target.replace("external:","") : "wss://server.thingmaker.repl.co/ws?target="+target 
 //var ban = []
 host = false
 if(!target){
-target = world.id || 0
+target = (world.id || 0) + ""
 host = true
 }
+target = target.startsWith("external:") ? "wss://"+target.replace("external:","") : "wss://server.thingmaker.repl.co/ws?target="+target 
 players = {} //empty
 var canSendPos = true //if internet is slow, don't send positions too fast because it will slow down the connection
 multiplayerError = null
@@ -24223,7 +24223,7 @@ if(!noOnupdate && blockID && blockData[blockID].onplace){
 blockData[blockID].onplace(x,y,z)
 }
 if(multiplayer && !remote){
-send({type:"setBlock", data:{x:x, y:y, z:z, block:blockID, dimension:getDimension(), keepTags:keepTags}})
+send({type:"setBlock", data:{x:x, y:y, z:z, block:blockID, dimension:getDimension(), keepTags:keepTags, prevBlock:prev}})
 }
 //Update the 6 adjacent blocks and 1 changed block
 if (xm && xm !== 15 && zm && zm !== 15) {
