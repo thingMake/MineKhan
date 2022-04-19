@@ -11746,7 +11746,7 @@ if(p.totalXP > 0) world.addEntity(new ExperienceOrb(p.x,p.y,p.z,p.totalXP))
 }
 changeScene("dead")
 releasePointer()
-p3.y = 0
+p3.hidden = true
 if(multiplayer) send({type:"die", id:achexUsername, message:dieMessage})
 }
 function damage(amount, why, nosound,type){
@@ -11853,7 +11853,8 @@ x: 0,
 y: 0,
 z: 0,
 survival: false,
-username: ""
+username: "",
+hidden: false
 }
 let controlMap = {}
 function setControl(name, key, Name, shift = false, ctrl = false, alt = false){
@@ -17118,6 +17119,7 @@ p3.holding = holding || 0
 p3.walking = p.walking
 p3.sprinting = p.sprinting
 p3.punchEffect = p.punchEffect
+p3.hidden = screen === "dead"
 updateTextures()
 let prevX
 let prevY
@@ -17241,6 +17243,7 @@ p.character.walking = p.walking
 p.character.sprinting = p.sprinting
 if(p.thirdPerson) p.character.holding = holding || 0
 p.character.punchEffect = p.punchEffect + 2
+p.character.hidden = p3.hidden
 p.character.update()
 //p.hand.update()
 }
@@ -22130,6 +22133,7 @@ if(this.dieEffect > Math.PI2){
 this.y = 0
 this.die = false
 this.dieEffect = 0
+this.hidden = true
 }
 }
 for(var p in this.parts){
@@ -22287,6 +22291,7 @@ glExtensions.vertex_array_object.bindVertexArrayOES(null)
 this.cached[blockID] = this.vao*/
 }
 render(){
+if(this.hidden) return
 let diff = (performance.now() - this.lastUpdate) / tickTime
 if (diff > 1) diff = 1
 const offsetY = this.offsetY
@@ -23657,6 +23662,7 @@ thisplayer.holding = pos.holding || 0
 thisplayer.walking = pos.walking
 thisplayer.sprinting = pos.sprinting
 thisplayer.punchEffect = pos.punchEffect
+thisplayer.hidden = pos.hidden
 if(data.host){
 worldTime = pos.time
 }
