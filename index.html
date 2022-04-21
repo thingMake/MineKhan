@@ -10504,6 +10504,7 @@ inv: world.getInv(),
 surviv: world.getSurvivStr(),
 ent: world.getEntities(),
 tags: world.getEditedTags(),
+netherTags: dimensions.nether.getEditedTags(),
 mod: world.mod,
 thumbnail: genWorldImage(),
 achievments:achievments,
@@ -17860,13 +17861,16 @@ crack.delayStart = now
 crack.breakStart = now
 }
 if(breaking){
+var usingTool = false
 var breakTime = blockData[block].breakTime
 var breakType = blockData[block].type
 if(holding && blockData[holding].shears && blockData[block].shearBreakTime){
 breakTime = blockData[block].shearBreakTime
+usingTool = true
 }
 if(holding && (blockData[holding].pickaxe || (blockData[holding].shovel && breakType === "ground") || (blockData[holding].axe && breakType === "wood") || (blockData[holding].hoe && breakType === "plant2"))){
 breakTime /= blockData[holding].mineSpeed
+usingTool = true
 }
 if(inWater === 1){
 breakTime *= 5
@@ -17902,6 +17906,11 @@ x += 0.5
 break
 }
 blockParticles(block, x,y,z, 4, "breaking")
+if(!usingTool && blockData[block].damage){
+var type = blockData[block].burnPlayer ? "fire" : ""
+damage(blockData[block].damage/2, username+" died while punching "+blockData[block].Name+".", false, type)
+if(blockData[block].burnPlayer) p.burnTimer += 1
+}
 p.punchEffect = 10
 }
 if(crack.idx >= crack.length){
@@ -23571,15 +23580,16 @@ data: data.USER
 }, author)
 }else{
 }*/
+var overworld = dimensions.overworld
 send({
 type:"loadSave",
-data:world.getSaveString(),
-nether:world.getNetherSaveString(),
-tags: world.getEditedTags(),
-mod: world.mod,
-id: world.id || Date.now(),
+data:overworld.getSaveString(),
+nether:overworld.getNetherSaveString(),
+tags: overworld.getEditedTags(),
+netherTags: dimensions.nether.getEditedTags(),
+mod: overworld.mod,
+id: overworld.id || Date.now(),
 time: worldTime,
-dimension: world.type || "overworld",
 cheats:cheats,
 inv: playersInv[data.USER]
 }, author)
@@ -23613,7 +23623,6 @@ if(survival){
 setHotbar([0,0,0,0,0,0,0,0,0])
 clearInv()
 }
-world = dimensions[data.dimension || "overworld"]
 worldTime = data.time
 cheats = data.cheats
 if(data.inv){
@@ -23628,6 +23637,7 @@ survival = data.inv.survival || false
 if(data.survivStr) world.loadSurvivStr(data.survivStr)
 }
 world.editedTagsToLoad = data.tags
+dimensions.nether.editedTagsToLoad = data.netherTags
 world.mod = data.mod
 if(data.mod){
 try{
@@ -23906,7 +23916,6 @@ this.loadFrom = []
 this.entities = []
 this.particles = []
 this.lastChunk = ","
-this.edited = false
 this.saveStr = null
 this.hasLoaded = false
 this.editedTags = []
@@ -24254,7 +24263,6 @@ if (xm | zm === 0) { this.updateBlock(x - 1, y, z - 1, lazy); }
 if (xm === 15 && zm === 0) { this.updateBlock(x + 1, y, z - 1, lazy); }
 if (xm === 0 && zm === 15) { this.updateBlock(x - 1, y, z + 1, lazy); }
 if (xm & zm === 15) { this.updateBlock(x + 1, y, z + 1, lazy); }
-this.edited = true
 }
 tagsChanged(x,y,z, t, remote){
 var str = x.toString(36)+","+y.toString(36)+","+z.toString(36)
@@ -25129,13 +25137,13 @@ return str
 getSaveString() {
 let world = this
 if(this.type !== "") world = dimensions.overworld //save overworld
-if(!world.edited && world.saveStr) return world.saveStr
+if(!world.hasLoaded && world.saveStr) return world.saveStr
 return world.getThisSaveString()
 }
 getNetherSaveString(){
 let world = this
 if(this.type !== "nether") world = dimensions.nether //save nether
-if(!world.edited && world.saveStr) return world.saveStr
+if(!world.hasLoaded && world.saveStr) return world.saveStr
 return world.getThisSaveString()
 }
 getInv(){
@@ -25198,6 +25206,7 @@ str += p.XP+","+p.level
 return str
 }
 getEditedTags(){
+if(!this.hasLoaded) return this.editedTagsToLoad
 var obj = {}
 for(var pos of this.editedTags){
 var arr = pos.split(",")
@@ -26439,7 +26448,7 @@ let closest = Infinity
 let cname = "Yourself"
 for (let name in players) {
 let pos = players[name]
-if(pos.dimension === world.type){
+if(pos.dimension === world.type && !pos.hidden){
 let distance = sqrt((pos.x - p2.x)*(pos.x - p2.x) + (pos.y - p2.y)*(pos.y - p2.y) + (pos.z - p2.z)*(pos.z - p2.z))
 if (distance < closest) {
 closest = distance
@@ -29648,7 +29657,7 @@ let surviv
 let mod
 let nether
 let ent
-let tags
+let tags, netherTags
 if (!selectedWorld && !boxCenterTop.value.startsWith("JSON")) {
 code = boxCenterTop.value
 } else {
@@ -29670,6 +29679,7 @@ surviv = data.surviv
 nether = data.nether
 ent = data.ent
 tags = data.tags
+netherTags = data.netherTags
 if(data.achievments) achievments = data.achievments
 playersInv = data.playersInv || {}
 try{
@@ -29718,6 +29728,7 @@ world.posEntity(ent[i])
 }
 }
 world.editedTagsToLoad = tags
+dimensions.nether.editedTagsToLoad = netherTags
 if(mod){
 try{mod()}catch(e){console.log(e)}
 }
@@ -30314,8 +30325,8 @@ p.foodJitter = -1
 if(p.touchingBurnBlock && tick){
 p.burnStart = now
 p.burnTimer += 0.2
-if(p.burnTimer > 16) p.burnTimer = 16
 }
+if(p.burnTimer > 16) p.burnTimer = 16
 if((wet || freezeEffect > 0) && p.burnTimer > 0 && tick) {
 p.burnTimer = 0
 poof(p.x,p.y-p.bottomH+0.25,p.z, 8)
