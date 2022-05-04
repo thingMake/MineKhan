@@ -166,6 +166,15 @@ background-position: 0 0;
 background-size: 40px 600%;
 display:inline-block;
 }
+.world .lockImg{
+width: 14px;
+height: 16px;
+image-rendering: pixelated;
+float: right;
+margin-left: 4px;
+background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAICAYAAAA1BOUGAAAAAXNSR0IArs4c6QAAAD9JREFUGFdjZICChQsX/oex4+PjGUFsMAGSgAkg8xnRJZBNwi+ZmZkJtwumC0YzIktOnz6dITMzE66GeEl0YwHnrii1au6ixAAAAABJRU5ErkJggg==");
+background-size:100%;
+}
 .world-select .message{
 font-size: 15px;
 font-family: 'VT323', 'Courier New', Courier, monospace;
@@ -3599,7 +3608,7 @@ world.setBlockPower(x,y-1,z, target, "top",dimension)
 }
 }
 }else if(blockPowerChanged){
-var shouldBeOn = /*world.getRedstoneWirePower(x,y,z) || */world.getSurroundingBlockPower(x,y,z,"nether") === "strong"
+var shouldBeOn = /*world.getRedstoneWirePower(x,y,z) || */world.getSurroundingBlockPower(x,y,z,dimension) === "strong"
 var power = world.getPower(x,y,z,dimension)
 if(shouldBeOn && !power){
 world.setPower(x,y,z,15,false,dimension)
@@ -6110,6 +6119,7 @@ glassSound: true
 },
 {
 name: "blueStainedGlassPane",
+Name: "Blue Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -6119,7 +6129,7 @@ glassSound: true
 },
 {
 name: "blackStainedGlassPane",
-Name: "Blue Stained Glass Pane",
+Name: "Black Stained Glass Pane",
 transparent: true,
 shadow: false,
 breakTime: 0.3,
@@ -11407,7 +11417,7 @@ let replace = blockIds[split[1]]
 if(!split[1]) replace = 0
 let into = blockIds[split[2]]
 if(!split[2]) into = 0
-replaceBlocks(prevPos[0], prevPos[1]-1, prevPos[2], p2.x, p2.y-1, p2.z, replace, into)
+replaceBlocks(prevPos[0], prevPos[1]-1, prevPos[2], p2.x, p2.y-1, p2.z, replace, into, p.dimension)
 }
 },
 {
@@ -11464,32 +11474,6 @@ Messages.add("Killed: "+killed.join(", "))
 Messages.add("No such target: "+split[1])
 }
 }
-},
-{
-name: "ban",
-args: ["username","reason"],
-info: "Bans a player. They cannot rejoin the world. Reason is the reason why you banned them. Only bans them until multiplayer turns off",
-func: split => {
-if(multiplayer && win.ban){
-ban(split[1], split.slice(2).join(" "))
-}else{
-Messages.add("Error: can't ban.")
-}
-},
-noCheats:true
-},
-{
-name: "unban",
-args: ["username"],
-info: "Unbans a player.",
-func: split => {
-if(win.unban){
-unban(split[1])
-}else{
-Messages.add("Error: can't ban.")
-}
-},
-noCheats:true
 },
 {
 name: "time",
@@ -11577,18 +11561,6 @@ if(isNaN(p.z)) p.z = pz
 },
 },
 {
-name:"online",
-args:[],
-noCheats: true,
-info: "Lists people that are playing on this world.",
-func: split => {
-if(!multiplayer){
-return Messages.add("You are not in a multiplayer world.")
-}
-send({type:"fetchUsers"})
-}
-},
-{
 name:"playSound",
 args:["sound", "volume", "pitch"],
 info:"Plays a sound. Sound can be any sound, for example: click, block.grass.dig1, entity.generic.explode1. Volume is a number from 0 to 1.",
@@ -11602,6 +11574,57 @@ if(multiplayer) send({type:"playSound", data:split[1], volume:volume, pitch:pitc
 Messages.add("That sound doesn't exsist.")
 }
 }
+},
+{
+name:"online",
+args:[],
+noCheats: true,
+info: "Lists people that are playing on this world.",
+func: split => {
+if(!multiplayer){
+return Messages.add("You are not in a multiplayer world.")
+}
+send({type:"fetchUsers"})
+}
+},
+{
+name: "ban",
+args: ["username","reason"],
+info: "Bans a player. They cannot rejoin the world. Reason is the reason why you banned them. Only bans them until multiplayer turns off",
+func: split => {
+if(multiplayer && win.ban){
+ban(split[1], split.slice(2).join(" "))
+}else{
+Messages.add("Error: can't ban.")
+}
+},
+noCheats:true
+},
+{
+name: "unban",
+args: ["username"],
+info: "Unbans a player.",
+func: split => {
+if(win.unban){
+unban(split[1])
+}else{
+Messages.add("Error: can't ban.")
+}
+},
+noCheats:true
+},
+{
+name:"whitelist",
+args: ["action","username"],
+info: "Allow certain people to join. Uses:<br>/whitelist enable<br>/whitelist disable<br>/whitelist add username<br>/whitelist remove username",
+func: split => {
+if(!multiplayer) return Messages.add("Not in a multiplayer world")
+if(split[1] === "enable") send({type:"whitelist",data:"enable"})
+else if(split[1] === "disable") send({type:"whitelist",data:"disable"})
+else if(split[1] === "add") send({type:"whitelist",data:"add",who:split[2]})
+else if(split[1] === "remove") send({type:"whitelist",data:"remove",who:split[2]})
+},
+noCheats: true
 },
 {
 name:"sendEval",
@@ -14863,11 +14886,11 @@ tex[4] = temp // East = North
 return tex
 }
 win.initBlockData = function(){
-var buttonOnclick = function(x,y,z){
+var buttonOnclick = function(x,y,z,dimension){
 var off = this.id | BUTTON
 var on = this.id | SLAB
 var target = null
-switch(world.getBlock(x,y,z)){
+switch(world.getBlock(x,y,z,dimension)){
 case off | NORTH:
 target = on | NORTH
 break
@@ -14881,15 +14904,15 @@ case off | WEST:
 target = on | WEST
 }
 if(target){
-world.setBlock(x,y,z,target)
+world.setBlock(x,y,z,target, false,false,false,false,dimension)
 }
 }
-var buttonOnupdate = function(x,y,z){
+var buttonOnupdate = function(x,y,z,b,world,sx,sy,sz,dimension){
 var off = this.id | BUTTON
 var on = this.id | SLAB
 var target = null
 var ax=x,ay=y,az=z, dir
-var block = world.getBlock(x,y,z)
+var block = world.getBlock(x,y,z,dimension)
 switch(block){
 case on | NORTH:
 case off | NORTH:
@@ -14931,43 +14954,43 @@ target = off | WEST
 hasPower = true
 break
 }
-if(hasPower && !world.getPower(x,y,z)){
-world.setPower(x,y,z,16)
-world.spreadPower(x,y,z,16)
-world.setBlockPower(ax,ay,az,"strong",dir)
-playSound("click",0,1,0.6)
+if(hasPower && !world.getPower(x,y,z,dimension)){
+world.setPower(x,y,z,16,false,dimension)
+world.spreadPower(x,y,z,16,dimension)
+world.setBlockPower(ax,ay,az,"strong",dir,dimension)
+playSound("click",0,posSound(x,y,z),0.6)
 setTimeout(function(){
-world.setBlock(x,y,z,target)
-world.setPower(x,y,z,0)
-world.unspreadPower(x,y,z,16)
-world.setBlockPower(ax,ay,az,null,dir)
-playSound("click",0,1,0.5)
+world.setBlock(x,y,z,target, false,false,false,false,dimension)
+world.setPower(x,y,z,0,false,dimension)
+world.unspreadPower(x,y,z,16,false,dimension)
+world.setBlockPower(ax,ay,az,null,dir,dimension)
+playSound("click",0,posSound(x,y,z),0.5)
 },this.stone ? tickTime*20 : tickTime*30)
 }
 }
-var pressurePlateActivate = function(x,y,z){
+var pressurePlateActivate = function(x,y,z,dimension){
 if(this.heavyWeighted || this.lightWeighted) return //not going to do those yet
-if(world.getBlock(x,y,z) === this.id && pressurePlateHasPressure(x,y,z)){
-world.setBlock(x,y,z, this.id | SLAB)
+if(world.getBlock(x,y,z,dimension) === this.id && pressurePlateHasPressure(x,y,z,dimension)){
+world.setBlock(x,y,z, this.id | SLAB, false,false,false,false,dimension)
 }
 }
-var pressurePlateOnupdate = function(x,y,z){
-var block = world.getBlock(x,y,z)
-if(block === (this.id | SLAB) && !world.getPower(x,y,z)){
-world.setPower(x,y,z,16)
-world.spreadPower(x,y,z,16)
-world.setBlockPower(x,y-1,z,"strong","top")
-playSound("click",0,1,0.6)
+var pressurePlateOnupdate = function(x,y,z,b,world,sx,sy,sz,dimension){
+var block = world.getBlock(x,y,z,dimension)
+if(block === (this.id | SLAB) && !world.getPower(x,y,z,dimension)){
+world.setPower(x,y,z,16,false,dimension)
+world.spreadPower(x,y,z,16,dimension)
+world.setBlockPower(x,y-1,z,"strong","top",dimension)
+playSound("click",0,posSound(x,y,z),0.6)
 var me = this
 var i = setInterval(function(){
-if(pressurePlateHasPressure(x,y,z)) return
+if(pressurePlateHasPressure(x,y,z,dimension)) return
 clearInterval(i)
 setTimeout(function(){
-world.setBlock(x,y,z,me.id)
-world.setPower(x,y,z,0)
-world.unspreadPower(x,y,z,16)
-world.setBlockPower(x,y-1,z,null,"top")
-playSound("click",0,1,0.5)
+world.setBlock(x,y,z,me.id, false,false,false,false,dimension)
+world.setPower(x,y,z,0,false,dimension)
+world.unspreadPower(x,y,z,16,false,dimension)
+world.setBlockPower(x,y-1,z,null,"top",dimension)
+playSound("click",0,posSound(x,y,z),0.5)
 }, tickTime*20)
 }, tickTime*2)
 }
@@ -15067,9 +15090,9 @@ if(baseBlock.torch || baseBlock.chain){
 slabBlock.drop = i
 }
 if(baseBlock.door){//doesn't work: open and close weirdly
-var func = function(x,y,z){
-var o = world.getTagByName(x,y,z,"open")
-var b = world.getBlock(x,y,z)
+var func = function(x,y,z,dimension){
+var o = world.getTagByName(x,y,z,"open",dimension)
+var b = world.getBlock(x,y,z,dimension)
 var door2 = (b & SLAB) === SLAB
 var shapeId = door2 ? (this.id | SLAB) : (this.id | DOOR)
 var setId = door2 ? (this.id | SLAB) : (this.id | DOOR)
@@ -15095,16 +15118,16 @@ set = setId | WEST
 set = setId | SOUTH
 }
 }
-world.setBlock(x,y,z,set)
-world.setTagByName(x,y,z,"open",!o)
+world.setBlock(x,y,z,set, false,false,false,false,dimension)
+world.setTagByName(x,y,z,"open",!o,false,dimension)
 }
-var onclick = baseBlock.name === "ironDoor" ? emptyFunc : function(x,y,z){
-this.toggle(x,y,z)
+var onclick = baseBlock.name === "ironDoor" ? emptyFunc : function(x,y,z,dimension){
+this.toggle(x,y,z,dimension)
 }
-var onpowerupdate = function(x,y,z){
-var power = world.getRedstonePower(x,y,z) || world.getSurroundingBlockPower(x,y,z) ? true : false
-var open = world.getTagByName(x,y,z,"open") ? true : false
-if(power !== open) this.toggle(x,y,z)
+var onpowerupdate = function(x,y,z,sx,sy,sz,blockPowerChanged,dimension){
+var power = world.getRedstonePower(x,y,z,dimension) || world.getSurroundingBlockPower(x,y,z,dimension) ? true : false
+var open = world.getTagByName(x,y,z,"open",dimension) ? true : false
+if(power !== open) this.toggle(x,y,z,dimension)
 }
 baseBlock.toggle = func.bind(baseBlock)
 baseBlock.onclick = onclick.bind(baseBlock)
@@ -15247,8 +15270,8 @@ slabBlock.shape = shapes.fenceGateWall
 stairBlock.shape = shapes.fenceGateOpen
 crossBlock.shape = shapes.fenceGateWallOpen
 crossBlock.transparent = true
-baseBlock.onclick = slabBlock.onclick = stairBlock.onclick = crossBlock.onclick = (function(x,y,z){
-var b = world.getBlock(x,y,z)
+baseBlock.onclick = slabBlock.onclick = stairBlock.onclick = crossBlock.onclick = (function(x,y,z,dimension){
+var b = world.getBlock(x,y,z,dimension)
 var set
 var id = this.id
 if((id | CUBE) === b){
@@ -15260,8 +15283,7 @@ set = id | CUBE
 }else if((id | CROSS) === b){
 set = id | SLAB
 }
-console.log(set, id, b)
-if(set)world.setBlock(x,y,z,set)
+if(set)world.setBlock(x,y,z,set,false,false,false,false,dimension)
 //doesn't work: if facing deriction other than north, it won't work
 }).bind({id:baseBlock.id})
 }
@@ -16972,7 +16994,7 @@ takeDamage = d
 damageBlock = blockData[block[3]]
 }
 if(blockData[block[3]].pressurePlate && blockData[block[3]].activate){
-blockData[block[3]].activate(x,y,z)
+blockData[block[3]].activate(x,y,z,p.dimension)
 }
 }
 //Check collisions in the Y direction
@@ -17296,7 +17318,7 @@ p.character.hidden = p3.hidden
 p.character.update()
 //p.hand.update()
 }
-function pressurePlateHasPressure(x,y,z){
+function pressurePlateHasPressure(x,y,z,dimension){
 var collided = false
 if(x - 0.5 < p.x + p.w &&
 x + 0.5 > p.x - p.w &&
@@ -17977,7 +17999,6 @@ crack.delayStart = now
 }
 }
 function explode(x,y,z, r, liquid, dimension){
-var world = w
 /*world.setBlock(x,y,z,blockIds.air);
 for(var i=radius; i>0; i--){
 sphereoidAt(x,y,z,i,i,i, blockIds.air)
@@ -21633,6 +21654,52 @@ p.y = this.y
 p.z = this.z
 this.canDespawn = true
 }
+this.canFacePlayer = true
+}
+render(){
+if(this.canFacePlayer) {
+this.facePlayer()
+this.canFacePlayer = false
+}
+let diff = (performance.now() - this.lastUpdate) / tickTime
+if (diff > 1) diff = 1
+const offsetY = this.offsetY
+let renderx = (this.x - this.previousX) * diff + this.previousX
+let rendery = ((this.y - this.previousY) * diff + this.previousY) + offsetY
+let renderz = (this.z - this.previousZ) * diff + this.previousZ
+const modelMatrix = entityMatrices.modelMatrix;
+modelMatrix.identity()
+modelMatrix.translate(renderx, rendery, renderz)
+modelMatrix.rotZ(this.dieEffect)
+modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
+modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
+const viewMatrix = p.transformation.elements
+const proj = p.projection
+let projectionMatrix = entityMatrices.projectionMatrix
+projectionMatrix.set(proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0)
+projectionMatrix = projectionMatrix.elements
+const modelViewProjectionMatrix = entityMatrices.modelViewProjectionMatrix
+modelViewProjectionMatrix.identity()
+modelViewProjectionMatrix.mult(projectionMatrix)
+modelViewProjectionMatrix.mult(viewMatrix)
+modelViewProjectionMatrix.mult(modelMatrix.elements)
+// row major to column major
+modelViewProjectionMatrix.transpose()
+const x = round(this.x)
+const y = round(this.y)
+const z = round(this.z)
+const blockLight = world.getLight(x, y, z, 1, this.dimension)
+const skysLight = world.getLight(x, y, z, 0, this.dimension)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
+gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
+gl.uniform1i(glCache.uSamplerEntity, 0)
+gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
+gl.uniform1f(glCache.harmEffectEntity, this.harmEffect || this.dieEffect)
+gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
+glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
 }
 class Snowball extends BlockEntity{
@@ -21673,6 +21740,52 @@ var fromMe = this.from === achexUsername
 if (fromMe && (now - this.spawn > this.despawns || this.hasCollided)) {
 this.canDespawn = true
 }
+this.canFacePlayer = true
+}
+render(){
+if(this.canFacePlayer) {
+this.facePlayer()
+this.canFacePlayer = false
+}
+let diff = (performance.now() - this.lastUpdate) / tickTime
+if (diff > 1) diff = 1
+const offsetY = this.offsetY
+let renderx = (this.x - this.previousX) * diff + this.previousX
+let rendery = ((this.y - this.previousY) * diff + this.previousY) + offsetY
+let renderz = (this.z - this.previousZ) * diff + this.previousZ
+const modelMatrix = entityMatrices.modelMatrix;
+modelMatrix.identity()
+modelMatrix.translate(renderx, rendery, renderz)
+modelMatrix.rotZ(this.dieEffect)
+modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
+modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
+const viewMatrix = p.transformation.elements
+const proj = p.projection
+let projectionMatrix = entityMatrices.projectionMatrix
+projectionMatrix.set(proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0)
+projectionMatrix = projectionMatrix.elements
+const modelViewProjectionMatrix = entityMatrices.modelViewProjectionMatrix
+modelViewProjectionMatrix.identity()
+modelViewProjectionMatrix.mult(projectionMatrix)
+modelViewProjectionMatrix.mult(viewMatrix)
+modelViewProjectionMatrix.mult(modelMatrix.elements)
+// row major to column major
+modelViewProjectionMatrix.transpose()
+const x = round(this.x)
+const y = round(this.y)
+const z = round(this.z)
+const blockLight = world.getLight(x, y, z, 1, this.dimension)
+const skysLight = world.getLight(x, y, z, 0, this.dimension)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
+gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
+gl.uniform1i(glCache.uSamplerEntity, 0)
+gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
+gl.uniform1f(glCache.harmEffectEntity, this.harmEffect || this.dieEffect)
+gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
+glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
 }
 class SlingshotShot extends BlockEntity{
@@ -24730,7 +24843,7 @@ var northDown = tags && tags.northDown ? this.getPower(x,y-1,z+1,dimension) : 0
 var southDown = tags && tags.southDown ? this.getPower(x,y-1,z-1,dimension) : 0
 var level = max(right,left,down,up, top,bottom, northUp,southUp,eastUp,westUp, northDown,southDown,eastDown,westDown) - 1
 if(this.redstoneComponentPowering(x,y,z,dimension)) level = 15
-if(world.getBlockPower(x,y,z+1,dimension) === "strong" || world.getBlockPower(x,y,z-1,dimension) === "strong" || world.getBlockPower(x+1,y,z,dimension) === "strong" || world.getBlockPower(x-1,y,z,dimension) === "strong" || world.getBlockPower(x,y-1,z,dimension) === "strong" || world.getBlockPower(x,y+1,z,dimension) === "strong"){
+if(world.getSurroundingBlockPower(x,y,z,dimension) === "strong"){
 level = 15
 }
 return level < 0 ? 0 : level
@@ -28828,7 +28941,7 @@ elem[0].classList.remove("selected")
 }
 }
 function addWorld(server) {
-var {name,id,host,players,external} = server
+let {name,id,host,players,external,banned,whitelist} = server
 let div = doc.createElement("div")
 div.className = "world"
 div.onclick = e => {
@@ -28838,7 +28951,8 @@ selectedWorld = id
 }
 let br = "<br>"
 div.id = id
-div.innerHTML = "<div class='ping'>Pinging...</div>"
+if((banned && typeof banned[username] === "string") || (whitelist && !whitelist.includes(username))) div.innerHTML += "<div class='lockImg'></div>"
+div.innerHTML += "<div class='ping'>Pinging...</div>"
 div.innerHTML += "<strong>" + Messages.format(name)+ "</strong>" + br
 if(external) div.innerHTML += Messages.format(server.description) + br
 else div.innerHTML += "Hosted by "+host + br
