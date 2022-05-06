@@ -244,7 +244,7 @@ display: none !important;
 background-color: rgba(0, 0, 0, 0.9);
 color: rgb(200, 200, 200);
 font-family: VT323, 'Courier New', Courier, monospace;
-font-size:13px;
+font-size:16px;
 word-wrap: normal;
 width: auto;
 max-width: 400px;
@@ -772,7 +772,7 @@ void main(){
 vec4 color = texture2D(uSampler, vTexture);
 if (color.a != 1.0) color.a = mix(color.a, 0.0, vFog);
 vec3 tint = vTint;
-if(color.r != color.g && color.g != color.b){
+if(color.r != color.g || color.g != color.b){
 tint.r = 1.;
 tint.g = 1.;
 tint.b = 1.;
@@ -933,9 +933,14 @@ uniform sampler2D uSampler;
 uniform float uLightLevel;
 varying vec2 vTexture;
 uniform vec3 tint;
+uniform bool tintGray;
 void main(){
 vec4 color = texture2D(uSampler, vTexture);
-gl_FragColor = vec4(color.rgb * tint * uLightLevel, color.a);
+vec3 currentTint = tint;
+if(tintGray && (color.r != color.g || color.g != color.b)){
+currentTint.r = currentTint.g = currentTint.b = 1.;
+}
+gl_FragColor = vec4(color.rgb * currentTint * uLightLevel, color.a);
 if (gl_FragColor.a == 0.0) discard;
 }
 </script>
@@ -2138,7 +2143,8 @@ acaciaLeaves: function(n){
 var pix = getPixels("0g0g6óoH000ĞłHÚĎYĆåZðoH5yPÑĊŋÑQ>CEK$ûwAķÇ5Ī1]þıXA^ëĚyAIQBûUNiÏõXP(k^SīÀëĬc4ĊUõóPwA]BĚÂÎSÇ(mQ|JİóJİ$ĭRNwÊBwÏAER@6ÁXü]XJs")
 for (let i = 0; i < pix.length; i += 4) {
 var c = leafColor
-setPixel(n, i >> 2 & 15, i >> 6, pix[i], pix[i+1], pix[i+2], pix[i + 3]);
+var bright = avg(pix[i],pix[i+1],pix[i+2])
+setPixel(n, i >> 2 & 15, i >> 6, bright, bright, bright, pix[i + 3]);
 }
 },
 birchLeaves: function(n){
@@ -3196,7 +3202,7 @@ type:"wood",
 { name: "orangeConcrete", Name:"Orange Concrete",breakTime:9, type:"rock1", stoneSound:true},
 { name: "magentaConcrete", Name:"Magenta Concrete",breakTime:9, type:"rock1", stoneSound:true},
 { name: "lightBlueConcrete", Name:"Light Blue Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "yellowConcrete", Name:"Red Concrete",breakTime:9, type:"rock1", stoneSound:true},
+{ name: "yellowConcrete", Name:"Yellow Concrete",breakTime:9, type:"rock1", stoneSound:true},
 { name: "limeConcrete", Name:"Lime Concrete",breakTime:9, type:"rock1", stoneSound:true},
 { name: "pinkConcrete", Name:"Pink Concrete",breakTime:9, type:"rock1", stoneSound:true},
 { name: "grayConcrete", Name:"Gray Concrete",breakTime:9, type:"rock1", stoneSound:true},
@@ -3407,7 +3413,7 @@ hidden:true,
 drop: "redstone",
 onupdate: function(x,y,z,b,world,sx,sy,sz,dimension){
 var tags = world.getTags(x,y,z,dimension)
-if(!tags) return
+if(!tags) return this.onplace(x,y,z,dimension)
 var pnorthUp = tags.northUp, psouthUp = tags.southUp, peastUp = tags.eastUp, pwestUp = tags.westUp,
 pnorthDown = tags.northDown, psouthDown = tags.southDown, peastDown = tags.eastDown, pwestDown = tags.westDown
 var above = world.getBlock(x,y+1,z)
@@ -10346,6 +10352,12 @@ this.x *= m
 this.y *= m
 this.z *= m
 }
+mag() {
+return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z)
+}
+magSquared() {
+return this.x * this.x + this.y * this.y + this.z * this.z
+}
 crossProduct(x,y,z,vector) {
 vector.x = this.y * z - this.z * y
 vector.y = this.z * x - this.x * z
@@ -10358,6 +10370,9 @@ vector.y = this.y * y
 vector.z = this.z * z
 return vector
 }
+}
+function mag(x,y,z) {
+return sqrt(x * x + y * y + z * z)
 }
 let fill = function(r, g, b, a) {
 if (g === undefined) {
@@ -11238,6 +11253,9 @@ option.selected = true
 }
 {
 //command system
+function sleep(ms) {
+return new Promise(resolve => setTimeout(resolve, ms))
+}
 var copiedBlocks = [];
 var prevPos;
 function fill(x,y,z,x2,y2,z2, blockID, dimension){
@@ -11311,36 +11329,40 @@ copy(prevPos[0], prevPos[1]-1, prevPos[2], p2.x, p2.y-1, p2.z, p.dimension);
 function pasteAtPlayer(){
 paste(p2.x,p2.y-1,p2.z, p.dimension)
 }
-function hcyl(bottom, height, radius, id, dimension) {
-let radsq = radius * radius
-let innerRadsq = (radius - 1.2) * (radius - 1.2)
-height += bottom
-for (let x = -radius; x <= radius; x++) {
-for (let y = bottom; y < height; y++) {
-for (let z = -radius; z <= radius; z++) {
-let d = x * x + z * z
-if (d < radsq && d >= innerRadsq) {
-world.setBlock(p2.x + x, p2.y + y, p2.z + z, id, false,false,false,false, dimension)
+async function hcyl(width, height, depth, id, X,Y,Z, dimension) {
+let w2 = width * width
+let d2 = depth * depth
+let w3 = (width - 1.2) * (width - 1.2)
+let d3 = (depth - 1.2) * (depth - 1.2)
+for (let x = -width; x <= width; x++) {
+for (let y = -height; y <= height; y++) {
+for (let z = -depth; z <= depth; z++) {
+let n = x * x / w2 + z * z / d2
+let n2 = x * x / w3 + z * z / d3
+if (n < 1 && n2 >= 1) {
+world.setBlock(X + x, Y + y, Z + z, id, false,false,false,false, dimension)
+await sleep(10)
 }
 }
 }
 }
 }
-function cyl(bottom, height, radius, id, dimension) {
-let radsq = radius * radius
-height += bottom
-for (let x = -radius; x <= radius; x++) {
-for (let y = bottom; y < height; y++) {
-for (let z = -radius; z <= radius; z++) {
-let d = x * x + z * z
-if (d < radsq) {
-world.setBlock(p2.x + x, p2.y + y, p2.z + z, id, false,false,false,false, dimension)
+async function cyl(width, height, depth, id, X,Y,Z, dimension) {
+let w2 = width * width
+let d2 = depth * depth
+for (let x = -width; x <= width; x++) {
+for (let y = -height; y <= height; y++) {
+for (let z = -depth; z <= depth; z++) {
+let n = x * x / w2 + z * z / d2
+if (n < 1) {
+world.setBlock(X + x, Y + y, Z + z, id, false,false,false,false, dimension)
+await sleep(10)
 }
 }
 }
 }
 }
-function sphereoid(w, h, d, id, X,Y,Z, dimension) {
+async function sphereoid(w, h, d, id, X,Y,Z, dimension) {
 let w2 = w * w
 let h2 = h * h
 let d2 = d * d
@@ -11354,6 +11376,23 @@ let n = x * x / w2 + y * y / h2 + z * z / d2
 let n2 = x * x / w3 + y * y / h3 + z * z / d3
 if (n < 1 && n2 >= 1) {
 world.setBlock(X + x, Y + y, Z + z, id, false,false,false,false, dimension)
+await sleep(10)
+}
+}
+}
+}
+}
+async function ball(w, h, d, id, X,Y,Z, dimension) {
+let w2 = w * w
+let h2 = h * h
+let d2 = d * d
+for (let y = -h; y < h; y++) {
+for (let x = -w; x <= w; x++) {
+for (let z = -d; z <= d; z++) {
+let n = x * x / w2 + y * y / h2 + z * z / d2
+if (n < 1) {
+world.setBlock(X + x, Y + y, Z + z, id, false,false,false,false, dimension)
+await sleep(10)
 }
 }
 }
@@ -11398,15 +11437,24 @@ info: "Pastes copied blocks at the player's position",
 func: () => pasteAtPlayer()
 },
 {
-name: "sphereoid",
-args: ["width", "height", "depth", "block_name", "x", "y", "z"],
-func: split => {
-let id = blockIds[split[4]]
-if(!split[4]) id = 0
-let x = split[5] ? parseInt(split[5]) : p2.x,
-y = split[6] ? parseInt(split[6]) : p2.y,
-z = split[7] ? parseInt(split[7]) : p2.z
-sphereoid(split[1], split[2], split[3], id, x,y,z, p.dimension)
+name: "shape",
+info: "Type can be: sphere, hollowSphere, cylinder, hollowCylinder",
+args: ["type","width", "height", "depth", "block_name", "x", "y", "z"],
+func: async split => {
+let id = blockIds[split[5]]
+if(!split[5]) id = 0
+let x = split[6] ? parseInt(split[6]) : p2.x,
+y = split[7] ? parseInt(split[7]) : p2.y,
+z = split[8] ? parseInt(split[8]) : p2.z,
+width = parseInt(split[2]) || 0,
+height = parseInt(split[3]) || 0,
+depth = parseInt(split[4]) || 0
+if(split[1] === "sphere") await ball(width, height, depth, id, x,y,z, p.dimension)
+else if(split[1] === "hollowSphere") await sphereoid(width, height, depth, id, x,y,z, p.dimension)
+else if(split[1] === "cylinder") await cyl(width, height, depth, id, x,y,z, p.dimension)
+else if(split[1] === "hollowCylinder") await hcyl(width, height, depth, id, x,y,z, p.dimension)
+else return Messages.add("No such shape: "+split[1])
+Messages.add("Finished shape: "+split[1])
 }
 },
 {
@@ -11703,9 +11751,15 @@ span: document.createElement("span"),
 array: [],
 all: [],
 remove: (function(){
-var arr = [["k","c","u","f"].reverse().join(""), "stupid","bloody","dumb","bitch"]
+var arr = [["k","c","u","f"].reverse().join(""), "stupid","blood","dumb","bitch","shit","poo"]
+var between = "[ \*.,|`~\/\\!&]*" //there might be characters between, like this: d.u.m.b
 arr.forEach((value, i) => {
-arr[i] = new RegExp("("+value+")", "gi")
+var str = ""
+for(var j=0; j<value.length; j++){
+if(j+1 === value.length) str += value[j]
+else str += value[j] + between
+}
+arr[i] = new RegExp("("+str+")", "gi")
 })
 return arr
 })(),
@@ -14240,6 +14294,46 @@ south: 0,
 east: 0,
 west: 0
 },
+},
+stairCornerOut: {
+verts: [
+[objectify( 0, 0,  0, 16, 16, 0, 0)], //bottom
+[objectify( 0, 8,  16, 16, 16, 0, 0), objectify( 0, 16,  16, 8, 8, 0, 0)], //top
+[objectify(8, 16, 16, 8, 8, 0, 0), objectify(16, 8, 16, 16, 8, 0, 0)], //north
+[objectify( 0, 8,  0, 16, 8, 0, 0), objectify( 0, 16,  8, 8, 8, 0, 0)], //south
+[objectify(16, 8, 0, 16, 8, 0, 0), objectify(8, 16, 8, 8, 16, 0, 0)], //east
+[objectify( 0, 8, 8, 8, 8, 0, 0), objectify( 0, 16, 16, 8, 16, 8, 0)]  //west
+],
+cull: {
+top: 0,
+bottom: 3,
+north: 3,
+south: 0,
+east: 0,
+west: 0
+},
+flip: true,
+rotate: true
+},
+stairCornerIn: {
+verts: [
+[objectify(0,0,0,16,16,0,0)],
+[objectify(8,8,8,8,8,0,0),objectify(0,16,16,16,8,0,0),objectify(0,16,8,8,8,0,0)],
+[objectify(16,16,16,16,16,0,0)],
+[objectify(8,16,8,8,8,0,0),objectify(0,16,0,8,8,0,0),objectify(0,8,0,16,8,0,0)],
+[objectify(8,16,0,8,8,0,0),objectify(16,16,8,8,8,0,0),objectify(16,8,0,16,8,0,0)],
+[objectify(0,16,16,16,16,0,0)]
+],
+cull: {
+top: 0,
+bottom: 3,
+north: 3,
+south: 0,
+east: 0,
+west: 0
+},
+flip: true,
+rotate: true
 },
 playerHand: {
 verts: [
@@ -16918,12 +17012,17 @@ this.size = 0
 }
 let blocks = []
 let resolveContactsAndUpdatePosition = function(now) {
-let pminX = round(p.x - p.w - 1)
-let pmaxX = round(p.x + p.w + 1)
-let pminY = round(p.y - p.bottomH - 1)
-let pmaxY = round(p.y + p.topH + 1)
-let pminZ = round(p.z - p.w - 1)
-let pmaxZ = round(p.z + p.w + 1)
+let mag = p.velocity.mag()
+let steps = Math.ceil(mag)
+const VX = p.velocity.x / steps
+const VY = p.velocity.y / steps
+const VZ = p.velocity.z / steps
+let pminX = floor(p.x - p.w - 1)
+let pmaxX = ceil(p.x + p.w + 1)
+let pminY = floor(p.y - p.bottomH - 1)
+let pmaxY = ceil(p.y + p.topH + 1)
+let pminZ = floor(p.z - p.w - 1)
+let pmaxZ = ceil(p.z + p.w + 1)
 let block = null
 let vel = p.velocity
 let blocksSize = 0
@@ -16958,6 +17057,7 @@ contacts.add(e.x, e.y, e.z, e.block)
 p.previousX = p.x
 p.previousY = p.y
 p.previousZ = p.z
+let hasCollided = false
 blockHere = world.getBlock(round(p.x),round(p.y),round(p.z), d)
 var pblockHere = blockHere
 blockHere = blockHere && blockData[blockHere].solid ? true : false
@@ -16976,7 +17076,16 @@ block = blocks[i]
 x = block[0]
 y = block[1]
 z = block[2]
-if(block[0] === p2.x && block[2] === p2.z && blockData[block[3]].ontouch){
+let d = blockData[block[3]].damage
+if(d && d>takeDamage/* && collided(x,y,z,0,0,0,block[3])*/) {
+takeDamage = d
+damageBlock = blockData[block[3]]
+}
+if(blockData[block[3]].pressurePlate && blockData[block[3]].activate){
+blockData[block[3]].activate(x,y,z,p.dimension)
+}
+if(!inBox(x,y,z,1,1,1)) continue
+if(blockData[block[3]].ontouch){
 ontouch = blockData[block[3]].ontouch
 }
 if(blockData[block[3]].liquid) {
@@ -16988,29 +17097,24 @@ wet = true
 if(!blockData[block[3]].solid && blockData[block[3]].powder){
 powder = true
 }
-let d = blockData[block[3]].damage
-if(d && d>takeDamage/* && collided(x,y,z,0,0,0,block[3])*/) {
-takeDamage = d
-damageBlock = blockData[block[3]]
 }
-if(blockData[block[3]].pressurePlate && blockData[block[3]].activate){
-blockData[block[3]].activate(x,y,z,p.dimension)
-}
-}
+for (let j = 1; j <= steps && !hasCollided; j++) {
+let px = p.x, pz = p.z, py = p.y
 //Check collisions in the Y direction
 p.onGround = false
 p.canStepX = false
 p.canStepZ = false
-p.y += vel.y
+p.y += VY
 for (let i = 0; i < contacts.size; i++) {
 block = contacts.array[i]
-if (collided(block[0], block[1], block[2], 0, vel.y, 0, block[3])) {
-p.y = p.previousY
+if (collided(block[0], block[1], block[2], 0, VY, 0, block[3])) {
+p.y = py
 vel.y = 0
+hasCollided = true
 break
 }
 }
-if (p.y === p.previousY && !p.flying) {
+if (p.onGround) {
 p.canStepX = true
 p.canStepZ = true
 }
@@ -17025,15 +17129,16 @@ break
 }
 }
 //Check collisions in the X direction
-p.x += vel.x
+p.x += VX
 for (let i = 0; i < contacts.size; i++) {
 block = contacts.array[i]
-if (collided(block[0], block[1], block[2], vel.x, 0, 0, block[3])) {
+if (collided(block[0], block[1], block[2], VX, 0, 0, block[3])) {
 if (p.canStepX && !world.getBlock(block[0], block[1] + 1, block[2], d) && !world.getBlock(block[0], block[1] + 2, block[2], d)) {
 continue
 }
-p.x = p.previousX
+p.x = px
 vel.x = 0
+hasCollided = true
 break
 }
 if (sneakLock && onBox(block[0], block[1], block[2], 1, 1, 1)) {
@@ -17041,20 +17146,22 @@ sneakSafe = true
 }
 }
 if (sneakLock && !sneakSafe) {
-p.x = p.previousX
+p.x = px
 vel.x = 0
+hasCollided = true
 }
 sneakSafe = false
 //Check collisions in the Z direction
-p.z += vel.z
+p.z += VZ
 for (let i = 0; i < contacts.size; i++) {
 block = contacts.array[i]
-if (collided(block[0], block[1], block[2], 0, 0, vel.z, block[3])) {
+if (collided(block[0], block[1], block[2], 0, 0, VZ, block[3])) {
 if (p.canStepZ && !world.getBlock(block[0], block[1] + 1, block[2], d) && !world.getBlock(block[0], block[1] + 2, block[2], d)) {
 continue
 }
-p.z = p.previousZ
+p.z = pz
 vel.z = 0
+hasCollided = true
 break
 }
 if (sneakLock && onBox(block[0], block[1], block[2], 1, 1, 1)) {
@@ -17062,8 +17169,10 @@ sneakSafe = true
 }
 }
 if (sneakLock && !sneakSafe) {
-p.z = p.previousZ
+p.z = pz
 vel.z = 0
+hasCollided = true
+}
 }
 //Minimun height: -40
 if(p.y <= -40){
@@ -17133,7 +17242,7 @@ var fallType = fall > 6 ? "bigfall" : "smallfall"
 damage(Math.floor(fall-3), username+" fell from a high place. You fell "+Math.round(fall)+" blocks.", false, fallType)//Math.floor( (p.velocity.y * p.velocity.y * 8));
 }
 if(p.velocity.y < -0.1 && block){
-blockParticles(block, p.x,p.y-p.bottomH,p.z,10, null,world, p.dimension)
+blockParticles(block, p.x,p.y-p.bottomH,p.z,10, "player",world, p.dimension)
 blockSound(block, "step", p.x,p.y,p.z, 1)
 }
 if(blockData[block].bounciness && p.velocity.y < -0.2){
@@ -17495,7 +17604,7 @@ p.lastPlace = Date.now()
 } else {
 p.lastBreak = Date.now()
 if(!prevBlock) return
-blockParticles(prevBlock,hitBox.pos[0],hitBox.pos[1],hitBox.pos[2],30, null,world,p.dimension)
+blockParticles(prevBlock,hitBox.pos[0],hitBox.pos[1],hitBox.pos[2],30, "break",world,p.dimension)
 if(blockData[prevBlock].onbreak){
 blockData[prevBlock].onbreak(hitBox.pos[0],hitBox.pos[1],hitBox.pos[2], prevBlock, prevTags,p.dimension)
 }
@@ -17957,27 +18066,7 @@ if(crack.soundTimer > 15){
 crack.soundTimer -= 15
 blockSound(block, "breaking", hitBox.pos[0], hitBox.pos[1], hitBox.pos[2])
 var x = hitBox.pos[0], y = hitBox.pos[1], z = hitBox.pos[2]
-switch(hitBox.face) {
-case "top":
-y += 0.5
-break
-case "bottom":
-y -= 0.5
-break
-case "south":
-z -= 0.5
-break
-case "north":
-z += 0.5
-break
-case "west":
-x -= 0.5
-break
-case "east":
-x += 0.5
-break
-}
-blockParticles(block, x,y,z, 4, "breaking", world,p.dimension)
+blockParticles(block, x,y,z, 4, "breaking", world,p.dimension,hitBox.face)
 if(!usingTool && blockData[block].damage){
 var type = blockData[block].burnPlayer ? "fire" : ""
 damage(blockData[block].damage/2, username+" died while punching "+blockData[block].Name+".", false, type)
@@ -18132,14 +18221,55 @@ var under = world.getBlock(x,y-1,z,dimension)
 if(under && blockData[under].solid) return
 world.setBlock(x,y,z, 0,false,false,false,false,dimension)
 world.addEntity(new Item(x,y,z,0,0,0,b,true),false,dimension)
-blockParticles(b,x,y,z,30, null,world,dimension)
+blockParticles(b,x,y,z,30, "break",world,dimension)
 blockSound(b, "dig", x,y,z)
 }, tickTime)
 }
 }
-function blockParticles(block,x,y,z,amount, type, w = world, dimension){
+function blockParticles(block,x,y,z,amount, type, w = world, dimension, dir){
 var world = w
-for(var i=0; i<amount; i++) world.addParticle(new BlockParticle(blockData[block].textures[2], x,y,z, type), dimension)
+for(var i=0; i<amount; i++) {
+var ax = x, ay = y, az = z
+if(type === "break"){
+ax += rand(-0.4,0.4)
+ay += rand(-0.4,0.4)
+az += rand(-0.4,0.4)
+}else if(type === "breaking"){
+switch(dir) {
+case "top":
+ay += 0.5
+ax += rand(-0.5,0.5)
+az += rand(-0.5,0.5)
+break
+case "bottom":
+ay -= 0.5
+ax += rand(-0.5,0.5)
+az += rand(-0.5,0.5)
+break
+case "south":
+az -= 0.5
+ax += rand(-0.5,0.5)
+ay += rand(-0.5,0.5)
+break
+case "north":
+az += 0.5
+ax += rand(-0.5,0.5)
+ay += rand(-0.5,0.5)
+break
+case "west":
+ax -= 0.5
+ay += rand(-0.5,0.5)
+az += rand(-0.5,0.5)
+break
+case "east":
+ax += 0.5
+ay += rand(-0.5,0.5)
+az += rand(-0.5,0.5)
+break
+}
+}
+world.addParticle(new BlockParticle(blockData[block].textures[2], ax,ay,az, type, block), dimension)
+}
 }
 function goToDimension(d){
 d = d || ""
@@ -20803,7 +20933,8 @@ this.contacts = new Contacts()
 this.lastUpdate = performance.now()
 this.onGround = false
 this.hasCollided = false
-this.gravityStength = -0.032
+this.gravityStength = -0.048
+this.defaultGravityStength = -0.048
 this.standingOn = 0
 this.despawns = despawns
 this.spawn = this.lastUpdate
@@ -20923,10 +21054,10 @@ return {vao, size}
 updateVelocity(now) {
 this.standingOn = world.getBlock(this.x, round(this.y-this.height-1), this.z)
 if (this.liquid){
-this.gravityStength = -0.01
+this.gravityStength = -0.015
 this.vely *= 0.9
 }else{
-this.gravityStength = -0.02
+this.gravityStength = this.defaultGravityStength
 }
 this.vely += this.gravityStength
 if (this.vely < -1.5) {
@@ -21023,6 +21154,10 @@ return col
 }
 }
 move(now) {
+let steps = Math.ceil(mag(this.velx,this.vely,this.velz))
+const VX = this.velx / steps
+const VY = this.vely / steps
+const VZ = this.velz / steps
 let pminX = floor(this.x - this.width / 2)
 let pmaxX = ceil(this.x + this.width / 2)
 let pminY = floor(this.y - this.height / 2)
@@ -21047,51 +21182,54 @@ this.liquid = true
 this.previousX = this.x
 this.previousY = this.y
 this.previousZ = this.z
+this.hasCollided = false
+for (let j = 1; j <= steps && !this.hasCollided; j++) {
+let px = this.x, pz = this.z, py = this.y
 this.canStepX = false
 this.canStepY = false
 this.onGround = false
-this.hasCollided = false
 //Check collisions in the Y direction
-this.y += this.vely
+this.y += VY
 for (let i = 0; i < this.contacts.size; i++) {
 block = this.contacts.array[i]
-if (this.collided(block[0], block[1], block[2], 0, this.vely, 0, block[3])) {
-this.y = this.previousY
+if (this.collided(block[0], block[1], block[2], 0, VY, 0, block[3])) {
+this.y = py
 this.vely = 0
 this.hasCollided = true
 break
 }
 }
-if (this.y === this.previousY) {
+if (this.onGround) {
 this.canStepX = true
 this.canStepZ = true
 }
 //Check collisions in the X direction
-this.x += this.velx
+this.x += VX
 for (let i = 0; i < this.contacts.size; i++) {
 block = this.contacts.array[i]
-if (this.collided(block[0], block[1], block[2], this.velx, 0, 0, block[3])) {
+if (this.collided(block[0], block[1], block[2], VX, 0, 0, block[3])) {
 if (this.canStepX && !world.getBlock(block[0], block[1] + 1, block[2], this.dimension) && !world.getBlock(block[0], block[1] + 2, block[2]), this.dimension) {
 continue
 }
-this.x = this.previousX
+this.x = px
 this.velx = 0
 this.hasCollided = true
 break
 }
 }
 //Check collisions in the Z direction
-this.z += this.velz
+this.z += VZ
 for (let i = 0; i < this.contacts.size; i++) {
 block = this.contacts.array[i]
-if (this.collided(block[0], block[1], block[2], 0, 0, this.velz, block[3])) {
+if (this.collided(block[0], block[1], block[2], 0, 0, VZ, block[3])) {
 if (this.canStepZ && !world.getBlock(block[0], block[1] + 1, block[2], this.dimension) && !world.getBlock(block[0], block[1] + 2, block[2], this.dimension)) {
 continue
 }
-this.z = this.previousZ
+this.z = pz
 this.velz = 0
 this.hasCollided = true
 break
+}
 }
 }
 if(this.onGround){
@@ -21247,6 +21385,7 @@ this.type = "Item"
 this.from = achexUsername
 this.durability = durability
 //this.amount = amount || 1
+this.defaultGravityStength = -0.032
 if(autoSetVel){
 this.velx = (Math.random()-0.5) * 0.2
 this.vely = Math.random() * 0.2
@@ -21632,7 +21771,7 @@ this.velx = velx
 this.vely = vely
 this.velz = velz
 this.from = achexUsername
-this.gravityStrength = -0.05
+this.defaultGravityStength = -0.05
 }
 updateVelocity(now) {
 this.vely += this.gravityStength
@@ -21710,7 +21849,7 @@ this.velx = velx
 this.vely = vely
 this.velz = velz
 this.from = achexUsername
-this.gravityStrength = -0.05
+this.defaultGravityStength = -0.05
 }
 updateVelocity(now) {
 this.vely += this.gravityStrength
@@ -21796,7 +21935,7 @@ this.velx = velx
 this.vely = vely
 this.velz = velz
 this.despawns = 10000
-this.gravityStrength = -0.01
+this.defaultGravityStength = -0.01
 }
 update() {
 let now = performance.now()
@@ -22749,6 +22888,8 @@ this.health = 10
 class Particle extends Entity{
 constructor() {
 super(...arguments)
+this.tint = null
+this.tintGray = false
 }
 facePlayer(){
 this.yaw = Math.PId - (atan2(p.z - this.z, p.x - this.x) + Math.PI2 + Math.PI)
@@ -22799,7 +22940,7 @@ this.pitch = rxy
 this.yaw = lambda*/
 }
 updateVelocity(now) {
-this.vely += -0.02
+this.vely += -0.04
 if (this.vely < -1.5) {
 this.vely = -1.5
 }
@@ -22852,15 +22993,19 @@ const skysLight = world.getLight(x, y, z, 0, this.dimension)
 const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 gl.uniform1i(glCache.uSamplerParticle, 0)
+if(this.tint) gl.uniform3f(glCache.tintParticle, this.tint[0],this.tint[1],this.tint[2])
+if(this.tintGray) gl.uniform1i(glCache.tintGrayParticle, 1)
 gl.uniform1f(glCache.uLightLevelParticle, lightLevel)
 gl.uniformMatrix4fv(glCache.uViewParticle, false, modelViewProjectionMatrix.elements)
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
+if(this.tint) gl.uniform3f(glCache.tintParticle, 1,1,1)
+if(this.tintGray) gl.uniform1i(glCache.tintGrayParticle, 0)
 }
 }
 class BlockParticle extends Particle{
-constructor(tex, x,y,z, type){
+constructor(tex, x,y,z, type, id){
 let s=4/16
 let bs = 3/16 //particle size
 let p=1/(16+4)
@@ -22905,6 +23050,23 @@ index += 8
 }
 }
 super(x, y, z, 0, 0, velx, vely, velz, bs, bs, bs, new Float32Array(shapeVerts.flat(Infinity)), new Float32Array(texture), size, despawn)
+this.block = id
+}
+update(){
+let now = performance.now()
+this.updateVelocity(now)
+this.move(now)
+if (now - this.spawn > this.despawns) {
+this.canDespawn = true
+}
+var id = this.block
+if(id && blockData[id].tint){
+var biome = world.getBiome(round(this.x),round(this.y),round(this.z),this.dimension)
+var tints = blockData[id].tint
+this.tint = tints[biome] || tints.default
+this.tintGray = true
+}
+this.canFacePlayer = true
 }
 }
 win.BlockParticle = BlockParticle
@@ -23248,7 +23410,7 @@ r = 148
 g = 193
 break
 }
-this.tint = {r:r/255,g:g/255,b:b/255}
+this.tint = [r/255,g/255,b/255]
 }
 update() {
 let now = performance.now()
@@ -23260,48 +23422,6 @@ if (now - this.spawn > this.despawns) {
 this.canDespawn = true
 }
 this.canFacePlayer = true
-}
-render() {
-let diff = (performance.now() - this.lastUpdate) / tickTime
-if (diff > 1) diff = 1
-let renderx = (this.x - this.previousX) * diff + this.previousX
-let rendery = (this.y - this.previousY) * diff + this.previousY
-let renderz = (this.z - this.previousZ) * diff + this.previousZ
-if(this.canFacePlayer){
-this.facePlayer()
-this.canFacePlayer = false
-}
-const modelMatrix = new Matrix();
-modelMatrix.identity()
-modelMatrix.translate(renderx, rendery, renderz)
-modelMatrix.rotY(this.yaw)
-modelMatrix.rotX(this.pitch)
-modelMatrix.scale(this.width, this.height, this.depth)
-const viewMatrix = p.transformation.elements
-const proj = p.projection
-const projectionMatrix = [proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0]
-const modelViewProjectionMatrix = new Matrix()
-modelViewProjectionMatrix.identity()
-modelViewProjectionMatrix.mult(projectionMatrix)
-modelViewProjectionMatrix.mult(viewMatrix)
-modelViewProjectionMatrix.mult(modelMatrix.elements)
-// row major to column major
-modelViewProjectionMatrix.transpose()
-const x = round(this.x)
-const y = round(this.y)
-const z = round(this.z)
-const blockLight = world.getLight(x, y, z, 1, this.dimension)
-const skysLight = world.getLight(x, y, z, 0, this.dimension)
-const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
-gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
-gl.uniform1i(glCache.uSamplerParticle, 0)
-gl.uniform3f(glCache.tintParticle, this.tint.r,this.tint.g,this.tint.b)
-gl.uniform1f(glCache.uLightLevelParticle, lightLevel)
-gl.uniformMatrix4fv(glCache.uViewParticle, false, modelViewProjectionMatrix.elements)
-glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
-gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
-glExtensions.vertex_array_object.bindVertexArrayOES(null)
-gl.uniform3f(glCache.tintParticle, 1,1,1)
 }
 }
 win.NoteParticle = NoteParticle
@@ -23529,7 +23649,7 @@ if(Date.now() - start < time){
 clearTimeout(t)
 resolve(r)
 }
-})
+}).catch(reject)
 })
 }
 win.timeoutPromise = timeoutPromise
@@ -23619,7 +23739,7 @@ players:r.players,
 ping: Date.now() - start
 })),
 20000
-)
+).catch(() => {})
 )
 }
 await Promise.all(promises)
@@ -26684,7 +26804,7 @@ var xpBar = p.XP / p.nextLevel
 var level = p.level
 ctx.drawImage(images.experienceBar, 0,0,182,5, x,iy+ih,s*9,10)
 ctx.drawImage(images.experienceBar, 0,5,182*xpBar,5, x,iy+ih,s*9*xpBar,10)
-ctx.font = "18px VT323"
+ctx.font = "16px VT323"
 ctx.textAlign = "center"
 var barX = x+s*4.5
 ctx.strokeStyle = "black"
@@ -26703,7 +26823,7 @@ ctx.globalAlpha = 1
 if(inventory.showName > 0){
 ctx.globalAlpha = inventory.showName > 1 ? 1 : inventory.showName
 var Y = y - (s*1.5)
-ctx.font = "18px VT323"
+ctx.font = "16px VT323"
 var slot = inventory.hotbar[inventory.hotbarSlot]
 var id = slot && slot.id
 if(slot && slot.id && slot.id < isCube) {
@@ -27482,7 +27602,7 @@ world.setBlock(furnaceData.x,furnaceData.y,furnaceData.z, needs, false, false, f
 }
 let offX = width - s*4
 let offY = s * 2
-ctx.font = "20px VT323"
+ctx.font = "24px VT323"
 ctx.fillStyle = "white"
 ctx.textAlign = "left"
 ctx.fillText("Furnace", offX, offY - s2)
@@ -27663,9 +27783,9 @@ ctx.lineWidth = 2
 ctx.strokeRect(ox,oy,s,s)
 }
 ctx.fillStyle = "white"
-ctx.font = "15px VT323"
+ctx.font = "16px VT323"
 ctx.textAlign = "left"
-ctx.fillText("Chest & stuff", x, y-7)
+ctx.fillText("Chest & stuff", x, y-4)
 ctx2.font = "14px VT323"
 ctx2.textAlign = "right"
 ctx2.fillStyle = "white"
@@ -28252,8 +28372,10 @@ glCache.aTextureParticle = gl.getAttribLocation(programParticle, "aTexture")
 glCache.aVertexParticle = gl.getAttribLocation(programParticle, "aVertex")
 glCache.isTextureAtlasParticle = gl.getUniformLocation(programParticle, "isTextureAtlas")
 glCache.tintParticle = gl.getUniformLocation(programParticle, "tint")
+glCache.tintGrayParticle = gl.getUniformLocation(programParticle, "tintGray")
 gl.uniform1i(glCache.isTextureAtlasParticle, 1)
 gl.uniform3f(glCache.tintParticle, 1,1,1)
+gl.uniform1i(glCache.tintGrayParticle, 0)
 gl.useProgram(program3D)
 glCache.uSampler = gl.getUniformLocation(program3D, "uSampler")
 glCache.uPos = gl.getUniformLocation(program3D, "uPos")
@@ -30394,7 +30516,7 @@ sizess = -sizess
 size += sizes
 drawTitle()
 fill(220)
-ctx.font = "18px VT323"
+ctx.font = "16px VT323"
 ctx.textAlign = 'left'
 text("MineKhan " + version, 2, height - 2)
 ctx.textAlign = "right"
@@ -30832,7 +30954,7 @@ ctx.fillStyle = titleColor
 ctx.globalAlpha = alpha > 1 ? 1 : alpha
 text(title, width/2, height/2, 80)
 if(subtitle){
-ctx.font = "40px VT323"
+ctx.font = "48px VT323"
 text(subtitle, width/2, height/2+50, 40)
 }
 ctx.globalAlpha = 1
@@ -30871,6 +30993,7 @@ if(p.sprinting) limit = 250
 if(now - lastStepSound > limit){
 lastStepSound = now
 blockSound(standingOn, "step", p.x,p.y,p.z, 1)
+if(p.sprinting) blockParticles(standingOn, p.x,p.y-p.bottomH,p.z,10, "player",world, p.dimension)
 }
 }
 if(multiplayer && multiplayer.sendPos && tick) multiplayer.sendPos()
