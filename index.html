@@ -11546,13 +11546,14 @@ Messages.add("No such mode: "+split[1])
 },
 {
 name:"gameMode",
+names: ["gm"],
 args: ["mode"],
-info: "mode can be: creative, survival, spectator",
+info: "mode can be: creative, c, survival, s, spectator",
 func: split => {
 let m = split[1]
 p.spectator = false
-if(m === "creative") survival = false
-else if(m === "survival") survival = true
+if(m === "creative" || m === "c") survival = false
+else if(m === "survival" || m === "s") survival = true
 else if(m === "spectator") {p.spectator = p.flying = true; survival = false}
 else Messages.add("Game mode doesn't exsist: "+m)
 }
@@ -11704,6 +11705,9 @@ for(var i=0; i<cmds.length; i++){
 if(cmds[i].name.toLowerCase() === name.toLowerCase()){
 return cmds[i]
 }
+if(cmds[i].names && cmds[i].names.includes(name)){
+return cmds[i]
+}
 }
 }
 function runCmd(str){
@@ -11717,8 +11721,11 @@ if(cmd){
 var str = "<b>/"+split[1]+"</b><br>"
 str += "Syntax: /"+cmd.name+" "
 if(cmd.args) str += cmd.args.join(" ")
-str += "<br>"
-if(cmd.info) str += "Description: "+cmd.info
+if(cmd.info) str += "<br>Description: "+cmd.info
+if(cmd.names){
+str += "<br>Can also be:"
+cmd.names.forEach(v => str += " /"+v)
+}
 Messages.add(str)
 }else Messages.add("There is no information for /"+split[1])
 }else{
@@ -16883,12 +16890,12 @@ let id = d + p.w*2
 return p.x > ix && p.y > iy && p.z > iz && p.x < ix + iw && p.y < iy + ih && p.z < iz + id
 }
 let onBox = function(x, y, z, w, h, d) {
-let iy = roundBits(y - h/2 - p.topH)
-let ih = roundBits(h + p.bottomH + p.topH)
-let ix = roundBits(x - w/2 - p.w)
-let iw = roundBits(w + p.w*2)
-let iz = roundBits(z - d/2 - p.w)
-let id = roundBits(d + p.w*2)
+let iy = y - h/2 - p.topH
+let ih = h + p.bottomH + p.topH
+let ix = x - w/2 - p.w
+let iw = w + p.w*2
+let iz = z - d/2 - p.w
+let id = d + p.w*2
 return p.x > ix && p.y > iy && p.z > iz && p.x < ix + iw && p.y <= iy + ih && p.z < iz + id
 }
 let takeDamage
@@ -16900,12 +16907,12 @@ let shape = blockData[block].shape
 if(shape.hitbox) shape = shape.hitbox
 let verts = shape.verts
 let blockObj = blockData[block]
-let px = roundBits(p.x - p.w - x)
-let py = roundBits(p.y - p.bottomH - y)
-let pz = roundBits(p.z - p.w - z)
-let pxx = roundBits(p.x + p.w - x)
-let pyy = roundBits(p.y + p.topH - y)
-let pzz = roundBits(p.z + p.w - z)
+let px = p.x - p.w - x
+let py = p.y - p.bottomH - y
+let pz = p.z - p.w - z
+let pxx = p.x + p.w - x
+let pyy = p.y + p.topH - y
+let pzz = p.z + p.w - z
 let minX, minY, minZ, maxX, maxY, maxZ, min, max
 //Top and bottom faces
 let faces = verts[0]
@@ -16913,6 +16920,7 @@ if (vy <= 0) {
 faces = verts[1]
 }
 if (!vx && !vz) {
+let col = false
 for (let face of faces) {
 min = face.min
 minX = min[0]
@@ -16921,21 +16929,20 @@ max = face.max
 maxX = max[0]
 maxZ = max[2]
 if (face[1] > py && face[1] < pyy && minX < pxx && maxX > px && minZ < pzz && maxZ > pz) {
+col = true
+p.velocity.y = 0
 if (vy <= 0) {
 p.onGround = true
-var target = round((face[1] + y + p.bottomH) * 10000) / 10000
-if(!blockHere/*target - p.y < 1*/ || !survival) p.y = target
-//p.y = round((face[1] + y + p.bottomH) * 10000) / 10000
-return false
+if(!blockHere || !survival) p.y = /*round((*/face[1] + y + p.bottomH/*) * 10000) / 10000*/
 } else {
 //if(blockObj.damage > takeDamage){
 //takeDamage = blockObj.damage
 //}
-return true
+if(!blockHere || !survival) p.y = face[1] + y - p.topH
 }
 }
 }
-return false
+return col
 }
 //West and East faces
 if (vx < 0) {
@@ -16953,8 +16960,10 @@ max = face.max
 maxZ = max[2]
 maxY = max[1]
 if (face[0] > px && face[0] < pxx && minY < pyy && maxY > py && minZ < pzz && maxZ > pz) {
-if (maxY - py > 0.5) {
+if (maxY - py > 0.5 || !p.onGround) {
 p.canStepX = false
+p.x = x + face[0] + (vx < 0 ? p.w : -p.w)
+p.velocity.x = 0
 }
 col = true
 //if(blockObj.damage > takeDamage){
@@ -16980,8 +16989,10 @@ max = face.max
 maxX = max[0]
 maxY = max[1]
 if (face[2] > pz && face[2] < pzz && minY < pyy && maxY > py && minX < pxx && maxX > px) {
-if (maxY - py > 0.5) {
+if (maxY - py > 0.5 || !p.onGround) {
 p.canStepZ = false
+p.z = z + face[2] + (vz < 0 ? p.w : -p.w)
+p.velocity.z = 0
 }
 col = true
 //if(blockObj.damage > takeDamage){
@@ -17108,8 +17119,6 @@ p.y += VY
 for (let i = 0; i < contacts.size; i++) {
 block = contacts.array[i]
 if (collided(block[0], block[1], block[2], 0, VY, 0, block[3])) {
-p.y = py
-vel.y = 0
 hasCollided = true
 break
 }
@@ -17136,8 +17145,6 @@ if (collided(block[0], block[1], block[2], VX, 0, 0, block[3])) {
 if (p.canStepX && !world.getBlock(block[0], block[1] + 1, block[2], d) && !world.getBlock(block[0], block[1] + 2, block[2], d)) {
 continue
 }
-p.x = px
-vel.x = 0
 hasCollided = true
 break
 }
@@ -17159,8 +17166,6 @@ if (collided(block[0], block[1], block[2], 0, 0, VZ, block[3])) {
 if (p.canStepZ && !world.getBlock(block[0], block[1] + 1, block[2], d) && !world.getBlock(block[0], block[1] + 2, block[2], d)) {
 continue
 }
-p.z = pz
-vel.z = 0
 hasCollided = true
 break
 }
@@ -17230,9 +17235,16 @@ ontouch(x, y, z)
 }
 }
 let runGravity = function() {
-if (p.flying) {
-return
+if(liquid !== lastLiquid){
+lastLiquid = liquid
+if(liquid && wet){
+playSound("liquid.splash")
+}else if(!wet){
+//playSound("liquid.exit")
 }
+}
+if(p.y > p.lastY) p.lastY = p.y
+if(p.flying) return
 if(p.onGround) {
 let fall = p.lastY - p.y
 p.lastY = p.y
@@ -17241,7 +17253,7 @@ if(fall > 3 && survival && !liquid) {
 var fallType = fall > 6 ? "bigfall" : "smallfall"
 damage(Math.floor(fall-3), username+" fell from a high place. You fell "+Math.round(fall)+" blocks.", false, fallType)//Math.floor( (p.velocity.y * p.velocity.y * 8));
 }
-if(p.velocity.y < -0.1 && block){
+if(fall > 0.5 && block){
 blockParticles(block, p.x,p.y-p.bottomH,p.z,10, "player",world, p.dimension)
 blockSound(block, "step", p.x,p.y,p.z, 1)
 }
@@ -17258,18 +17270,10 @@ p.foodExhaustion += p.sprinting ? 0.2 : 0.05
 p.velocity.y = 0
 }
 }
-} else {
+}else{
 p.velocity.y += p.gravityStength
 if(p.velocity.y < -p.maxYVelocity) {
 p.velocity.y = -p.maxYVelocity
-}
-}
-if(liquid !== lastLiquid){
-lastLiquid = liquid
-if(liquid && wet){
-playSound("liquid.splash")
-}else if(!wet){
-//playSound("liquid.exit")
 }
 }
 }
@@ -17408,13 +17412,14 @@ p.character.render()
 let updtPlayer = function(){
 if(p.ry - p.bodyRot > Math.PI) p.bodyRot += Math.PId //prevent weird thing happening when rotation was 0 but is now 360
 if(p.ry - p.bodyRot < -Math.PI) p.bodyRot -= Math.PId
-if(p.ry - p.bodyRot > Math.PI2) p.bodyRot = p.ry - Math.PI2//if rotation difference is too much rotate body
-if(p.ry - p.bodyRot < -Math.PI2) p.bodyRot = p.ry + Math.PI2
+if(p.ry - p.bodyRot > Math.PI4) p.bodyRot = p.ry - Math.PI4//if rotation difference is too much rotate body
+if(p.ry - p.bodyRot < -Math.PI4) p.bodyRot = p.ry + Math.PI4
 if(move.z && !move.x) p.bodyRot = lerp(0.4, p.bodyRot, p.ry) //forward and backward
-if(move.x > 0 && !move.z) p.bodyRot = lerp(0.4, p.bodyRot, p.ry-Math.PI2) //right
-if(move.x < 0 && !move.z) p.bodyRot = lerp(0.4, p.bodyRot, p.ry+Math.PI2) //left
+if(move.x > 0 && !move.z) p.bodyRot = lerp(0.4, p.bodyRot, p.ry-Math.PI4) //right
+if(move.x < 0 && !move.z) p.bodyRot = lerp(0.4, p.bodyRot, p.ry+Math.PI4) //left
 if((move.x > 0 && move.z > 0) || (move.x < 0 && move.z < 0)) p.bodyRot = lerp(0.4, p.bodyRot, p.ry-Math.PI4) //diagnal
 if((move.x < 0 && move.z > 0) || (move.x > 0 && move.z < 0)) p.bodyRot = lerp(0.4, p.bodyRot, p.ry+Math.PI4) //diagnal
+if(p.punchEffect > 0) p.bodyRot = lerp(0.4, p.bodyRot, p.ry)
 p.character.setPos(p.x,p.y,p.z)
 p.character.setRot(-p.rx,-p.ry, -p.bodyRot)
 p.character.burning = p.burning
@@ -17640,9 +17645,11 @@ updateHUD = true
 }
 }
 function replaceItem(id){
-inventory.hotbar[inventory.hotbarSlot] && (inventory.hotbar[inventory.hotbarSlot].id = id)
+if(inventory.hotbar[inventory.hotbarSlot]){
+inventory.hotbar[inventory.hotbarSlot].id = id
 inventory.hotbar[inventory.hotbarSlot].animation = 1.5
-holding = inventory.hotbar[inventory.hotbarSlot].id
+}
+holding = inventory.hotbar[inventory.hotbarSlot].id || 0
 updateHUD = true
 }
 function getPosition(){
@@ -21071,12 +21078,12 @@ this.velx += (this.velx * 0.9 - this.velx)
 }
 collided(x, y, z, vx, vy, vz, block) {
 let verts = blockData[block].shape.verts
-let px = roundBits(this.x - this.width / 2 - x)
-let py = roundBits(this.y - this.height / 2 - y)
-let pz = roundBits(this.z - this.depth / 2 - z)
-let pxx = roundBits(this.x + this.width / 2 - x)
-let pyy = roundBits(this.y + this.height / 2 - y)
-let pzz = roundBits(this.z + this.depth / 2 - z)
+let px = this.x - this.width / 2 - x
+let py = this.y - this.height / 2 - y
+let pz = this.z - this.depth / 2 - z
+let pxx = this.x + this.width / 2 - x
+let pyy = this.y + this.height / 2 - y
+let pzz = this.z + this.depth / 2 - z
 let minX, minY, minZ, maxX, maxY, maxZ, min, max
 //Top and bottom faces
 let faces = verts[0]
@@ -21084,6 +21091,7 @@ if (vy <= 0) {
 faces = verts[1]
 }
 if (!vx && !vz) {
+let col = false
 for (let face of faces) {
 min = face.min
 minX = min[0]
@@ -21092,17 +21100,18 @@ max = face.max
 maxX = max[0]
 maxZ = max[2]
 if (face[1] > py && face[1] < pyy && minX < pxx && maxX > px && minZ < pzz && maxZ > pz) {
+col = true
 if (vy <= 0) {
 this.onGround = true
-this.y = round((face[1] + y + this.height / 2) * 10000) / 10000
+this.y = face[1] + y + this.height / 2
 this.vely = 0
-return false
 } else {
-return true
+this.y = face[1] + y - this.height / 2
+this.vely = 0
 }
 }
 }
-return false
+return col
 }
 //West and East faces
 if (vx < 0) {
@@ -21122,6 +21131,8 @@ maxY = max[1]
 if (face[0] > px && face[0] < pxx && minY < pyy && maxY > py && minZ < pzz && maxZ > pz) {
 if (maxY - py > 0.5) {
 this.canStepX = false
+this.x = x + face[0] + (vx < 0 ? this.width / 2 : -this.width / 2)
+this.velx = 0
 }
 col = true
 }
@@ -21146,6 +21157,8 @@ maxY = max[1]
 if (face[2] > pz && face[2] < pzz && minY < pyy && maxY > py && minX < pxx && maxX > px) {
 if (maxY - py > 0.5) {
 this.canStepZ = false
+this.z = z + face[2] + (vz < 0 ? this.depth / 2 : -this.depth / 2)
+this.velz = 0
 }
 col = true
 }
@@ -21193,8 +21206,6 @@ this.y += VY
 for (let i = 0; i < this.contacts.size; i++) {
 block = this.contacts.array[i]
 if (this.collided(block[0], block[1], block[2], 0, VY, 0, block[3])) {
-this.y = py
-this.vely = 0
 this.hasCollided = true
 break
 }
@@ -21211,8 +21222,6 @@ if (this.collided(block[0], block[1], block[2], VX, 0, 0, block[3])) {
 if (this.canStepX && !world.getBlock(block[0], block[1] + 1, block[2], this.dimension) && !world.getBlock(block[0], block[1] + 2, block[2]), this.dimension) {
 continue
 }
-this.x = px
-this.velx = 0
 this.hasCollided = true
 break
 }
@@ -21225,8 +21234,6 @@ if (this.collided(block[0], block[1], block[2], 0, 0, VZ, block[3])) {
 if (this.canStepZ && !world.getBlock(block[0], block[1] + 1, block[2], this.dimension) && !world.getBlock(block[0], block[1] + 2, block[2], this.dimension)) {
 continue
 }
-this.z = pz
-this.velz = 0
 this.hasCollided = true
 break
 }
