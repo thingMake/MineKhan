@@ -3047,7 +3047,7 @@ stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","blo
 },
 { name: "stone", Name:"Stone", drop:"cobblestone", type:"rock1", breakTime:7.5, blastResistance:6, stoneSound:true},
 { name: "bedrock", Name:"Bedrock", breakTime:89000000, blastResistance:3600000, stoneSound:true, pistonPush:false, pistonPull:false},
-{ name: "sand", Name:"Sand", breakTime:0.75, blastResistance:0.5,
+{ name: "sand", Name:"Sand", breakTime:0.75, blastResistance:0.5,fallingDust:[212/255, 195/255, 148/255],
 onupdate: function(x,y,z,b,world,sx,sy,sz,dimension){
 fall(x,y,z,b,world,false,dimension)
 },
@@ -3056,7 +3056,7 @@ fall(x,y,z,b,world,true,dimension)
 },
 digSound: ["block.sand.dig1", "block.sand.dig2", "block.sand.dig3", "block.sand.dig4"],
 stepSound: ["block.sand.step1", "block.sand.step2","block.sand.step3","block.sand.step4","block.sand.step5"]},
-{ name: "gravel", Name:"Gravel", breakTime:0.9, blastResistance:0.6, type:"ground",
+{ name: "gravel", Name:"Gravel", breakTime:0.9, blastResistance:0.6, type:"ground",fallingDust:[132/255, 126/255, 124/255],
 onupdate: function(x,y,z,b,world,sx,sy,sz,dimension){
 fall(x,y,z,b,world,false,dimension)
 },
@@ -3309,11 +3309,11 @@ playSound("entity.tnt.fuse", 0, posSound(x,y,z))
 },
 onpowerupdate:function(x,y,z,sx,sy,sz,blockPowerChanged,dimension){
 var power = world.getRedstonePower(x,y,z,dimension)
-if(power > 0) this.explode(x,y,z,dimension)
+if(power > 0) this.explode(x,y,z,null,dimension)
 },
 onplace:function(x,y,z,dimension){
 var power = world.getRedstonePower(x,y,z,dimension)
-if(power > 0) this.explode(x,y,z,dimension)
+if(power > 0) this.explode(x,y,z,null,dimension)
 },
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
@@ -5360,6 +5360,7 @@ layers: true,
 transparent:true,
 drop:"snowball",
 breakTime: 0.5,
+fallingDust:[248/255, 253/255, 253/255],
 onupdate: function(x,y,z,b,world,sx,sy,sz,dimension){
 fall(x,y,z,b,world,false,dimension)
 },
@@ -6647,6 +6648,7 @@ Name:"End Stone",
 name:"redSand",
 Name:"Red Sand",
 breakTime:0.75,
+fallingDust:[178/255, 94/255, 26/255],
 onupdate: function(x,y,z,b,world,sx,sy,sz,dimension){
 fall(x,y,z,b,world,false,dimension)
 },
@@ -19767,6 +19769,17 @@ world.setBlock(x,y+2,z, above, false,false,false,false, this.type) //move the ca
 world.setBlock(x,y+1,z, blockIds.cactus|CACTUS, false,false,false,false, this.type)
 }
 }
+for (i = 0; i < 40; i++) {
+let rnd = rand(this.blocks.length) | 0
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+var f = blockData[this.blocks[rnd] || 0].fallingDust
+var under = world.getBlock(x,y-1,z,this.type)
+if(f && !(under && blockData[under].solid)){
+world.addParticle(new FallingDustParticle(x+rand(-0.5,0.5),y-0.5,z+rand(-0.5,0.5),f),this.type)
+}
+}
 }
 getLight(x, y, z, block = 0) {
 let s = this.size
@@ -21070,10 +21083,10 @@ this.vely += this.gravityStength
 if (this.vely < -1.5) {
 this.vely = -1.5
 }
-let drag = this.liquid ? 0.7 : (this.onGround ? 0.5 : 0.85)
+let drag = this.liquid ? 0.7 : (this.onGround ? 0.8 : 0.9)
 if(blockData[this.standingOn].slide) drag = blockData[this.standingOn].slide
-this.velz += (this.velz * 0.9 - this.velz)
-this.velx += (this.velx * 0.9 - this.velx)
+this.velz += (this.velz * drag - this.velz)
+this.velx += (this.velx * drag - this.velx)
 // this.vely += (this.vely * 0.9 - this.vely) * dt
 }
 collided(x, y, z, vx, vy, vz, block) {
@@ -21706,7 +21719,7 @@ if(i%2){
 this.tex = this.tntBlockId
 }else{
 this.tex = blockIds.whiteConcrete
-world.addParticle(new TNTSmokeParticle(this.x,this.y+0.5-0.125,this.z), this.dimension)
+world.addParticle(new SmokeParticle(this.x,this.y+0.5-0.125,this.z), this.dimension)
 }
 if(this.prevTex !== this.tex){
 this.changeBlock(this.tex)
@@ -22947,11 +22960,19 @@ this.pitch = rxy
 this.yaw = lambda*/
 }
 updateVelocity(now) {
-this.vely += -0.04
+this.standingOn = world.getBlock(this.x, round(this.y-this.height-1), this.z)
+if (this.liquid){
+this.gravityStength = -0.015
+this.vely *= 0.9
+}else{
+this.gravityStength = this.defaultGravityStength
+}
+this.vely += this.gravityStength
 if (this.vely < -1.5) {
 this.vely = -1.5
 }
-let drag = this.onGround ? 0 : 0.9
+let drag = this.liquid ? 0.7 : (this.onGround ? 0 : 0.9)
+if(blockData[this.standingOn].slide) drag = blockData[this.standingOn].slide
 this.velz += (this.velz * drag - this.velz)
 this.velx += (this.velx * drag - this.velx)
 // this.vely += (this.vely * 0.9 - this.vely) * dt
@@ -23158,6 +23179,68 @@ world.addParticle(new PoofParticle(x+X,y+Y,z+Z), dimension)
 }
 }
 win.playerPoof = playerPoof
+class FallingDustParticle extends Particle{
+constructor(x,y,z, tint){
+super(x, y, z, 0, 0, 0, 0, 0, 0.25, 0.25, 0.25, null, null, genericVaos.size, rand(4000, 8000), genericVaos[floor(rand(8))])
+this.tint = tint
+this.defaultGravityStength = -0.004
+}
+update(){
+let now = performance.now()
+this.updateVelocity(now)
+this.move(now)
+if (now - this.spawn > this.despawns) {
+this.canDespawn = true
+}
+if(this.onGround) this.canDespawn = true
+this.canFacePlayer = true
+}
+render(){
+if(this.canFacePlayer){
+this.facePlayer()
+this.canFacePlayer = false
+}
+let diff = (performance.now() - this.lastUpdate) / tickTime
+if (diff > 1) diff = 1
+let renderx = (this.x - this.previousX) * diff + this.previousX
+let rendery = (this.y - this.previousY) * diff + this.previousY
+let renderz = (this.z - this.previousZ) * diff + this.previousZ
+const modelMatrix = new Matrix();
+modelMatrix.identity()
+modelMatrix.translate(renderx, rendery, renderz)
+modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
+modelMatrix.scale(this.width, this.height, this.depth)
+const viewMatrix = p.transformation.elements
+const proj = p.projection
+const projectionMatrix = [proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0]
+const modelViewProjectionMatrix = new Matrix()
+modelViewProjectionMatrix.identity()
+modelViewProjectionMatrix.mult(projectionMatrix)
+modelViewProjectionMatrix.mult(viewMatrix)
+modelViewProjectionMatrix.mult(modelMatrix.elements)
+// row major to column major
+modelViewProjectionMatrix.transpose()
+const x = round(this.x)
+const y = round(this.y)
+const z = round(this.z)
+const blockLight = world.getLight(x, y, z, 1, this.dimension)
+const skysLight = world.getLight(x, y, z, 0, this.dimension)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
+gl.bindTexture(gl.TEXTURE_2D, genericTexture)
+gl.uniform1i(glCache.uSamplerParticle, 6)
+gl.uniform1f(glCache.uLightLevelParticle, lightLevel)
+gl.uniformMatrix4fv(glCache.uViewParticle, false, modelViewProjectionMatrix.elements)
+gl.uniform1i(glCache.isTextureAtlasParticle, 0)
+if(this.tint) gl.uniform3f(glCache.tintParticle, this.tint[0],this.tint[1],this.tint[2])
+glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
+gl.uniform1i(glCache.isTextureAtlasParticle, 1)
+if(this.tint) gl.uniform3f(glCache.tintParticle, 1,1,1)
+}
+}
+win.FallingDustParticle = FallingDustParticle
 class ShockwaveParticle extends Particle{
 constructor(x,y,z, delay){
 var vao = explodeVaos[8]
@@ -23224,7 +23307,7 @@ gl.uniform1i(glCache.isTextureAtlasParticle, 1)
 }
 }
 win.ShockwaveParticle = ShockwaveParticle
-class TNTSmokeParticle extends Particle {
+class SmokeParticle extends Particle {
 constructor(x,y,z){
 var frameTime = tickTime
 super(x, y, z, 0, 0, rand(-0.02,0.02), 0, rand(-0.02,0.02), 0.125, 0.125, 0.125, null, null, genericVaos.size, genericVaos.length*frameTime, genericVaos[0])
@@ -23282,7 +23365,7 @@ glExtensions.vertex_array_object.bindVertexArrayOES(null)
 gl.uniform1i(glCache.isTextureAtlasParticle, 1)
 }
 }
-win.TNTSmokeParticle = TNTSmokeParticle
+win.SmokeParticle = SmokeParticle
 class NoteParticle extends Particle{
 constructor(x,y,z, note){
 let tex = "note"
