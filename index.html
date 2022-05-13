@@ -22590,11 +22590,11 @@ this.parts.rightArm.rx = 0
 var walkRotTarget
 if(this.walking){
 if(this.sprinting){
-walkRotTarget = sin((now - this.spawn) / 50) * Math.PI / 4
+walkRotTarget = sin(((now - this.spawn) / 250) * Math.PI) * Math.PI / 4
 }else if(this.sneaking){
 walkRotTarget = sin((now - this.spawn) / 220) * Math.PI / 4
 }else{
-walkRotTarget = sin((now - this.spawn) / 100) * Math.PI / 4
+walkRotTarget = sin(((now - this.spawn) / 500) * Math.PI) * Math.PI / 4
 }
 }else{
 walkRotTarget = 0
