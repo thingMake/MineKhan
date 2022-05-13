@@ -10373,9 +10373,6 @@ vector.z = this.z * z
 return vector
 }
 }
-function mag(x,y,z) {
-return sqrt(x * x + y * y + z * z)
-}
 let fill = function(r, g, b, a) {
 if (g === undefined) {
 g = r
@@ -10460,6 +10457,10 @@ let zDist = z - z2
 return sqrt((xDist*xDist)+(yDist*yDist)+(zDist*zDist))
 }
 win.dist2 = dist2; win.dist3 = dist3
+function mag(x,y,z) {
+return sqrt(x * x + y * y + z * z)
+}
+win.mag = mag
 const ARROW = "arrow"
 const HAND = "pointer"
 let cursor = function(type) {
@@ -14474,6 +14475,24 @@ east: 3,
 west: 3
 },
 },
+cape:{
+verts:[
+[objectify(3,-8,8,10,1,11,0)],
+[objectify(3,8,9,10,1,1,0)],
+[objectify(13,8,9,10,16,11,1)],
+[objectify(3,8,8,10,16,1,1)],
+[objectify(13,8,8,1,16,0,1)],
+[objectify(3,8,9,1,16,21,1)]
+],
+cull: {
+top: 3,
+bottom: 3,
+north: 3,
+south: 3,
+east: 3,
+west: 3
+}
+},
 item: {
 verts: generateItemShape(),
 cull: {
@@ -16921,7 +16940,7 @@ let faces = verts[0]
 if (vy <= 0) {
 faces = verts[1]
 }
-if (!vx && !vz) {
+if (vx === null && vz === null) {
 let col = false
 for (let face of faces) {
 min = face.min
@@ -16952,7 +16971,7 @@ faces = verts[4]
 } else if (vx > 0) {
 faces = verts[5]
 }
-if (vx) {
+if (vx !== null) {
 let col = false
 for (let face of faces) {
 min = face.min
@@ -16981,7 +17000,7 @@ faces = verts[2]
 } else if (vz > 0) {
 faces = verts[3]
 }
-if (vz) {
+if (vz !== null) {
 let col = false
 for (let face of faces) {
 min = face.min
@@ -17026,7 +17045,7 @@ this.size = 0
 let blocks = []
 let resolveContactsAndUpdatePosition = function(now) {
 let mag = p.velocity.mag()
-let steps = Math.ceil(mag)
+let steps = max(Math.ceil(mag), 1)
 const VX = p.velocity.x / steps
 const VY = p.velocity.y / steps
 const VZ = p.velocity.z / steps
@@ -17120,9 +17139,9 @@ p.canStepZ = false
 p.y += VY
 for (let i = 0; i < contacts.size; i++) {
 block = contacts.array[i]
-if (collided(block[0], block[1], block[2], 0, VY, 0, block[3])) {
+if (collided(block[0], block[1], block[2], null, VY, null, block[3])) {
 hasCollided = true
-break
+//break
 }
 }
 if (p.onGround) {
@@ -17143,12 +17162,12 @@ break
 p.x += VX
 for (let i = 0; i < contacts.size; i++) {
 block = contacts.array[i]
-if (collided(block[0], block[1], block[2], VX, 0, 0, block[3])) {
+if (collided(block[0], block[1], block[2], VX, null, null, block[3])) {
 if (p.canStepX && !world.getBlock(block[0], block[1] + 1, block[2], d) && !world.getBlock(block[0], block[1] + 2, block[2], d)) {
 continue
 }
 hasCollided = true
-break
+//break
 }
 if (sneakLock && onBox(block[0], block[1], block[2], 1, 1, 1)) {
 sneakSafe = true
@@ -17164,12 +17183,12 @@ sneakSafe = false
 p.z += VZ
 for (let i = 0; i < contacts.size; i++) {
 block = contacts.array[i]
-if (collided(block[0], block[1], block[2], 0, 0, VZ, block[3])) {
+if (collided(block[0], block[1], block[2], null, null, VZ, block[3])) {
 if (p.canStepZ && !world.getBlock(block[0], block[1] + 1, block[2], d) && !world.getBlock(block[0], block[1] + 2, block[2], d)) {
 continue
 }
 hasCollided = true
-break
+//break
 }
 if (sneakLock && onBox(block[0], block[1], block[2], 1, 1, 1)) {
 sneakSafe = true
@@ -21103,7 +21122,7 @@ let faces = verts[0]
 if (vy <= 0) {
 faces = verts[1]
 }
-if (!vx && !vz) {
+if (vx === null && vz === null) {
 let col = false
 for (let face of faces) {
 min = face.min
@@ -21132,7 +21151,7 @@ faces = verts[4]
 } else if (vx > 0) {
 faces = verts[5]
 }
-if (vx) {
+if (vx !== null) {
 let col = false
 for (let face of faces) {
 min = face.min
@@ -21158,7 +21177,7 @@ faces = verts[2]
 } else if (vz > 0) {
 faces = verts[3]
 }
-if (vz) {
+if (vz !== null) {
 let col = false
 for (let face of faces) {
 min = face.min
@@ -21180,7 +21199,7 @@ return col
 }
 }
 move(now) {
-let steps = Math.ceil(mag(this.velx,this.vely,this.velz))
+let steps = max(Math.ceil(mag(this.velx / (this.width/2), this.vely / (this.height/2), this.velz / (this.depth/2))), 1)
 const VX = this.velx / steps
 const VY = this.vely / steps
 const VZ = this.velz / steps
@@ -21218,9 +21237,9 @@ this.onGround = false
 this.y += VY
 for (let i = 0; i < this.contacts.size; i++) {
 block = this.contacts.array[i]
-if (this.collided(block[0], block[1], block[2], 0, VY, 0, block[3])) {
+if (this.collided(block[0], block[1], block[2], null, VY, null, block[3])) {
 this.hasCollided = true
-break
+//break
 }
 }
 if (this.onGround) {
@@ -21231,24 +21250,24 @@ this.canStepZ = true
 this.x += VX
 for (let i = 0; i < this.contacts.size; i++) {
 block = this.contacts.array[i]
-if (this.collided(block[0], block[1], block[2], VX, 0, 0, block[3])) {
+if (this.collided(block[0], block[1], block[2], VX, null, null, block[3])) {
 if (this.canStepX && !world.getBlock(block[0], block[1] + 1, block[2], this.dimension) && !world.getBlock(block[0], block[1] + 2, block[2]), this.dimension) {
 continue
 }
 this.hasCollided = true
-break
+//break
 }
 }
 //Check collisions in the Z direction
 this.z += VZ
 for (let i = 0; i < this.contacts.size; i++) {
 block = this.contacts.array[i]
-if (this.collided(block[0], block[1], block[2], 0, 0, VZ, block[3])) {
+if (this.collided(block[0], block[1], block[2], null, null, VZ, block[3])) {
 if (this.canStepZ && !world.getBlock(block[0], block[1] + 1, block[2], this.dimension) && !world.getBlock(block[0], block[1] + 2, block[2], this.dimension)) {
 continue
 }
 this.hasCollided = true
-break
+//break
 }
 }
 }
@@ -21425,7 +21444,7 @@ this.updateVelocity(now)
 this.move(now)
 let pickup = false
 let comeCloser = false
-if(now - this.spawn > 1000 && !p.spectator){
+if(now - this.spawn > 1000 && !p.spectator && p.dimension === this.dimension){
 let xDist = this.x - p.x
 let yDist = this.y - (p.y - p.bottomH)
 let zDist = this.z - p.z
@@ -22011,7 +22030,7 @@ this.hasCollided = false
 this.y += this.vely
 for (let i = 0; i < this.contacts.size; i++) {
 block = this.contacts.array[i]
-if (this.collided(block[0], block[1], block[2], 0, this.vely, 0, block[3])) {
+if (this.collided(block[0], block[1], block[2], null, this.vely, null, block[3])) {
 this.y = this.previousY
 this.vely = 0
 this.hasCollided = true
@@ -22027,7 +22046,7 @@ this.canStepZ = true
 this.x += this.velx
 for (let i = 0; i < this.contacts.size; i++) {
 block = this.contacts.array[i]
-if (this.collided(block[0], block[1], block[2], this.velx, 0, 0, block[3])) {
+if (this.collided(block[0], block[1], block[2], this.velx, null, null, block[3])) {
 if (this.canStepX && !world.getBlock(block[0], block[1] + 1, block[2], this.dimension) && !world.getBlock(block[0], block[1] + 2, block[2], this.dimension)) {
 continue
 }
@@ -22042,7 +22061,7 @@ break
 this.z += this.velz
 for (let i = 0; i < this.contacts.size; i++) {
 block = this.contacts.array[i]
-if (this.collided(block[0], block[1], block[2], 0, 0, this.velz, block[3])) {
+if (this.collided(block[0], block[1], block[2], null, null, this.velz, block[3])) {
 if (this.canStepZ && !world.getBlock(block[0], block[1] + 1, block[2], this.dimension) && !world.getBlock(block[0], block[1] + 2, block[2]), this.dimension) {
 continue
 }
@@ -22143,7 +22162,7 @@ this.tint = {r:1,g:1,b:1}
 update(){
 let now = performance.now()
 var dist = dist3(this.x,this.y,this.z,p.x,p.y-p.bottomH,p.z)
-if(!p.spectator){
+if(!p.spectator && p.dimension === this.dimension){
 if(dist < 7.25 && dist > -7.25){
 ////var speed = (7.25 - dist) / 10
 //var aDist = abs(dist)
@@ -22406,6 +22425,8 @@ part = this.generateVAO(shapes.playerLeftLeg,0,0)
 this.addPart("leftLeg",part.size,part.vao,pix*2,pix*-6,0,1,1,1,0,0)
 part = this.generateVAO(shapes.playerRightLeg,0,0)
 this.addPart("rightLeg",part.size,part.vao,pix*-2,pix*-6,0,1,1,1,0,0)
+part = this.generateVAO(shapes.cape,0,0,false,4,8)
+this.addPart("cape",part.size,part.vao,0,pix*6,pix*-3,1,1,1,0,0)
 this.headYaw = 0
 this.headPitch = 0
 this.holding = 1 //shown in the hand, it is set to the blockid for the block the player is holding
@@ -22419,6 +22440,9 @@ this.pOffsetry = this.offsetry = 0
 this.skinSet = false
 this.skinURL = null
 this.skinImg = images.skin
+this.capeSet = false
+this.capeURL = null
+this.capeImg = null
 }
 setSkin(url){
 this.skinSet = true
@@ -22431,8 +22455,20 @@ me.skinImg = image
 }
 image.src = url
 }
-generateVAO(shape, tx, ty, texAtlas){
-var scale = texAtlas ? 1 : (16 * 16 / 64)
+setCape(url){
+this.capeSet = true
+this.capeURL = url
+if(!url) return
+var image = new Image()
+var me = this
+image.onload = function(){
+me.capeImg = image
+}
+image.src = url
+}
+generateVAO(shape, tx, ty, texAtlas, xScale, yScale){
+if(!xScale) xScale = texAtlas ? 1 : 4
+if(!yScale) yScale = texAtlas ? 1 : 4
 const shapeVerts = shape.verts
 const shapeTexVerts = shape.texVerts
 const size = shape.size
@@ -22445,14 +22481,14 @@ let side = blockSides[n]
 let directionalFaces = shapeVerts[Sides[side]]
 for (let facei = 0; facei < directionalFaces.length; facei++) {
 let texShapeVerts = shapeTexVerts[n][facei]
-texture[index    ] = (tx + texShapeVerts[0]) * scale
-texture[index + 1] = (ty + texShapeVerts[1]) * scale
-texture[index + 2] = (tx + texShapeVerts[2]) * scale
-texture[index + 3] = (ty + texShapeVerts[3]) * scale
-texture[index + 4] = (tx + texShapeVerts[4]) * scale
-texture[index + 5] = (ty + texShapeVerts[5]) * scale
-texture[index + 6] = (tx + texShapeVerts[6]) * scale
-texture[index + 7] = (ty + texShapeVerts[7]) * scale
+texture[index    ] = (tx + texShapeVerts[0]) * xScale
+texture[index + 1] = (ty + texShapeVerts[1]) * yScale
+texture[index + 2] = (tx + texShapeVerts[2]) * xScale
+texture[index + 3] = (ty + texShapeVerts[3]) * yScale
+texture[index + 4] = (tx + texShapeVerts[4]) * xScale
+texture[index + 5] = (ty + texShapeVerts[5]) * yScale
+texture[index + 6] = (tx + texShapeVerts[6]) * xScale
+texture[index + 7] = (ty + texShapeVerts[7]) * yScale
 index += 8
 }
 texNum++
@@ -22576,6 +22612,15 @@ this.parts.rightArm.rx -= punchEffect/6
 this.parts.rightArm.ry2 = sin(punchEffect*Math.PI/10)
 this.offsetry = this.parts.rightArm.ry2 / 3
 }else this.parts.rightArm.ry2 = 0
+if(this.capeImg){
+var target
+if(this.walking){
+target = Math.PI2 + sin((now - this.spawn) / 200) * (Math.PI / 8)
+}else{
+target = (sin((now - this.spawn) / 1000) / 2 + 0.5) * (Math.PI / 16)
+}
+this.parts.cape.rx = lerp(0.125, this.parts.cape.rx, target)
+}
 }
 setPos(x,y,z){
 this.previousX = this.x
@@ -22698,6 +22743,12 @@ entityFire.render(this)
 }
 }
 renderPart(part, modelMatrix, modelViewProjectionMatrix, projectionMatrix, viewMatrix, x,y,z){
+if(part.name === "cape"){
+if(!this.capeImg) return
+gl.activeTexture(gl.TEXTURE7)
+gl.bindTexture(gl.TEXTURE_2D, skinTexture)
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.capeImg)
+}
 var texAtlas = part.name === "holding"
 if(texAtlas){
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
@@ -23749,6 +23800,7 @@ username = fetchRes.username
 userInfo = fetchRes
 //p.character.changeBlock(abs(r.hashCode()) % 80 + 1)
 if(fetchRes.skin) p.character.setSkin(fetchRes.skin)
+if(fetchRes.cape) p.character.setCape(fetchRes.cape)
 return username
 }else{
 username = "Steve"
@@ -23849,6 +23901,7 @@ var multiplayerError = null
 var players = {}
 win.playersInv = {}
 win.playerSkins = {}
+win.playerCapes = {}
 function hasPlayer(username){
 for(var i in players){
 if(players[i].username === username) return true
@@ -23925,7 +23978,7 @@ send({
 name: world.name
 })
 }
-send({type:"mySkin", data:p.character.skinURL})
+send({type:"mySkin", data:p.character.skinURL, cape:p.character.capeURL})
 send({
 "type":"getSave"
 })
@@ -23987,7 +24040,7 @@ cheats:cheats,
 inv: playersInv[data.USER]
 }, author)
 }
-send({type:"mySkin", data:p.character.skinURL})
+send({type:"mySkin", data:p.character.skinURL, cape:p.character.capeURL})
 }else if(data.type === "loadSave"){
 world = new World()
 world.id = data.id
@@ -24028,6 +24081,7 @@ mod()
 changeScene("loading")
 }else if(data.type === "mySkin"){
 playerSkins[author] = data.data
+if(data.cape) playerCapes[author] = data.cape
 }else if(data.type === "pos"){
 var pos = data.data
 if(!players[author]){
@@ -24059,6 +24113,9 @@ worldTime = pos.time
 if(data.inv) playersInv[data.USER] = data.inv
 if(!thisplayer.skinSet && playerSkins[author]){
 thisplayer.setSkin(playerSkins[author])
+}
+if(!thisplayer.capeSet && playerCapes[author]){
+thisplayer.setCape(playerCapes[author])
 }
 if(data.host && data.worldSettings){
 Object.assign(worldSettings, data.worldSettings)
@@ -25204,14 +25261,14 @@ this.sortedChunks[i].tick()
 if(screen !== "loading" && screen !== "netherLoading"){
 for (let i = this.entities.length - 1; i >= 0; i--) {
 const entity = this.entities[i]
-entity.update()
+if(entity.dimension === p.dimension) entity.update()
 if (entity.canDespawn || (entity.y <= -64)) {
 this.deleteEntity(0, false, i)
 }
 }
 for (let i = this.particles.length - 1; i >= 0; i--) {
 const particle = this.particles[i]
-particle.update()
+if(particle.dimension === p.dimension) particle.update()
 if (particle.canDespawn || (particle.y <= -64)) {
 this.particles.splice(i,1)
 }
