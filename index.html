@@ -270,7 +270,6 @@ position:absolute;
 z-index:2;
 top:0px;
 left:0px;
-background:#000a;
 color:white;
 font:14px 'VT323';
 overflow-wrap:anywhere;
@@ -278,19 +277,40 @@ max-height:100vh;
 max-width: calc(50% - 30px);
 overflow:hidden;
 }
-#messageInput{
-border:none;
-background:transparent;
-width:100%;
-min-width:100px;
-color:white;
-font:14px 'VT323';
-}
 #messages{
-/*display: flex;
-align-items: flex-end;*/
 max-height:100vh;
 overflow:hidden;
+background:#000a;
+}
+#messageInput{
+display:none;
+margin-left: 50px;
+height: 50px;
+width: calc(100% - 150px);
+color:white;
+font:16px 'VT323';
+padding:8px;
+background:rgb(60,60,60);
+border-color:rgb(20,20,20) rgb(130,130,130) rgb(130,130,130) rgb(20,20,20);
+border-width:2px;
+border-style:solid;
+outline: none;
+box-sizing: border-box;
+}
+#messagesHolder.chat{
+width:100vw;
+height:100vh;
+max-width:none;
+display:flex;
+flex-direction:column;
+}
+#messagesHolder.chat #messages{
+height:100%;
+width:100%;
+overflow-y:scroll;
+}
+#messagesHolder.chat #messageInput{
+display:inline-block;
 }
 #controls{
 width: 99vw;
@@ -543,8 +563,8 @@ Then save the program as a Spin-off.
 <p id="message" class="hidden darklinks" style="position: absolute; top: 10px; right: 10px; z-index: 1; text-align: right; background-color: rgba(255, 255, 255, 0.3);"></p>
 <datalist id="cmdList"></datalist>
 <div id="messagesHolder" class="hidden">
-<input id="messageInput" class="hidden" list="cmdList">
 <div id="messages"></div>
+<input id="messageInput" list="cmdList">
 </div>
 <div id="controls" class="hidden"></div>
 <div id="controlDetect" class="hidden" tabindex="0">Click or press a key</div>
@@ -11080,7 +11100,8 @@ onenter: () => {
 startLoad()
 constVersion(world.version || version)
 },
-onexit: () => {
+onexit: (newScene) => {
+if(newScene !== "play") return
 if(multiplayer){
 send({
 "type":"joined",
@@ -11110,7 +11131,21 @@ exit: [window.marketplace]
 play: {
 enter: [window.messageHolder, window.onscreenControl_Element],
 exit: [window.messageHolder, window.onscreenControl_Element],
-onexit: () => Messages.clear()
+onexit: newScene => {
+if(newScene !== "chat") Messages.clear()
+}
+},
+chat: {
+enter: [window.messageHolder],
+exit: [window.messageHolder],
+onenter: () => {
+window.messageHolder.classList.add("chat")
+Messages.showAll()
+},
+onexit: () => {
+window.messageHolder.classList.remove("chat")
+Messages.showArr()
+}
 },
 "options controls":{
 enter: [window.controls],
@@ -11142,11 +11177,11 @@ for (let element of html[newScene].enter) {
 element.classList.remove("hidden")
 }
 }
+if (html[screen] && html[screen].onexit) {
+html[screen].onexit(newScene)
+}
 if (html[newScene] && html[newScene].onenter) {
 html[newScene].onenter()
-}
-if (html[screen] && html[screen].onexit) {
-html[screen].onexit()
 }
 if(newScene === "options" && !screen.startsWith("options ")){
 beforeOptionsScreen = screen
@@ -11402,12 +11437,6 @@ await sleep(10)
 }
 }
 var cmds = [
-{
-name: "showAll",
-info: "Shows all messages.",
-func: () => Messages.showAll(),
-noCheats: true
-},
 {
 name: "clear",
 info: "Clears shown messages",
@@ -11762,12 +11791,12 @@ array: [],
 all: [],
 remove: (function(){
 var arr = [["k","c","u","f"].reverse().join(""), "stupid","blood","dumb","bitch","shit","poo"]
-var between = "[ \*.,|`~\/\\!&]*" //there might be characters between, like this: d.u.m.b
+var between = "[THELETTER \*.,|`~\/\\!&]*" //there might be characters between, like this: d.u.m.b
 arr.forEach((value, i) => {
 var str = ""
 for(var j=0; j<value.length; j++){
 if(j+1 === value.length) str += value[j]
-else str += value[j] + between
+else str += value[j] + between.replace("THELETTER",value[j])
 }
 arr[i] = new RegExp("("+str+")", "gi")
 })
@@ -11780,13 +11809,20 @@ messages.innerHTML = ""
 messages.scrollTop = messages.scrollHeight;
 },
 update:function(){
-this.setContent(this.array)
+if(screen === "chat"){
+this.showAll()
+}else{
+this.showArr()
+}
 },
 showAll: function(){
 this.setContent(this.all)
 },
+showArr: function(){
+this.setContent(this.array)
+},
 clear: function(){this.array = [];this.update()},
-add: function(msg){
+add: function(msg, lazy){
 msg = this.format(msg)
 this.array.push(msg)
 this.all.push(msg)
@@ -11797,38 +11833,39 @@ if(settings.narrator){
 this.span.innerHTML = msg
 speak(this.span.innerText)
 }
-this.update()
+if(!lazy) this.update()
 },
-write: function(msg, from){
+write: function(msg, from, lazy){
 if(!from){
 if(!msg) return
 }
-this.add((from || username)+": "+msg)
+this.add((from || username)+": "+msg, lazy)
 if(!from && multiplayer){
 send({type:"message", data:msg, username:username})
 }
 },
 showInput(setTo){
-messageInput.classList.remove("hidden")
+releasePointer()
+changeScene("chat")
 if(setTo) messageInput.value = setTo
 messageInput.focus()
-messageInput.onkeypress = (e) => {
-if(e.key !== "Enter") return
+},
+submitInput(){
 if(messageInput.value[0] === "/"){
-Messages.add(messageInput.value)
+Messages.add(messageInput.value, true)
 runCmd(messageInput.value)
 }else{
-Messages.write(messageInput.value)
+Messages.write(messageInput.value, null, true)
 }
-messageInput.classList.add("hidden")
+play()
 messageInput.value = ""
-canvas.focus()
-}
 },
 format(str){
 for(var regex of this.remove){ //remove bad words
 str = str.replace(regex, "<span style='color:black; background:black;'>$1</span>")
 }
+this.span.innerHTML = str
+str = this.span.innerHTML //make html in message correct
 if(str.includes("§")){
 var arr = str.split("§")
 var res = "<span>"+arr[0]
@@ -11844,6 +11881,15 @@ return res
 }
 }
 window.Messages = Messages
+window.messages.onclick = () => canvas.focus()
+messagesHolder.onmousedown = e => canvas.onmousedown(e) //make buttons work
+messageInput.onkeyup = e => {
+if(e.key === "Enter") {
+Messages.submitInput()
+}else if (e.key === "Escape") {
+play()
+}
+}
 let title = ""
 let subtitle = ""
 let titleOpacity = 0
@@ -12209,6 +12255,7 @@ gl.clearColor(sky[0], sky[1], sky[2], 1.0)
 getPointer()
 fill(255, 255, 255)
 textSize(10)
+canvas.focus()
 changeScene("play")
 }
 let gl
@@ -21900,6 +21947,7 @@ update() {
 let now = performance.now()
 this.updateVelocity(now)
 this.move(now)
+var fromMe = this.from === achexUsername
 if(fromMe && now - this.spawn > 1000){
 var collided = entityRayTrace(this.x,this.y,this.z,true)
 if(collided && collided !== this){
@@ -21914,7 +21962,6 @@ damage(1, username+" got killed by their own snowball.")
 this.canDespawn = true
 }
 }
-var fromMe = this.from === achexUsername
 if (fromMe && (now - this.spawn > this.despawns || this.hasCollided)) {
 this.canDespawn = true
 }
@@ -26279,9 +26326,12 @@ Button.add(mid, height / 2 + 40, w2, 40, "Cancel", "multiplayer connecting", r =
 Button.add(mid, height / 2 + 40, w2, 40, "Back", "multiplayer lost", r => changeScene("multiplayer menu"))
 //play buttons
 if(touchScreen){
-Button.add(mid-14, 14, 20,20, "/", "play", Messages.showInput)
+Button.add(mid-14, 14, 20,20, "/", "play", () => Messages.showInput())
 Button.add(mid+14, 14, 20,20, "❚❚", "play", r => changeScene("pause"))
 }
+//chat buttons
+Button.add(width-50, height-25, 100,50, "enter", "chat", () => Messages.submitInput())
+Button.add(25, height-25, 50,50, "/?", "chat", () => runCmd("/?"))
 // Pause buttons
 Button.add(width / 2, height / 2 + -175, 300, 40, "Resume", "pause", play)
 Button.add(width / 2, height / 2 + -125, 300, 40, "Options", "pause", r => changeScene("options"))
@@ -28360,12 +28410,16 @@ play()
 if (k === controlMap.cycleBlockShapes.key) {
 drawScreens.inventory()
 }
+}else if(screen === "chat"){
+if(k === controlMap.chat.key){
+play()
+}
 }
 }
 canvas.onkeyup = function(e) {
 let k = e.key.toLowerCase()
 Key[k] = false
-if(k === "escape" && (screen === "pause" || screen === "inventory" || screen === "options" && previousScreen === "pause") && Date.now() > unpauseDelay) {
+if(k === "escape" && (screen === "pause" || screen === "inventory" || screen === "chest" || screen === "furnace" || screen === "chat" || screen === "options" && previousScreen === "pause") && Date.now() > unpauseDelay) {
 play()
 }
 if (screen === "play") {
@@ -30120,7 +30174,7 @@ win.menuMusicVolume = 1
 win.menuMusicIdx = 0
 win.currentMusic = null
 function updateMusic(){
-if(screen === "play" || screen === "pause" || screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest"){
+if(screen === "play" || screen === "pause" || screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "options" || screen.startsWith("options ") || screen === "chat"){
 if(menuMusicVolume > 0) menuMusicVolume -= 0.01
 if(menuMusicVolume < 0) menuMusicVolume = 0
 if(currentMusic && menuMusicVolume === 0){
@@ -31249,6 +31303,9 @@ fill(255)
 textSize(25)
 ctx.textAlign = "center"
 text(`Loading... ${progress}% complete (${sub} / ${maxLoad})`, width / 2, height / 2)
+}
+drawScreens.chat = () => {
+clear()
 }
 drawScreens.inventory = drawInv
 drawScreens.crafting = drawCrafting
