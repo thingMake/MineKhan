@@ -11141,6 +11141,7 @@ exit: [window.messageHolder],
 onenter: () => {
 window.messageHolder.classList.add("chat")
 Messages.showAll()
+Messages.scrollToBottom()
 },
 onexit: () => {
 window.messageHolder.classList.remove("chat")
@@ -11803,10 +11804,14 @@ arr[i] = new RegExp("("+str+")", "gi")
 return arr
 })(),
 setContent:function(arr){
+let lockScroll = false
+if (screen === "chat" && messages.scrollTop + messages.clientHeight + 50 > messages.scrollHeight) {
+lockScroll = true
+}
 if(arr.length === 0){
 messages.innerHTML = ""
 }else messages.innerHTML = arr.join("<br>")
-messages.scrollTop = messages.scrollHeight;
+if(lockScroll) messages.scrollTop = messages.scrollHeight
 },
 update:function(){
 if(screen === "chat"){
@@ -11878,6 +11883,9 @@ res += "</span><span style='color:"+col+";'>"+s
 res += "</span>"
 return res
 }else return str
+},
+scrollToBottom(){
+messages.scrollTop = messages.scrollHeight
 }
 }
 window.Messages = Messages
@@ -25998,6 +26006,8 @@ if (!this.scenes.includes(screen)) {
 return
 }
 let current = (settings[this.name] - this.min) / (this.max - this.min)
+let hovering = this.sliding || this.mouseCollided()
+let disabled = false
 // Outline
 ctx.beginPath()
 strokeWeight(2)
@@ -26012,15 +26022,60 @@ let value = this.percentage ? (round(settings[this.name]*100*exponent)/exponent)
 if(this.replaceValue && this.replaceValue[value]){
 value = this.replaceValue[value]
 }
+let barW = 15
+let x = this.x - (this.w - barW) / 2 + (this.w - barW) * current - barW/2
+strokeWeight(2)
+stroke(80)
+if (disabled) {
+fill(60)
+stroke(20)
+} else {
+if (hovering) {
+cursor(HAND)
+fill(100, 120, 200)
+stroke(100,80,160)
+}else{
+fill(120)
+}
+}
+ctx.fillRect(x, this.y - this.h / 2, barW, this.h)
 ctx.beginPath()
-fill(130)
-let x = this.x - (this.w - 10) / 2 + (this.w - 10) * current - 5
-ctx.fillRect(x, this.y - this.h / 2, 10, this.h)
+if(disabled){
+ctx.moveTo(x + 2, this.y + (this.h / 2) - 2)
+ctx.lineTo(x + 2, this.y - this.h / 2 + 2)
+ctx.lineTo(x + barW - 2, this.y - this.h / 2 + 2)
+}else{
+ctx.moveTo(x + barW - 2, this.y - this.h / 2 + 2)
+ctx.lineTo(x + barW - 2, this.y + (this.h / 2) - 2)
+ctx.lineTo(x + 2, this.y + (this.h / 2) - 2)
+}
+ctx.stroke()
+ctx.beginPath()
+stroke(200)
+if (hovering && !disabled)stroke(200, 200, 255);
+if(disabled)stroke(130);
+if(disabled){
+ctx.moveTo(x + barW - 2, this.y - this.h / 2 + 2)
+ctx.lineTo(x + barW - 2, this.y + (this.h / 2) - 2)
+ctx.lineTo(x + 2, this.y + (this.h / 2) - 2)
+}else{
+ctx.moveTo(x + 2, this.y + (this.h / 2) - 2)
+ctx.lineTo(x + 2, this.y - this.h / 2 + 2)
+ctx.lineTo(x + barW - 2, this.y - this.h / 2 + 2)
+}
+ctx.stroke()
+stroke(0)
+strokeWeight(1)
+ctx.strokeRect(x, this.y-this.h/2, barW, this.h)
 //Label
 fill(255, 255, 255)
 textSize(13)
 ctx.textAlign = 'center'
-text(`${this.label}: ${value}`, this.x, this.y + this.h / 8)
+let label = `${this.label}: ${value}`
+fill(0)
+text(label, this.x+2, this.y + this.h / 8 + 2)
+disabled ? fill(255) : (hovering ? fill(255,255,0) : fill(255) )
+text(label, this.x, this.y + this.h / 8)
 }
 mouseCollided(){
 return mouseX > this.x - this.w / 2 && mouseX < this.x + this.w / 2 && mouseY > this.y - this.h / 2 && mouseY < this.y + this.h / 2
@@ -26108,8 +26163,7 @@ if(this.setIndex){
 this.index = this.setIndex()
 }
 // Outline
-ctx.beginPath()
-strokeWeight(6)
+strokeWeight(2)
 stroke(80)
 if (disabled) {
 fill(60)
@@ -26123,27 +26177,35 @@ stroke(100,80,160)
 fill(120)
 }
 }
-ctx.rect(this.x - this.w / 2, this.y - this.h / 2, this.w, this.h)
+ctx.fillRect(this.x - this.w / 2, this.y - this.h / 2, this.w, this.h)
+ctx.beginPath()
+if(disabled){
+ctx.moveTo(this.x - this.w / 2 + 2, this.y + (this.h / 2) - 2)
+ctx.lineTo(this.x - this.w / 2 + 2, this.y - this.h / 2 + 2)
+ctx.lineTo(this.x + (this.w / 2) - 2, this.y - this.h / 2 + 2)
+}else{
+ctx.moveTo(this.x + (this.w / 2) - 2, this.y - this.h / 2 + 2)
+ctx.lineTo(this.x + (this.w / 2) - 2, this.y + (this.h / 2) - 2)
+ctx.lineTo(this.x - this.w / 2 + 2, this.y + (this.h / 2) - 2)
+}
 ctx.stroke()
-ctx.fill()
 ctx.beginPath()
 stroke(200)
 if (hovering && !disabled)stroke(200, 200, 255);
 if(disabled)stroke(130);
-strokeWeight(3.5)
 if(disabled){
-ctx.moveTo(this.x + (this.w / 2) + 2, this.y - this.h / 2-2)
-ctx.lineTo(this.x + (this.w / 2) + 2, this.y + (this.h / 2)+1)
-ctx.lineTo(this.x - this.w / 2 - 1, this.y + (this.h / 2)+1)
+ctx.moveTo(this.x + (this.w / 2) - 2, this.y - this.h / 2 + 2)
+ctx.lineTo(this.x + (this.w / 2) - 2, this.y + (this.h / 2) - 2)
+ctx.lineTo(this.x - this.w / 2 + 2, this.y + (this.h / 2) - 2)
 }else{
-ctx.moveTo(this.x - this.w / 2 - 2, this.y + (this.h / 2)-2)
-ctx.lineTo(this.x - this.w / 2 - 2, this.y - this.h / 2-2)
-ctx.lineTo(this.x + (this.w / 2)+1, this.y - this.h / 2-2)
+ctx.moveTo(this.x - this.w / 2 + 2, this.y + (this.h / 2) - 2)
+ctx.lineTo(this.x - this.w / 2 + 2, this.y - this.h / 2 + 2)
+ctx.lineTo(this.x + (this.w / 2) - 2, this.y - this.h / 2 + 2)
 }
 ctx.stroke()
 stroke(0)
 strokeWeight(1)
-ctx.strokeRect(this.x-this.w/2-4, this.y-this.h/2-4, this.w+8, this.h+8)
+ctx.strokeRect(this.x-this.w/2, this.y-this.h/2, this.w, this.h)
 //Label
 textSize(13)
 ctx.textAlign = 'center'
