@@ -1078,6 +1078,15 @@ res += arguments[i]
 res /= arguments.length
 return res
 }
+const divideWithRemainder = function(a,b){
+var n=a/b
+var f=floor(n)
+var r=n-f
+n=f
+r=floor(r*b)
+return {n,r}
+}
+window.divideWithRemainder = divideWithRemainder
 Math.PI2 = Math.PI / 2
 Math.PI4 = Math.PI / 4
 Math.PId = Math.PI * 2
@@ -27281,7 +27290,7 @@ if(invItems[i] && invItems[i].id){
 x = (i) % perRow * s + 50
 y = ((i) / perRow | 0) * s + 50
 drawIcon(x, y - invScroll, invItems[i].id, invItems[i])
-if(inventory.spreaded.length && inventory.spreaded.includes(i)){
+if(inventory.spreadPlace === "invSpace" && inventory.spreaded.length && inventory.spreaded.includes(i)){
 ctx.fillStyle = "rgb(180,180,180)"
 ctx.fillRect(x+1-s2,y+1-s2,s-2,s-2)
 }else ctx2.fillText(invItems[i].amount, x+s2, y+s2)
@@ -27332,7 +27341,10 @@ let idx = (y*3) + x
 if(inventory.crafting[idx] && inventory.crafting[idx].id){
 let X = x*s+offX, Y = y*s+offY
 drawIcon(X+s2,Y+s2, inventory.crafting[idx].id, inventory.crafting[idx])
-ctx2.fillText(inventory.crafting[idx].amount, X+s, Y+s)
+if(inventory.spreadPlace === "crafting" && inventory.spreaded.length && inventory.spreaded.includes(idx)){
+ctx.fillStyle = "rgb(180,180,180)"
+ctx.fillRect(X+1,Y+1,s-2,s-2)
+}else ctx2.fillText(inventory.crafting[idx].amount, X+s, Y+s)
 }
 }
 }
@@ -27529,9 +27541,14 @@ if(holding.amount <= 0) holding.id = 0
 }
 }
 }else{
+let empty = !(inventory.crafting[idx] && inventory.crafting[idx].id)
 let temp = inventory.holding
 inventory.holding = inventory.crafting[idx]
 inventory.crafting[idx] = temp
+if(empty){
+inventory.spreadStart = idx
+inventory.spreadPlace = "crafting"
+}
 }
 updateCraftingGrid()
 }else if(screen === "inventory" && mouseX>craftResX && mouseX<craftResX+s && mouseY>craftResY && mouseY<craftResY+s && inventory.craftingRes && inventory.craftingRes.id){
@@ -27551,6 +27568,10 @@ achievment("Benchmaking")
 }
 updateCraftingGrid()
 }else if(screen === "crafting" && mouseX>offX && mouseX<offX+(s*3) && mouseY>offY && mouseY<offY+(s*3)){}else{
+if(survival && inventory.holding && inventory.holding.id){
+let d = p.direction
+for(var j=0; j<inventory.holding.amount; j++) world.addEntity(new Item(p.x,p.y,p.z,d.x/4,d.y/4,d.z/4,inventory.holding.id,false, 1,inventory.holding.durability),false,p.dimension)
+}
 inventory.holding = 0
 }
 if(!dontRedraw)drawScreens.inventory()
@@ -27594,6 +27615,27 @@ inventory.spreaded.push(over)
 invItems[over] = invItems[inventory.spreadStart]
 inventory.spreaded.push(inventory.spreadStart, over)
 }
+}
+}
+}else if(
+(screen === "inventory" && mouseX > offX && mouseY > offY && mouseX < offX + s*2 && mouseY < offY + s*2) ||
+(screen === "crafting" && mouseX > offX && mouseY > offY && mouseX < offX + s*3 && mouseY < offY + s*3)
+){
+let X = Math.floor((mouseX - offX) / s)
+let Y = Math.floor((mouseY - offY) / s)
+let idx = (Y*3)+X
+let c = inventory.crafting
+if(!c[idx]) c[idx] = {id:0,amount:0}
+if(inventory.spreadPlace === "crafting" && inventory.spreadStart > -1 && c[inventory.spreadStart].amount > 1 && mouseDown){
+inventory.spreading = true
+}
+if(inventory.spreading && !(c[idx] && c[idx].id) && idx !== inventory.spreadStart && inventory.spreaded.length < c[inventory.spreadStart].amount){
+if(inventory.spreaded.length){
+c[idx] = c[inventory.spreadStart]
+inventory.spreaded.push(idx)
+}else{
+c[idx] = c[inventory.spreadStart]
+inventory.spreaded.push(inventory.spreadStart, idx)
 }
 }
 }
@@ -27646,6 +27688,31 @@ inventory.spreaded = []
 inventory.spreadStart = -1
 inventory.spreading = false
 }
+}else if(
+(screen === "inventory" && mouseX > offX && mouseY > offY && mouseX < offX + s*2 && mouseY < offY + s*2) ||
+(screen === "crafting" && mouseX > offX && mouseY > offY && mouseX < offX + s*3 && mouseY < offY + s*3)
+){
+let c = inventory.crafting
+if(!invItems[over]) invItems[over] = {id:0,amount:0}
+if(inventory.spreadPlace === "crafting" && inventory.spreaded.length){
+//a/b with remainder
+var a=c[inventory.spreadStart].amount
+var b=inventory.spreaded.length
+var n=a/b
+var f=floor(n)
+var r=n-f
+n=f
+r=floor(r*b)//sometimes not precise so use floor
+//n = result   r = remainder
+var id = c[inventory.spreadStart].id
+for(var i=0; i<inventory.spreaded.length; i++){
+c[inventory.spreaded[i]] = {id:id, amount:n}
+}
+if(r) inventory.holding = {id:id, amount:r}
+inventory.spreaded = []
+}
+inventory.spreadStart = -1
+inventory.spreading = false
 }
 }
 function drawCrafting(mouse) {
@@ -27682,7 +27749,10 @@ let idx = (y*3) + x
 if(inventory.crafting[idx] && inventory.crafting[idx].id){
 let X = x*s+offX, Y = y*s+offY
 drawIcon(X+s2,Y+s2, inventory.crafting[idx].id, inventory.crafting[idx])
-ctx2.fillText(inventory.crafting[idx].amount, X+s, Y+s)
+if(inventory.spreadPlace === "crafting" && inventory.spreaded.length && inventory.spreaded.includes(idx)){
+ctx.fillStyle = "rgb(180,180,180)"
+ctx.fillRect(X+1,Y+1,s-2,s-2)
+}else ctx2.fillText(inventory.crafting[idx].amount, X+s, Y+s)
 }
 }
 }
@@ -27786,8 +27856,13 @@ if(holding.amount <= 0) holding.id = 0
 }
 }
 }else{
+let empty = !(inventory.crafting[idx] && inventory.crafting[idx].id)
 inventory.holding = inventory.crafting[idx]
 inventory.crafting[idx] = temp
+if(empty){
+inventory.spreadStart = idx
+inventory.spreadPlace = "crafting"
+}
 }
 }
 updateCraftingGrid()
@@ -30386,7 +30461,13 @@ tags = data.tags
 netherTags = data.netherTags
 if(data.cloud){
 changeScene("downloading")
-let cloudWorld = await fetch(`https://server.thingmaker.repl.co/saves/${selectedWorld}`, {credentials:'include'}).then(res => res.json())
+let error
+let cloudWorld = await fetch(`https://server.thingmaker.repl.co/saves/${selectedWorld}`, {credentials:'include'}).then(res => res.json()).catch(e => {error = e}) //dont remove brackets, prevents returning value
+if(!cloudWorld){
+alert("Failed to load cloud save. "+error)
+changeScene("loadsave menu")
+return
+}
 code = cloudWorld.code
 world.id = cloudWorld.id
 world.edited = cloudWorld.edited
