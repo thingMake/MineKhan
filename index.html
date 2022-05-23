@@ -3102,6 +3102,7 @@ stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","blo
 name: "leaves",
 Name: "Leaves",
 transparent: true,
+cullFace:"never",
 breakTime: 0.3,
 blastResistance:0.2,
 type:"plant2",
@@ -3353,6 +3354,7 @@ solid:false,
 shadow: false,
 portal: true,
 transparent:true,
+cullFace:"same",
 lightLevel: 11,
 flatIcon:true,
 ontouch: function(){
@@ -3766,22 +3768,27 @@ pistonPull:false
 {
 name: "autumnLeaves",
 transparent: true,
+cullFace:"never",
 },
 {
 name: "darkLeaves",
 transparent: true,
+cullFace:"never",
 },
 {
 name: "redBerryLeaves",
 transparent: true,
+cullFace:"never",
 },
 {
 name: "blueBerryLeaves",
 transparent: true,
+cullFace:"never",
 },
 {
 name: "pinkLeaves",
 transparent: true,
+cullFace:"never",
 },
 { name: "flowerOftheValley",
 Name:"Flower of The Valley",
@@ -4147,6 +4154,7 @@ wet:true,
 solid:false,
 shadow: false, //to hide faces
 semiTrans: true,
+cullFace:"same",
 blastResistance:100,
 tint:{
 default:[68/255,175/255,245/255],
@@ -5294,6 +5302,7 @@ attackDamage: 7
 { name:"azaleaLeaves",
 Name:"Azalea Leaves",
 transparent: true,
+cullFace:"never",
 breakTime: 0,
 type:"plant2",
 drop: function(){
@@ -5309,6 +5318,7 @@ stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.
 { name:"floweringAzaleaLeaves",
 Name:"Flowering Azalea Leaves",
 transparent: true,
+cullFace:"never",
 breakTime: 0,
 type:"plant2",
 drop: function(){
@@ -6747,6 +6757,7 @@ breakTime:0.45
 name:"oakLeaves",
 Name: "Oak Leaves",
 transparent: true,
+cullFace:"never",
 breakTime: 0.3,
 type:"plant2",
 drop: function(){
@@ -6776,6 +6787,7 @@ invTint:[leafColor.r,leafColor.g,leafColor.b]
 name: "acaciaLeaves",
 Name:"Acacia Leaves",
 transparent: true,
+cullFace:"never",
 breakTime: 0.3,
 type:"plant2",
 drop: function(){
@@ -6803,6 +6815,7 @@ invTint:[leafColor.r,leafColor.g,leafColor.b]
 name: "birchLeaves",
 Name:"Birch Leaves",
 transparent: true,
+cullFace:"never",
 breakTime: 0.3,
 type:"plant2",
 drop: function(){
@@ -6822,6 +6835,7 @@ stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.
 name: "darkOakLeaves",
 Name:"Dark Oak Leaves",
 transparent: true,
+cullFace:"never",
 breakTime: 0.3,
 type:"plant2",
 drop: function(){
@@ -6849,6 +6863,7 @@ invTint:[leafColor.r,leafColor.g,leafColor.b]
 name: "jungleLeaves",
 Name:"Jungle Leaves",
 transparent: true,
+cullFace:"never",
 breakTime: 0.3,
 type:"plant2",
 drop: function(){
@@ -6876,6 +6891,7 @@ invTint:[leafColor.r,leafColor.g,leafColor.b]
 name: "spruceLeaves",
 Name:"Spruce Leaves",
 transparent: true,
+cullFace:"never",
 breakTime: 0.3,
 type:"plant2",
 drop: function(){
@@ -7579,6 +7595,7 @@ woodSound:true
 name:"cherryLeaves",
 Name:"Cherry Leaves",
 transparent: true,
+cullFace:"never",
 breakTime: 0.3,
 type:"plant2",
 drop: function(){
@@ -7598,6 +7615,7 @@ stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.
 name:"pinkCherryLeaves",
 Name:"Pink Cherry Leaves",
 transparent: true,
+cullFace:"never",
 breakTime: 0.3,
 type:"plant2",
 drop: function(){
@@ -9227,6 +9245,7 @@ data.textures[t] = "error"
 }
 }
 data.transparent = data.transparent || false
+data.cullFace = data.cullFace !== undefined ? data.cullFace	: (data.transparent ? "same" : null) //when to cull face, diff = when different, same = when same, never = never, null = default
 data.shadow = data.shadow !== undefined ? data.shadow	: true
 data.lightLevel = data.lightLevel || 0
 data.onupdate = data.onupdate || emptyFunc
@@ -9307,6 +9326,7 @@ data.stepSound = deepslateBricksStepSound
 data.Name = data.Name || data.name
 data.pistonPush = data.pistonPush !== undefined ? data.pistonPush : true
 data.pistonPull = data.pistonPull !== undefined ? data.pistonPull : true
+if(data.pane || data.carpet || data._1PixLower) data.cullFace = "same"
 }
 // survival inventory
 let invItems = [];
@@ -12855,8 +12875,8 @@ top: 3,
 bottom: 3,
 north: 0,
 south: 0,
-east: 0,
-west: 0
+east: 3,
+west: 3
 },
 texVerts: [],
 varients: [],
@@ -13318,11 +13338,11 @@ verts: [
 ],
 cull: {
 top: 0,
-bottom: 0,
-north: 0,
-south: 0,
-east: 0,
-west: 0
+bottom: 3,
+north: 3,
+south: 3,
+east: 3,
+west: 3
 },
 texVerts: [],
 varients: [],
@@ -15123,12 +15143,12 @@ break
 case on | EAST:
 case off | EAST:
 ax++
-dir = "west"
+dir = "east"
 break
 case on | WEST:
 case off | WEST:
 ax--
-dir = "east"
+dir = "west"
 break
 }
 var hasPower
@@ -15403,6 +15423,7 @@ tallcrossBlock.shape = shapes._1PixLower
 tallcrossBlock.textures = ["dirt","dirtPathTop","dirtPathSide","dirtPathSide","dirtPathSide","dirtPathSide"]
 tallcrossBlock.solid = true
 tallcrossBlock.transparent = true
+tallcrossBlock.cullFace = "same"
 tallcrossBlock.shadow = true
 tallcrossBlock.biomeTintTop = false
 tallcrossBlock.biomeTintNorth = false
@@ -17119,7 +17140,7 @@ this.size = 0
 }
 let blocks = []
 let resolveContactsAndUpdatePosition = function(now) {
-let steps = Math.ceil(max(p.velocity.x,p.velocity.y,p.velocity.z, 1))
+let steps = Math.ceil(max(abs(p.velocity.x),abs(p.velocity.y),abs(p.velocity.z), 1))
 const VX = p.velocity.x / steps
 const VY = p.velocity.y / steps
 const VZ = p.velocity.z / steps
@@ -18455,7 +18476,7 @@ if (func !== getBlock || screen === "loading" || screen === "netherLoading") {
 sourceRange = sourceData.shape.cull[sourceDir]
 hiderRange = data.shape.cull[dir]
 }
-if ((sourceRange & hiderRange) !== sourceRange || sourceRange === 0 || block !== type && data.transparent || data.transparent && data.shadow) {
+if ((sourceRange & hiderRange) !== sourceRange || sourceRange === 0 || data.cullFace === "never" || block !== type && data.cullFace && data.cullFace !== "diff" || block === type && data.cullFace && data.cullFace !== "same") {
 return 1
 }
 return 0
@@ -21273,7 +21294,7 @@ return col
 }
 }
 move(now) {
-let steps = Math.ceil(max(this.velx / (this.width/2), this.vely / (this.height/2), this.velz / (this.depth/2), 1))
+let steps = Math.ceil(max(abs(this.velx / (this.width/2)), abs(this.vely / (this.height/2)), abs(this.velz / (this.depth/2)), 1))
 const VX = this.velx / steps
 const VY = this.vely / steps
 const VZ = this.velz / steps
@@ -26288,9 +26309,11 @@ Slider.all = []
 const nothing = () => false
 const always = () => true
 // Main menu buttons
-Button.add(width / 2, height / 2 - 40, 400, 40, "Singleplayer", "main menu", r => changeScene("loadsave menu"))
-Button.add(width / 2, height / 2 + 15, 400, 40, "Multiplayer", "main menu", r => {
+Button.add(width / 2, height / 2 - 40, 400, 40, "Singleplayer", "main menu", r => {
+changeScene("loadsave menu")
 initWorldsMenu()
+})
+Button.add(width / 2, height / 2 + 15, 400, 40, "Multiplayer", "main menu", r => {
 changeScene("multiplayer menu")
 }, () => preVersion/*, "If you want multiplayer, why don't you head over to willard.fun/minekhan?"*/)
 Button.add(width / 2, height / 2 + 70, 400, 40, "Marketplace", "main menu", r => changeScene("marketplace"))
