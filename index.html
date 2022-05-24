@@ -11370,11 +11370,10 @@ for(var X = 0; X<copiedBlocks.length; X++){
 var xRow = copiedBlocks[X];
 for(var Y=0; Y<xRow.length; Y++){
 var yRow = xRow[Y];
-for(var Z=0; Z<yRow.length; Z++){
-var block = yRow[Z];
-world.setBlock(X+x,Y+y,Z+z,false,false,false,false,block)
-Z++
-var tags = yRow[z]
+for(var Z=0; Z<yRow.length/2; Z++){
+var block = yRow[Z*2]
+world.setBlock(X+x,Y+y,Z+z,block,false,false,false,false,dimension)
+var tags = yRow[z*2+1]
 if(tags) world.setTags(X+x,Y+y,Z+z, tags,false, dimension)
 }
 }
@@ -11939,13 +11938,21 @@ play()
 }
 let title = ""
 let subtitle = ""
-let titleOpacity = 0
+let titleFadeIn = 0 //duration in miliseconds
+let titleFadeOut = 0
+let titleStay = 0
 let titleColor = "black"
-function showTitle(aTitle, aSubtitle, color){
-title = aTitle
-subtitle = aSubtitle
-titleOpacity = 140
+let titleStart = 0
+let titleShowing = false
+function showTitle(Title, Subtitle, color, fadeIn = 500,fadeOut = 2000,stay = 1000){
+titleStart = Date.now()
+title = Title
+subtitle = Subtitle
 titleColor = color || "white"
+titleFadeIn = fadeIn
+titleFadeOut = fadeOut
+titleStay = stay
+titleShowing = true
 }
 win.showTitle = showTitle
 let sideMessageTime = 0,
@@ -17014,6 +17021,15 @@ let iz = z - d/2 - p.w
 let id = d + p.w*2
 return p.x > ix && p.y > iy && p.z > iz && p.x < ix + iw && p.y <= iy + ih && p.z < iz + id
 }
+let touchingBox = function(x, y, z, w, h, d) {
+let iy = y - h/2 - p.topH - 0.1
+let ih = h + p.bottomH + p.topH + 0.1
+let ix = x - w/2 - p.w - 0.1
+let iw = w + p.w*2 + 0.1
+let iz = z - d/2 - p.w - 0.1
+let id = d + p.w*2 + 0.1
+return p.x > ix && p.y > iy && p.z > iz && p.x < ix + iw && p.y < iy + ih && p.z < iz + id
+}
 let takeDamage
 function collided(x, y, z, vx, vy, vz, block) {
 if(p.spectator) {
@@ -17203,10 +17219,12 @@ block = blocks[i]
 x = block[0]
 y = block[1]
 z = block[2]
+if(touchingBox(x,y,z,1,1,1)){
 let d = blockData[block[3]].damage
-if(d && d>takeDamage/* && collided(x,y,z,0,0,0,block[3])*/) {
+if(d && d>takeDamage) {
 takeDamage = d
 damageBlock = blockData[block[3]]
+}
 }
 if(blockData[block[3]].pressurePlate && blockData[block[3]].activate){
 blockData[block[3]].activate(x,y,z,p.dimension)
@@ -24253,7 +24271,7 @@ Messages.add(data.USER+" earned the achievment: "+data.data)
 }else if(data.type === "diamondsToYou"){
 achievment("Diamonds to you!")
 }else if(data.type === "hit"){
-if(survival){
+if(survival && worldSettings.pvp){
 damage(data.data || 1, data.message || (data.username+" killed "+username))
 p.velocity.x += data.velx || 0
 p.velocity.z += data.velz || 0
@@ -31354,9 +31372,14 @@ drawScreens.dead()
 Button.draw()
 Slider.draw()
 }
-if(titleOpacity > 0){
-titleOpacity --
-let alpha = titleOpacity/100
+if(titleShowing){
+if(now - (titleFadeIn+titleFadeOut+titleStay) < titleStart){
+let alpha = 1
+if(now - titleFadeIn < titleStart){
+alpha = (now - titleStart) / titleFadeIn
+}else if(now - titleFadeIn - titleStay - titleFadeOut < titleStart){
+alpha = 1-((now - titleStart - titleFadeIn - titleStay) / titleFadeOut)
+}
 ctx.font = "80px VT323"
 ctx.textAlign = "center"
 ctx.fillStyle = titleColor
@@ -31368,6 +31391,7 @@ text(subtitle, width/2, height/2+50, 40)
 }
 ctx.globalAlpha = 1
 updateHUD = true
+}else titleShowing = false
 }
 if(sideMessageTime > 0){
 sideMessageTime --
