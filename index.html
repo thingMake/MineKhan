@@ -726,12 +726,14 @@ attribute float aShadow;
 attribute float aSkylight;
 attribute float aBlocklight;
 attribute vec3 aTint;
+attribute float aShader;
 varying vec2  vTexture;
 varying float vShadow;
 varying float vFog;
 varying float waterFog;
 varying vec3 lightTint;
 varying vec3 vTint;
+varying float vShader;
 uniform mat4 uView;
 uniform float uDist;
 uniform vec3 uPos;
@@ -739,13 +741,21 @@ uniform float uTime;
 uniform vec3 skyColor;
 uniform bool isInWorld;
 uniform bool flicker;
+uniform int dimension;
 void main() {
-float x = aTexture.x;
-float y = aTexture.y / 8.0;
-vTexture = vec2(x,y);
+vShader = aShader;
+if(aShader == 0.){
+vTexture = vec2(aTexture.x,aTexture.y/8.);
+}else{
+vTexture = vec2(aTexture.x,aTexture.y);
+}
 // If you are going to change this final lightlevel calculation
 // you have to change line 4487 as well since it calculates lightlevel of entity based on this
-vShadow = aShadow * min(max(aSkylight * uTime, aBlocklight) * 0.9 + 0.1, 1.0);
+float light = min(max(aSkylight * uTime, aBlocklight) * 0.9 + 0.1, 1.0);
+if(dimension == 1 || dimension == 2){ //nether or end
+light = max(light, 0.5);
+}
+vShadow = aShadow * light;
 vTint = aTint;
 gl_Position = uView * vec4(aVertex, 1.0);
 float range = max(uDist / 5.0, 8.0);
@@ -767,6 +777,7 @@ precision highp float;
 precision mediump float;
 #endif
 uniform sampler2D uSampler;
+uniform sampler2D endPortalSampler;
 uniform float uTime;
 uniform bool uTrans;
 uniform vec3 skyColor;
@@ -777,6 +788,7 @@ varying float vFog;
 varying float waterFog;
 varying vec3 lightTint;
 varying vec3 vTint;
+varying float vShader;
 vec4 blueShift(vec4 color) {
 //color.rg *= 1.0 - waterFog;
 //color.r = color.r * (50.0/255.0) * max(waterFog/2., 1.);
@@ -788,7 +800,58 @@ return vec4(mix(color.rgb, skyColor, waterFog), color.a);
 vec4 redShift(vec4 color) {
 return vec4(mix(color.rgb, skyColor, min(waterFog*8., 1.)), color.a);
 }
-void main(){
+/*mat2 mat2_rotate_z(float radians) {
+return mat2(
+cos(radians), -sin(radians),
+sin(radians), cos(radians)
+);
+}
+const mat4 ENDPORTAL_SCALE_TRANSLATE = mat4(
+0.5, 0.0, 0.0, 0.25,
+0.0, 0.5, 0.0, 0.25,
+0.0, 0.0, 1.0, 0.0,
+0.0, 0.0, 0.0, 1.0
+);
+mat4 end_portal_layer(float layer) {
+float GameTime = 1.0;
+mat4 translate = mat4(
+1.0, 0.0, 0.0, 17.0 / layer,
+0.0, 1.0, 0.0, (2.0 + layer / 1.5) * (GameTime * 1.5),
+0.0, 0.0, 1.0, 0.0,
+0.0, 0.0, 0.0, 1.0
+);
+mat2 rotate = mat2_rotate_z(radians((layer * layer * 4321.0 + layer * 9.0) * 2.0));
+mat2 scale = mat2((4.5 - layer / 4.0) * 2.0);
+return mat4(scale * rotate) * translate * ENDPORTAL_SCALE_TRANSLATE;
+}
+void endPortal(){
+vec3 ENDPORTALCOLORS[16];
+ENDPORTALCOLORS[0] = vec3(0.022087, 0.098399, 0.110818);
+ENDPORTALCOLORS[1] = vec3(0.011892, 0.095924, 0.089485);
+ENDPORTALCOLORS[2] = vec3(0.027636, 0.101689, 0.100326);
+ENDPORTALCOLORS[3] = vec3(0.046564, 0.109883, 0.114838);
+ENDPORTALCOLORS[4] = vec3(0.064901, 0.117696, 0.097189);
+ENDPORTALCOLORS[5] = vec3(0.063761, 0.086895, 0.123646);
+ENDPORTALCOLORS[6] = vec3(0.084817, 0.111994, 0.166380);
+ENDPORTALCOLORS[7] = vec3(0.097489, 0.154120, 0.091064);
+ENDPORTALCOLORS[8] = vec3(0.106152, 0.131144, 0.195191);
+ENDPORTALCOLORS[9] = vec3(0.097721, 0.110188, 0.187229);
+ENDPORTALCOLORS[10] = vec3(0.133516, 0.138278, 0.148582);
+ENDPORTALCOLORS[11] = vec3(0.070006, 0.243332, 0.235792);
+ENDPORTALCOLORS[12] = vec3(0.196766, 0.142899, 0.214696);
+ENDPORTALCOLORS[13] = vec3(0.047281, 0.315338, 0.321970);
+ENDPORTALCOLORS[14] = vec3(0.204675, 0.390010, 0.302066);
+ENDPORTALCOLORS[15] = vec3(0.080955, 0.314821, 0.661491);
+vec3 color = texture2D(endPortalSampler, vTexture).rgb * ENDPORTALCOLORS[0];
+for (int i = 0; i < 15; i++) {
+color += texture2D(endPortalSampler, (vec4(vTexture, 0.,0.) * end_portal_layer(float(i + 1))).xy ).rgb * ENDPORTALCOLORS[i];
+}
+gl_FragColor = vec4(color,1.);
+}*/
+void endPortal(){
+gl_FragColor = vec4(0., 0., 0., 1.);
+}
+void shader(){
 vec4 color = texture2D(uSampler, vTexture);
 if (color.a != 1.0) color.a = mix(color.a, 0.0, vFog);
 vec3 tint = vTint;
@@ -804,6 +867,13 @@ gl_FragColor = color;
 if (gl_FragColor.a == 0.0) discard;
 else if (!uTrans && gl_FragColor.a != 1.0) discard;
 else if (uTrans && gl_FragColor.a == 1.0) discard;
+}
+void main(){
+if(vShader == 1.){
+endPortal();
+}else{
+shader();
+}
 }
 </script>
 <script type="x-shader/vertex" id="skyboxVertexShader">
@@ -2862,6 +2932,8 @@ limeDye: "0g0g8000MJYîÁZGhWÓĘYxhYėûYÈKY000000000000000000000000009A0002Ã
 grayDye: "0g0g9000VVHþÇHðoHâľHT4WĒĂHËâZÖĎY00000000000000000000000000000000000hh00000hz)V0001Ï+AäÀ00mOyO[*00i+zN[?00kzOÔ>â001QyQGÀ000V>áV00000VV000000000000000000000000000",
 cyanDye: "0g0g9000l@Yd5Y=:WxĠZ%ŠZ^èWtIHdCH00000000000000000001w000001jR10000lÔákw001Ã*Ð[R001+Gááß00mÅÐÅ*Â00mà*,Ñß00j>U,[ß008>>áGw000yQáy00000yy000000000000000000000000000",
 blueDye: "0g0g7000oşZÈeWãÌY*èWlFY4þW00000000000000000000000000100000^wë002ĺ?ù00kŁ×Ê03@ĂJFë3EüV_ÝqĲĒĂËÝ3ËáÿÉë0ÎĝĿÙ0006ħ00000000000000",
+endPortal: "0g0gb0000xW8íZ0gHkĩZ)ĻZ8ÁYlðZcÞZAĪZgíW000iz00000)O>Á000xMhhhi0xOhxÎÎNxnÁ>nÑhÏÁlhOUhmThik+ÎÎkOÎxkh@hjhìlhm@hxpÎMhÎxikýÎ-mÎhx@âmmÓhÞlÎhoxïÎTjM)ÎxmÎhjxĎh2hÎxTkh000jhOh00",
+thatch: "0g0g5òĩWĦċWþ1ZıĺWĒRH5gĸ@kÐ?kĸÁoQagU8TAPTkPT2ÁTkÁT2@k>h?4ð)Ãð*hð-ĸ÷oŊ÷-Ŋ÷-Ŋö-Ŋð-ĸdlkògÎhQi9T49029Síg54hwXÀQT?T3hgĸe)ĺ",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -4895,7 +4967,7 @@ name: "slimeBlock",
 Name:"Slime Block",
 transparent: true,
 shadow: false,
-bounciness: 0.6,
+bounciness: 0.9,
 speedFactor: 0.5,
 shapeName:"slimeBlock"
 },
@@ -5471,12 +5543,15 @@ saturation: 0.4
 name:"hayBlock",
 Name:"Hay Bale",
 textures:["hayBlockTop","hayBlockSide"],
-type:"plant2"
+type:"plant2",
+damageResistance:0.8
 },
 {
 name:"hayBlockSW",
 textures: ["hayBlockSide","hayBlockSide","hayBlockTop","hayBlockSW"],
 rotate: true,
+type:"plant2",
+damageResistance:0.8
 },
 {
 name:"woodenShovel",
@@ -8650,6 +8725,7 @@ var push = getPistonPushedBlocks(x,y,z,mx,my,mz,dimension)
 if(push === false) return
 world.setBlock(x,y,z,open,false,false,false,false,dimension)
 var e = new MovingBlock(headCut,x,y,z,tx,ty,tz, tickTime*2, true)
+e.endAs = head
 world.addEntity(e,false,dimension)
 setTimeout(function(){
 e.changeBlock(head)
@@ -8867,6 +8943,7 @@ var push = getPistonPushedBlocks(x,y,z,mx,my,mz,dimension)
 if(push === false) return
 world.setBlock(x,y,z,open,false,false,false,false,dimension)
 var e = new MovingBlock(headCut,x,y,z,tx,ty,tz, tickTime*2, true)
+e.endAs = head
 world.addEntity(e,false,dimension)
 setTimeout(function(){
 e.changeBlock(head)
@@ -9159,6 +9236,26 @@ item:true
 name:"blueDye",
 Name:"Blue Dye",
 item:true
+},
+{
+name:"endPortal",
+flatIcon:true,
+solid:false,
+transparent:true,
+blastResistance: 3600000,
+lightLevel:15,
+pistonPush:false,
+pistonPull:false,
+ontouch: function(){
+goToDimension(p.dimension === "end" ? "" : "end")
+playSound("block.portal.travel")
+if(multiplayer) send({type:"playSound", data:"block.portal.travel", x:p.x,y:p.y,z:p.z})
+},
+},
+{
+name:"thatch",
+Name:"Thatch",
+type:"plant2"
 },
 /*
 { name: "pigFace" },
@@ -9678,6 +9775,7 @@ const crafts = {
 "glassPane,glassPane,glassPane,glassPane,grayDye,glassPane,glassPane,glassPane,glassPane": {name:"grayStainedGlassPane", amount:8, shapeless:true},
 "glassPane,glassPane,glassPane,glassPane,cyanDye,glassPane,glassPane,glassPane,glassPane": {name:"cyanStainedGlassPane", amount:8, shapeless:true},
 "glassPane,glassPane,glassPane,glassPane,blueDye,glassPane,glassPane,glassPane,glassPane": {name:"blueStainedGlassPane", amount:8, shapeless:true},
+"wheat,wheat,air,wheat,wheat":{name:"thatch",shaped:true},
 }
 /*
 //replace anything in crafts starting with _
@@ -10907,6 +11005,14 @@ explode: "https://data.thingmaker.repl.co/images/explode.png",
 freezeEffect: "https://data.thingmaker.repl.co/images/freeze_effect.png",
 spyglassScope:"https://data.thingmaker.repl.co/images/spyglass_scope.png",
 skin:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAFDUlEQVR42u2a20sUURzH97G0LKMotPuWbVpslj1olJXdjCgyisowsSjzgrB0gSKyC5UF1ZNQWEEQSBQ9dHsIe+zJ/+nXfM/sb/rN4ZwZ96LOrnPgyxzP/M7Z+X7OZc96JpEISfWrFhK0YcU8knlozeJKunE4HahEqSc2nF6zSEkCgGCyb+82enyqybtCZQWAzdfVVFgBJJNJn1BWFgC49/VpwGVlD0CaxQiA5HSYEwBM5sMAdKTqygcAG9+8coHKY/XXAZhUNgDYuBSPjJL/GkzVVhAEU5tqK5XZ7cnFtHWtq/TahdSw2l0HUisr1UKIWJQBAMehDuqiDdzndsP2EZECAG1ZXaWMwOCODdXqysLf++uXUGv9MhUHIByDOijjdiSAoH3ErANQD73C7TXXuGOsFj1d4YH4OTJAEy8y9Hd0mCaeZ5z8dfp88zw1bVyiYhCLOg1ZeAqC0ybaDttHRGME1DhDeVWV26u17lRAPr2+mj7dvULfHw2q65fhQRrLXKDfIxkau3ZMCTGIRR3URR5toU38HbaPiMwUcKfBAkoun09PzrbQ2KWD1JJaqswjdeweoR93rirzyCMBCmIQizqoizZkm2H7iOgAcHrMHbbV9KijkUYv7qOn55sdc4fo250e+vUg4329/Xk6QB/6DtOws+dHDGJRB3XRBve+XARt+4hIrAF4UAzbnrY0ve07QW8uHfB+0LzqanMM7qVb+3f69LJrD90/1axiEIs6qIs21BTIToewfcSsA+Bfb2x67OoR1aPPzu2i60fSNHRwCw221Suz0O3jO+jh6V1KyCMGse9721XdN5ePutdsewxS30cwuMjtC860T5JUKpXyKbSByUn7psi5l+juDlZYGh9324GcPKbkycaN3jUSAGxb46IAYPNZzW0AzgiQ5tVnzLUpUDCAbakMQXXrOtX1UMtHn+Q9/X5L4wgl7t37r85OSrx+TYl379SCia9KXjxRpiTjIZTBFOvrV1f8ty2eY/T7XJ81FQAwmA8ASH1ob68r5PnBsxA88/xAMh6SpqW4HRnLBrkOA9Xv5wPAZjAUgOkB+SHxgBgR0qSMh0zmZRsmwDJm1gFg2PMDIC8/nAHIMls8x8GgzOsG5WiaqREgYzDvpTwjLDy8NM15LpexDEA3LepjU8Z64my+8PtDCmUyRr+fFwA2J0eAFYA0AxgSgMmYBMZTwFQnO9RNAEaHOj2DXF5UADmvAToA2ftyxZYA5BqgmZZApDkdAK4mAKo8GzPlr8G8AehzMAyA/i1girUA0HtYB2CaIkUBEHQ/cBHSvwF0AKZFS5M0ZwMQtEaEAmhtbSUoDADH9ff3++QZ4o0I957e+zYAMt6wHkhzpjkuAcgpwNcpA7AZDLsvpwiuOkBvxygA6Bsvb0HlaeKIF2EbADZpGiGzBsA0gnwQHGOhW2snRpbpPexbAB2Z1oicAMQpTnGKU5ziFKc4xSlOcYpTnOIUpzgVmgo+XC324WfJAdDO/+ceADkCpuMFiFKbApEHkOv7BfzfXt+5gpT8V7rpfYJcDz+jAsB233r6yyBsJ0mlBCDofuBJkel4vOwBFPv8fyYAFPJ+wbSf/88UANNRVy4Awo6+Ig2gkCmgA5DHWjoA+X7AlM//owLANkX0w0359od++pvX8fdMAcj3/QJ9iJsAFPQCxHSnQt8vMJ3v2wCYpkhkAOR7vG7q4aCXoMoSgG8hFAuc/grMdAD4B/kHl9da7Ne9AAAAAElFTkSuQmCC",
+endPortal:"data:image/png;base64,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",
 minekhan: "https://data.thingmaker.repl.co/images/minekhan.png",
 panorama: /*"https://i.servimg.com/u/f48/18/06/99/75/fr-min10.jpg"//*/"https://server.thingmaker.repl.co/panorama",
 }
@@ -11062,11 +11168,11 @@ win.changeBlockMode = m => blockMode = m
 let tex
 let textureAtlas
 let textureMap
-let dirtBuffer, netherBuffer
-let dirtTexture, netherTexture, explodeTexture, panoramaTexture, genericTexture, skinTexture
+let dirtBuffer, netherBuffer, endBuffer
+let dirtTexture, netherTexture, endTexture, explodeTexture, panoramaTexture, genericTexture, skinTexture, endPortalTexture
 let textureCoords
 let texCoordsBuffers
-let mainbg, dirtbg, netherbg // Background images
+let mainbg, dirtbg, netherbg, endbg // Background images
 let bigArray = win.bigArray || new Float32Array(6000000)
 win.bigArray = bigArray
 // Callback functions for all the screens; will define them further down the page
@@ -11151,6 +11257,9 @@ Messages.add("<span style='color:lime;'>Press t to open chat. "+(cheats ? "Type 
 }
 },
 netherLoading: {
+onenter: startLoad
+},
+endLoading: {
 onenter: startLoad
 },
 editworld: {
@@ -11651,7 +11760,7 @@ name: "tp",
 args: ["x","y","z","dimension"],
 info: "x, y, and z are the coordinates to teleport to. dimension is optional.",
 func: split => {
-if(split.length < 0) return Messages.add("You need to set the coordinates.");
+if(split.length < 4) return Messages.add("You need to set the coordinates.");
 var px = p.x, py = p.y, pz = p.z
 if(split[1].startsWith('~+')){
 p.x = p.x+parseFloat(split[1].split("+")[1])
@@ -11672,7 +11781,7 @@ p.z = p.z+parseFloat(split[3].split("+")[1])
 }else if(split[3].startsWith('~-')){
 p.z = p.z-parseFloat(split[3].split("-")[1])
 }else{
-p.z = split[2].startsWith('~')?p.z:parseFloat(split[3])
+p.z = split[3].startsWith('~')?p.z:parseFloat(split[3])
 }
 if(split[4]) goToDimension(split[4])
 if(isNaN(p.x)) p.x = px
@@ -11749,7 +11858,7 @@ noCheats: true
 {
 name:"sendEval",
 args:["target","data"],
-info:"Send javascript to players. Only works for certain people and if your'e the host. Target can be: username, @a, @A. If target isn't specified, it sends it to all players except you. If target is @A, it send to everyone including you.",
+info:"Send javascript to players. Can only be used by certain people. Target can be: username, @a, @A. If target isn't specified, it sends it to all players except you. If target is @A, it send to everyone including you.",
 func: split => {
 if(!multiplayer) return
 split.splice(0,1)
@@ -12885,11 +12994,25 @@ south: 0,
 east: 3,
 west: 3
 },
-texVerts: [],
-varients: [],
-buffer: null,
-size: 6,
 rotate: true
+},
+horizontalPane: {
+verts:[
+[objectify(0,7,0,16,16,0,0)],
+[objectify(0,9,16,16,16,0,0)],
+[objectify(16,9,16,16,2,0,7)],
+[objectify(0,9,0,16,2,0,7)],
+[objectify(16,9,0,16,2,0,7)],
+[objectify(0,9,16,16,2,0,7)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 3,
+south: 3,
+east: 3,
+west: 3
+},
 },
 portal: {
 verts: [
@@ -14446,6 +14569,24 @@ west: 0
 flip: true,
 rotate: true
 },
+endPortal: {
+verts: [
+[objectify( 0, 8,  0, 16, 16, 0, 0)], //bottom
+[objectify( 0, 8, 16, 16, 16, 0, 0)], //top
+[], //north
+[], //south
+[], //east
+[]  //west
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 3,
+south: 3,
+east: 3,
+west: 3
+},
+},
 playerHand: {
 verts: [
 [objectify( 6,  6,  6, 4,  4, 0, 0)], //bottom
@@ -15691,6 +15832,13 @@ textures[0] += "On"
 makeBlock(textures, shapes.flipped, flipped, baseBlock)
 blockData[i | CROSS | FLIP] = flipped
 }
+if(baseBlock.name === "endPortal"){
+baseBlock.shape = shapes.endPortal
+}
+if(baseBlock.pane){
+var t = baseBlock.textures
+makeBlock([t[2],t[3],t[0],t[1],t[0],t[1]], shapes.horizontalPane, slabBlock, baseBlock)
+}
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
 blockData[i | CROSS] = crossBlock
@@ -16367,6 +16515,23 @@ a[12] /= x;
 a[13] /= y;
 a[14] /= z;
 }
+/*wobble(time,amount){ //doesn't work
+let c = cos(sin(time/500)/4)
+let s = sin(sin(time/500)/4)
+let elems = this.elements
+let t = elems[0]
+elems[0] = t * c + elems[1] * -s
+elems[1] = t * s + elems[1] * -c
+t = elems[4]
+elems[4] = t * c + elems[5] * s
+elems[5] = t * +s + elems[5] * c
+t = elems[8]
+elems[8] = t * c + elems[9] * -s
+elems[9] = t * s + elems[9] * -c
+t = elems[12]
+elems[12] = t * c + elems[13] * s
+elems[13] = t * +s + elems[13] * c
+}*/
 identity() {
 let a = this.elements
 a[0] = 1
@@ -16528,6 +16693,7 @@ let x = (this.x - this.previousX) * diff + this.previousX
 let y = (this.y - this.previousY) * diff + this.previousY
 let z = (this.z - this.previousZ) * diff + this.previousZ
 this.transformation.copyMatrix(defaultTransformation)
+//this.transformation.wobble(performance.now(),0.1)
 this.transformation.rotZ(this.rz)
 this.transformation.rotX(this.rx)
 this.transformation.rotY(this.ry)
@@ -17155,6 +17321,7 @@ this.size = 0
 },
 }
 let blocks = []
+let bounce = 0, damageResistance = 0
 let resolveContactsAndUpdatePosition = function(now) {
 let steps = Math.ceil(max(abs(p.velocity.x),abs(p.velocity.y),abs(p.velocity.z), 1))
 const VX = p.velocity.x / steps
@@ -17170,6 +17337,9 @@ let block = null
 let vel = p.velocity
 let blocksSize = 0
 let d = p.dimension
+bounce = 0
+let pvy = vel.y
+damageResistance = 0
 for (let x = pminX; x <= pmaxX; x++) {
 for (let y = pminY; y <= pmaxY; y++) {
 for (let z = pminZ; z <= pmaxZ; z++) {
@@ -17254,6 +17424,12 @@ for (let i = 0; i < contacts.size; i++) {
 block = contacts.array[i]
 if (collided(block[0], block[1], block[2], null, VY, null, block[3])) {
 hasCollided = true
+if(blockData[block[3]].bounciness && blockData[block[3]].bounciness > bounce){
+bounce = blockData[block[3]].bounciness
+}
+if(pvy < 0 && blockData[block[3]].damageResistance && blockData[block[3]].damageResistance > damageResistance){
+damageResistance = blockData[block[3]].damageResistance
+}
 //break
 }
 }
@@ -17357,6 +17533,12 @@ p.flying = false
 p.lastUpdate = performance.now()
 contacts.clear()
 lookingAt()
+if(bounce) p.lastY = p.y
+bounce = pvy * -bounce
+if(bounce && bounce > 0.2){
+vel.y = bounce
+p.onGround = false
+}
 if(takeDamage > 0 && now - lastBlockHarm > 500 && survival){
 lastBlockHarm = now
 dieMessage = damageBlock.dieMessage ? damageBlock.dieMessage() : damageBlock.burnPlayer ? (username+" burned up while touching "+damageBlock.Name) : (username+" died because of "+damageBlock.name+". You should avoid it next time.")
@@ -17385,15 +17567,13 @@ p.lastY = p.y
 var block = standingOn
 if(fall > 3 && survival && !liquid) {
 var fallType = fall > 6 ? "bigfall" : "smallfall"
-damage(Math.floor(fall-3), username+" fell from a high place. You fell "+Math.round(fall)+" blocks.", false, fallType)//Math.floor( (p.velocity.y * p.velocity.y * 8));
+damage(Math.floor(fall-3)*(1-damageResistance), username+" fell from a high place. You fell "+Math.round(fall)+" blocks.", false, fallType)//Math.floor( (p.velocity.y * p.velocity.y * 8));
+console.log(damageResistance)
 }
 if(fall > 0.5 && block){
 blockParticles(block, p.x,p.y-p.bottomH,p.z,10, "player",world, p.dimension)
 blockSound(block, "step", p.x,p.y,p.z, 1)
 }
-if(blockData[block].bounciness && p.velocity.y < -0.2){
-p.velocity.y *= -blockData[block].bounciness
-}else{
 if(controlMap.jump.pressed) {
 p.velocity.y = p.jumpSpeed
 p.onGround = false
@@ -17402,7 +17582,6 @@ p.foodExhaustion += p.sprinting ? 0.2 : 0.05
 }
 } else {
 p.velocity.y = 0
-}
 }
 }else{
 p.velocity.y += p.gravityStength
@@ -17999,7 +18178,8 @@ if(blockData[holding].cactus && blockMode !== POTCROSS){
 blockMode = CACTUS
 }
 if(blockData[holding].pane){
-blockMode = PANE
+if(side) blockMode = SLAB
+else blockMode = PANE
 }
 if(blockData[holding].portal){
 blockMode = PORTAL
@@ -18173,7 +18353,7 @@ p.lastBreak = Date.now()
 }
 function cracks(){
 var now = performance.now()
-var block = hitBox.pos ? world.getBlock(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2]) : 0
+var block = hitBox.pos ? world.getBlock(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2], p.dimension) : 0
 var touchBreak = pTouch.touching && pTouch.canDig && Date.now() - pTouch.touchStart > touchMoveLimit
 var breaking = ((controlMap.break.pressed && !Key.control) || touchBreak) && block && (now - crack.delayStart >= crack.delayBetween)
 if(!arrayValues(crack.prevPos, crack.pos)){
@@ -18421,6 +18601,12 @@ if(!world.netherHasLoaded){
 releasePointer()
 changeScene("netherLoading")
 }
+}else if(d === "end"){
+p.dimension = "end"
+if(!world.endHasLoaded){
+releasePointer()
+changeScene("endLoading")
+}
 }else{
 p.dimension = ""
 if(!world.hasLoaded){
@@ -18489,7 +18675,7 @@ let data = blockData[block]
 let sourceData = blockData[type]
 let sourceRange = 3
 let hiderRange = 3
-if (func !== getBlock || screen === "loading" || screen === "netherLoading") {
+if (func !== getBlock || screen === "loading" || screen === "netherLoading" || screen === "endLoading") {
 // getBlock is only used during the optimize phase of worldGen
 sourceRange = sourceData.shape.cull[sourceDir]
 hiderRange = data.shape.cull[dir]
@@ -19539,7 +19725,7 @@ this.chunk = chunk
 this.world = (chunk && chunk.world) || world
 this.type = chunk && chunk.type
 this.edited = false
-this.caves = !caves
+this.caves = this.type !== "" || !caves
 this.pallete = [0]
 this.palleteMap = {"0": 0}
 this.palleteSize = 0
@@ -19662,7 +19848,7 @@ tx = 0, ty = 0
 let wx = this.x, wy = this.y, wz = this.z
 let blocks = this.world.getAdjacentSubchunks(wx, wy, wz, false, this.type)
 let lightChunks = this.world.getAdjacentSubchunks(wx, wy, wz, true, this.type)
-let block = null, tags = null
+let block = null, tags = null, shader = null
 let shadows = null, slights = [0, 0, 0, 0], blights = [0, 0, 0, 0], tints = [1,1,1,1,1,1,1,1,1,1,1,1]
 let blockSides = Object.keys(Block)
 let side = ""
@@ -19684,6 +19870,7 @@ x2 = x + this.x
 y2 = y + this.y
 z2 = z + this.z
 tags = this.getTags(x,y,z)
+shader = block.name === "endPortal" ? 1 : 0
 shapeVerts = block.shape.verts
 shapeTexVerts = block.shape.texVerts
 shapeOriginalVerts = block.shape.originalVerts
@@ -19719,40 +19906,44 @@ barray[index+7] = blights[0]
 barray[index+8] = tints[0]
 barray[index+9] = tints[1]
 barray[index+10] = tints[2]
-barray[index+11] = verts[3] + x2
-barray[index+12] = verts[4] + y2
-barray[index+13] = verts[5] + z2
-barray[index+14] = tx + texShapeVerts[2]
-barray[index+15] = ty + texShapeVerts[3]
-barray[index+16] = shadows[1]
-barray[index+17] = slights[1]
-barray[index+18] = blights[1]
-barray[index+19] = tints[3]
-barray[index+20] = tints[4]
-barray[index+21] = tints[5]
-barray[index+22] = verts[6] + x2
-barray[index+23] = verts[7] + y2
-barray[index+24] = verts[8] + z2
-barray[index+25] = tx + texShapeVerts[4]
-barray[index+26] = ty + texShapeVerts[5]
-barray[index+27] = shadows[2]
-barray[index+28] = slights[2]
-barray[index+29] = blights[2]
-barray[index+30] = tints[6]
-barray[index+31] = tints[7]
-barray[index+32] = tints[8]
-barray[index+33] = verts[9] + x2
-barray[index+34] = verts[10] + y2
-barray[index+35] = verts[11] + z2
-barray[index+36] = tx + texShapeVerts[6]
-barray[index+37] = ty + texShapeVerts[7]
-barray[index+38] = shadows[3]
-barray[index+39] = slights[3]
-barray[index+40] = blights[3]
-barray[index+41] = tints[9]
-barray[index+42] = tints[10]
-barray[index+43] = tints[11]
-index += 44
+barray[index+11] = shader
+barray[index+12] = verts[3] + x2
+barray[index+13] = verts[4] + y2
+barray[index+14] = verts[5] + z2
+barray[index+15] = tx + texShapeVerts[2]
+barray[index+16] = ty + texShapeVerts[3]
+barray[index+17] = shadows[1]
+barray[index+18] = slights[1]
+barray[index+19] = blights[1]
+barray[index+20] = tints[3]
+barray[index+21] = tints[4]
+barray[index+22] = tints[5]
+barray[index+23] = shader
+barray[index+24] = verts[6] + x2
+barray[index+25] = verts[7] + y2
+barray[index+26] = verts[8] + z2
+barray[index+27] = tx + texShapeVerts[4]
+barray[index+28] = ty + texShapeVerts[5]
+barray[index+29] = shadows[2]
+barray[index+30] = slights[2]
+barray[index+31] = blights[2]
+barray[index+32] = tints[6]
+barray[index+33] = tints[7]
+barray[index+34] = tints[8]
+barray[index+35] = shader
+barray[index+36] = verts[9] + x2
+barray[index+37] = verts[10] + y2
+barray[index+38] = verts[11] + z2
+barray[index+39] = tx + texShapeVerts[6]
+barray[index+40] = ty + texShapeVerts[7]
+barray[index+41] = shadows[3]
+barray[index+42] = slights[3]
+barray[index+43] = blights[3]
+barray[index+44] = tints[9]
+barray[index+45] = tints[10]
+barray[index+46] = tints[11]
+barray[index+47] = shader
+index += 48
 }
 }
 texNum++
@@ -19971,7 +20162,7 @@ this.loaded = false
 this.type = type || ""
 // vao for this chunk
 this.vao = glExtensions.vertex_array_object.createVertexArrayOES()
-this.caves = !caves
+this.caves = this.type !== "" || !caves
 this.doubleRender = false
 this.world = world
 }
@@ -20428,7 +20619,7 @@ if(g) world.setBlock(wx+i, g+1, wz+k, 0)
 //
 }
 // Cactus
-if (random() < 0.01 && this.getBlock(i, ground, k) && b === "desert" && ground > 60 && this.type !== "nether") {
+if (random() < 0.01 && this.getBlock(i, ground, k) && b === "desert" && ground > 60 && this.type === "") {
 var rnd = random()
 top = ground + Math.floor(2.5 + rnd*1.5);
 rand = Math.floor(random(4096));
@@ -20451,7 +20642,7 @@ this.setBlock(i, top+1, k, blockIds.redCactusFruit|CROSS);
 break
 }
 }
-if (random() < 0.006 && this.getBlock(i, ground, k) && b === "desert" && ground > 60 && this.type !== "nether") {
+if (random() < 0.006 && this.getBlock(i, ground, k) && b === "desert" && ground > 60 && this.type === "") {
 let tree = blockIds.deadBush | CROSS;
 this.setBlock(i,ground+1,k, tree);
 this.setBlock(i, ground, k, blockIds.sand);
@@ -20764,7 +20955,7 @@ world.spawnBlock(wx, ground+1, wz, blockIds.warpedRoots, type);
 }
 }
 //bamboo
-if(random() < 0.2 && this.getBlock(i, ground, k) && b === "bambooForest" && ground > 60 && this.type !== "nether"){
+if(random() < 0.2 && this.getBlock(i, ground, k) && b === "bambooForest" && ground > 60 && this.type === ""){
 if(random() < 0.2){
 this.setBlock(i, ground+1, k, blockIds.bambooShoot | CROSS)
 }else{
@@ -20876,7 +21067,7 @@ if(world.getBlock(wx+x,y,wz+z,type) === blockIds.netherrack && world.getBlock(wx
 world.setBlock(wx+x,y,wz+z, blockIds.netherGoldOre, false,false,false,false,type)
 }
 }
-}else{
+}else if(this.type === "end"){}else{
 // Blocks of each per chunk in Minecraft
 // Coal: 185.5
 // Iron: 111.5
@@ -20984,7 +21175,7 @@ minY = min(minY, y)
 }
 this.maxY = maxY
 this.minY = minY
-this.faces = data.length / 44
+this.faces = data.length / 48
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
 gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
@@ -20995,12 +21186,14 @@ gl.enableVertexAttribArray(glCache.aShadow)
 gl.enableVertexAttribArray(glCache.aSkylight)
 gl.enableVertexAttribArray(glCache.aBlocklight)
 gl.enableVertexAttribArray(glCache.tint)
-gl.vertexAttribPointer(glCache.aVertex, 3, gl.FLOAT, false, 44, 0)
-gl.vertexAttribPointer(glCache.aTexture, 2, gl.FLOAT, false, 44, 12)
-gl.vertexAttribPointer(glCache.aShadow, 1, gl.FLOAT, false, 44, 20)
-gl.vertexAttribPointer(glCache.aSkylight, 1, gl.FLOAT, false, 44, 24)
-gl.vertexAttribPointer(glCache.aBlocklight, 1, gl.FLOAT, false, 44, 28)
-gl.vertexAttribPointer(glCache.tint, 3, gl.FLOAT, false, 44, 32)
+gl.enableVertexAttribArray(glCache.aShader)
+gl.vertexAttribPointer(glCache.aVertex, 3, gl.FLOAT, false, 48, 0)
+gl.vertexAttribPointer(glCache.aTexture, 2, gl.FLOAT, false, 48, 12)
+gl.vertexAttribPointer(glCache.aShadow, 1, gl.FLOAT, false, 48, 20)
+gl.vertexAttribPointer(glCache.aSkylight, 1, gl.FLOAT, false, 48, 24)
+gl.vertexAttribPointer(glCache.aBlocklight, 1, gl.FLOAT, false, 48, 28)
+gl.vertexAttribPointer(glCache.tint, 3, gl.FLOAT, false, 48, 32)
+gl.vertexAttribPointer(glCache.aShader, 1, gl.FLOAT, false, 48, 44)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
 this.lazy = false
 }
@@ -21018,7 +21211,7 @@ var world = this.world
 let chunkX = this.x >> 4
 let chunkZ = this.z >> 4
 let load = null
-let loadFrom = this.type === "nether" ? world.netherLoadFrom : world.loadFrom
+let loadFrom = this.type === "nether" ? world.netherLoadFrom : (this.type === "end" ? world.endLoadFrom : world.loadFrom)
 for (let i = 0; i < loadFrom.length; i++) {
 load = loadFrom[i]
 if (load.x === chunkX && load.z === chunkZ) {
@@ -21891,6 +22084,7 @@ this.despawns = despawns //also tells how much time for it to move
 this.solidWhenDone = solidWhenDone
 this.tags = tags
 this.canStandOn = true
+this.endAs = null
 }
 update() {
 let now = performance.now()
@@ -21900,7 +22094,7 @@ if(this.solidWhenDone){
 this.x = this.mx
 this.y = this.my
 this.z = this.mz
-world.setBlock(round(this.x),round(this.y),round(this.z),this.block, false,false,false,false, this.dimension)
+world.setBlock(round(this.x),round(this.y),round(this.z),this.endAs || this.block, false,false,false,false, this.dimension)
 if(this.tags) world.setTags(round(this.x),round(this.y),round(this.z), this.tags, false, this.dimension)
 }
 }
@@ -23853,11 +24047,11 @@ return dx1 * dx1 + dy1 * dy1 - (dx2 * dx2 + dy2 * dy2)
 }
 function fillReqs(x, z, dimension) {
 // Chunks must all be loaded first.
-let loadFrom = dimension === "nether" ? world.netherLoadFrom : world.loadFrom
+let loadFrom = dimension === "nether" ? world.netherLoadFrom : (dimension === "end" ? world.endLoadFrom : world.loadFrom)
 var done = true
 for (let i = x - 3; i <= x + 3; i++) {
 for (let j = z - 3; j <= z + 3; j++) {
-let chunk = (dimension === "nether" ? world.netherLoaded : world.loaded)[(i + world.offsetX) * world.lwidth + j + world.offsetZ]
+let chunk = (dimension === "nether" ? world.netherLoaded : (dimension === "end" ? world.endLoaded : world.loaded))[(i + world.offsetX) * world.lwidth + j + world.offsetZ]
 if (!chunk.generated) {
 world.generateQueue.push(chunk)
 done = false
@@ -24410,6 +24604,10 @@ case 1://crimson and warped forests
 case 2:
 t = 16
 break
+//end
+case "end":
+t = 2
+break
 default:
 t = 10
 break
@@ -24433,10 +24631,13 @@ this.version = version
 //Initialize the world's arrays
 this.chunks = []
 this.netherChunks = []
+this.endChunks = []
 this.loaded = []
 this.netherLoaded = []
+this.endLoaded = []
 this.sortedChunks = []
 this.netherSortedChunks = []
+this.endSortedChunks = []
 this.doubleRenderChunks = []
 this.offsetX = 0
 this.offsetZ = 0
@@ -24449,18 +24650,24 @@ this.loadQueue = []
 this.meshQueue = []
 this.loadFrom = []
 this.netherLoadFrom = []
+this.endLoadFrom = []
 this.entities = []
 this.particles = []
 this.lastChunk = ","
 this.netherLastChunk = ","
+this.endLastChunk = ","
 this.saveStr = null
 this.netherSaveStr = null
+this.endSaveStr = null
 this.hasLoaded = false
 this.netherHasLoaded = false
+this.endHasLoaded = false
 this.editedTags = []
 this.netherEditedTags = []
+this.endEditedTags = []
 this.editedTagsToLoad = null
 this.netherEditedTagsToLoad = null
+this.endEditedTagsToLoad = null
 }
 genChunk(chunk) {
 let x = chunk.x >> 4
@@ -24484,6 +24691,7 @@ const hillSize = 0.004 // smaller = bigger; 0.005 to 0.01 seems the be a reasona
 let gen = 0, floatGen = 0
 for (let i = 0; i < 16; i++) {
 for (let k = 0; k < 16; k++) {
+let wx = trueX + i, wz = trueZ + k
 floatGen = noiseProfile.noise((trueX + i) * smoothness, (trueZ + k) * smoothness) * hilliness + generator.extra
 gen = superflat === "island" && chunk.type === "" ? win.islandGenerator.GetHeight(x*16+i, z*16+k) : (superflat ? 4 : Math.round(floatGen))
 /*if(this.type === "nether" && superflat){
@@ -24532,6 +24740,33 @@ for(let j=1; j<gen; j++){
 chunk.setBlock(i, netherHeight - j, k, block)
 }*/
 chunk.setBlock(i,netherHeight,k, blockIds.bedrock)
+}else if(chunk.type === "end"){
+chunk.tops[k * 16 + i] = 0
+for(let j = 0; j<64; j++){
+gen = noise(wx * 0.01, j*0.01, wz * 0.01) - 0.57
+if(wx > -64 && wx < 64 && wz > -64 && wz < 64){
+//main island
+gen = gen + 0.57 - lerp(max(abs(wx),abs(wz))/64, 0,0.57)
+}else if(wx > -80 && wx < 80 && wz > -80 && wz < 80){
+//blend into void
+gen = gen + 0.57 - lerp(max(abs(wx)-64,abs(wz)-64)/16, 0.57,1)
+}else if(wx > -200 && wx < 200 && wz > -200 && wz < 200){
+//blend void into outer islands
+var dist = 200-64
+gen = lerp(max(abs(wx)-dist,abs(wz)-dist,0)/64, -0.1,gen)
+}
+if(j < 32){
+gen = lerp(j/32,-0.1,gen)
+}
+if(j > 48){
+gen = lerp((j-48)/16, gen,-0.1)
+}
+if(gen > 0){
+chunk.tops[k * 16 + i] = j
+chunk.biomes[k * 16 + i] = "end"
+chunk.setBlock(i,j,k,blockIds.endStone)
+}
+}
 }else if (superflat === "island") {
 if (win.islandGenerator.GetWaterDepth(x*16+i, z*16+k) > 0) {
 chunk.setBlock(i, gen, k, blockIds.Water);
@@ -24545,30 +24780,36 @@ chunk.setBlock(i, gen, k, blockIds.sand)
 chunk.setBlock(i, gen - 1, k, blockIds.sand)
 chunk.setBlock(i, gen - 2, k, blockIds.sand)
 chunk.setBlock(i, gen - 3, k, blockIds.sand)
+chunk.biomes[k * 16 + i] = "desert"
 }   else if (biomeHere === -1) {
 chunk.setBlock(i, gen, k, blockIds.snowBlock)
 chunk.setBlock(i, gen - 1, k, blockIds.snowBlock)
 chunk.setBlock(i, gen - 2, k, blockIds.stone)
 chunk.setBlock(i, gen - 3, k, blockIds.stone)
+chunk.biomes[k * 16 + i] = "snowyField"
 }   else if (biomeHere === -4934476 || biomeHere === -8355712 || biomeHere === -6963874) {
 chunk.setBlock(i, gen, k, blockIds.stone)
 chunk.setBlock(i, gen - 1, k, blockIds.stone)
 chunk.setBlock(i, gen - 2, k, blockIds.stone)
 chunk.setBlock(i, gen - 3, k, blockIds.stone)
+chunk.biomes[k * 16 + i] = "desert"
 } else if (biomeHere === -65536) {
 chunk.setBlock(i, gen, k, blockIds.Lava)
 chunk.setBlock(i, gen - 1, k, blockIds.stone)
 chunk.setBlock(i, gen - 2, k, blockIds.stone)
 chunk.setBlock(i, gen - 3, k, blockIds.stone)
+chunk.biomes[k * 16 + i] = "desert"
 } else {
 chunk.setBlock(i, gen, k, blockIds.grass)
 chunk.setBlock(i, gen - 1, k, blockIds.dirt)
 chunk.setBlock(i, gen - 2, k, blockIds.dirt)
 chunk.setBlock(i, gen - 3, k, blockIds.dirt)
+chunk.biomes[k * 16 + i] = "field"
 }
 }
 } else if(superflat){
 chunk.tops[k * 16 + i] = gen;
+chunk.biomes[k * 16 + i] = "field"
 chunk.setBlock(i, gen, k, blockIds.grass);
 chunk.setBlock(i, gen - 1, k, blockIds.dirt);
 chunk.setBlock(i, gen - 2, k, blockIds.dirt);
@@ -24674,7 +24915,7 @@ chunk.setBlock(i, gen - 1, k, blockIds.gravel);
 }
 }
 }
-if(chunk.type !== "nether"){
+if(chunk.type === ""){
 for (let j = 1; j < gen - 3; j++) {
 chunk.setBlock(i, j, k, blockIds.stone)
 }
@@ -24685,7 +24926,7 @@ chunk.setBlock(i, 0, k, blockIds.bedrock)
 chunk.generated = true
 }
 getAdjacentSubchunks(x, y, z, lights, dimension) {
-let chunks = dimension === "nether" ? this.netherChunks : this.chunks
+let chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
 let minChunkX = x - 16 >> 4
 let maxChunkX = x + 16 >> 4
 let minChunkY = y - 16 >> 4
@@ -24711,7 +24952,7 @@ ret.push(lights ? emptySection.light : emptySection.blocks)
 return ret
 }
 updateBlock(x, y, z, lazy, noOnupdate, sx,sy,sz, dimension) {
-let chunks = dimension === "nether" ? this.netherChunks : this.chunks
+let chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
 let chunk = chunks[x >> 4] && chunks[x >> 4][z >> 4]
 if (chunk && chunk.buffer) {
 chunk.updateBlock(x & 15, y, z & 15, this, lazy, noOnupdate, sx,sy,sz)
@@ -24720,10 +24961,10 @@ chunk.updateBlock(x & 15, y, z & 15, this, lazy, noOnupdate, sx,sy,sz)
 getChunk(x, z, dimension) {
 let X = (x >> 4) + this.offsetX
 let Z = (z >> 4) + this.offsetZ
-return (dimension === "nether" ? this.netherLoaded : this.loaded)[X * this.lwidth + Z]
+return (dimension === "nether" ? this.netherLoaded : (dimension === "end" ? this.endLoaded : this.loaded))[X * this.lwidth + Z]
 }
 getWorldBlock(x, y, z, dimension) {
-var chunks = dimension === "nether" ? this.netherChunks : this.chunks
+var chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
 if (!chunks[x >> 4] || !chunks[x >> 4][z >> 4]) {
 return blockIds.air
 }
@@ -24740,11 +24981,11 @@ return blockIds.air
 } else if (X < 0 || X >= lwidth || Z < 0 || Z >= lwidth) {
 return this.getWorldBlock(x, y, z, dimension)
 }
-var chunk = (dimension === "nether" ? this.netherLoaded : this.loaded)[X * lwidth + Z]
+var chunk = (dimension === "nether" ? this.netherLoaded : (dimension === "end" ? this.endLoaded : this.loaded))[X * lwidth + Z]
 return chunk ? chunk.getBlock(x & 15, y, z & 15) : blockIds.air
 }
 setBlock(x, y, z, blockID, lazy, noOnupdate, remote, keepTags, dimension) {
-var chunks = dimension === "nether" ? this.netherChunks : this.chunks
+var chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
 if (!chunks[x >> 4] || !chunks[x >> 4][z >> 4]) {
 return
 }
@@ -24757,19 +24998,19 @@ if (blockID) {
 if(prev){ //block gets replaced
 let prevData = blockData[prev]
 chunk.deleteBlock(xm, y, zm, !lazy)
-if (!lazy && chunk.buffer && (!prevData.transparent || prevData.lightLevel) && screen !== "loading" && screen !== "netherLoading") {
+if (!lazy && chunk.buffer && (!prevData.transparent || prevData.lightLevel) && screen !== "loading" && screen !== "netherLoading" && screen !== "endLoading") {
 this.updateLight(x, y, z, false, prevData.lightLevel, dimension)
 }
 }
 let data = blockData[blockID]
 chunk.setBlock(xm, y, zm, blockID, !lazy)
-if (!lazy && chunk.buffer && (!data.transparent || data.lightLevel) && screen !== "loading" && screen !== "netherLoading") {
+if (!lazy && chunk.buffer && (!data.transparent || data.lightLevel) && screen !== "loading" && screen !== "netherLoading" && screen !== "endLoading") {
 this.updateLight(x, y, z, true, data.lightLevel, dimension)
 }
 } else {
 let data = blockData[chunk.getBlock(xm, y, zm)]
 chunk.deleteBlock(xm, y, zm, !lazy)
-if (!lazy && chunk.buffer && (!data.transparent || data.lightLevel) && screen !== "loading" && screen !== "netherLoading") {
+if (!lazy && chunk.buffer && (!data.transparent || data.lightLevel) && screen !== "loading" && screen !== "netherLoading" && screen !== "endLoading") {
 this.updateLight(x, y, z, false, data.lightLevel, dimension)
 }
 }
@@ -24813,7 +25054,7 @@ if (xm & zm === 15) { this.updateBlock(x + 1, y, z + 1, lazy, true,x,y,z,dimensi
 }
 tagsChanged(x,y,z, t, remote, dimension){
 var str = x.toString(36)+","+y.toString(36)+","+z.toString(36)
-var editedTags = dimension === "nether" ? this.netherEditedTags : this.editedTags
+var editedTags = dimension === "nether" ? this.netherEditedTags : (dimension === "end" ? this.endEditedTags : this.editedTags)
 if(t){
 if(!editedTags.includes(str)) editedTags.push(str)
 }else{
@@ -24826,7 +25067,7 @@ send({type:"setTags", x:x, y:y, z:z, data:t, dimension:dimension})
 }
 }
 getWorldTags(x, y, z, dimension) {
-var chunks = dimension === "nether" ? this.netherChunks : this.chunks
+var chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
 if (!chunks[x >> 4] || !chunks[x >> 4][z >> 4]) {
 return
 }
@@ -24836,7 +25077,7 @@ getTags(x,y,z,dimension){
 let X = (x >> 4) + this.offsetX
 let Z = (z >> 4) + this.offsetZ
 let lwidth = this.lwidth
-let loaded = dimension === "nether" ? this.netherLoaded : this.loaded
+let loaded = dimension === "nether" ? this.netherLoaded : (dimension === "end" ? this.endLoaded : this.loaded)
 if (y > maxHeight) {
 return
 } else if (y < 0) {
@@ -24851,7 +25092,7 @@ var t = this.getTags(x,y,z,dimension)
 return t && t[n]
 }
 setTags(x,y,z,data, remote,dimension){
-var chunks = dimension === "nether" ? this.netherChunks : this.chunks
+var chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
 if (!chunks[x >> 4] || !chunks[x >> 4][z >> 4]) {
 return
 }
@@ -24863,7 +25104,7 @@ chunk.setTags(xm, y, zm, data)
 this.tagsChanged(x,y,z,data, remote, dimension)
 }
 setTagByName(x,y,z,n,data, remote,dimension){
-var chunks = dimension === "nether" ? this.netherChunks : this.chunks
+var chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
 if (!chunks[x >> 4] || !chunks[x >> 4][z >> 4]) {
 return
 }
@@ -24884,12 +25125,12 @@ let X = (x >> 4) + this.offsetX
 let Z = (z >> 4) + this.offsetZ
 let lwidth = this.lwidth
 if (X < 0 || X >= lwidth || Z < 0 || Z >= lwidth) {
-let chunks = dimension === "nether" ? this.netherChunks : this.chunks
+let chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
 if(chunks[x >> 4] && chunks[x >> 4][z >> 4]){
 return chunks[x >> 4][z >> 4].getLight(x & 15, y, z & 15, blockLight)
 }
 }
-let loaded = dimension === "nether" ? this.netherLoaded : this.loaded
+let loaded = dimension === "nether" ? this.netherLoaded : (dimension === "end" ? this.endLoaded : this.loaded)
 if(loaded[X * lwidth + Z]){
 return loaded[X * lwidth + Z].getLight(x & 15, y, z & 15, blockLight)
 }
@@ -24898,7 +25139,7 @@ return 15
 setLight(x, y, z, level, block, dimension) {
 let X = (x >> 4) + this.offsetX
 let Z = (z >> 4) + this.offsetZ
-var loaded = dimension === "nether" ? this.netherLoaded : this.loaded
+var loaded = dimension === "nether" ? this.netherLoaded : (dimension === "end" ? this.endLoaded : this.loaded)
 var lwidth = this.lwidth
 if (loaded[X * lwidth + Z]) {
 return loaded[X * lwidth + Z].setLight(x & 15, y, z & 15, level, block)
@@ -25005,7 +25246,7 @@ if(blockData[blockID].tallcrossShape) blockID |= TALLCROSS
 if(blockData[blockID].cactus) blockID |= CACTUS
 let chunkX = x >> 4
 let chunkZ = z >> 4
-let chunks = dimension === "nether" ? this.netherChunks : this.chunks
+let chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
 if (!chunks[chunkX]) {
 chunks[chunkX] = []
 }
@@ -25022,7 +25263,7 @@ chunk.setBlock(x & 15, y, z & 15, blockID)
 }
 }
 getBiome(x,y,z,dimension){
-let chunks = dimension === "nether" ? this.netherChunks : this.chunks
+let chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
 if (!chunks[x >> 4] || !chunks[x >> 4][z >> 4]) {
 return
 }
@@ -25348,7 +25589,7 @@ let tickStart = performance.now()
 let maxChunkX = (p.x >> 4) + settings.renderDistance
 let maxChunkZ = (p.z >> 4) + settings.renderDistance
 let chunk = maxChunkX + "," + maxChunkZ
-var lastChunk = p.dimension === "nether" ? "netherLastChunk" : "lastChunk"
+var lastChunk = p.dimension === "nether" ? "netherLastChunk" : (p.dimension === "end" ? "endLastChunk" : "lastChunk")
 if (chunk !== this[lastChunk]) {
 this[lastChunk] = chunk
 this.loadChunks()
@@ -25371,7 +25612,7 @@ newWorldBlock()
 for (let i = 0; i < this.sortedChunks.length; i++) {
 this.sortedChunks[i].tick()
 }
-if(screen !== "loading" && screen !== "netherLoading"){
+if(screen !== "loading" && screen !== "netherLoading" && screen !== "endLoading"){
 for (let i = this.entities.length - 1; i >= 0; i--) {
 const entity = this.entities[i]
 if(entity.dimension === p.dimension) entity.update()
@@ -25455,7 +25696,7 @@ break
 render() {
 gl.useProgram(program3D);
 initModelView(p)
-if(p.dimension === "nether"){
+if(p.dimension === "nether" || p.dimension === "end"){
 skyLight = 0
 }else{
 skyLight = min(max(abs(worldTime % (Math.PId*1.2) - Math.PI) / Math.PI - 0.04, 0.1), 1)
@@ -25480,7 +25721,7 @@ sky[2] = defaultSky[2]
 if(inWater) gl.clearColor(sky[0], sky[1], sky[2], 1)
 else gl.clearColor(sky[0] * skyLight, sky[1] * skyLight, sky[2] * skyLight, 1)
 gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT)
-if(p.dimension !== "nether"){
+if(p.dimension !== "nether" && p.dimension !== "end"){
 //skybox render
 if(inWater === 0){
 /*gl.useProgram(skyboxProgram);
@@ -25514,7 +25755,8 @@ gl.uniform1f(glCache.uDist, fogDist)
 gl.uniform1f(glCache.uTime, skyLight)
 gl.uniform3f(glCache.skyColor, sky[0], sky[1], sky[2])
 gl.uniform1i(glCache.inWater, inWater)
-let c = p.dimension === "nether" ? this.netherSortedChunks : this.sortedChunks
+gl.uniform1i(glCache.dimension, p.dimension === "nether" ? 1 : (p.dimension === "end" ? 2 : 0))
+let c = p.dimension === "nether" ? this.netherSortedChunks : (p.dimension === "end" ? this.endSortedChunks : this.sortedChunks)
 for (let chunk of c) {
 chunk.render()
 }
@@ -25603,8 +25845,8 @@ this.chunkGenQueue.length = 0
 this.lightingQueue.length = 0
 this.populateQueue.length = 0
 this.generateQueue.length = 0
-var loaded = d === "nether" ? this.netherLoaded : this.loaded
-var chunks = d === "nether" ? this.netherChunks : this.chunks
+var loaded = d === "nether" ? this.netherLoaded : (d === "end" ? this.endLoaded : this.loaded)
+var chunks = d === "nether" ? this.netherChunks : (d === "end" ? this.endChunks : this.chunks)
 if (loaded.length > this.lwidth * this.lwidth) {
 loaded.length = this.lwidth * this.lwidth
 }
@@ -25629,7 +25871,7 @@ this.chunkGenQueue.push(chunk)
 loaded[i++] = chunk
 }
 }
-var sortedChunks = d === "nether" ? this.netherSortedChunks : this.sortedChunks
+var sortedChunks = d === "nether" ? this.netherSortedChunks : (d === "end" ? this.endSortedChunks : this.sortedChunks)
 sortedChunks.length = 0
 for (let chunk of loaded) {
 if (renderFilter(chunk)) {
@@ -25649,19 +25891,24 @@ if (chunk.doubleRender) {
 this.doubleRenderChunks.push(chunk)
 }
 }
+for(let chunk of this.endLoaded){
+if (chunk.doubleRender) {
+this.doubleRenderChunks.push(chunk)
+}
+}
 }
 getTop(x,z,dimension){
 let X = (x >> 4) + this.offsetX
 let Z = (z >> 4) + this.offsetZ
-var chunks = dimension === "nether" ? this.netherChunks : this.chunks
+var chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
 if (X < 0 || X >= this.lwidth || Z < 0 || Z >= this.lwidth) {
 return chunks[x >> 4][z >> 4].tops[(z&15) * 16 + (x&15)]
 }
 }
 getSaveString(){
 let world = this
-let chunks = this.chunks, netherChunks = this.netherChunks
-let edited = [], netherEdited = [], pallete = {}, netherPallete = {}
+let chunks = this.chunks, netherChunks = this.netherChunks, endChunks = this.endChunks
+let edited = [], netherEdited = [], endEdited = [], pallete = {}, netherPallete = {}, endPallete = {}
 if(this.hasLoaded || !this.saveStr){
 for (let x in chunks) {
 for (let z in chunks[x]) {
@@ -25714,6 +25961,32 @@ chunks[0].edited = false
 }
 }
 }
+if(this.endHasLoaded || !this.endSaveStr){
+for (let x in endChunks) {
+for (let z in endChunks[x]) {
+let chunk = endChunks[x][z]
+if (chunk.edited) {
+for (let y = 0; y < chunk.sections.length; y++) {
+if (chunk.sections[y].edited) {
+endEdited.push([ chunk.sections[y], chunk.cleanSections[y] ])
+}
+}
+}
+}
+}
+for (let chunks of endEdited) {
+let changes = false
+chunks[0].blocks.forEach((id, i) => {
+if (id !== chunks[1][i]) {
+endPallete[id] = true
+changes = true
+}
+})
+if (!changes) {
+chunks[0].edited = false
+}
+}
+}
 let blocks = Object.keys(pallete).map(n => Number(n))
 pallete = {}
 blocks.forEach((block, index) => pallete[block] = index)
@@ -25722,13 +25995,17 @@ let netherBlocks = Object.keys(netherPallete).map(n => Number(n))
 netherPallete = {}
 netherBlocks.forEach((block, index) => netherPallete[block] = index)
 netherBlocks = (this.netherHasLoaded || !this.netherSaveStr) ? netherBlocks.map(b => b.toString(36)).join(",") : this.netherSaveStr.pallete
+let endBlocks = Object.keys(endPallete).map(n => Number(n))
+endPallete = {}
+endBlocks.forEach((block, index) => endBlocks[block] = index)
+endBlocks = (this.endHasLoaded || !this.endSaveStr) ? endBlocks.map(b => b.toString(36)).join(",") : this.endSaveStr.pallete
 let rnd = round
 let options = p.flying | (superflat==="island" ? 2 : superflat) << 1 | p.spectator << 3 | caves << 4 | trees << 5 | survival << 6
 let str = world.name + ";" + worldSeed.toString(36) + ";"
 + rnd(p.x).toString(36) + "," + rnd(p.y).toString(36) + "," + rnd(p.z).toString(36) + ","
 + (p.rx * 100 | 0).toString(36) + "," + (p.ry * 100 | 0).toString(36) + "," + options.toString(36) + ";"
 + (verMoreThan(this.version, "1.0.2") ? version : this.version) + ";"
-+ blocks+"|"+netherBlocks + ";"
++ blocks+"|"+netherBlocks+"|"+endBlocks+";"
 if(this.hasLoaded || !this.saveStr){
 for (let i = 0; i < edited.length; i++) {
 if (!edited[i][0].edited) {
@@ -25768,16 +26045,28 @@ str += ";"
 }
 if (str.match(/;$/)) str = str.substr(0, str.length - 1)
 }else str += this.netherSaveStr.sections
+str += ";|"
+if(this.endHasLoaded || !this.endSaveStr){
+for (let i = 0; i < endEdited.length; i++) {
+if (!endEdited[i][0].edited) {
+continue
+}
+let real = endEdited[i][0]
+let blocks = real.blocks
+let original = endEdited[i][1]
+str += (real.x / 16).toString(36) + "," + (real.y / 16).toString(36) + "," + (real.z / 16).toString(36) + ","
+for (let j = 0; j < original.length; j++) {
+if (blocks[j] !== original[j]) {
+str += (endPallete[blocks[j]] << 12 | j).toString(36) + ","
+}
+}
+str = str.substr(0, str.length - 1); //Remove trailing comma
+str += ";"
+}
+if (str.match(/;$/)) str = str.substr(0, str.length - 1)
+}else str += this.endSaveStr.sections
 return str
 }
-/*getSaveString() {
-if(!this.hasLoaded && this.saveStr) return this.saveStr
-return this.getThisSaveString()
-}
-getNetherSaveString(){
-if(!this.hasLoaded && this.saveStr) return this.saveStr
-return this.getThisSaveString("nether")
-}*/
 getInv(){
 let str = ""
 let arr = []
@@ -25855,6 +26144,14 @@ obj[pos+","+"nether"] = this.getTags(parseInt(arr[0], 36),parseInt(arr[1], 36),p
 }else if(this.netherEditedTagsToLoad){
 for(let i in this.netherEditedTagsToLoad) obj[i] = this.netherEditedTagsToLoad[i]
 }
+if(this.endHasLoaded){
+for(var pos of this.endEditedTags){
+var arr = pos.split(",")
+obj[pos+","+"end"] = this.getTags(parseInt(arr[0], 36),parseInt(arr[1], 36),parseInt(arr[2],36), "end")
+}
+}else if(this.endEditedTagsToLoad){
+for(let i in this.endEditedTagsToLoad) obj[i] = this.endEditedTagsToLoad[i]
+}
 return obj
 }
 loadSave(str) {
@@ -25888,28 +26185,30 @@ this.version = version
 // 	alert("This save code is for an older version. 0.7.0 or later is needed")
 // }
 let palletes = data.shift().split("|")
-let pallete = palletes[0].split(",").map(n => parseInt(n, 36)), netherPallete = palletes[1] ? palletes[1].split(",").map(n => parseInt(n, 36)) : ""
-this.loadFrom = [], this.netherLoadFrom = []
+let pallete = palletes[0].split(",").map(n => parseInt(n, 36)), netherPallete = palletes[1] ? palletes[1].split(",").map(n => parseInt(n, 36)) : "", endPallete = palletes[2] ? palletes[2].split(",").map(n => parseInt(n, 36)) : ""
+this.loadFrom = [], this.netherLoadFrom = [], this.endLoadFrom = []
 this.saveStr = {pallete:palletes[0], sections:""}
 this.netherSaveStr = {pallete:palletes[1] || "", sections:""}
+this.endSaveStr = {pallete:palletes[2] || "", sections:""}
 let dimension = ""
 for (let i = 0; data.length; i++) {
 let blocks = data.shift().split(",")
 if(blocks[0].startsWith("|")){
 blocks[0] = blocks[0].substring(1)
 if(dimension === "") dimension = "nether"
+else if(dimension === "nether") dimension = "end"
 else alert("Error: Save string cotains extra dimensions not in this version.")
 }
 if(!blocks[0]) continue //maybe it was only the "|"
-(dimension === "nether" ? this.netherSaveStr : this.saveStr).sections += blocks.join(",")+";"
-var loadFrom = dimension === "nether" ? this.netherLoadFrom : this.loadFrom
+(dimension === "nether" ? this.netherSaveStr : (dimension === "end" ? this.endSaveStr : this.saveStr)).sections += blocks.join(",")+";"
+var loadFrom = dimension === "nether" ? this.netherLoadFrom : (dimension === "end" ? this.endLoadFrom : this.loadFrom)
 loadFrom.push({
 x: parseInt(blocks.shift(), 36),
 y: parseInt(blocks.shift(), 36),
 z: parseInt(blocks.shift(), 36),
 blocks: [],
 })
-var currentPallete = dimension === "nether" ? netherPallete : pallete
+var currentPallete = dimension === "nether" ? netherPallete : (dimension === "end" ? endPallete : pallete)
 for (let j = 0; j < blocks.length; j++) {
 let block = parseInt(blocks[j], 36)
 let index = block & 0xffffff
@@ -25919,6 +26218,7 @@ loadFrom[loadFrom.length-1].blocks[index] = currentPallete[pid]
 }
 this.saveStr.sections = this.saveStr.sections.substring(0,this.saveStr.sections.length-1) //remove trailing ;
 this.netherSaveStr.sections = this.netherSaveStr.sections.substring(0,this.netherSaveStr.sections.length-1)
+this.endSaveStr.sections = this.endSaveStr.sections.substring(0,this.endSaveStr.sections.length-1)
 }
 loadNetherSave(str){ //for older saves
 }
@@ -25981,10 +26281,13 @@ p.level = parseInt(arr[15]) || 0; setLevel()
 setEditedTagsToLoad(obj){
 this.editedTagsToLoad = {}
 this.netherEditedTagsToLoad = {}
+this.endEditedTagsToLoad = {}
 for(var i in obj){
 var pos = i.split(",")
 if(pos[3] === "nether"){
 this.netherEditedTagsToLoad[i] = obj[i]
+}else if(pos[3] === "end"){
+this.endEditedTagsToLoad[i] = obj[i]
 }else{
 this.editedTagsToLoad[i] = obj[i]
 }
@@ -26002,6 +26305,13 @@ for(var t in obj){
 var data = obj[t]
 var pos = t.split(",")
 world.setTags(parseInt(pos[0],36),parseInt(pos[1],36),parseInt(pos[2],36),data,true,"nether")
+}
+}
+loadEndEditedTags(obj){
+for(var t in obj){
+var data = obj[t]
+var pos = t.split(",")
+world.setTags(parseInt(pos[0],36),parseInt(pos[1],36),parseInt(pos[2],36),data,true,"end")
 }
 }
 loadOldSave(str) {
@@ -26784,7 +27094,17 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
 })
-//texture 5 available
+// Endstone texture for the background
+let endPixels = new Uint8Array(getPixels(textures.endStone))
+endTexture = gl.createTexture()
+gl.activeTexture(gl.TEXTURE5)
+gl.bindTexture(gl.TEXTURE_2D, endTexture)
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 16, 16, 0, gl.RGBA, gl.UNSIGNED_BYTE, endPixels)
+gl.generateMipmap(gl.TEXTURE_2D)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT)
 let panoramaPixels = new Uint8Array([255,0,0,1])
 panoramaTexture = gl.createTexture()
 gl.activeTexture(gl.TEXTURE4)
@@ -26823,6 +27143,21 @@ images.skin.addEventListener("load", function(){
 gl.activeTexture(gl.TEXTURE7)
 gl.bindTexture(gl.TEXTURE_2D, skinTexture)
 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, images.skin)
+//gl.generateMipmap(gl.TEXTURE_2D);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+})
+let endPortalPixels = new Uint8Array([255,0,0,1])
+endPortalTexture = gl.createTexture()
+gl.activeTexture(gl.TEXTURE8)
+gl.bindTexture(gl.TEXTURE_2D, endPortalTexture)
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, endPortalPixels)
+images.endPortal.addEventListener("load", function(){
+gl.activeTexture(gl.TEXTURE8)
+gl.bindTexture(gl.TEXTURE_2D, endPortalTexture)
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, images.endPortal)
 //gl.generateMipmap(gl.TEXTURE_2D);
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
@@ -27173,7 +27508,7 @@ let str = "Average Frame Time: " + analytics.displayedFrameTime + "ms\n"
 + "Worst Frame Time: " + analytics.displayedwFrameTime + "ms\n"
 + "Render Time: " + analytics.displayedRenderTime + "ms\n"
 + "Tick Time: " + analytics.displayedTickTime + "ms\n"
-+ "Rendered Chunks: " + renderedChunks.toLocaleString() + " / " + (p.dimension === "nether" ? world.netherLoaded : world.loaded).length + "\n"
++ "Rendered Chunks: " + renderedChunks.toLocaleString() + " / " + (p.dimension === "nether" ? world.netherLoaded : (p.dimension === "end" ? world.endLoaded : world.loaded)).length + "\n"
 + "Generated Chunks: " + generatedChunks.toLocaleString() + "\n"
 + "FPS: " + analytics.fps//*temp*/ + "   atk-cdn_"+attackCooldown+",start_"+attackCooldownStart+",time_"+attackCooldownTime
 if (p.autoBreak) {
@@ -27754,6 +28089,7 @@ inventory.spreaded = []
 }
 inventory.spreadStart = -1
 inventory.spreading = false
+updateCraftingGrid()
 }
 }
 function drawCrafting(mouse) {
@@ -28726,7 +29062,7 @@ function startLoad() {
 p2.x = p.x
 p2.y = p.y
 p2.z = p.z
-let loadFrom = p.dimension === "nether" ? world.netherLoadFrom : world.loadFrom
+let loadFrom = p.dimension === "nether" ? world.netherLoadFrom : (p.dimension === "end" ? world.endLoadFrom : world.loadFrom)
 maxLoad = loadFrom.length + 9
 }
 function initWebglPrograms(){
@@ -28781,18 +29117,24 @@ glCache.aSkylight = gl.getAttribLocation(program3D, "aSkylight")
 glCache.aBlocklight = gl.getAttribLocation(program3D, "aBlocklight")
 glCache.aTexture = gl.getAttribLocation(program3D, "aTexture")
 glCache.aVertex = gl.getAttribLocation(program3D, "aVertex")
+glCache.aShader = gl.getAttribLocation(program3D, "aShader")
 glCache.skyColor = gl.getUniformLocation(program3D, "skyColor")
 glCache.inWater = gl.getUniformLocation(program3D, "inWater")
 glCache.uTrans = gl.getUniformLocation(program3D, "uTrans")
 glCache.tint = gl.getAttribLocation(program3D, "aTint")
 glCache.isInWorld = gl.getUniformLocation(program3D, "isInWorld")
 glCache.flicker = gl.getUniformLocation(program3D, "flicker")
+glCache.dimension = gl.getUniformLocation(program3D, "dimension")
+glCache.endPortalSampler = gl.getUniformLocation(program3D, "endPortalSampler")
 gl.uniform1i(glCache.uTrans, 0)
 gl.uniform1f(glCache.uDist, 1000)
 gl.uniform1i(glCache.isInWorld, 0)
 gl.uniform1i(glCache.flicker, 0)
 gl.disableVertexAttribArray(glCache.tint)
 gl.vertexAttrib3f(glCache.tint, 1,1,1)
+gl.disableVertexAttribArray(glCache.aShader)
+gl.vertexAttrib1f(glCache.aShader, 0)
+gl.uniform1i(glCache.endPortalSampler, 8)
 }
 win.initWebglPrograms = initWebglPrograms
 function initWebgl() {
@@ -29264,6 +29606,31 @@ pixels = new Uint8Array(width * height * 4)
 gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
 netherbg = ctx.createImageData(width, height)
 netherbg.data.set(pixels)
+// Endstone background
+bright = 0.4
+if (endBuffer) {
+gl.deleteBuffer(endBuffer)
+}
+endBuffer = gl.createBuffer()
+gl.bindBuffer(gl.ARRAY_BUFFER, endBuffer)
+bgCoords = new Float32Array([
+-1, -1, 0, stack, bright,
+1, -1, stack * aspect, stack, bright,
+1, 1, stack * aspect, 0, bright,
+-1, 1, 0, 0, bright
+])
+gl.bufferData(gl.ARRAY_BUFFER, bgCoords, gl.STATIC_DRAW)
+gl.uniform1i(glCache.uSampler2, 5)
+gl.clearColor(0, 0, 0, 1)
+gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT)
+gl.vertexAttribPointer(glCache.aVertex2, 2, gl.FLOAT, false, 20, 0)
+gl.vertexAttribPointer(glCache.aTexture2, 2, gl.FLOAT, false, 20, 8)
+gl.vertexAttribPointer(glCache.aShadow2, 1, gl.FLOAT, false, 20, 16)
+gl.drawArrays(gl.TRIANGLE_FAN, 0, 4)
+pixels = new Uint8Array(width * height * 4)
+gl.readPixels(0, 0, width, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels)
+endbg = ctx.createImageData(width, height)
+endbg.data.set(pixels)
 }
 function initPlayer() {
 p = new Camera()
@@ -30786,7 +31153,7 @@ initMultiplayer(urlParams.get("target"))
 }
 }
 // Define all the scene draw functions
-let clear,dirt,nether
+let clear,dirt,nether,end
 (function() {
 var splashs = [
 "Multiplayer!",
@@ -30930,6 +31297,7 @@ ctx.translate(-(width/2+280),-170)
 clear = () => ctx.clearRect(0, 0, canvas.width, canvas.height)
 dirt = () => ctx.putImageData(dirtbg, 0, 0)
 nether = () => ctx.putImageData(netherbg, 0, 0)
+end = () => ctx.putImageData(endbg, 0, 0)
 drawScreens["initLoading"] = () => {}
 var size = 0
 var sizes = 0
@@ -31536,6 +31904,47 @@ textSize(25)
 ctx.textAlign = "center"
 text(`Loading... ${progress}% complete (${sub} / ${maxLoad})`, width / 2, height / 2)
 }
+drawScreens.endLoading = () => {
+p.dimension = "end"
+let frameStart = win.performance.now()+1
+let sub = maxLoad - world.endLoadFrom.length - 9
+let standing = true
+if (world.endLoadFrom.length) {
+let load = world.endLoadFrom[0]
+p.x = load.x * 16
+p.y = load.y * 16
+p.z = load.z * 16
+standing = false
+} else {
+p.x = p2.x
+p.y = p2.y
+p.z = p2.z
+let cx = p.x >> 4
+let cz = p.z >> 4
+for (let x = cx - 1; x <= cx + 1; x++) {
+for (let z = cz - 1; z <= cz + 1; z++) {
+if (!world.endChunks[x] || !world.endChunks[x][z] || !world.endChunks[x][z].buffer) {
+standing = false
+} else {
+sub++
+}
+}
+}
+}
+if (standing) {
+if(world.endEditedTagsToLoad) world.loadEndEditedTags(world.endEditedTagsToLoad)
+world.endHasLoaded = true
+play()
+return
+}
+world.tick()
+let progress = Math.round(100 * sub / maxLoad)
+end()
+fill(255)
+textSize(25)
+ctx.textAlign = "center"
+text(`Loading... ${progress}% complete (${sub} / ${maxLoad})`, width / 2, height / 2)
+}
 drawScreens.chat = () => {
 clear()
 }
@@ -31668,7 +32077,7 @@ drawScreens[screen]()
 Button.draw()
 Slider.draw()
 }
-if (screen === "play" || screen === "loading" || screen === "netherLoading") {
+if (screen === "play" || screen === "loading" || screen === "netherLoading" || screen === "endLoading") {
 drawScreens[screen]()
 if(touchScreen && screen === "play") Button.draw()
 }
