@@ -782,6 +782,7 @@ uniform float uTime;
 uniform bool uTrans;
 uniform vec3 skyColor;
 uniform int inWater;
+uniform vec2 screenSize;
 varying float vShadow;
 varying vec2 vTexture;
 varying float vFog;
@@ -812,17 +813,21 @@ const mat4 ENDPORTAL_SCALE_TRANSLATE = mat4(
 0.0, 0.0, 1.0, 0.0,
 0.0, 0.0, 0.0, 1.0
 );
-mat4 end_portal_layer(float layer) {
+mat2 end_portal_layer(float layer) {
 float GameTime = 1.0;
-mat4 translate = mat4(
-1.0, 0.0, 0.0, 17.0 / layer,
-0.0, 1.0, 0.0, (2.0 + layer / 1.5) * (GameTime * 1.5),
-0.0, 0.0, 1.0, 0.0,
-0.0, 0.0, 0.0, 1.0
+//mat4 translate = mat4(
+//    1.0, 0.0, 0.0, 17.0 / layer,
+//    0.0, 1.0, 0.0, (2.0 + layer / 1.5) * (GameTime * 1.5),
+//    0.0, 0.0, 1.0, 0.0,
+//    0.0, 0.0, 0.0, 1.0
+//);
+mat2 translate = mat2(
+1.0, 0.0,
+(2.0 + layer / 1.5) * (GameTime * 1.5), 0.0
 );
 mat2 rotate = mat2_rotate_z(radians((layer * layer * 4321.0 + layer * 9.0) * 2.0));
 mat2 scale = mat2((4.5 - layer / 4.0) * 2.0);
-return mat4(scale * rotate) * translate * ENDPORTAL_SCALE_TRANSLATE;
+return mat2(scale * rotate) * translate;// * ENDPORTAL_SCALE_TRANSLATE;
 }
 void endPortal(){
 vec3 ENDPORTALCOLORS[16];
@@ -842,9 +847,11 @@ ENDPORTALCOLORS[12] = vec3(0.196766, 0.142899, 0.214696);
 ENDPORTALCOLORS[13] = vec3(0.047281, 0.315338, 0.321970);
 ENDPORTALCOLORS[14] = vec3(0.204675, 0.390010, 0.302066);
 ENDPORTALCOLORS[15] = vec3(0.080955, 0.314821, 0.661491);
-vec3 color = texture2D(endPortalSampler, vTexture).rgb * ENDPORTALCOLORS[0];
-for (int i = 0; i < 15; i++) {
-color += texture2D(endPortalSampler, (vec4(vTexture, 0.,0.) * end_portal_layer(float(i + 1))).xy ).rgb * ENDPORTALCOLORS[i];
+float size = min(screenSize.x,screenSize.y);
+vec2 pos = vec2(gl_FragCoord.x*size/screenSize.x, gl_FragCoord.y*size/screenSize.y);
+vec3 color = texture2D(uSampler, gl_FragCoord.xy).rgb * ENDPORTALCOLORS[0];
+for (int i = 1; i < 16; i++) {
+color += texture2D(endPortalSampler, pos * end_portal_layer(float(i)) ).rgb * ENDPORTALCOLORS[i];
 }
 gl_FragColor = vec4(color,1.);
 }*/
@@ -17189,11 +17196,11 @@ return p.x > ix && p.y > iy && p.z > iz && p.x < ix + iw && p.y <= iy + ih && p.
 }
 let touchingBox = function(x, y, z, w, h, d) {
 let iy = y - h/2 - p.topH - 0.1
-let ih = h + p.bottomH + p.topH + 0.1
+let ih = h + p.bottomH + p.topH + 0.2
 let ix = x - w/2 - p.w - 0.1
-let iw = w + p.w*2 + 0.1
+let iw = w + p.w*2 + 0.2
 let iz = z - d/2 - p.w - 0.1
-let id = d + p.w*2 + 0.1
+let id = d + p.w*2 + 0.2
 return p.x > ix && p.y > iy && p.z > iz && p.x < ix + iw && p.y < iy + ih && p.z < iz + id
 }
 let takeDamage
@@ -17400,7 +17407,7 @@ if(blockData[block[3]].pressurePlate && blockData[block[3]].activate){
 blockData[block[3]].activate(x,y,z,p.dimension)
 }
 if(!inBox(x,y,z,1,1,1)) continue
-if(blockData[block[3]].ontouch){
+if(!p.spectator && blockData[block[3]].ontouch){
 ontouch = blockData[block[3]].ontouch
 }
 if(blockData[block[3]].liquid) {
@@ -17567,8 +17574,7 @@ p.lastY = p.y
 var block = standingOn
 if(fall > 3 && survival && !liquid) {
 var fallType = fall > 6 ? "bigfall" : "smallfall"
-damage(Math.floor(fall-3)*(1-damageResistance), username+" fell from a high place. You fell "+Math.round(fall)+" blocks.", false, fallType)//Math.floor( (p.velocity.y * p.velocity.y * 8));
-console.log(damageResistance)
+damage(Math.floor((fall-3)*(1-damageResistance)), username+" fell from a high place. You fell "+Math.round(fall)+" blocks.", false, fallType)//Math.floor( (p.velocity.y * p.velocity.y * 8));
 }
 if(fall > 0.5 && block){
 blockParticles(block, p.x,p.y-p.bottomH,p.z,10, "player",world, p.dimension)
@@ -27214,7 +27220,7 @@ gl.activeTexture(gl.TEXTURE0)
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, textureSize, textureH, 0, gl.RGBA, gl.UNSIGNED_BYTE, texturePixels);
 }
-function drawIcon(x, y, id, obj) {
+function drawIcon(x, y, id, obj, noAmount) {
 id = id < isCube ? (id | blockMode) : id
 let X =  x / (3 * height) - 0.1666 * width / height
 let Y = y / (3 * height) - 0.1666
@@ -27272,20 +27278,22 @@ ctx2.fillRect(dx,dy,w,ts)
 ctx2.fillStyle = prevFill
 }
 }
+if(obj.amount !== 1 && !noAmount){
+ctx2.fillStyle = "white"
+ctx2.font = (s/3)+"px VT323"
+ctx2.textAlign = "right"
+ctx2.fillText(obj.amount, x+(s/2), y+(s/2))
+}
 }
 function hotbar() {
 FOV(90)
 let s = inventory.size
 let s2 = s/2
-ctx2.fillStyle = "white"
-ctx2.font = "14px VT323"
-ctx2.textAlign = "right"
 for(let i = 0; i < inventory.hotbar.length; i ++) {
 let x = width / 2 - inventory.hotbar.length / 2 * inventory.size + (i + 0.5) * inventory.size + 25
 let y = height - inventory.size
 if(inventory.hotbar[i] && inventory.hotbar[i].id) {
-drawIcon(x, y, inventory.hotbar[i].id, inventory.hotbar[i])
-if(survival && inventory.hotbar[i].amount>1) ctx2.fillText(inventory.hotbar[i].amount, x+(s/2), y+(s/2))
+drawIcon(x, y, inventory.hotbar[i].id, inventory.hotbar[i], !survival)
 }
 }
 if(touchScreen && screen === "play"){
@@ -27316,7 +27324,7 @@ let s = inventory.size
 let s2 = s / 2
 let x = width / 2 + 0.5
 let y = height / 2 + 0.5
-let maxX = (width / 2) + (inventory.hotbar.length / 2 * s) + s2
+let maxX = (width / 2) + (inventory.hotbar.length / 2 * s) + 25
 textSize(10)
 // Spyglass image
 if(p.usingSpyglass){
@@ -27381,14 +27389,15 @@ ctx.lineWidth = 2
 ctx.beginPath()
 ctx.strokeRect(width / 2 - 9 / 2 * s + inventory.hotbarSlot * s + 25, height - s * 1.5, s, s)
 if(survival){
-var iw = 18
-var pw = 2 //pixel width
+var iw = s/2.25
+var xpbh = s*9/182*5 //xp bar height
+var pw = iw/9 //pixel width
 var pw2 = pw/2
 var iw2 = iw/2
 var dw = iw2 - pw2
 var aw = iw - pw //adjusted width
-var iy = y-iw-4-12
-var ih = iw+2
+var iy = y-iw-(pw*4)-xpbh
+var ih = iw + pw
 //Health bar
 var outline = (healEffect < 40 && healEffect > 30) || (healEffect < 20 && healEffect > 10)
 if((loseHealthEffect < 60 && loseHealthEffect > 50) || (loseHealthEffect < 40 && loseHealthEffect > 30) || (loseHealthEffect < 20 && loseHealthEffect > 10)) outline = true
@@ -27462,9 +27471,10 @@ ctx.drawImage(images.warm, X, iy - ih*2, iw, iw);
 }
 var xpBar = p.XP / p.nextLevel
 var level = p.level
-ctx.drawImage(images.experienceBar, 0,0,182,5, x,iy+ih,s*9,10)
-ctx.drawImage(images.experienceBar, 0,5,182*xpBar,5, x,iy+ih,s*9*xpBar,10)
-ctx.font = "16px VT323"
+ctx.drawImage(images.experienceBar, 0,0,182,5, x,iy+ih,s*9,xpbh)
+ctx.drawImage(images.experienceBar, 0,5,182*xpBar,5, x,iy+ih,s*9*xpBar,xpbh)
+if(level){
+ctx.font = iw+"px VT323"
 ctx.textAlign = "center"
 var barX = x+s*4.5
 ctx.strokeStyle = "black"
@@ -27473,6 +27483,7 @@ ctx.strokeText(level, barX, iy+ih)
 ctx.fillStyle = colors.a
 ctx.fillText(level, barX, iy+ih)
 ctx.textAlign = "left"
+}
 }
 if(freezeEffect > 0){
 var opacity = freezeEffect / 140
@@ -27649,27 +27660,20 @@ ctx.strokeRect(x, y, s, s)
 }
 }
 if (inventory.holding && inventory.holding.id) {
-drawIcon(mouseX, mouseY, inventory.holding.id, inventory.holding)
-if(survival){
-ctx2.fillStyle = "white"
-ctx2.font = "14px VT323"
-ctx2.textAlign = "right"
-ctx2.fillText(inventory.holding.amount, mouseX+s2, mouseY+s2)
-}
+drawIcon(mouseX, mouseY, inventory.holding.id, inventory.holding, !survival)
 }
 if(survival){
-ctx2.fillStyle = "white"
-ctx2.font = "14px VT323"
-ctx2.textAlign = "right"
 for (let i = 0; i < invLength; i++) {
 if(invItems[i] && invItems[i].id){
 x = (i) % perRow * s + 50
 y = ((i) / perRow | 0) * s + 50
-drawIcon(x, y - invScroll, invItems[i].id, invItems[i])
+let noAmount = false
 if(inventory.spreadPlace === "invSpace" && inventory.spreaded.length && inventory.spreaded.includes(i)){
 ctx.fillStyle = "rgb(180,180,180)"
 ctx.fillRect(x+1-s2,y+1-s2,s-2,s-2)
-}else ctx2.fillText(invItems[i].amount, x+s2, y+s2)
+noAmount = true
+}
+drawIcon(x, y - invScroll, invItems[i].id, invItems[i], noAmount)
 }
 }
 }else{
@@ -27716,11 +27720,13 @@ for(x=0; x<2; x++){
 let idx = (y*3) + x
 if(inventory.crafting[idx] && inventory.crafting[idx].id){
 let X = x*s+offX, Y = y*s+offY
-drawIcon(X+s2,Y+s2, inventory.crafting[idx].id, inventory.crafting[idx])
+let noAmount = false
 if(inventory.spreadPlace === "crafting" && inventory.spreaded.length && inventory.spreaded.includes(idx)){
 ctx.fillStyle = "rgb(180,180,180)"
 ctx.fillRect(X+1,Y+1,s-2,s-2)
-}else ctx2.fillText(inventory.crafting[idx].amount, X+s, Y+s)
+noAmount = true
+}
+drawIcon(X+s2,Y+s2, inventory.crafting[idx].id, inventory.crafting[idx], noAmount)
 }
 }
 }
@@ -27742,10 +27748,6 @@ ctx.strokeStyle = over?"white":"black"
 ctx.strokeRect(x,y, s,s)
 if(inventory.craftingRes && inventory.craftingRes.id){
 drawIcon(x+s2, y+s2, inventory.craftingRes.id, inventory.craftingRes)
-ctx2.font = "14px VT323"
-ctx2.textAlign = "right"
-ctx2.fillStyle = "white"
-ctx2.fillText(inventory.craftingRes.amount, x+s, y+s)
 }
 ctx.drawImage(gl.canvas,0,0)
 if(inventory.craftingRes && inventory.craftingRes.id){
@@ -28125,11 +28127,13 @@ for(x=0; x<3; x++){
 let idx = (y*3) + x
 if(inventory.crafting[idx] && inventory.crafting[idx].id){
 let X = x*s+offX, Y = y*s+offY
-drawIcon(X+s2,Y+s2, inventory.crafting[idx].id, inventory.crafting[idx])
+let noAmount = false
 if(inventory.spreadPlace === "crafting" && inventory.spreaded.length && inventory.spreaded.includes(idx)){
 ctx.fillStyle = "rgb(180,180,180)"
 ctx.fillRect(X+1,Y+1,s-2,s-2)
-}else ctx2.fillText(inventory.crafting[idx].amount, X+s, Y+s)
+noAmount = true
+}
+drawIcon(X+s2,Y+s2, inventory.crafting[idx].id, inventory.crafting[idx], noAmount)
 }
 }
 }
@@ -28151,10 +28155,6 @@ ctx.strokeStyle = over?"white":"black"
 ctx.strokeRect(x,y, s,s)
 if(inventory.craftingRes && inventory.craftingRes.id){
 drawIcon(x+s2, y+s2, inventory.craftingRes.id, inventory.craftingRes)
-ctx2.font = "14px VT323"
-ctx2.textAlign = "right"
-ctx2.fillStyle = "white"
-ctx2.fillText(inventory.craftingRes.amount, x+s, y+s)
 }
 ctx.drawImage(gl.canvas,0,0)
 if(inventory.craftingRes && inventory.craftingRes.id){
@@ -28333,10 +28333,6 @@ ctx.font = "24px VT323"
 ctx.fillStyle = "white"
 ctx.textAlign = "left"
 ctx.fillText("Furnace", offX, offY - s2)
-//font for numbers
-ctx2.font = "14px VT323"
-ctx2.textAlign = "right"
-ctx2.fillStyle = "white"
 let x = offX+s2-2
 let y = offY+s
 fill(100)
@@ -28372,7 +28368,6 @@ ctx.strokeStyle = over?"white":"black"
 ctx.strokeRect(x,y, s,s)
 if(data.input && data.input.id){
 drawIcon(x+s2, y+s2, data.input.id, data.input)
-ctx2.fillText(data.input.amount, x+s, y+s)
 }
 //fuel
 x = offX
@@ -28383,7 +28378,6 @@ ctx.strokeStyle = over?"white":"black"
 ctx.strokeRect(x,y, s,s)
 if(data.fuel && data.fuel.id){
 drawIcon(x+s2, y+s2, data.fuel.id, data.fuel)
-ctx2.fillText(data.fuel.amount, x+s, y+s)
 }
 //output
 x = offX + (s*2)
@@ -28394,7 +28388,6 @@ ctx.strokeStyle = over?"white":"black"
 ctx.strokeRect(x,y, s,s)
 if(data.output && data.output.id){
 drawIcon(x+s2, y+s2, data.output.id, data.output)
-ctx2.fillText(data.output.amount, x+s, y+s)
 }
 ctx.drawImage(gl.canvas,0,0)
 if(over && data.output && data.output.id){ //this is right aligned so you can see it
@@ -28513,9 +28506,6 @@ ctx.fillStyle = "white"
 ctx.font = "16px VT323"
 ctx.textAlign = "left"
 ctx.fillText("Chest & stuff", x, y-4)
-ctx2.font = "14px VT323"
-ctx2.textAlign = "right"
-ctx2.fillStyle = "white"
 if(data.contents){
 for(var i=0; i<length; i++){
 var item = data.contents[i]
@@ -28525,7 +28515,6 @@ var iy = floor(i/w)
 ix = x + ix*s
 iy = y + iy*s
 drawIcon(ix+s2,iy+s2, item.id, item)
-if(item.amount !== 1) ctx2.fillText(item.amount, ix+s, iy+s)
 }
 }
 ctx.drawImage(gl.canvas,0,0)
@@ -29019,6 +29008,7 @@ canvas2.height = height
 gl.canvas.height = height
 gl.canvas.width = width
 gl.viewport(0, 0, width, height)
+gl.uniform2f(glCache.screenSize,width,height)
 initButtons()
 initBackgrounds()
 inventory.size = 40 * min(width, height) / 600
@@ -29126,6 +29116,7 @@ glCache.isInWorld = gl.getUniformLocation(program3D, "isInWorld")
 glCache.flicker = gl.getUniformLocation(program3D, "flicker")
 glCache.dimension = gl.getUniformLocation(program3D, "dimension")
 glCache.endPortalSampler = gl.getUniformLocation(program3D, "endPortalSampler")
+glCache.screenSize = gl.getUniformLocation(program3D, "screenSize")
 gl.uniform1i(glCache.uTrans, 0)
 gl.uniform1f(glCache.uDist, 1000)
 gl.uniform1i(glCache.isInWorld, 0)
@@ -29135,6 +29126,7 @@ gl.vertexAttrib3f(glCache.tint, 1,1,1)
 gl.disableVertexAttribArray(glCache.aShader)
 gl.vertexAttrib1f(glCache.aShader, 0)
 gl.uniform1i(glCache.endPortalSampler, 8)
+gl.uniform2f(glCache.screenSize, width,height)
 }
 win.initWebglPrograms = initWebglPrograms
 function initWebgl() {
