@@ -885,7 +885,6 @@ shader();
 </script>
 <script type="x-shader/vertex" id="skyboxVertexShader">
 attribute vec3 aVertex;
-uniform float time;
 uniform mat4 uView;
 varying vec3 position;
 mat4 no_translate (mat4 mat) {
@@ -905,66 +904,14 @@ precision highp float;
 precision mediump float;
 #endif
 uniform float time;
+uniform vec3 sky;
+uniform vec3 skyBottom;
 varying vec3 position;
-vec2 rotate2D (vec2 p, float angle){
-return vec2(p.x*cos(angle)-p.y*sin(angle), p.y*cos(angle)+p.x*sin(angle));
-}
-float rand2D(in vec2 co){
-return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
-float rand3D(in vec3 co){
-return fract(sin(dot(co.xyz ,vec3(12.9898,78.233,144.7272))) * 43758.5453);
-}
-float simple_interpolate(in float a, in float b, in float x)
-{
-return a + smoothstep(0.0,1.0,x) * (b-a);
-}
-float interpolatedNoise3D(in float x, in float y, in float z)
-{
-float integer_x = x - fract(x);
-float fractional_x = x - integer_x;
-float integer_y = y - fract(y);
-float fractional_y = y - integer_y;
-float integer_z = z - fract(z);
-float fractional_z = z - integer_z;
-float v1 = rand3D(vec3(integer_x, integer_y, integer_z));
-float v2 = rand3D(vec3(integer_x+1.0, integer_y, integer_z));
-float v3 = rand3D(vec3(integer_x, integer_y+1.0, integer_z));
-float v4 = rand3D(vec3(integer_x+1.0, integer_y +1.0, integer_z));
-float v5 = rand3D(vec3(integer_x, integer_y, integer_z+1.0));
-float v6 = rand3D(vec3(integer_x+1.0, integer_y, integer_z+1.0));
-float v7 = rand3D(vec3(integer_x, integer_y+1.0, integer_z+1.0));
-float v8 = rand3D(vec3(integer_x+1.0, integer_y +1.0, integer_z+1.0));
-float i1 = simple_interpolate(v1,v5, fractional_z);
-float i2 = simple_interpolate(v2,v6, fractional_z);
-float i3 = simple_interpolate(v3,v7, fractional_z);
-float i4 = simple_interpolate(v4,v8, fractional_z);
-float ii1 = simple_interpolate(i1,i2,fractional_x);
-float ii2 = simple_interpolate(i3,i4,fractional_x);
-return simple_interpolate(ii1 , ii2 , fractional_y);
-}
-float Noise3D(in vec3 coord, in float wavelength)
-{
-return interpolatedNoise3D(coord.x/wavelength, coord.y/wavelength, coord.z/wavelength);
-}
-float noise (vec3 p, float frequency) {
-float sum = 0.0;
-for(float i = 0.0; i<5.0; i++) {
-sum += Noise3D(p * frequency * pow(2.0, i), 1.0) / pow(2.0, i);
-} return sum * 0.5; }
-vec3 SUN_POSITION (float ftime) { return normalize(vec3(sin(ftime), cos(ftime), sin(ftime))); }
-const vec3 skyColor = vec3(0., 0.6, 0.9);
-const vec3 sunColor = vec3(1.0, 1.0, 0.6);
 void main (void) {
-vec3 sun = SUN_POSITION(time);
-float sunset = 1.-abs(dot(sun, vec3(0., 1., 0.)));
-vec3 horizonColor = mix(vec3(0., 0.8, 0.8), vec3(0.8, 0.4, 0.), sunset);
+if(time == 0.) discard;
 vec3 dir = normalize(position);
-float horizonal = 1.-abs(dot(dir, vec3(0., 1., 0.)));
-vec3 col = mix(skyColor, horizonColor, horizonal);
-col = mix(col, sunColor, smoothstep(0.96, 0.98, dot(dir, sun)));
-float night = smoothstep(-1.0, 0.0, -sun.y);
-gl_FragColor = vec4(col * night, 1.0);
+float horizonal = min(dot(dir, vec3(0., 1., 0.))/1.+1., 1.);
+gl_FragColor = vec4(mix(sky,skyBottom,horizonal)*time, 1.);
 }
 </script>
 <script type="x-shader/vertex" id="entityVertexShader">
@@ -2976,6 +2923,10 @@ mangroveTrapdoor: "0g0g9ÑJWÊÞZáĪHòOYýUWé3HÙĊZáŊH00001h101h0iO)QQ>Owl
 mangroveDoorTop: "0g0gaýUWòOYé3HÊÞZáŊHáĪHÑJW)ĺHÚĞZÙĊZ1g1xg0hz4U?VU?V>5>O+ÓO)ÄlO?Q?UOÄâ*ÃÓÐ)>ÄïÒOVUO>ÄÑÑ*UV>ÃÃkÑÒÂB>ÃÃ4)Öx2ÃÄ>4)*ÖþÄÄ>5)*þÖÄ>>l))Çý@>ÃlÑ*?UÃÃÃAÑÒUUÃxÄAÑÒÂBÃMþâüÒw2>Îþ",
 mangroveDoorBottom: "0g0gaÚĞZáĪHÙĊZÑJWáŊHÊÞZòOYé3HýUW)ĺH1xMNz?+BMM)zNjÄ?ÎMxRA>ã?ìMxTkiV>ìÁNkTzOjXÁMnÞjjjìÁÁäÔjjjÎUUNz?jláUUzNl>láUÁRAl??JÁÁhTll?2ÁDÓÓßll)ÁThhQ?lÞDãÓÔGßjÎhhkQTh>Ð*VVO*VO",
 mangroveDoor: "0g0ga000é3HáŊHÊÞZÑJW)ĺHòOYýUWÙĊZáĪH000000000000000001yyyyw001y)>Nw005zNyOw006ACÞAw001AEĀAw001AA)xw005zCÞDù006zEĀCù001zA)xw001zCÞzw005AEĀAw006AA)Aw001zQQ>w002OOOO(0",
+blueRedstoneLamp: "0g0g8kċY<ŒZ1ŖZ^øZģHZøvZNÍZFEZ0000004Cķ9Ĝ81.Çeĭë5įķ9įįa@íÎ.geĜtĔDÆ9ĈŋýXķ0ïÑþĘS06œĝķ0dgąĖíķeŉjánÆe{RKġo9İĠ5įķ1.Áeĭë4kĿ9Ċ8000000",
+greenRedstoneLamp: "0g0g8pxZÔČY,ŗWHŜYŞťHĲŢWØŚZNěW0000004Cķ9Ĝ81.Çeĭë5įķ9įįa@íÎ.geĜtĔDÆ9ĈŋýXķ0ïÑþĘS06œĝķ0dgąĖíķeŉjánÆe{RKġo9İĠ5įķ1.Áeĭë4kĿ9Ċ8000000",
+yellowRedstoneLamp: "0g0g7-ìHÀħWZÀWZĘWZřZZŗHZëW0000004Cķ9Ĝ81.Çeĭë5įķ9įįa@íÎ.geĜtĔDÆ9ĈŋýXķ0ïÑþĘS06œĝķ0dgąĖíķeŉjánÆe{RKġo9İI5įķ1.Áeĭë4kĿ9Ċ8000000",
+redRedstoneLamp: "0g0g8-ìHĤŚZţ0WŤAYťŒYť-ZţĪWõŉY0000004Cķ9Ĝ81.Çeĭë5įķ9įįa@íÎ.geĜtĔDÆ9ĈŋýXķ0ïÑþĘS06œĝķ0dgąĖíķeŉjánÆe{RKġo9İĠ5įķ1.Áeĭë4kĿ9Ċ8000000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -6761,6 +6712,7 @@ saturation: 1.2
 {
 name:"redstoneLamp",
 Name:"Redstone Lamp",
+//if you chang this, change colored lamps too
 onpowerupdate:function(x,y,z,sx,sy,sz,blockPowerChanged,dimension){
 var power = world.getRedstonePower(x,y,z,dimension) || world.getSurroundingBlockPower(x,y,z,dimension)
 var block = this.id
@@ -9475,6 +9427,74 @@ breakTime:82.5,
 pistonPush:false,
 pistonPull:false
 },
+{
+name:"redRedstoneLamp",
+Name:"Red Redstone Lamp",
+textures:"redstoneLamp",
+onpowerupdate:function(x,y,z,sx,sy,sz,blockPowerChanged,dimension){
+var power = world.getRedstonePower(x,y,z,dimension) || world.getSurroundingBlockPower(x,y,z,dimension)
+var block = this.id
+if(power){
+block = this.id | SLAB
+}
+if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,false,false,false,dimension)
+},
+onplace:function(x,y,z,dimension){
+this.onpowerupdate(x,y,z,null,null,null,null,dimension)
+},
+coloredRedstoneLamp:true
+},
+{
+name:"yellowRedstoneLamp",
+Name:"Yellow Redstone Lamp",
+textures:"redstoneLamp",
+onpowerupdate:function(x,y,z,sx,sy,sz,blockPowerChanged,dimension){
+var power = world.getRedstonePower(x,y,z,dimension) || world.getSurroundingBlockPower(x,y,z,dimension)
+var block = this.id
+if(power){
+block = this.id | SLAB
+}
+if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,false,false,false,dimension)
+},
+onplace:function(x,y,z,dimension){
+this.onpowerupdate(x,y,z,null,null,null,null,dimension)
+},
+coloredRedstoneLamp:true
+},
+{
+name:"greenRedstoneLamp",
+Name:"Green Redstone Lamp",
+textures:"redstoneLamp",
+onpowerupdate:function(x,y,z,sx,sy,sz,blockPowerChanged,dimension){
+var power = world.getRedstonePower(x,y,z,dimension) || world.getSurroundingBlockPower(x,y,z,dimension)
+var block = this.id
+if(power){
+block = this.id | SLAB
+}
+if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,false,false,false,dimension)
+},
+onplace:function(x,y,z,dimension){
+this.onpowerupdate(x,y,z,null,null,null,null,dimension)
+},
+coloredRedstoneLamp:true
+},
+{
+name:"blueRedstoneLamp",
+Name:"Blue Redstone Lamp",
+textures:"redstoneLamp",
+onpowerupdate:function(x,y,z,sx,sy,sz,blockPowerChanged,dimension){
+var power = world.getRedstonePower(x,y,z,dimension) || world.getSurroundingBlockPower(x,y,z,dimension)
+var block = this.id
+if(power){
+block = this.id | SLAB
+}
+if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,false,false,false,dimension)
+},
+onplace:function(x,y,z,dimension){
+this.onpowerupdate(x,y,z,null,null,null,null,dimension)
+},
+coloredRedstoneLamp:true
+},
 /*
 { name: "pigFace" },
 { 
@@ -10973,8 +10993,9 @@ doc.title = "MineKhan "+version
 let normReach = 5
 let bigReach = 40
 let reach = normReach // Max distance player can place or break blocks
-let defaultSky = [0.6, 0.8, 0.9]
+let defaultSky = [0,0,0] //actual default: 0.6, 0.8, 0.9
 let sky = [...defaultSky]/*[0.33, 0.54, 0.72, (originl sky)]*/ // 0 to 1 RGB color scale
+let skyBottom = [...defaultSky]
 let superflat = false
 let trees = true
 let caves = true
@@ -11122,56 +11143,25 @@ let generatedChunks
 let mouseX, mouseY, mouseDown
 let width = window.innerWidth
 let height = window.innerHeight
-class Skybox{ //from https://www.khanacademy.org/computer-programming/skybox/5709195676041216 with syntax modifications
+class Skybox{
 constructor(){
-this.vertexData = new Float32Array([
-//bottom vertices
--1.0, -1.0, -1.0,
-1.0, -1.0, -1.0,
-1.0, -1.0,  1.0,
--1.0, -1.0,  1.0,
-// top vertices
--1.0,  1.0, -1.0,
-1.0,  1.0, -1.0,
-1.0,  1.0,  1.0,
--1.0,  1.0,  1.0
-]);
-this.faceData = new Uint8Array([
-//-y
-1, 0, 3,
-1, 3, 2,
-//+y
-5, 7, 4,
-5, 6, 7,
-//+x
-1, 2, 5,
-2, 6, 5,
-//-x
-0, 4, 3,
-3, 4, 7,
-//-z
-0, 1, 5,
-0, 5, 4,
-//+z
-3, 7, 6,
-3, 6, 2
-]);
-gl.enableVertexAttribArray(glCache.skyboxVertex);
+const shape = shapes.cube
+const shapeVerts = shape.verts
+const size = shape.size
 this.vao = glExtensions.vertex_array_object.createVertexArrayOES()
+this.verticesBuffer = gl.createBuffer()
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
-this.buffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-gl.bufferData(gl.ARRAY_BUFFER, this.vertexData, gl.DYNAMIC_DRAW);
-this.indexBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.faceData, gl.DYNAMIC_DRAW);
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
+gl.bindBuffer(gl.ARRAY_BUFFER, this.verticesBuffer)
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shapeVerts.flat(Infinity)), gl.STATIC_DRAW)
+gl.vertexAttribPointer(glCache.skyboxVertex, 3, gl.FLOAT, false, 0, 0)
+gl.enableVertexAttribArray(glCache.skyboxVertex)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
+this.faces = size
 }
 render() {
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
-gl.vertexAttribPointer(glCache.skyboxVertex, 3, gl.FLOAT, false, 4 * 3, 0);
-gl.uniformMatrix4fv(glCache.skyboxView, false, p.transformation.elements)
-gl.drawElements(gl.TRIANGLES, this.faceData.length, gl.UNSIGNED_BYTE, 0);
+gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
 }
@@ -11945,10 +11935,9 @@ args: ["mode","n"],
 info: "mode can be: set, add, subtract. n is the time to set to. 1000 is a day. n an also be: day, night",
 func: split => {
 var time
-if(split[2] === "day") time = -20
-else if(split[2] === "night") time = 480
+if(split[2] === "day") time = 500
+else if(split[2] === "night") time = 0
 else time = parseInt(split[2]) || 0
-time = time * Math.PId / 1000
 if(split[1] === "set"){
 worldTime = time
 }else if(split[1] === "add"){
@@ -16074,6 +16063,10 @@ baseBlock.shape = shapes.endPortal
 if(baseBlock.pane){
 var t = baseBlock.textures
 makeBlock([t[2],t[3],t[0],t[1],t[0],t[1]], shapes.horizontalPane, slabBlock, baseBlock)
+}
+if(baseBlock.coloredRedstoneLamp){
+makeBlock(new Array(6).fill(baseBlock.name), shapes.cube, slabBlock)
+slabBlock.lightLevel = 15
 }
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
@@ -24821,6 +24814,27 @@ return "bambooForest"
 return "oakForest"
 }
 }
+function getBiomeSkyColor(biome,arr){
+switch(biome){
+case "snowyField":
+arr[0] = 127/255,arr[1] = 161/255,arr[2] = 1
+break
+case "desert":
+arr[0] = 110/255,arr[1] = 177/255,arr[2] = 1
+break
+case "field":
+case "oakForest":
+arr[0] = 121/255,arr[1] = 166/255,arr[2] = 1
+break
+case "jungle":
+case "giantJungle":
+case "bambooForest":
+arr[0] = 119/255,arr[1] = 168/255,arr[2] = 1
+break
+default:
+arr[0] = 0.6,arr[1] = 0.8,arr[2] = 0.9
+}
+}
 function getBiomeTemperature(biome){
 var t
 switch(biome){
@@ -24849,7 +24863,7 @@ t = 16
 break
 //end
 case "end":
-t = 2
+t = 6
 break
 default:
 t = 10
@@ -24858,7 +24872,7 @@ break
 return t
 }
 let skyLight = 0
-let worldTime = 0 //current in-game time
+let worldTime = 375 //current in-game time
 let fogDist = 16
 class World {
 constructor() {
@@ -25838,7 +25852,7 @@ this[lastChunk] = chunk
 this.loadChunks()
 this.chunkGenQueue.sort(sortChunks)
 }
-if(worldSettings.dayNightCycle) worldTime += 0.0005
+if(worldSettings.dayNightCycle) worldTime += 0.4
 var touchBreak = pTouch.touching && pTouch.canDig && Date.now() - pTouch.touchStart > touchMoveLimit
 if (((controlMap.break.pressed && !Key.control) || touchBreak) && p.lastBreak < Date.now() - 250 && screen === "play" && !survival && !entHitbox.ent) { // survival breaking isn't instant
 changeWorldBlock(0)
@@ -25939,27 +25953,31 @@ break
 render() {
 gl.useProgram(program3D);
 initModelView(p)
+var time = worldTime % 1000
 if(p.dimension === "nether" || p.dimension === "end"){
 skyLight = 0
 }else{
-skyLight = min(max(abs(worldTime % (Math.PId*1.2) - Math.PI) / Math.PI - 0.04, 0.1), 1)
+if(time > 625 && time < 875) skyLight = 1 - ((time - 625) / 250) //get darker
+else if(time > 125 && time < 375) skyLight = (time - 125) / 250 //get brighter
+else if(time >= 875 || time <= 125) skyLight = 0
+else skyLight = 1
 }
 if(inWater === 1){
-sky[0] = waterFogColor[0]
-sky[1] = waterFogColor[1]
-sky[2] = waterFogColor[2]
+skyBottom[0] = sky[0] = waterFogColor[0]
+skyBottom[1] = sky[1] = waterFogColor[1]
+skyBottom[2] = sky[2] = waterFogColor[2]
 }else if(inWater === 2){
-sky[0] = 0.8
-sky[1] = 0
-sky[2] = 0
+skyBottom[0] = sky[0] = 0.8
+skyBottom[1] = sky[1] = 0
+skyBottom[2] = sky[2] = 0
 }else{
-/*var redTintAmount = min(abs(skyLight - 0.5), 1)
-sky[0] = lerp(redTintAmount, defaultSky[0], 255)
-sky[1] = lerp(redTintAmount, defaultSky[1], 0)
-sky[2] = lerp(redTintAmount, defaultSky[2], 0)*/
 sky[0] = defaultSky[0]
 sky[1] = defaultSky[1]
 sky[2] = defaultSky[2]
+var orange = min(max(1-abs(250-time)/125, 1-abs(750-time)/125, 0), 1)
+skyBottom[0] = lerp(orange, 178/255, 1)
+skyBottom[1] = lerp(orange, 206/255, 0.5)
+skyBottom[2] = lerp(orange, 252/255, 0)
 }
 if(inWater) gl.clearColor(sky[0], sky[1], sky[2], 1)
 else gl.clearColor(sky[0] * skyLight, sky[1] * skyLight, sky[2] * skyLight, 1)
@@ -25967,13 +25985,16 @@ gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT)
 if(p.dimension !== "nether" && p.dimension !== "end"){
 //skybox render
 if(inWater === 0){
-/*gl.useProgram(skyboxProgram);
-gl.uniform1f(glCache.skyboxTime, worldTime);
+gl.useProgram(skyboxProgram);
+gl.uniform1f(glCache.skyboxTime, skyLight);
+gl.uniform3f(glCache.skyboxSky, sky[0], sky[1], sky[2])
+gl.uniform3f(glCache.skyboxSkyBottom, skyBottom[0],skyBottom[1],skyBottom[2]);
+gl.uniformMatrix4fv(glCache.skyboxView, false, matrix)
 gl.depthFunc(gl.ALWAYS);
 gl.disable(gl.CULL_FACE);
 skybox.render();
 gl.depthFunc(gl.LESS);
-gl.enable(gl.CULL_FACE)*/
+gl.enable(gl.CULL_FACE)
 }
 }
 gl.useProgram(program3D);
@@ -25996,7 +26017,7 @@ gl.uniform1f(glCache.uDist, fogDist)
 // if you are going to change this to use actual time change line 4487 as well
 // since it depends on it
 gl.uniform1f(glCache.uTime, skyLight)
-gl.uniform3f(glCache.skyColor, sky[0], sky[1], sky[2])
+gl.uniform3f(glCache.skyColor, skyBottom[0], skyBottom[1], skyBottom[2])
 gl.uniform1i(glCache.inWater, inWater)
 gl.uniform1i(glCache.dimension, p.dimension === "nether" ? 1 : (p.dimension === "end" ? 2 : 0))
 let c = p.dimension === "nether" ? this.netherSortedChunks : (p.dimension === "end" ? this.endSortedChunks : this.sortedChunks)
@@ -29312,7 +29333,6 @@ program2D = createProgramObject(gl, vertexShaderSrc2D, fragmentShaderSrc2D)
 skyboxProgram = createProgramObject(gl, skyboxVertex, skyboxFragment);
 programEntity = createProgramObject(gl, vertexShaderSrcEntity, fragmentShaderSrcEntity)
 programParticle = createProgramObject(gl, vertexShaderSrcParticle, fragmentShaderSrcParticle)
-skybox = new Skybox()
 gl.useProgram(program2D)
 glCache.uSampler2 = gl.getUniformLocation(program2D, "uSampler")
 glCache.aTexture2 = gl.getAttribLocation(program2D, "aTexture")
@@ -29322,6 +29342,8 @@ gl.useProgram(skyboxProgram)
 glCache.skyboxVertex = gl.getAttribLocation(skyboxProgram, "aVertex");
 glCache.skyboxTime = gl.getUniformLocation(skyboxProgram, "time");
 glCache.skyboxView = gl.getUniformLocation(skyboxProgram, "uView");
+glCache.skyboxSky = gl.getUniformLocation(skyboxProgram, "sky");
+glCache.skyboxSkyBottom = gl.getUniformLocation(skyboxProgram, "skyBottom");
 gl.useProgram(programEntity)
 glCache.uSamplerEntity = gl.getUniformLocation(programEntity, "uSampler")
 glCache.uLightLevelEntity = gl.getUniformLocation(programEntity, "uLightLevel")
@@ -31081,7 +31103,7 @@ break
 world.name = name.replace(/(;|\|)/g, "\u037e")
 world.loadChunks()
 world.chunkGenQueue.sort(sortChunks)
-//cheats = !survival
+worldTime = 375
 p.x = p.z = 8
 if(survival) {
 setHotbar([0,0,0,0,0,0,0,0,0])
@@ -31374,6 +31396,7 @@ loadDone()
 console.log(e)
 loadDone()
 })
+skybox = new Skybox()
 setSeed(Math.random() * 2000000000 | 0)
 win.islandGenerator = new Generator();
 message.innerHTML = ".>a/<etisbew ym>'oc.lper.rekamgniht.www//:sptth'=ferh a< tuo kcehc oslA>rb<>a/<etisbew s'draliW no nahKeniM ot kniL>'nahkenim/nuf.dralliw//:sptth'=ferh a<>rb<.>a<etisbew s'dralliW>'nuf.dralliw//:sptth'=ferh a< tuo kcehc ot>rb<erus eb ,siht ekil uoy fI>rb<.dralliW yb >a/<nahKeniM>\"wen_\"=tegrat \"8676731005517465/cm/sc/gro.ymedacanahk.www//:sptth\"=ferh a< fo>rb<ffo-nips a si margorp sihT".split("").reverse().join("")
@@ -31933,13 +31956,16 @@ p.lastTemperature = round(p.temperature)
 updateHUD = true
 }
 }
-if(inWater === 1 && tick){
+if(tick){
 var b = world.getBiome(p2.x,p2.y,p2.z, p.dimension)
+getBiomeSkyColor(b,defaultSky)
+if(inWater === 1){
 var w = blockData[blockIds.Water]
 var t = w.tint[b] || w.tint.default
 waterFogColor[0] = t[0]
 waterFogColor[1] = t[1]
 waterFogColor[2] = t[2]
+}
 }
 if(p.health < 5 && tick) updateHUD = true //for hearts shaking
 if (updateHUD) {
