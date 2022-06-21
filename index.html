@@ -903,15 +903,15 @@ precision highp float;
 #else
 precision mediump float;
 #endif
-uniform float time;
+uniform float light;
 uniform vec3 sky;
 uniform vec3 skyBottom;
 varying vec3 position;
 void main (void) {
-if(time == 0.) discard;
+if(light == 0.) discard;
 vec3 dir = normalize(position);
 float horizonal = min(dot(dir, vec3(0., 1., 0.))/1.+1., 1.);
-gl_FragColor = vec4(mix(sky,skyBottom,horizonal)*time, 1.);
+gl_FragColor = vec4(mix(sky,skyBottom,horizonal)*light, 1.);
 }
 </script>
 <script type="x-shader/vertex" id="entityVertexShader">
@@ -2927,6 +2927,10 @@ blueRedstoneLamp: "0g0g8kċY<ŒZ1ŖZ^øZģHZøvZNÍZFEZ0000004Cķ9Ĝ81.Çeĭë5�
 greenRedstoneLamp: "0g0g8pxZÔČY,ŗWHŜYŞťHĲŢWØŚZNěW0000004Cķ9Ĝ81.Çeĭë5įķ9įįa@íÎ.geĜtĔDÆ9ĈŋýXķ0ïÑþĘS06œĝķ0dgąĖíķeŉjánÆe{RKġo9İĠ5įķ1.Áeĭë4kĿ9Ċ8000000",
 yellowRedstoneLamp: "0g0g7-ìHÀħWZÀWZĘWZřZZŗHZëW0000004Cķ9Ĝ81.Çeĭë5įķ9įįa@íÎ.geĜtĔDÆ9ĈŋýXķ0ïÑþĘS06œĝķ0dgąĖíķeŉjánÆe{RKġo9İI5įķ1.Áeĭë4kĿ9Ċ8000000",
 redRedstoneLamp: "0g0g8-ìHĤŚZţ0WŤAYťŒYť-ZţĪWõŉY0000004Cķ9Ĝ81.Çeĭë5įķ9įįa@íÎ.geĜtĔDÆ9ĈŋýXķ0ïÑþĘS06œĝķ0dgąĖíķeŉjánÆe{RKġo9İĠ5įķ1.Áeĭë4kĿ9Ċ8000000",
+sun0: "0g0ghZŤYZšYZUYEĉWAùZwëZoKYkÀYgSHc(H8wW4gW00W000sÝZ8wHsÝY02xùĎ/ičĕö02ylĭ/ičĕö8Rylĭ/iŜĕögXyĠĮ/ičĕöp8ÅSĮRÌčęöx^ŏoŏRÌĝęö#ĄÐt8_ĻĝęöMõàĉ9_ĽĞMö.ĵáxFæþĞMöRgXčŖÂĽĭMö^Âÿĥ_ÈĿĭMöÂĆč%ØÉoĭMöÈĽĝĕÙÐoĭMöÈĽĞMõÐoĭMöÐoĭMõÐoĭMöØÈĽĝĕØÈĽĝĕ",
+sun1: "0g0gh00W4gW8wWc(HgSHkÀYoKYwëZAùZEĉWZUYZšYZŤYsÝZ8wHsÝY00002hcïMķý%õ02hcïO}ï%õ02ncïO}ï%Ø02hcïFĂâF^00h-ÑFĆĺĉ900gĠÑx{ŝĄŏ00gòĪxaÐ*ď000ïĪp8ÂĀĭ000X}oįRüč0004yàðNgX0000x8ĄňõÐ000018Rx-R000000RgXx00000000Xx0000000000Xx8RgXx8Rg",
+sun2: "0g0gh00W0004gW8wW8wHc(HgSHkÀYoKYwëZsÝZAùZsÝYEĉWZUYZšYZŤY00000000010000000001gXw0000001gXx8S00001oįMIRg0001F^ÂgÏgë001MõÏüXoX001.ĵàočwīw01RgàĀĬF4w01^üXsĭF6x01ÈÂĎwōM]x01×ĽýM7M]M01àĄŋđ7.óM81çŅŌč].óT81XuŌč].óM81XuōĕE.óM81",
+sun3: "0g0gg00W4gW8wW8wHc(HgSHkÀYoKYsÝZwëZsÝYAùZEĉWZUYZšYZŤY0000000000000000000000hh00001hhh0001hizy000hiOQQ001iOQVV00hzQVÓÓ00h)?ÄÔG01i)VÔäò01j?Äæòă01z?ÔĐăĤ0hAÄÔòńń0h)ÄäăŅŕ0hAÄäăŅZ0hAÄåĤŅZ",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -11158,11 +11162,53 @@ gl.vertexAttribPointer(glCache.skyboxVertex, 3, gl.FLOAT, false, 0, 0)
 gl.enableVertexAttribArray(glCache.skyboxVertex)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
 this.faces = size
+/*var tex = textureCoords[textureMap.sun0]
+this.sun = generateVAO(shapes.sun, tex[0],tex[1])*///works if shapes is cube
 }
 render() {
+gl.useProgram(skyboxProgram);
+gl.uniform1f(glCache.skyboxLight, skyLight);
+gl.uniform3f(glCache.skyboxSky, sky[0], sky[1], sky[2])
+gl.uniform3f(glCache.skyboxSkyBottom, skyBottom[0],skyBottom[1],skyBottom[2]);
+gl.uniformMatrix4fv(glCache.skyboxView, false, matrix)
+gl.depthFunc(gl.ALWAYS);
+gl.disable(gl.CULL_FACE);
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
+/*var rotation = ((worldTime%1000)*Math.PI/500)+Math.PI
+let diff = (performance.now() - p.lastUpdate) / tickTime
+if (diff > 1) diff = 1
+let px = (p.x - p.previousX) * diff + p.previousX
+let py = (p.y - p.previousY) * diff + p.previousY
+let pz = (p.z - p.previousZ) * diff + p.previousZ
+gl.useProgram(programEntity)
+const modelMatrix = entityMatrices.modelMatrix;
+modelMatrix.identity()
+modelMatrix.translate(px+sin(rotation)*4, py+cos(rotation)*4, pz)
+modelMatrix.rotZ(rotation+Math.PI2)
+const viewMatrix = p.transformation.elements
+const proj = p.projection
+let projectionMatrix = entityMatrices.projectionMatrix
+projectionMatrix.set(proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0)
+projectionMatrix = projectionMatrix.elements
+const modelViewProjectionMatrix = entityMatrices.modelViewProjectionMatrix
+modelViewProjectionMatrix.identity()
+modelViewProjectionMatrix.mult(projectionMatrix)
+modelViewProjectionMatrix.mult(viewMatrix)
+modelViewProjectionMatrix.mult(modelMatrix.elements)
+// row major to column major
+modelViewProjectionMatrix.transpose()
+gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
+gl.uniform1i(glCache.uSamplerEntity, 0)
+gl.uniform1f(glCache.uLightLevelEntity, 1)
+gl.uniform1f(glCache.harmEffectEntity, 0)
+gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
+glExtensions.vertex_array_object.bindVertexArrayOES(this.sun.vao)
+gl.drawElements(gl.TRIANGLES, 6 * this.sun.size, gl.UNSIGNED_INT, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)*/
+gl.depthFunc(gl.LESS);
+gl.enable(gl.CULL_FACE)
 }
 }
 let skybox
@@ -12228,13 +12274,13 @@ if(setTo) messageInput.value = setTo
 messageInput.focus()
 },
 submitInput(){
+play()
 if(messageInput.value[0] === "/"){
 Messages.add(messageInput.value, true)
 runCmd(messageInput.value)
 }else{
 Messages.write(messageInput.value, null, true)
 }
-play()
 messageInput.value = ""
 },
 format(str){
@@ -12315,10 +12361,12 @@ invItems[i].id = 0
 }
 if(p.totalXP > 0) world.addEntity(new ExperienceOrb(p.x,p.y,p.z,p.totalXP),false,p.dimension)
 }
+lastDeathTime = performance.now()
+p.spectator = true
 changeScene("dead")
 releasePointer()
 p3.hidden = true
-if(multiplayer) send({type:"die", id:achexUsername, message:dieMessage})
+if(multiplayer) send({type:"die", id:userId, message:dieMessage})
 }
 function damage(amount, why, nosound,type){
 var prev = amount
@@ -12359,7 +12407,7 @@ break
 loseHealthEffect = 60
 dieMessage = why
 updateHUD = true
-if(multiplayer) send({type:"harmEffect", id:achexUsername})
+if(multiplayer) send({type:"harmEffect", id:userId})
 }
 win.damage = damage
 function XP(amount){
@@ -12569,12 +12617,13 @@ let lastTick = 0
 let lastLiquid = false
 let attackCooldown = 0, attackCooldownStart = 0, attackCooldownTime = 0 //for swords
 let harmEffect = 0, lastDamage = 0
-//let healTime = 5000 // miliseconds between each heal
 let healEffect = 0 // health bar outline flash white
 let lastHeal = 0
 let lastBlockHarm = 0
 let lastLoseOxygen = 0
 let lastGetOxygen = 0
+let lastDeathTime = 0
+let deadButtonsDisabled = false
 let witherEffect = 0
 let witherDamage = 0
 let witherTime = 0
@@ -14812,6 +14861,26 @@ east: 3,
 west: 3
 },
 },
+sun:{
+verts:[
+[],[],[],
+[
+objectify(-8,24,8,16,16,0,0),
+objectify(8,24,8,16,16,16,0),
+objectify(-8,8,8,16,16,32,0),
+objectify(8,8,8,16,16,48,0),
+],
+[],[]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
 playerHand: {
 verts: [
 [objectify( 6,  6,  6, 4,  4, 0, 0)], //bottom
@@ -16928,9 +16997,6 @@ this.transformation.rotX(this.rx)
 this.transformation.rotY(this.ry)
 this.transformation.translate(-x, -y, -z)
 }
-resetMatrix() {
-this.transformation.copyMatrix(defaultTransformation)
-}
 getMatrix() {
 let proj = this.projection
 let view = this.transformation.elements
@@ -17269,40 +17335,99 @@ cf = north ? "north" : "south"
 }
 return [ cd, cf ]
 }
-let entPlayerCollided
-let collidedWithMe
-function entityRayTrace(x,y,z,returnIt,dimension = p.dimension){
+function entityRayTrace(x,y,z,w,h,d){
+let cf, cd = 1e9; //Closest face and distance
+let m; //Absolute distance to intersection point
+let ix, iy, iz; //Intersection coords
+let minX, minY, minZ, maxX, maxY, maxZ, face; //Bounds of face coordinates
+let w2 = w/2, h2 = h/2, d2 = d/2
+let east = p.direction.x < 0
+let top = p.direction.y < 0
+let north = p.direction.z < 0
+if (p.direction.y) {
+minX = -w2
+minZ = -d2
+maxX = w2
+maxZ = d2
+if(top){
+face = h2
+}else{
+face = -h2
+}
+m = (y + face - p.y) / p.direction.y
+ix = m * p.direction.x + p.x
+iz = m * p.direction.z + p.z
+if (m > 0 && m < cd && ix >= x + minX && ix <= x + maxX && iz >= z + minZ && iz <= z + maxZ) {
+cd = m; //Ray crosses bottom face
+cf = top ? "top" : "bottom"
+}
+}
+if (p.direction.x) {
+minY = -h2
+minZ = -d2
+maxY = h2
+maxZ = d2
+if(east){
+face = w2
+}else{
+face = -w2
+}
+m = (x + face - p.x) / p.direction.x
+iy = m * p.direction.y + p.y
+iz = m * p.direction.z + p.z
+if (m > 0 && m < cd && iy >= y + minY && iy <= y + maxY && iz >= z + minZ && iz <= z + maxZ) {
+cd = m
+cf = east ? "east" : "west"
+}
+}
+if (p.direction.z) {
+minX = -w2
+minY = -h2
+maxX = w2
+maxY = h2
+if(north){
+face = d2
+}else{
+face = -d2
+}
+m = (z + face - p.z) / p.direction.z
+ix = m * p.direction.x + p.x
+iy = m * p.direction.y + p.y
+if (m > 0 && m < cd && ix >= x + minX && ix <= x + maxX && iy >= y + minY && iy <= y + maxY) {
+cd = m
+cf = north ? "north" : "south"
+}
+}
+if(Key.c){console.log(cd,cf)}
+return [ cd, cf ]
+}
+function runEntityRayTrace(){
+entHitbox.closest = reach
 entPlayerCollided = false
+var dimension = p.dimension
 for(var i=0; i<world.entities.length; i++){
 var ent = world.entities[i]
 if(ent.dimension !== dimension) continue
-var ex = ent.x, ey = ent.y, ez = ent.z
-var w2=ent.width/2, h2=ent.height/2, d2=ent.depth/2
-if(x>ex-w2 && x<ex+w2 && y>ey-h2 && y<ey+h2 && z>ez-d2 && z<ez+d2){
-if(returnIt) return ent
-else return entHitbox.ent = ent
+let c = entityRayTrace(ent.x,ent.y,ent.z,ent.width,ent.height,ent.depth)
+if(c[0] < entHitbox.closest){
+entHitbox.closest = c[0]
+entHitbox.face = c.cf
+entHitbox.ent = ent
 }
 }
 if(multiplayer){
 for(var i in players){
 var ent = players[i]
 if(ent.dimension !== dimension) continue
-var ex = ent.x, ey = ent.y, ez = ent.z
-var w2=ent.width/2, h2=ent.height/2, d2=ent.depth/2
-if(x>ex-w2 && x<ex+w2 && y>ey-h2 && y<ey+h2 && z>ez-d2 && z<ez+d2){
-if(returnIt){
-entPlayerCollided = true
-return ent
-}else{
+let c = entityRayTrace(ent.x,ent.y,ent.z,ent.width,ent.height,ent.depth)
+if(c[0] < entHitbox.closest){
+entHitbox.closest = c[0]
 entHitbox.player = true
-return entHitbox.ent = ent
+entHitbox.face = c.cf
+entHitbox.ent = ent
 }
 }
 }
-}
-var px = p.x, py = p.y, pz = p.z
-var w2 = p.w/2, th = p.topH, bh = p.bottomH
-collidedWithMe = x>px-p.w && x<px+p.w && y>py-bh && y<py+th && z>pz-w2 && z<pz+w2
 }
 function runRayTrace(x, y, z) {
 let block = world.getBlock(x, y, z, p.dimension)
@@ -17381,17 +17506,13 @@ runRayTrace(minX, maxY, minZ)
 if (minZ !== maxZ) {
 runRayTrace(minX, minY, maxZ)
 }
-if (hitBox.pos) {
-return; //The ray has collided; it can't possibly find a closer collision now
-}
-var ex=maxX, ey=maxY, ez=maxZ
-for(var e=0; e<1; e+=0.1){
-ex += pd.x*0.1, ey += pd.y*0.1, ez += pd.z*0.1
-entityRayTrace(ex,ey,ez)
-if(entHitbox.ent){
+runEntityRayTrace()
+if(entHitbox.ent && entHitbox.closest < hitBox.closest){
 hitBox.pos = null
 return
 }
+if (hitBox.pos) {
+return; //The ray has collided; it can't possibly find a closer collision now
 }
 minZ = maxZ
 minY = maxY
@@ -21463,6 +21584,44 @@ loadFrom.splice(i--, 1)
 this.loaded = true
 }
 }
+let entPlayerCollided
+let collidedWithMe
+function entCollided(ent){
+var w2 = ent.width/2, h2 = ent.height/2, d2 = ent.depth/2
+entPlayerCollided = false
+collidedWithMe = false
+for(var e of world.entities){
+if(e === ent || e.dimension !== ent.dimension) continue
+var ew2 = e.width/2, eh2 = e.height/2, ed2 = e.depth/2
+if(ent.x - w2 < e.x + ew2 &&
+ent.x + w2 > e.x - ew2 &&
+ent.y - h2 < e.y + eh2 &&
+ent.y - h2 > e.y - eh2 &&
+ent.z - d2 < e.z + ed2 &&
+ent.z + d2 > e.z - ed2) return ent
+}
+if(multiplayer){
+for(var e of players){
+if(e === ent || e.dimension !== ent.dimension) continue
+var ew2 = e.width/2, eh2 = e.height/2, ed2 = e.depth/2
+if(ent.x - w2 < e.x + ew2 &&
+ent.x + w2 > e.x - ew2 &&
+ent.y - h2 < e.y + eh2 &&
+ent.y - h2 > e.y - eh2 &&
+ent.z - d2 < e.z + ed2 &&
+ent.z + d2 > e.z - ed2){
+entPlayerCollided = true
+return ent
+}
+}
+}
+if(ent.x - w2 < p.x + p.w &&
+ent.x + w2 > p.x - p.w &&
+ent.y - h2 < p.y + p.topH &&
+ent.y - h2 > p.y - p.bottomH &&
+ent.z - d2 < p.z + p.w &&
+ent.z + d2 > p.z - p.w) collidedWithMe = true
+}
 class Contacts {
 constructor() {
 this.array = []
@@ -21487,6 +21646,47 @@ var entityMatrices = {
 modelViewProjectionMatrix: new Matrix(),
 projectionMatrix: new Matrix(),
 modelMatrix: new Matrix()
+}
+function generateVAO(shape, tx, ty){
+const shapeVerts = shape.verts
+const shapeTexVerts = shape.texVerts
+const size = shape.size
+let blockSides = Object.keys(Block)
+let texNum = 0
+let texture = []
+let index = 0
+for (let n = 0; n < 6; n++) {
+let side = blockSides[n]
+let directionalFaces = shapeVerts[Sides[side]]
+for (let facei = 0; facei < directionalFaces.length; facei++) {
+let texShapeVerts = shapeTexVerts[n][facei]
+texture[index    ] = tx + texShapeVerts[0]
+texture[index + 1] = ty + texShapeVerts[1]
+texture[index + 2] = tx + texShapeVerts[2]
+texture[index + 3] = ty + texShapeVerts[3]
+texture[index + 4] = tx + texShapeVerts[4]
+texture[index + 5] = ty + texShapeVerts[5]
+texture[index + 6] = tx + texShapeVerts[6]
+texture[index + 7] = ty + texShapeVerts[7]
+index += 8
+}
+texNum++
+}
+var vao = glExtensions.vertex_array_object.createVertexArrayOES()
+const verticesBuffer = gl.createBuffer()
+const textureBuffer = gl.createBuffer()
+glExtensions.vertex_array_object.bindVertexArrayOES(vao)
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
+gl.bindBuffer(gl.ARRAY_BUFFER, verticesBuffer)
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(shapeVerts.flat(Infinity)), gl.STATIC_DRAW)
+gl.vertexAttribPointer(glCache.aVertexEntity, 3, gl.FLOAT, false, 0, 0)
+gl.bindBuffer(gl.ARRAY_BUFFER, textureBuffer)
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(texture), gl.STATIC_DRAW)
+gl.vertexAttribPointer(glCache.aTextureEntity, 2, gl.FLOAT, false, 0, 0)
+gl.enableVertexAttribArray(glCache.aVertexEntity)
+gl.enableVertexAttribArray(glCache.aTextureEntity)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
+return {vao, size}
 }
 class Entity {
 constructor(x, y, z, pitch, yaw, velx, vely, velz, width, height, depth, vertices, texture, faces, despawns, vao, dimension) {
@@ -21521,6 +21721,7 @@ this.despawns = despawns
 this.spawn = this.lastUpdate
 this.canDespawn = false
 this.dieEffect = 0
+this.dieRotate = 0
 this.burning = false
 this.parts = {}
 this.faces = faces
@@ -21854,7 +22055,9 @@ let renderz = (this.z - this.previousZ) * diff + this.previousZ
 const modelMatrix = entityMatrices.modelMatrix;
 modelMatrix.identity()
 modelMatrix.translate(renderx, rendery, renderz)
-modelMatrix.rotZ(this.dieEffect)
+modelMatrix.translate(0,-this.height/2,0)
+modelMatrix.rotZ(this.dieRotate)
+modelMatrix.translate(0,this.height/2,0)
 modelMatrix.rotX(this.pitch)
 modelMatrix.rotY(this.yaw)
 modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
@@ -21904,7 +22107,9 @@ originalX:x, originalY:y, originalZ:z
 renderPart(part, modelMatrix, modelViewProjectionMatrix, projectionMatrix, viewMatrix, x,y,z){
 modelMatrix.identity()
 modelMatrix.translate(x, y, z)
-modelMatrix.rotZ(this.dieEffect)
+modelMatrix.translate(0,-this.height/2,0)
+modelMatrix.rotZ(this.dieRotate)
+modelMatrix.translate(0,this.height/2,0)
 modelMatrix.rotX(this.pitch)
 modelMatrix.rotY(this.yaw)
 modelMatrix.translate(part.x, part.y, part.z)
@@ -21963,7 +22168,7 @@ texNum++
 super(x, y, z, 0, 0, velx, vely, velz, 0.25, 0.25, 0.25, new Float32Array(shapeVerts.flat(Infinity)), new Float32Array(texture), size, 1500000)
 this.block = blockID
 this.type = "Item"
-this.from = achexUsername
+this.from = userId
 this.durability = durability
 //this.amount = amount || 1
 this.defaultGravityStength = -0.032
@@ -22050,7 +22255,7 @@ achievment("DIAMONDS!")
 if(this.block === blockIds.ancientDebris){
 achievment("Hidden In The Depths")
 }
-if(multiplayer && this.block === blockIds.diamond && this.from !== achexUsername){
+if(multiplayer && this.block === blockIds.diamond && this.from !== userId){
 //that achivement
 send({type:"diamondsToYou"}, this.from)
 }
@@ -22156,7 +22361,7 @@ index += 8
 }
 texNum++
 }
-super(x, y, z, 0, 0, 0, 0, 0, 0.996, 0.996, 0.996, new Float32Array(shapeVerts.flat(Infinity)), new Float32Array(texture), size, 1500000)
+super(x, y, z, 0, 0, 0, 0, 0, 1, 1, 1, new Float32Array(shapeVerts.flat(Infinity)), new Float32Array(texture), size, 1500000)
 this.block = blockID
 this.type = "BlockEntity"
 this.solidOnGround = solidOnGround
@@ -22352,7 +22557,7 @@ this.type = "EnderPearl"
 this.velx = velx
 this.vely = vely
 this.velz = velz
-this.from = achexUsername
+this.from = userId
 this.defaultGravityStength = -0.05
 }
 updateVelocity(now) {
@@ -22365,7 +22570,7 @@ update() {
 let now = performance.now()
 this.updateVelocity(now)
 this.move(now)
-var fromMe = this.from === achexUsername
+var fromMe = this.from === userId
 if (fromMe && now - this.spawn > this.despawns) {
 this.canDespawn = true
 }
@@ -22391,7 +22596,6 @@ let renderz = (this.z - this.previousZ) * diff + this.previousZ
 const modelMatrix = entityMatrices.modelMatrix;
 modelMatrix.identity()
 modelMatrix.translate(renderx, rendery, renderz)
-modelMatrix.rotZ(this.dieEffect)
 modelMatrix.rotY(this.yaw)
 modelMatrix.rotX(this.pitch)
 modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
@@ -22416,7 +22620,7 @@ const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 gl.uniform1i(glCache.uSamplerEntity, 0)
 gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
-gl.uniform1f(glCache.harmEffectEntity, this.harmEffect || this.dieEffect)
+gl.uniform1f(glCache.harmEffectEntity, 0)
 gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
@@ -22430,11 +22634,11 @@ this.type = "Snowball"
 this.velx = velx
 this.vely = vely
 this.velz = velz
-this.from = achexUsername
+this.from = userId
 this.defaultGravityStength = -0.05
 }
 updateVelocity(now) {
-this.vely += this.gravityStrength
+this.vely += this.defaultGravityStength
 if (this.vely < -0.5) {
 this.vely = -0.5
 }
@@ -22443,9 +22647,9 @@ update() {
 let now = performance.now()
 this.updateVelocity(now)
 this.move(now)
-var fromMe = this.from === achexUsername
+var fromMe = this.from === userId
 if(fromMe && now - this.spawn > 1000){
-var collided = entityRayTrace(this.x,this.y,this.z,true)
+var collided = entCollided(this)
 if(collided && collided !== this){
 if(entPlayerCollided){
 send({type:"hit", username:username, data:1, message:username+" killed "+ent.username+" with snowballs."}, ent.id)
@@ -22454,7 +22658,7 @@ if(collided.onhit) collided.onhit(1)
 }
 this.canDespawn = true
 }else if(collidedWithMe && survival){
-damage(1, username+" got killed by their own snowball.")
+damage(1, username+" killed themself with a snowball.")
 this.canDespawn = true
 }
 }
@@ -22477,7 +22681,6 @@ let renderz = (this.z - this.previousZ) * diff + this.previousZ
 const modelMatrix = entityMatrices.modelMatrix;
 modelMatrix.identity()
 modelMatrix.translate(renderx, rendery, renderz)
-modelMatrix.rotZ(this.dieEffect)
 modelMatrix.rotY(this.yaw)
 modelMatrix.rotX(this.pitch)
 modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
@@ -22502,7 +22705,6 @@ const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 gl.uniform1i(glCache.uSamplerEntity, 0)
 gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
-gl.uniform1f(glCache.harmEffectEntity, this.harmEffect || this.dieEffect)
 gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
@@ -22527,8 +22729,8 @@ if (now - this.spawn > this.despawns && this.onGround) {
 this.canDespawn = true
 //world.addEntity(new Item(this.x,this.y,this.z,0,0,0,blockIds.ironNugget))
 }
-var collided = entityRayTrace(this.x,this.y,this.z,true)
-if(collided && collided !== this){
+var collided = entCollided(this)
+if(collided){
 if(!entPlayerCollided){
 if(collided.onhit) collided.onhit(5)
 }
@@ -22638,7 +22840,6 @@ let renderz = (this.z - this.previousZ) * diff + this.previousZ
 const modelMatrix = entityMatrices.modelMatrix;
 modelMatrix.identity()
 modelMatrix.translate(renderx, rendery, renderz)
-modelMatrix.rotZ(this.dieEffect)
 modelMatrix.rotY(this.yaw)
 modelMatrix.rotX(this.pitch)
 modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
@@ -22663,7 +22864,6 @@ const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 gl.uniform1i(glCache.uSamplerEntity, 0)
 gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
-gl.uniform1f(glCache.harmEffectEntity, this.harmEffect || this.dieEffect)
 gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
@@ -22947,7 +23147,7 @@ glExtensions.vertex_array_object.bindVertexArrayOES(null)
 //character is seen in 3rd person mode
 class Character extends Entity{
 constructor(blockID){
-super(0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, null, null, 0, Infinity, "this isn't really a VAO... but it will be overwritten")
+super(0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, null, null, 0, Infinity, "this isn't really a VAO... but it will be overwritten")
 var v = this.generateVAO(shapes.playerBody, 0,0)
 this.faces = v.size
 this.vao = v.vao
@@ -23060,12 +23260,13 @@ if(this.harmEffect > 0){
 this.harmEffect -= 3
 }
 if(this.die){
-this.dieEffect += 0.18
-if(this.dieEffect > Math.PI2){
-this.y = 0
+this.dieEffect += 0.05
+this.dieRotate = (this.dieEffect**4)*Math.PI2
+if(this.dieEffect > 1){
 this.die = false
 this.dieEffect = 0
 this.hidden = true
+poof(this.x,this.y,this.z, 20,this.dimension)
 }
 }
 for(var p in this.parts){
@@ -23247,10 +23448,11 @@ gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this.skinImg
 const modelMatrix = new Matrix();
 modelMatrix.identity()
 modelMatrix.translate(renderx, rendery, renderz)
-modelMatrix.rotZ(this.dieEffect)
+modelMatrix.translate(0,-this.height/2,0)
+modelMatrix.rotZ(this.dieRotate)
+modelMatrix.translate(0,this.height/2,0)
 modelMatrix.rotY(this.yaw + offsetry)
 modelMatrix.rotX(this.pitch)
-modelMatrix.scale(this.width, this.height, this.depth)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
 const projectionMatrix = [proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0]
@@ -23302,7 +23504,9 @@ let diff = (performance.now() - this.lastUpdate) / tickTime
 if (diff > 1) diff = 1
 modelMatrix.identity()
 modelMatrix.translate(x, y, z)
-modelMatrix.rotZ(this.dieEffect)
+modelMatrix.translate(0,-this.height/2,0)
+modelMatrix.rotZ(this.dieRotate)
+modelMatrix.translate(0,this.height/2,0)
 modelMatrix.rotY(this.yaw)
 modelMatrix.rotX(this.pitch)
 if(part.name === "holding"){
@@ -23336,7 +23540,6 @@ gl.uniform1i(glCache.isTextureAtlasEntity,0)
 }
 }
 window.Player = Character
-//world.entities.push(new Cow(p2.x, p2.y, p2.z))
 class Mob extends Entity{
 constructor(){
 super(...arguments)
@@ -23404,8 +23607,9 @@ this.harmEffect -= 3
 }
 if(this.health <= 0){
 this.health = -1
-this.dieEffect += 0.18
-if(this.dieEffect > Math.PI2){
+this.dieEffect += 0.05
+this.dieRotate = (this.dieEffect**4)*Math.PI2
+if(this.dieEffect > 1){
 this.canDespawn = true
 poof(this.x,this.y,this.z, 20,this.dimension)
 }
@@ -24373,7 +24577,7 @@ reject()
 window.addEventListener("message", onmsg);
 })
 }
-var achexUsername = "player"+Date.now()
+var userId = "player"+Date.now()
 win.username = "Steve"
 win.userInfo = null
 async function loggedIn(){
@@ -24481,7 +24685,7 @@ if(multiplayer.readyState !== WebSocket.OPEN){
 console.warn("WebSocket is not in open state. Current state is: "+multiplayer.readyState+". Trying to send: ",msg)
 return
 }
-msg.FROM = achexUsername
+msg.FROM = userId
 msg.USER = username
 if(to) msg.TO = to
 multiplayer.send(JSON.stringify(msg))
@@ -24513,7 +24717,7 @@ multiplayer.send(JSON.stringify({
 send({
 "type":"connect",
 username: username,
-id: achexUsername
+id: userId
 })
 if(host){
 send({
@@ -25852,7 +26056,7 @@ this[lastChunk] = chunk
 this.loadChunks()
 this.chunkGenQueue.sort(sortChunks)
 }
-if(worldSettings.dayNightCycle) worldTime += 0.4
+if(worldSettings.dayNightCycle) worldTime += 0.125
 var touchBreak = pTouch.touching && pTouch.canDig && Date.now() - pTouch.touchStart > touchMoveLimit
 if (((controlMap.break.pressed && !Key.control) || touchBreak) && p.lastBreak < Date.now() - 250 && screen === "play" && !survival && !entHitbox.ent) { // survival breaking isn't instant
 changeWorldBlock(0)
@@ -25985,16 +26189,7 @@ gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT)
 if(p.dimension !== "nether" && p.dimension !== "end"){
 //skybox render
 if(inWater === 0){
-gl.useProgram(skyboxProgram);
-gl.uniform1f(glCache.skyboxTime, skyLight);
-gl.uniform3f(glCache.skyboxSky, sky[0], sky[1], sky[2])
-gl.uniform3f(glCache.skyboxSkyBottom, skyBottom[0],skyBottom[1],skyBottom[2]);
-gl.uniformMatrix4fv(glCache.skyboxView, false, matrix)
-gl.depthFunc(gl.ALWAYS);
-gl.disable(gl.CULL_FACE);
-skybox.render();
-gl.depthFunc(gl.LESS);
-gl.enable(gl.CULL_FACE)
+skybox.render()
 }
 }
 gl.useProgram(program3D);
@@ -27071,9 +27266,8 @@ a.click()
 // You Died buttons
 Button.add(width / 2, 225, 300, 40, "Respawn", "dead", r => {
 respawn()
-updateHUD = true
 play()
-})
+}, () => performance.now() - lastDeathTime < 1000)
 //Help buttons
 Button.add(60, 30, 80, 30, "Back", "options help", r => changeScene(previousScreen))
 // Marketplace buttons
@@ -29340,7 +29534,7 @@ glCache.aVertex2 = gl.getAttribLocation(program2D, "aVertex")
 glCache.aShadow2 = gl.getAttribLocation(program2D, "aShadow")
 gl.useProgram(skyboxProgram)
 glCache.skyboxVertex = gl.getAttribLocation(skyboxProgram, "aVertex");
-glCache.skyboxTime = gl.getUniformLocation(skyboxProgram, "time");
+glCache.skyboxLight = gl.getUniformLocation(skyboxProgram, "light");
 glCache.skyboxView = gl.getUniformLocation(skyboxProgram, "uView");
 glCache.skyboxSky = gl.getUniformLocation(skyboxProgram, "sky");
 glCache.skyboxSkyBottom = gl.getUniformLocation(skyboxProgram, "skyBottom");
@@ -29992,6 +30186,7 @@ freezeEffect = 0
 p.burnTimer = 0
 dieMessage = username+" died because ¯\\_(ツ)_/¯" //the \\ actually shows up as \
 p.dimension = ""
+p.spectator = false
 }
 function initWorldsMenu() {
 while (window.worlds.firstChild) {
@@ -31597,11 +31792,6 @@ text("Do not plagarize.", width - 2, height - 2)
 drawScreens.play = () => {
 ctx2.clearRect(0,0,width,height)
 var now = Date.now()
-tick = false
-if(now - lastTick > tickTime){
-lastTick = Math.floor(now / 50) * 50
-tick = true
-}
 if(tick && rand() > 0.2){
 gl.uniform1i(glCache.flicker, rand() > 0.9)
 }
@@ -32086,7 +32276,8 @@ if(multiplayer && multiplayer.sendPos && tick) multiplayer.sendPos()
 if(typeof win.eachFrame === "function") win.eachFrame()
 }
 drawScreens.dead = () => {
-ctx.drawImage(gl.canvas, 0, 0)
+defineWorld(tick)
+clear()
 ctx.fillStyle = "rgba(255,0,0,50%)"
 ctx.fillRect(0,0,width,height)
 fill(0)
@@ -32231,6 +32422,7 @@ ctx.textAlign = "center"
 text(`Loading... ${progress}% complete (${sub} / ${maxLoad})`, width / 2, height / 2)
 }
 drawScreens.chat = () => {
+defineWorld(tick)
 clear()
 }
 drawScreens.inventory = drawInv
@@ -32351,6 +32543,12 @@ initEverything()
 releasePointer()
 }
 if(allLoaded){
+var now = Date.now()
+tick = false
+if(now - lastTick > tickTime){
+lastTick = Math.floor(now / 50) * 50
+tick = true
+}
 if(screen === "options"){
 if(beforeOptionsScreen === "main menu"){
 if(analytics.frames % 2 === 0)renderMainBG()
@@ -32362,9 +32560,10 @@ drawScreens[screen]()
 Button.draw()
 Slider.draw()
 }
-if (screen === "play" || screen === "loading" || screen === "netherLoading" || screen === "endLoading") {
+if (screen === "play" || screen === "loading" || screen === "netherLoading" || screen === "endLoading" || screen === "dead" || screen === "chat") {
 drawScreens[screen]()
-if(touchScreen && screen === "play") Button.draw()
+Button.draw()
+Slider.draw()
 }
 if(screen === "furnace" && furnaceData.data.smelting){
 drawScreens[screen]()
