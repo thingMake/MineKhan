@@ -1139,6 +1139,16 @@ hash |= 0; // Convert to 32bit integer
 }
 return hash;
 }
+function chunkString (str, len) {
+const size = Math.ceil(str.length/len)
+const r = Array(size)
+let offset = 0
+for (let i = 0; i < size; i++) {
+r[i] = str.substr(offset, len)
+offset += len
+}
+return r
+}
 var tickSpeed = 20
 var tickTime = 1000/tickSpeed
 var fileReader = new FileReader();
@@ -12276,10 +12286,10 @@ messageInput.focus()
 submitInput(){
 play()
 if(messageInput.value[0] === "/"){
-Messages.add(messageInput.value, true)
+Messages.add(messageInput.value)
 runCmd(messageInput.value)
 }else{
-Messages.write(messageInput.value, null, true)
+Messages.write(messageInput.value)
 }
 messageInput.value = ""
 },
@@ -23265,6 +23275,7 @@ this.dieRotate = (this.dieEffect**4)*Math.PI2
 if(this.dieEffect > 1){
 this.die = false
 this.dieEffect = 0
+this.dieRotate = 0
 this.hidden = true
 poof(this.x,this.y,this.z, 20,this.dimension)
 }
@@ -23611,6 +23622,7 @@ this.dieEffect += 0.05
 this.dieRotate = (this.dieEffect**4)*Math.PI2
 if(this.dieEffect > 1){
 this.canDespawn = true
+this.dieRotate = 0
 poof(this.x,this.y,this.z, 20,this.dimension)
 }
 }
@@ -24758,6 +24770,7 @@ canSendPos = false
 send(obj)
 }
 }
+let loadSaveChunks = []
 multiplayer.onmessage = msg => {
 let packet = JSON.parse(msg.data)
 var author = packet.FROM //should be the id
@@ -24776,9 +24789,30 @@ data: data.USER
 }, author)
 }else{
 }*/
+let saveStr = world.getSaveString()
+if(saveStr.length > 10000){
+var chunks = chunkString(saveStr,10000)
+for(let c=0; c<chunks.length; c++){
+send({
+type:"loadSaveChunk",
+data: chunks[c],
+idx: c
+}, author)
+}
 send({
 type:"loadSave",
-data: world.getSaveString(),
+stringChunks: chunks.length,
+tags: world.getEditedTags(),
+mod: world.mod,
+id: world.id || Date.now(),
+time: worldTime,
+cheats:cheats,
+inv: playersInv[data.USER]
+}, author)
+}else{
+send({
+type:"loadSave",
+data: saveStr,
 tags: world.getEditedTags(),
 mod: world.mod,
 id: world.id || Date.now(),
@@ -24787,10 +24821,17 @@ cheats:cheats,
 inv: playersInv[data.USER]
 }, author)
 }
+}
 send({type:"mySkin", data:p.character.skinURL, cape:p.character.capeURL})
+}else if(data.type === "loadSaveChunk"){
+loadSaveChunks[data.idx] = data.data
 }else if(data.type === "loadSave"){
 world = new World()
 world.id = data.id
+if(data.stringChunks){
+data.data = loadSaveChunks.slice(0,data.stringChunks).join("")
+console.log(data.data)
+}
 if (data.data) {
 try {
 world.loadSave(data.data)
@@ -24955,7 +24996,7 @@ multiplayerError = data.data
 console.warn("Multiplayer error!",data.data)
 }
 }
-multiplayer.onclose = () => {
+multiplayer.onclose = e => {
 if(host){
 alert("Multiplayer connection lost!")
 }else{
@@ -24965,6 +25006,9 @@ changeScene("multiplayer lost")
 }
 clearInterval(multiplayer.pos)
 multiplayer = null
+if(e.code !== 1000 && e.code !== 1001){
+console.warn("Websocket closed with code: "+e.code,e.reason)
+}
 }
 multiplayer.onerror = e => {
 console.warn("WebSocket error!", e)
