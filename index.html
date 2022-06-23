@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <!-- @MineKhan version Alpha 1.0.5
+MAJOR.MINOR.PATCH <-- ignore that
 Notes and accreditation:
 !!Willard is another person, not me!!
 My credits (not Willard's)
@@ -3195,6 +3196,8 @@ else return "apple"
 },
 dropSelfWhenSheared:true,
 shearBreakTime:0.05,
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -3220,7 +3223,7 @@ glassSound: true
 { name: "redstoneOre", Name:"Redstone Ore", breakTime:15, type:"rock3", stoneSound:true, drop:"redstone", dropAmount:[4,5], experience:0.3},
 { name: "lapisOre", Name:"Lapis Lazuli Ore", breakTime:15, type:"rock2", drop:"lapisLazuli", stoneSound:true, experience:0.5},
 { name: "emeraldOre", Name:"Emerald Ore", breakTime:15, type:"rock3", drop:"emerald", stoneSound:true, experience:1.5},
-{ name: "coalBlock", Name:"Block of Coal", breakTime:25, type:"rock1", stoneSound:true},
+{ name: "coalBlock", Name:"Block of Coal", breakTime:25, type:"rock1", stoneSound:true, burnChance:0.4, burnTime:50},
 { name: "ironBlock", Name:"Block of Iron", breakTime:25, type:"metal2", stoneSound:true},
 { name: "goldBlock", Name:"Block of Gold", breakTime:15, type:"metal3", stoneSound:true},
 { name: "diamondBlock", Name:"Block of Diamond", breakTime:25, type:"metal3", stoneSound:true},
@@ -3237,7 +3240,7 @@ world.unspreadPower(x,y,z, 16,false,dimension)
 },
 { name: "lapisBlock", Name:"Block of Lapis Lazuli", breakTime:15, type:"metal2", stoneSound:true},
 { name: "emeraldBlock", Name:"Block of Emerald", breakTime:25, type:"metal3", stoneSound:true},
-{ name: "oakPlanks", Name:"Oak Planks", type:"wood", breakTime:3, woodSound:true},
+{ name: "oakPlanks", Name:"Oak Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "oakLog",
 Name:"Oak Log",
@@ -3245,8 +3248,10 @@ textures: [ "logTop", "logSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
-{ name: "acaciaPlanks", Name:"Acacia Planks", type:"wood", breakTime:3, woodSound:true},
+{ name: "acaciaPlanks", Name:"Acacia Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "acaciaLog",
 Name:"Acacia Log",
@@ -3254,8 +3259,10 @@ textures: [ "acaciaLogTop", "acaciaLogSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
-{ name: "birchPlanks", Name:"Birch Planks", type:"wood", breakTime:3, woodSound:true},
+{ name: "birchPlanks", Name:"Birch Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "birchLog",
 Name:"Birch Log",
@@ -3263,8 +3270,10 @@ textures: [ "birchLogTop", "birchLogSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
-{ name: "darkOakPlanks", Name:"Dark Oak Planks", type:"wood", breakTime:3, woodSound:true},
+{ name: "darkOakPlanks", Name:"Dark Oak Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "darkOakLog",
 Name:"Dark Oak Log",
@@ -3272,8 +3281,10 @@ textures: [ "darkOakLogTop", "darkOakLogSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
-{ name: "junglePlanks", Name:"Jungle Planks", type:"wood", breakTime:3,woodSound:true},
+{ name: "junglePlanks", Name:"Jungle Planks", type:"wood", breakTime:3,woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "jungleLog",
 Name:"Jungle Log",
@@ -3281,8 +3292,10 @@ textures: [ "jungleLogTop", "jungleLogSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
-{ name: "sprucePlanks", Name:"Spruce Planks", type:"wood", breakTime:3, woodSound:true},
+{ name: "sprucePlanks", Name:"Spruce Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "spruceLog",
 Name:"Spruce Log",
@@ -3290,23 +3303,25 @@ textures: [ "spruceLogTop", "spruceLogSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
-{ name: "whiteWool", Name:"White Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "orangeWool", Name:"Orange Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "magentaWool", Name:"Magenta Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "lightBlueWool", Name:"Light Blue Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "yellowWool", Name:"Yellow Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "limeWool", Name:"Lime Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "pinkWool", Name:"Pink Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "grayWool", Name:"Gray Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "lightGrayWool", Name:"Light Gray Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "cyanWool", Name:"Cyan Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "purpleWool", Name:"Purple Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "blueWool", Name:"Blue Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "brownWool", Name:"Brown Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "greenWool", Name:"Green Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "redWool", Name:"Red Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
-{ name: "blackWool", Name:"Black Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool"},
+{ name: "whiteWool", Name:"White Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "orangeWool", Name:"Orange Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "magentaWool", Name:"Magenta Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "lightBlueWool", Name:"Light Blue Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "yellowWool", Name:"Yellow Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "limeWool", Name:"Lime Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "pinkWool", Name:"Pink Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "grayWool", Name:"Gray Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "lightGrayWool", Name:"Light Gray Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "cyanWool", Name:"Cyan Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "purpleWool", Name:"Purple Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "blueWool", Name:"Blue Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "brownWool", Name:"Brown Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "greenWool", Name:"Green Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "redWool", Name:"Red Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
+{ name: "blackWool", Name:"Black Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
 { name: "whiteConcrete", Name:"White Concrete",breakTime:9, type:"rock1", stoneSound:true},
 { name: "orangeConcrete", Name:"Orange Concrete",breakTime:9, type:"rock1", stoneSound:true},
 { name: "magentaConcrete", Name:"Magenta Concrete",breakTime:9, type:"rock1", stoneSound:true},
@@ -3329,11 +3344,14 @@ Name:"Bookshelf",
 textures: [ "oakPlanks", "bookshelf" ],
 stoneSound: true,
 type:"wood", 
+burnChance:0.4,
+burnTime:30
 },
 { name: "netherrack",
 Name:"Netherrack",
 breakTime:2,
 type:"rock1",
+burnTime:Infinity,
 digSound: ["block.netherrack.dig1", "block.netherrack.dig2", "block.netherrack.dig3", "block.netherrack.dig4", "block.netherrack.dig5", "block.netherrack.dig6"],
 stepSound: ["block.netherrack.step1", "block.netherrack.step2","block.netherrack.step3","block.netherrack.step4","block.netherrack.step5","block.netherrack.step6"]},
 { name: "soulSand",
@@ -3401,7 +3419,7 @@ superTntTextures: ["superTntBottom","superTntTop","superTnt"],
 //  explode(x,y,z,5)
 //}, flint and steel explodes it
 explode: function(x,y,z, how,dimension){
-world.setBlock(x,y,z,0,false,false,false,dimension)
+world.setBlock(x,y,z,0,false,false,false,false,dimension)
 var e = new PrimedTNT(x,y,z)
 world.addEntity(e,false,dimension)
 playSound("entity.tnt.fuse", 0, posSound(x,y,z))
@@ -3411,7 +3429,7 @@ e.timeLimit = rand(10,30)
 }
 },
 superTntExplode: function(x,y,z,dimension){
-world.setBlock(x,y,z,0,false,false,false,dimension)
+world.setBlock(x,y,z,0,false,false,false,false,dimension)
 var e = new PrimedSuperTNT(x,y,z)
 world.addEntity(e,false,dimension)
 playSound("entity.tnt.fuse", 0, posSound(x,y,z))
@@ -3423,6 +3441,10 @@ if(power > 0) this.explode(x,y,z,null,dimension)
 onplace:function(x,y,z,dimension){
 var power = world.getRedstonePower(x,y,z,dimension)
 if(power > 0) this.explode(x,y,z,null,dimension)
+},
+burnChance:0.6,
+onburn:function(x,y,z,dimension){
+this.explode(x,y,z,null,dimension)
 },
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
@@ -3848,26 +3870,36 @@ pistonPull:false
 name: "autumnLeaves",
 transparent: true,
 cullFace:"never",
+burnChance: 0.2,
+burnTime: 30,
 },
 {
 name: "darkLeaves",
 transparent: true,
 cullFace:"never",
+burnChance: 0.2,
+burnTime: 30,
 },
 {
 name: "redBerryLeaves",
 transparent: true,
 cullFace:"never",
+burnChance: 0.2,
+burnTime: 30,
 },
 {
 name: "blueBerryLeaves",
 transparent: true,
 cullFace:"never",
+burnChance: 0.2,
+burnTime: 30,
 },
 {
 name: "pinkLeaves",
 transparent: true,
 cullFace:"never",
+burnChance: 0.2,
+burnTime: 30,
 },
 { name: "flowerOftheValley",
 Name:"Flower of The Valley",
@@ -4373,7 +4405,8 @@ woodSound:true
 {
 name: "magma", Name:"Magma Block", lightLevel:15,breakTime:10, type:"rock1",
 damage:1,
-dieMessage: () => username+" discovered the floor was lava."
+dieMessage: () => username+" discovered the floor was lava.",
+burnTime:Infinity
 },
 {
 name: "crimsonFungus",
@@ -5392,6 +5425,8 @@ if(r === 0) return "azalea"
 else return "floweringAzalea"
 }
 },
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -5408,6 +5443,8 @@ if(r === 0) return "azalea"
 else return "floweringAzalea"
 }
 },
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -5555,7 +5592,9 @@ name:"hayBlock",
 Name:"Hay Bale",
 textures:["hayBlockTop","hayBlockSide"],
 type:"plant2",
-damageResistance:0.8
+damageResistance:0.8,
+burnChance: 0.2,
+burnTime: 20
 },
 {
 name:"hayBlockSW",
@@ -5666,13 +5705,13 @@ textures: ["strippedOakLogTop", "strippedOakLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedOakLogSW",
 textures: ["strippedOakLog", "strippedOakLog", "strippedOakLogTop","strippedOakLogSW"],
-breakTime:3,
 woodSound:true,
-type:"wood",
 rotate:true
 },
 {
@@ -5682,13 +5721,13 @@ textures: ["strippedBirchLogTop", "strippedBirchLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedBirchLogSW",
 textures: ["strippedBirchLog", "strippedBirchLog", "strippedBirchLogTop","strippedBirchLogSW"],
-breakTime:3,
 woodSound:true,
-type:"wood",
 rotate:true
 },
 {
@@ -5698,13 +5737,13 @@ textures: ["strippedAcaciaLogTop", "strippedAcaciaLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedAcaciaLogSW",
 textures: ["strippedAcaciaLog", "strippedAcaciaLog", "strippedAcaciaLogTop","strippedAcaciaLogSW"],
-breakTime:3,
 woodSound:true,
-type:"wood",
 rotate:true
 },
 {
@@ -5714,13 +5753,13 @@ textures: ["strippedJungleLogTop", "strippedJungleLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedJungleLogSW",
 textures: ["strippedJungleLog", "strippedJungleLog", "strippedJungleLogTop","strippedJungleLogSW"],
-breakTime:3,
 woodSound:true,
-type:"wood",
 rotate:true
 },
 {
@@ -5730,13 +5769,13 @@ textures: ["strippedSpruceLogTop", "strippedSpruceLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedSpruceLogSW",
 textures: ["strippedSpruceLog", "strippedSpruceLog", "strippedSpruceLogTop","strippedSpruceLogSW"],
-breakTime:3,
 woodSound:true,
-type:"wood",
 rotate:true
 },
 {
@@ -5746,13 +5785,13 @@ textures: ["strippedDarkOakLogTop", "strippedDarkOakLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedDarkOakLogSW",
 textures: ["strippedDarkOakLog", "strippedDarkOakLog", "strippedDarkOakLogTop","strippedDarkOakLogSW"],
-breakTime:3,
 woodSound:true,
-type:"wood",
 rotate:true
 },
 {
@@ -6859,6 +6898,8 @@ return rand() > 0.8 ? "orange" : "apple"
 },
 dropSelfWhenSheared:true,
 shearBreakTime:0.05,
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
 tint:leafTint,
@@ -6886,6 +6927,8 @@ else if(r === 1) return "acaciaSapling"
 },
 dropSelfWhenSheared:true,
 shearBreakTime:0.05,
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
 tint:leafTint,
@@ -6913,6 +6956,8 @@ else if(r === 1) return "birchSapling"
 },
 dropSelfWhenSheared:true,
 shearBreakTime:0.05,
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -6933,6 +6978,8 @@ else return "apple"
 },
 dropSelfWhenSheared:true,
 shearBreakTime:0.05,
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
 tint:leafTint,
@@ -6960,6 +7007,8 @@ else if(r === 1) return "jungleSapling"
 },
 dropSelfWhenSheared:true,
 shearBreakTime:0.05,
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
 tint:leafTint,
@@ -6987,6 +7036,8 @@ else if(r === 1) return "spruceSapling"
 },
 dropSelfWhenSheared:true,
 shearBreakTime:0.05,
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -7067,7 +7118,96 @@ shadow:false,
 solid:false,
 lightLevel:15,
 ambientSound:"block.fire.fire",
-temperature:20
+temperature:20,
+getAttached:function(x,y,z,block,dimension){
+var ax = x, ay = y, az = z
+switch(block){
+case this.id:
+ay--
+break
+case this.id | STAIR:
+ay++
+break
+case this.id | SLAB | NORTH:
+az++
+break
+case this.id | SLAB | SOUTH:
+az--
+break
+case this.id | SLAB | EAST:
+ax++
+break
+case this.id | SLAB | WEST:
+ax--
+break
+}
+var attached = world.getBlock(ax,ay,az,dimension)
+return [attached,ax,ay,az]
+},
+tick:function(x,y,z,dimension){
+var block = world.getBlock(x,y,z,dimension)
+var attached = this.getAttached(x,y,z,block,dimension)
+var ax = attached[1], ay = attached[2], az = attached[3]
+attached = attached[0]
+var age = world.getTagByName(x,y,z,"age",dimension)
+if(!age) age = 0
+age += rand(10,11)
+//finish burning
+if(age >= 15 && !attached || !blockData[attached].burnTime){
+return world.setBlock(x,y,z,0,false,false,false,false,dimension)
+}
+if(attached && blockData[attached].burnTime && age > blockData[attached].burnTime){
+world.setBlock(x,y,z,0,false,false,false,false,dimension)
+world.setBlock(ax,ay,az,0,false,false,false,false,dimension)
+return
+}
+world.setTagByName(x,y,z,"age",age,false,dimension)
+//spread
+for(var i=x-1; i<=x+1; i++){
+for(var j=y-1; j<=y+4; j++){
+for(var k=z-1; k<=z+1; k++){
+var block = world.getBlock(i,j,k,dimension)
+if(block && blockData[block].burnChance && rand() < blockData[block].burnChance){
+if(blockData[block].onburn) blockData[block].onburn(i,j,k,dimension)
+var block
+let rx, ry, rz
+//find a place where the fire can go
+for(var t=0; t<6; t++){
+rx = i, ry = j, rz = k
+switch(floor(rand(6))){
+case 0:
+block = this.id
+ry++
+break
+case 1:
+block = this.id | STAIR
+ry--
+break
+case 2:
+block = this.id | SLAB | NORTH
+rz--
+break
+case 3:
+block = this.id | SLAB | SOUTH
+rz++
+break
+case 4:
+block = this.id | SLAB | EAST
+rx--
+break
+case 5:
+block = this.id | SLAB | WEST
+rx++
+break
+}
+if(!world.getBlock(rx,ry,rz,dimension)) break
+}
+if(!world.getBlock(rx,ry,rz,dimension)) world.setBlock(rx,ry,rz,block,false,false,false,false,dimension)
+}
+}
+}
+}
+}
 },
 {
 name: "endRod",
@@ -7083,6 +7223,8 @@ textures: "logSide",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "acaciaWood",
@@ -7091,6 +7233,8 @@ textures: "acaciaLogSide",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "birchWood",
@@ -7099,6 +7243,8 @@ textures: "birchLogSide",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "darkOakWood",
@@ -7107,6 +7253,8 @@ textures: "darkOakLogSide",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "jungleWood",
@@ -7115,6 +7263,8 @@ textures: "jungleLogSide",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "spruceWood",
@@ -7123,6 +7273,8 @@ textures: "spruceLogSide",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "crimsonHyphae",
@@ -7145,6 +7297,8 @@ textures: "strippedOakLog",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedAcaciaWood",
@@ -7153,6 +7307,8 @@ textures: "strippedAcaciaLog",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedBirchWood",
@@ -7161,6 +7317,8 @@ textures: "strippedBirchLog",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedDarkOakWood",
@@ -7169,6 +7327,8 @@ textures: "strippedDarkOakLog",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedJungleWood",
@@ -7177,6 +7337,8 @@ textures: "strippedJungleLog",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedSpruceWood",
@@ -7185,6 +7347,8 @@ textures: "strippedSpruceLog",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedCrimsonHyphae",
@@ -7668,6 +7832,8 @@ woodSound:true,
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name:"cherryLogSW",
@@ -7692,6 +7858,8 @@ else return "cherry"
 },
 dropSelfWhenSheared:true,
 shearBreakTime:0.05,
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -7712,6 +7880,8 @@ else if(rand() > 0.5) return "cherry"
 },
 dropSelfWhenSheared:true,
 shearBreakTime:0.05,
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -7731,6 +7901,8 @@ textures: "cherryLog",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 /*{
 name:"gun",
@@ -9264,7 +9436,9 @@ if(multiplayer) send({type:"playSound", data:"block.portal.travel", x:p.x,y:p.y,
 {
 name:"thatch",
 Name:"Thatch",
-type:"plant2"
+type:"plant2",
+burnChance: 0.2,
+burnTime: 20
 },
 {
 name:"pearlescentFroglight",
@@ -9303,6 +9477,8 @@ else if(r === 1) return ""//mangrove propagule here
 },
 dropSelfWhenSheared:true,
 shearBreakTime:0.05,
+burnChance: 0.2,
+burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
 tint:leafTint,
@@ -9321,6 +9497,8 @@ textures:["mangroveLogTop","mangroveLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name:"strippedMangroveLog",
@@ -9329,6 +9507,8 @@ textures:["strippedMangroveLogTop","strippedMangroveLog"],
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name:"mangroveLogSW",
@@ -9340,7 +9520,7 @@ name:"strippedMangroveLogSW",
 textures: ["strippedMangroveLog","strippedMangroveLog","strippedMangroveLogTop","strippedMangroveLogSW"],
 rotate: true, woodSound:true
 },
-{name:"mangrovePlanks", Name:"Mangrove Planks", type:"wood", breakTime:3, woodSound:true},
+{name:"mangrovePlanks", Name:"Mangrove Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 { 
 name: "mangroveDoor",
 Name:"Mangrove Door",
@@ -9407,6 +9587,8 @@ textures: "mangroveLog",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name: "strippedMangroveWood",
@@ -9415,6 +9597,8 @@ textures: "strippedMangroveLog",
 breakTime:3,
 woodSound:true,
 type:"wood",
+burnChance:0.1,
+burnTime:50
 },
 {
 name:"mud",
@@ -11026,6 +11210,8 @@ block.drop = unSw
 var obj = blockData[blockIds[unSw]]
 block.breakTime = obj.breakTime
 block.type = obj.type
+block.burnChance = obj.burnChance
+block.burnTime = obj.burnTime
 }
 }
 })
@@ -11149,6 +11335,7 @@ killCmdOff:false,
 dayNightCycle: true,
 blocksFall: true,
 pvp: true,
+fireSpreads: true
 }
 let worldSettings = Object.assign({}, defaultWorldSettings)
 win.worldSettings = worldSettings
@@ -13936,10 +14123,49 @@ fire: {
 verts: [
 [], //bottom
 [], //top
-[objectify(16, 16, 16, 16, 16, 0, 0), customFace(0,16,16, 16,16,16, 16,0,0, 0,0,0, 0,0), customFace(16,16,16, 0,16,16, 0,0,0, 16,0,0, 0,0)], //north
-[objectify( 0, 16,  0, 16, 16, 0, 0), customFace(16,16,0, 0,16,0, 0,0,16, 16,0,16, 0,0), customFace(0,16,0, 16,16,0, 16,0,16, 0,0,16, 0,0)], //south
-[objectify(16, 16,  0, 16, 16, 0, 0), customFace(16,16,0, 16,16,16, 0,0,16, 0,0,0, 0,0), customFace(16,16,16, 16,16,0, 0,0,0, 0,0,16, 0,0)], //east
-[objectify( 0, 16, 16, 16, 16, 0, 0), customFace(0,16,0, 0,16,16, 16,0,16, 16,0,0, 0,0), customFace(0,16,16, 0,16,0, 16,0,0, 16,0,16, 0,0)]  //west
+[customFace(16,24,15.5, 0,24,15.5, 0,0,16, 16,0,16, 0,0), customFace(0,24,15.5, 16,24,15.5, 16,0,16, 0,0,16, 0,0), customFace(0,20,12, 16,20,12, 16,0,0, 0,0,0, 0,0), customFace(16,20,12, 0,20,12, 0,0,0, 16,0,0, 0,0)], //north
+[customFace(16,24,0.5, 0,24,0.5, 0,0,0, 16,0,0, 0,0), customFace(0,24,0.5, 16,24,0.5, 16,0,0, 0,0,0, 0,0), customFace(16,20,4, 0,20,4, 0,0,16, 16,0,16, 0,0), customFace(0,20,4, 16,20,4, 16,0,16, 0,0,16, 0,0)], //south
+[customFace(15.5,24,16, 15.5,24,0, 16,0,0, 16,0,16, 0,0), customFace(15.5,24,0, 15.5,24,16, 16,0,16, 16,0,0, 0,0), customFace(12,20,0, 12,20,16, 0,0,16, 0,0,0, 0,0), customFace(12,20,16, 12,20,0, 0,0,0, 0,0,16, 0,0)], //east
+[customFace(0.5,24,16, 0.5,24,0, 0,0,0, 0,0,16, 0,0), customFace(0.5,24,0, 0.5,24,16, 0,0,16, 0,0,0, 0,0), customFace(4,20,0, 4,20,16, 16,0,16, 16,0,0, 0,0), customFace(4,20,16, 4,20,0, 16,0,0, 16,0,16, 0,0)]  //west
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+hitbox:"cube"
+},
+sideFire:{
+verts:[
+[],
+[],
+[],
+[customFace(0,20,14, 16,20,14, 16,0,16, 0,0,16, 0,0)],
+[],
+[]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+rotate:true,
+hitbox:"cube"
+},
+bottomFire:{
+verts:[
+[customFace(0,12,0, 16,12,0, 16,16,16, 0,16,16, 0,0),customFace(16,12,16, 0,12,16, 0,16,0, 16,16,0, 0,0), customFace(16,12,0, 16,12,16, 0,16,16, 0,16,0, 0,0),customFace(0,12,16, 0,12,0, 16,16,0, 16,16,16, 0,0)],
+[],
+[],
+[],
+[],
+[]
 ],
 cull: {
 top: 0,
@@ -15921,12 +16147,13 @@ makeBlock(arr, shapes.rotate, slabBlock)
 slabBlock.textures = arr
 }
 if(baseBlock.name === "jungleLeaves"){
-makeBlock(new Array(6).fill("floweringJungleLeaves"), shapes.cube, slabBlock)
+makeBlock(new Array(6).fill("floweringJungleLeaves"), shapes.cube, slabBlock, null, "Flowering Jungle Leaves")
 slabBlock.transparent = true
 }
 if(baseBlock.fire){
 baseBlock.shape = shapes.fire
-slabBlock.shape = shapes.cube
+slabBlock.shape = shapes.sideFire
+stairBlock.shape = shapes.bottomFire
 }
 if(baseBlock.name === "endRod"){
 baseBlock.shape = shapes.endRod
@@ -20464,10 +20691,14 @@ let rnd = rand(this.blocks.length) | 0
 let x = (rnd >> 8) + this.x
 let y = (rnd >> 4 & 15) + this.y
 let z = (rnd & 15) + this.z
-var f = blockData[this.blocks[rnd] || 0].fallingDust
-var under = world.getBlock(x,y-1,z,this.type)
+let block = this.blocks[rnd] || 0
+let f = blockData[block].fallingDust
+let under = world.getBlock(x,y-1,z,this.type)
 if(f && !(under && blockData[under].solid)){
 world.addParticle(new FallingDustParticle(x+rand(-0.5,0.5),y-0.5,z+rand(-0.5,0.5),f),this.type)
+}
+if(blockData[block].name === "fire" && worldSettings.fireSpreads){
+blockData[block].tick(x,y,z,this.type)
 }
 }
 }
@@ -27356,6 +27587,7 @@ Button.add(width / 2, height/2 + -185, width / 4, 40, ["Kill command enabled","K
 Button.add(width / 2, height/2 + -125, width / 4, 40, ["Day/Night Cycle: On", "Day/Night Cycle: Off"], "options worldSettings", r => worldSettings.dayNightCycle = r === "Day/Night Cycle: On", needsCheats, noCheatsThenSayIt, () => worldSettings.dayNightCycle ? 0 : 1)
 Button.add(width / 2, height/2 + -65, width / 4, 40, ["Blocks Fall: On", "Blocks Fall: Off"], "options worldSettings", r => worldSettings.blocksFall = r === "Blocks Fall: On", needsCheats, noCheatsThenSayIt, () => worldSettings.blocksFall ? 0 : 1)
 Button.add(width / 2, height/2 + -5, width / 4, 40, ["PVP: On","PVP: Off"], "options worldSettings", r => worldSettings.pvp = r === "PVP: On", null, null, () => worldSettings.pvp ? 0 : 1)
+Button.add(width / 2, height/2 + 55, width / 4, 40, ["Fire spreads: On","Fire spreads: Off"], "options worldSettings", r => worldSettings.fireSpreads = r === "Fire spreads: On", null, null, () => worldSettings.fireSpreads ? 0 : 1)
 Button.add(width / 2, height - 50, width / 3, 40, "Back", "options worldSettings", r => changeScene(previousScreen))
 // Control menu buttons
 Button.add(mid - x2, height - 30, w2, 40, "Done", "options controls", r => {
