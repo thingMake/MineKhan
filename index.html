@@ -65,7 +65,7 @@ font-family:sans-serif;
 overflow:auto;
 box-sizing:border-box;
 }
-button, #onscreenControls, canvas, #loader{
+button, canvas, #loader{
 /*get rid of user select*/
 -webkit-tap-highlight-color: transparent;
 -webkit-touch-callout: none;
@@ -397,29 +397,6 @@ font:15px VT323;
 #help h1{font-size:25px;}
 #help h2{font-size:18px;}
 #help img{max-width:100%;}
-#onscreenControls{
-position:fixed;
-font-family:monospace;
-bottom:10px;
-width:100%;
-}
-#onscreenControls button{
-min-width:calc(100% / 13);
-min-height:40px;
-}
-#onscreenControls #buttonsRight{
-position:absolute;
-bottom:10px;
-right:10px;
-}
-#onscreenControls #buttonsTop{
-position:absolute;
-top:10px;
-left:10px;
-width:calc(100% - 20px);
-display:flex;
-align-items:center;
-}
 #loader{
 background:#181818;
 color:white;
@@ -689,21 +666,6 @@ Shaped: The ingredients have a certain shape and the shape can be moved around.<
 Shapeless: The ingredients can be arranged on the grid in any way
 </div>
 </div>
-</div>
-<div id="onscreenControls" class="hidden">
-<button style="visibility:hidden;">&nbsp;</button><button id="controlW">W</button>
-<br>
-<button id="controlA">A</button><button style="visibility:hidden;">&nbsp;</button><button id="controlD">D</button>
-<br>
-<button style="visibility:hidden;">&nbsp;</button><button id="controlS">S</button>
-<div id="buttonsRight">
-<button id="controlSpace">space</button>
-<br>
-<button id="controlShift">shift</button>
-</div>
-<!--<div id="buttonsTop">
-<button id="controlPause">Pause</button>
-</div>-->
 </div>
 <div id="loader">
 <div class="name"><img src="https://data.thingmaker.repl.co/images/minekhan.png"></div><br>
@@ -1061,15 +1023,6 @@ window.controls = document.getElementById("controls")
 window.controlDetect = document.getElementById("controlDetect")
 window.narratorVoiceSelect = document.getElementById("narratorVoiceSelect")
 window.help = document.getElementById("help")
-window.onscreenControls={
-w:document.getElementById("controlW"),
-a:document.getElementById("controlA"),
-s:document.getElementById("controlS"),
-d:document.getElementById("controlD"),
-" ":document.getElementById("controlSpace"),
-"shift":document.getElementById("controlShift"),
-}
-window.onscreenControl_Element = document.getElementById("onscreenControls")
 canvas.width  = window.innerWidth
 canvas.height = window.innerHeight
 canvas2.width  = window.innerWidth
@@ -1080,7 +1033,7 @@ window.loader = document.getElementById("loader")
 window.loadBar = document.querySelector("#loadBar div")
 window.themeColor = document.getElementById("themeColor")
 let touchScreen = "ontouchstart" in document
-if(!touchScreen) onscreenControl_Element.style.display = "none"
+//if(!touchScreen) onscreenControl_Element.style.display = "none"
 var preVersion = false //preview version
 function MineKhan() {
 window.console.log("%cWhat are you doing?\n%cHacking?\n%cDON'T DO THAT!\n%cIf you are not a developer, %cGET OUT OF HERE!!!", "font-size:20px;font-weight:bold;", "background:lightgreen;padding:10px;", "color:red;font-weight:bold;", "text-decoration:underline;","text-decoration:underline;color:red;font-weight:bold;")
@@ -12193,8 +12146,8 @@ enter: [window.marketplace],
 exit: [window.marketplace]
 },
 play: {
-enter: [window.messageHolder, window.onscreenControl_Element],
-exit: [window.messageHolder, window.onscreenControl_Element],
+enter: [window.messageHolder],
+exit: [window.messageHolder],
 onexit: newScene => {
 if(newScene !== "chat") Messages.clear()
 }
@@ -18894,7 +18847,7 @@ if(fall > 0.5 && block){
 blockParticles(block, p.x,p.y-p.bottomH,p.z,10, "player",world, p.dimension)
 blockSound(block, "step", p.x,p.y,p.z, 1)
 }
-if(controlMap.jump.pressed) {
+if(controlMap.jump.pressed || onscreenControls.jump) {
 p.velocity.y = p.jumpSpeed
 p.onGround = false
 if(survival){
@@ -19094,13 +19047,13 @@ win.pressurePlateHasPressure = pressurePlateHasPressure
 let controls = function() {
 move.x = 0
 move.z = 0
-if(controlMap.forward.pressed) move.z += p.speed
-if(controlMap.backward.pressed) move.z -= p.speed
-if(controlMap.left.pressed) move.x += p.speed
-if(controlMap.right.pressed) move.x -= p.speed
+if(controlMap.forward.pressed || onscreenControls.forward) move.z += p.speed
+if(controlMap.backward.pressed || onscreenControls.backward) move.z -= p.speed
+if(controlMap.left.pressed || onscreenControls.left) move.x += p.speed
+if(controlMap.right.pressed || onscreenControls.right) move.x -= p.speed
 if (p.flying) {
-if(controlMap.jump.pressed) p.velocity.y += 0.09
-if(controlMap.sneak.pressed) p.velocity.y -= 0.09
+if(controlMap.jump.pressed || onscreenControls.jump) p.velocity.y += 0.09
+if(controlMap.sneak.pressed || onscreenControls.sneak) p.velocity.y -= 0.09
 }
 if(Key.arrowleft) p.ry -= 0.1
 if(Key.arrowright) p.ry += 0.1
@@ -28170,7 +28123,7 @@ Slider.all.push(new Slider(x, y, w, h, scenes, label, min, max, defaut, callback
 }
 Slider.all = []
 class Button {
-constructor(x, y, w, h, labels, scenes, callback, disabled, hoverText, setIndex) {
+constructor(x, y, w, h, labels, scenes, callback, disabled, hoverText, setIndex, mouseup) {
 this.x = x
 this.y = y
 this.h = h
@@ -28181,7 +28134,9 @@ this.hoverText = !hoverText || typeof hoverText === "string" ? (() => hoverText)
 this.scenes = Array.isArray(scenes) ? scenes : [scenes]
 this.labels = Array.isArray(labels) ? labels : [labels]
 this.callback = callback
+this.mouseupCallback = mouseup
 this.setIndex = setIndex
+this.pressed = false
 }
 mouseIsOver() {
 return mouseX >= this.x - this.w / 2 && mouseX <= this.x + this.w / 2 && mouseY >= this.y - this.h / 2 && mouseY <= this.y + this.h / 2
@@ -28271,9 +28226,25 @@ if (this.disabled() || !mouseDown || !this.scenes.includes(screen)) {
 return false
 }
 if (this.mouseIsOver()) {
+this.pressed = true
 this.index = (this.index + 1) % this.labels.length
 this.callback(this.labels[this.index])
 return true
+}
+}
+mouseup(){
+if (this.disabled() || !this.scenes.includes(screen)) {
+return
+}
+if(this.pressed){
+this.pressed = false
+if(this.mouseupCallback) this.mouseupCallback()
+return true
+}
+}
+static mouseIsOver(){
+for (let button of Button.all) {
+if(button.scenes.includes(screen) && button.mouseIsOver()) return button
 }
 }
 static draw() {
@@ -28291,8 +28262,17 @@ break
 }
 }
 }
-static add(x, y, w, h, labels, scenes, callback, disabled, hoverText, setIndex) {
-Button.all.push(new Button(x, y, w, h, labels, scenes, callback, disabled, hoverText, setIndex))
+static mouseup(){
+let draw = false
+for (let button of Button.all) {
+if (button.mouseup()) {
+draw = true
+}
+}
+if(draw) Button.draw()
+}
+static add(x, y, w, h, labels, scenes, callback, disabled, hoverText, setIndex, mouseup) {
+Button.all.push(new Button(x, y, w, h, labels, scenes, callback, disabled, hoverText, setIndex, mouseup))
 }
 }
 Button.all = []
@@ -28302,6 +28282,8 @@ Button.all = []
 Slider.all = []
 const nothing = () => false
 const always = () => true
+const s = inventory.size
+const s2 = s / 2
 // Main menu buttons
 Button.add(width / 2, height / 2 - 40, 400, 40, "Singleplayer", "main menu", r => {
 changeScene("loadsave menu")
@@ -28433,8 +28415,52 @@ Button.add(mid, height / 2 + 40, w2, 40, "Cancel", "multiplayer connecting", r =
 Button.add(mid, height / 2 + 40, w2, 40, "Back", "multiplayer lost", r => changeScene("multiplayer menu"))
 //play buttons
 if(touchScreen){
-Button.add(mid-14, 14, 20,20, "/", "play", () => Messages.showInput())
-Button.add(mid+14, 14, 20,20, "❚❚", "play", r => changeScene("pause"))
+var bs = s*0.75 //buton size
+var bs2 = bs / 2
+Button.add(mid-bs2, bs2, bs,bs, "/", "play", () => Messages.showInput())
+Button.add(mid+bs2, bs2, bs,bs, "❚❚", "play", r => changeScene("pause"))
+Button.add(bs*3, height-bs*5, bs*2,bs*2, "W", "play", r => {
+onscreenControls.forward = true
+if (Date.now() < p.lastForward + 400 && !p.sprinting && !p.sneaking) {
+p.sprinting = true
+p.FOV(settings.fov + 10, 250)
+} else {
+p.lastForward = Date.now()
+}
+}, null,null,null, r => onscreenControls.forward = false)
+Button.add(bs, height-bs*3, bs*2,bs*2, "A", "play", r => onscreenControls.left = true, null,null,null, r => onscreenControls.left = false)
+Button.add(bs*5, height-bs*3, bs*2,bs*2, "D", "play", r => onscreenControls.right = true, null,null,null, r => onscreenControls.right = false)
+Button.add(bs*3, height-bs, bs*2,bs*2, "S", "play", r => onscreenControls.backward = true, null,null,null, r => onscreenControls.backward = false)
+Button.add(width-bs, height-bs*3, bs*2,bs*2, "space", "play", r => {
+onscreenControls.jump = true
+if(!p.spectator){
+if (Date.now() < p.lastJump + 400) {
+p.flying ^= true
+if(survival) p.flying = false
+} else {
+p.lastJump = Date.now()
+}
+}
+}, null,null,null, r => onscreenControls.jump = false)
+Button.add(width-bs, height-bs, bs*2,bs*2, "shift", "play", r => {
+onscreenControls.sneak = true
+if(!p.flying){
+p.sneaking = true
+if (p.sprinting) {
+p.FOV(settings.fov, 100)
+}
+p.sprinting = false
+p.speed = p.sneakSpeed
+p.bottomH = 1.32
+}
+}, null,null,null, r => {
+onscreenControls.sneak = false
+if (p.sneaking) {
+p.sneaking = false
+p.speed = p.defaultSpeed
+p.bottomH = 1.62
+}
+})
 }
 //chat buttons
 Button.add(width-50, height-25, 100,50, "enter", "chat", () => Messages.submitInput())
@@ -28471,6 +28497,8 @@ a.href = "data:text/plain,"+getSaveJSON()
 a.download = world.name+".minekhan"
 a.click()
 }, nothing)
+// Inventory buttons
+Button.add(width - 50, 15, 60, 30, "close", ["inventory","crafting","furnace","chest"], play)
 // You Died buttons
 Button.add(width / 2, 225, 300, 40, "Respawn", "dead", r => {
 respawn()
@@ -28970,6 +28998,7 @@ var prev = ctx.textBaseline
 ctx.textBaseline = "middle";
 ctx.fillStyle = "white"
 ctx.fillText("...",x,y)
+ctx.textAlign = 'left'
 ctx.textBaseline = prev;
 }
 }
@@ -28982,6 +29011,7 @@ gl.useProgram(program3D)
 gl.uniform1i(glCache.uSampler, 0)
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 //}
+ctx.textAlign = 'left'
 hotbar()
 let s = inventory.size
 let s2 = s / 2
@@ -29254,6 +29284,7 @@ gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT)
 gl.useProgram(program3D)
 gl.uniform1i(glCache.uSampler, 0)
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
+ctx.textAlign = 'left'
 ctx.fillStyle = "rgb(127, 127, 127)"
 ctx.fillRect(0, 0, canvas.width, canvas.height)
 ctx2.clearRect(0, 0, canvas.width, canvas.height)
@@ -30261,35 +30292,78 @@ document.onmousemove = trackMouse
 win.pTouch = {x: -100, y: 0};
 let touchMoveLimit = 500 //(touch screen only) miliseconds before it decides you want to break a block
 canvas.addEventListener("touchstart", function(e) {
-pTouch.x = e.changedTouches[0].pageX;
-pTouch.y = e.changedTouches[0].pageY;
+pTouch.x = e.x = e.changedTouches[0].pageX;
+pTouch.y = e.y = e.changedTouches[0].pageY;
 pTouch.touching = mouseDown=true
 pTouch.touchStart = Date.now()
 pTouch.moved = false
+e.tOucHScrEeN = true
+canvas.onmousedown(e)
+if(screen === "play" && !Button.mouseIsOver() && !changeSlot()) {
 pTouch.canDig = true
+}
+e.preventDefault();
 }, false);
 canvas.addEventListener("touchmove", function(e) {
 e.movementY = e.changedTouches[0].pageY - pTouch.y;
 e.movementX = e.changedTouches[0].pageX - pTouch.x;
-pTouch.x = e.changedTouches[0].pageX;
-pTouch.y = e.changedTouches[0].pageY;
+pTouch.x = e.x = e.changedTouches[0].pageX;
+pTouch.y = e.y = e.changedTouches[0].pageY;
+if(screen === "play"){
 mmoved(e);
 pTouch.moved = true
 if(Date.now() - pTouch.touchStart < touchMoveLimit && (e.movementX > 10 || e.movementY > 10 || e.movementX < -10 || e.movementY < -10)){
 pTouch.canDig = false
+}
+}else{
+trackMouse(e)
 }
 e.preventDefault();
 }, false);
 var touchend = e => {
 if(screen === "play" && Date.now() - pTouch.touchStart < touchMoveLimit && pTouch.canDig){
 holding = inventory.hotbar[inventory.hotbarSlot].id
+if(entHitbox.ent){
+breakKeyPressed()
+}else{
+placeKeyPressed()
+}
+}else if(screen === "play" && pTouch.canDig && entHitbox.ent){
 placeKeyPressed()
 }
 pTouch.touching = mouseDown = false
 pTouch.canDig = false
+e.tOucHScrEeN = true
+canvas.onmouseup(e)
+e.preventDefault();
 }
 canvas.addEventListener("touchend",touchend,false)
 canvas.addEventListener("touchcancel",touchend,false)
+let onscreenControls = {}
+let changeSlot = () => {
+for(let i = 0; i < inventory.hotbar.length; i ++) {
+let x = width / 2 - inventory.hotbar.length / 2 * inventory.size + (i + 0.5) * inventory.size + 25
+let y = height - inventory.size
+x -= inventory.size/2
+y -= inventory.size/2
+if((mouseX>x)&&(mouseY>y)&&(mouseX < x+inventory.size)&&(mouseY < y+inventory.size)){
+inventory.hotbarSlot = i
+holding = inventory.hotbar[inventory.hotbarSlot].id
+inventory.showName = 1.5
+updateHUD = true
+return true
+}
+}
+i = inventory.hotbar.length
+let x = width / 2 - inventory.hotbar.length / 2 * inventory.size + (i + 0.5) * inventory.size + 25
+let y = height - inventory.size
+x -= inventory.size/2
+y -= inventory.size/2
+if((mouseX>x)&&(mouseY>y)&&(mouseX < x+inventory.size)&&(mouseY < y+inventory.size)){
+changeScene("inventory")
+return true
+}
+}
 document.onpointerlockchange = function() {
 if (doc.pointerLockElement === canvas) {
 doc.onmousemove = mmoved
@@ -30317,6 +30391,7 @@ p.spyglassStart = Date.now()
 newWorldBlock()
 }
 canvas.onmousedown = function(e) {
+if(touchScreen && !e.tOucHScrEeN) return
 mouseX = e.x
 mouseY = e.y
 mouseDown = true
@@ -30351,7 +30426,7 @@ mouseKey = "rightMouse"
 Key.rightMouse = true
 break
 }
-if(screen === "play") {
+if(screen === "play" && !e.tOucHScrEeN) {
 if (doc.pointerLockElement !== canvas) {
 getPointer()
 p.lastBreak = Date.now()
@@ -30384,6 +30459,7 @@ Button.click()
 Slider.click()
 }
 canvas.onmouseup = function(e) {
+if(touchScreen && !e.tOucHScrEeN) return
 switch(e.button) {
 case 0:
 Key.leftMouse = false
@@ -30396,78 +30472,11 @@ Key.rightMouse = false
 break
 }
 mouseDown = false
+Button.mouseup()
 Slider.release()
 draggingInvBar = false
 if(screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest") releaseInv()
 }
-for(var onscreencontrol in onscreenControls){
-var onscreencontrolElement = onscreenControls[onscreencontrol]
-onscreencontrolElement.value = onscreencontrol
-onscreencontrolElement.onmousedown=function(){
-canvas.onkeydown({key:this.value})
-}
-onscreencontrolElement.onmouseup=function(){
-canvas.onkeyup({key:this.value})
-}
-onscreencontrolElement.addEventListener("touchstart",onscreencontrolElement.onmousedown)
-onscreencontrolElement.addEventListener("touchend",onscreencontrolElement.onmouseup)
-onscreencontrolElement.addEventListener("touchcancel",onscreencontrolElement.onmouseup)
-}
-onscreenControls[" "].addEventListener("click",function(){
-if (!survival && !p.spectator) {//fly toggle
-if (Date.now() < p.lastJump + 400) {
-p.flying ^= true
-} else {
-p.lastJump = Date.now()
-}
-}
-})
-let lastForward = 0
-onscreenControls.w.addEventListener("touchstart",function(){
-if (Date.now() < lastForward + 400) { //sprint toggle
-player.sprinting = true
-} else {
-lastForward = Date.now()
-}
-})
-onscreenControls.w.addEventListener("touchend",() => p.sprinting = false)
-onscreenControls.w.addEventListener("touchcancel",() => p.sprinting = false)
-onscreenControls[" "].addEventListener("mousedown",function(){
-Key[" "]=true
-})
-onscreenControls[" "].addEventListener("mouseup",function(){
-Key[" "]=false
-})
-onscreenControls[" "].addEventListener("touchstart",function(){
-Key[" "]=true
-})
-onscreenControls[" "].addEventListener("touchend",function(){
-Key[" "]=false
-})
-onscreenControl_Element.onclick = e => {mouseX = e.x; mouseY = e.y}
-let changeSlot = () => {
-for(let i = 0; i < inventory.hotbar.length; i ++) {
-let x = width / 2 - inventory.hotbar.length / 2 * inventory.size + (i + 0.5) * inventory.size + 25
-let y = height - inventory.size
-x -= inventory.size/2
-y -= inventory.size/2
-if((mouseX>x)&&(mouseY>y)&&(mouseX < x+inventory.size)&&(mouseY < y+inventory.size)){
-inventory.hotbarSlot = i
-holding = inventory.hotbar[inventory.hotbarSlot].id
-updateHUD = true
-}
-}
-i = inventory.hotbar.length
-let x = width / 2 - inventory.hotbar.length / 2 * inventory.size + (i + 0.5) * inventory.size + 25
-let y = height - inventory.size
-x -= inventory.size/2
-y -= inventory.size/2
-if((mouseX>x)&&(mouseY>y)&&(mouseX < x+inventory.size)&&(mouseY < y+inventory.size)){
-changeScene("inventory")
-}
-}
-onscreenControl_Element.addEventListener("click",changeSlot)
-onscreenControl_Element.addEventListener("touchend",changeSlot)
 canvas.onkeydown = function(e) {
 let k = e.key.toLowerCase()
 if (e.preventDefault && k === " ") {
@@ -30508,6 +30517,14 @@ p.flying ^= true
 if(survival) p.flying = false
 } else {
 p.lastJump = Date.now()
+}
+}
+if(k === controlMap.forward.key){
+if (Date.now() < p.lastForward + 400 && !p.sprinting && !p.sneaking) {
+p.sprinting = true
+p.FOV(settings.fov + 10, 250)
+} else {
+p.lastForward = Date.now()
 }
 }
 if (k === controlMap.zoom.key) {
@@ -31326,6 +31343,7 @@ p.lastUpdate = performance.now()
 p.lastBreak = Date.now()
 p.lastPlace = Date.now()
 p.lastJump = Date.now()
+p.lastForward = Date.now()
 p.autoBreak = false
 p.autoBuild = false
 p.flying = false
@@ -33046,30 +33064,56 @@ p.sneaking = false
 p.speed = p.defaultSpeed
 p.bottomH = 1.62
 }
+let s = inventory.size
+let s2 = s/2
 for(var i=0; i<9; i++){
 if(!inventory.hotbar[i] || !inventory.hotbar[i].id) continue
-if(inventory.hotbar[i].amount < 1){
+var item = inventory.hotbar[i]
+if(item.amount < 1){
 inventory.hotbar[i] = 0
 holding = inventory.hotbar[inventory.hotbarSlot].id
 updateHUD = true
 continue
 }
-if(inventory.hotbar[i].animation > 1){
-inventory.hotbar[i].animation -= 0.04
-if(inventory.hotbar[i].animation < 1) inventory.hotbar[i].animation = 1
+if(item.animation > 1){
+item.animation -= 0.04
+if(item.animation < 1) item.animation = 1
 updateHUD = true
 }
-if(blockData[inventory.hotbar[i].id].pickaxe || blockData[inventory.hotbar[i].id].sword || blockData[inventory.hotbar[i].id].shovel || blockData[inventory.hotbar[i].id].axe || blockData[inventory.hotbar[i].id].hoe || inventory.hotbar[i].id===blockIds.flintAndSteel){
-if(inventory.hotbar[i].durability <= 0){
+if(blockData[item.id].pickaxe || blockData[item.id].sword || blockData[item.id].shovel || blockData[item.id].axe || blockData[item.id].hoe || item.id===blockIds.flintAndSteel){
+if(item.durability <= 0){
 inventory.hotbar[i] = 0
-holding = inventory.hotbar[inventory.hotbarSlot].id
+holding = item.id
 playSound("entity.item.break")
 if(multiplayer) send({type:"playSound", data:"entity.item.break", x:p.x,y:p.y,z:p.z})
 updateHUD = true
 continue
-}else if(!inventory.hotbar[i].durability){
-inventory.hotbar[i].durability = blockData[inventory.hotbar[i].id].durability
+}else if(!item.durability){
+item.durability = blockData[item.id].durability
 }
+}
+let x = width / 2 - inventory.hotbar.length / 2 * inventory.size + (i + 0.5) * inventory.size + 25
+let y = height - inventory.size
+if(touchScreen && mouseX>x-s2 && mouseY>y-s2 && mouseX<x+s2 && mouseY<y+s2){ //drop item
+if(pTouch.touching){
+if(item.dropStart){
+if(performance.now() - item.dropStart > 500){
+delete item.dropStart
+let d = p.direction
+let block = item.id
+block = block < isCube && !blockData[block].item ? block | blockMode : block
+world.addEntity(new Item(p.x, p.y, p.z, d.x/4, d.y/4, d.z/4, block, false, 1,item.durability),false,p.dimension)
+if(survival){
+item.amount --
+item.animation = 1.5
+holding = item.id
+updateHUD = true
+}
+}
+}else{
+item.dropStart = performance.now()
+}
+}else if(item.dropStart) delete item.dropStart
 }
 }
 if((now - attackCooldownStart) / 1000 * 20 > attackCooldownTime){
