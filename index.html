@@ -950,6 +950,33 @@ gl_FragColor = vec4(color.rgb * currentTint * uLightLevel, color.a);
 if (gl_FragColor.a == 0.0) discard;
 }
 </script>
+<script type="x-shader/vertex" id="textVertexShader">
+attribute vec2 aVertex;
+attribute vec2 aTexture;
+varying vec2 vTexture;
+uniform mat4 uView;
+void main() {
+vTexture = aTexture;
+gl_Position = uView * vec4(aVertex, 1.0, 1.0);
+}
+</script>
+<script type="x-shader/fragment" id="textFragmentShader">
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform sampler2D uSampler;
+uniform float uLightLevel;
+uniform vec3 textColor;
+uniform vec4 background;
+varying vec2 vTexture;
+void main(){
+vec4 color = texture2D(uSampler, vTexture);
+gl_FragColor = vec4(mix(background.rgb, color.rgb*textColor, color.a) * uLightLevel, mix(background.a, 1., color.a));
+if (gl_FragColor.a == 0.0) discard;
+}
+</script>
 <script type="x-shader/vertex" id="2dVertexShader">
 attribute vec2 aVertex;
 attribute vec2 aTexture;
@@ -1033,7 +1060,6 @@ window.loader = document.getElementById("loader")
 window.loadBar = document.querySelector("#loadBar div")
 window.themeColor = document.getElementById("themeColor")
 let touchScreen = "ontouchstart" in document
-//if(!touchScreen) onscreenControl_Element.style.display = "none"
 var preVersion = false //preview version
 function MineKhan() {
 window.console.log("%cWhat are you doing?\n%cHacking?\n%cDON'T DO THAT!\n%cIf you are not a developer, %cGET OUT OF HERE!!!", "font-size:20px;font-weight:bold;", "background:lightgreen;padding:10px;", "color:red;font-weight:bold;", "text-decoration:underline;","text-decoration:underline;color:red;font-weight:bold;")
@@ -2890,14 +2916,14 @@ blueRedstoneLamp: "0g0g8kċY<ŒZ1ŖZ^øZģHZøvZNÍZFEZ0000004Cķ9Ĝ81.Çeĭë5�
 greenRedstoneLamp: "0g0g8pxZÔČY,ŗWHŜYŞťHĲŢWØŚZNěW0000004Cķ9Ĝ81.Çeĭë5įķ9įįa@íÎ.geĜtĔDÆ9ĈŋýXķ0ïÑþĘS06œĝķ0dgąĖíķeŉjánÆe{RKġo9İĠ5įķ1.Áeĭë4kĿ9Ċ8000000",
 yellowRedstoneLamp: "0g0g7-ìHÀħWZÀWZĘWZřZZŗHZëW0000004Cķ9Ĝ81.Çeĭë5įķ9įįa@íÎ.geĜtĔDÆ9ĈŋýXķ0ïÑþĘS06œĝķ0dgąĖíķeŉjánÆe{RKġo9İI5įķ1.Áeĭë4kĿ9Ċ8000000",
 redRedstoneLamp: "0g0g8-ìHĤŚZţ0WŤAYťŒYť-ZţĪWõŉY0000004Cķ9Ĝ81.Çeĭë5įķ9įįa@íÎ.geĜtĔDÆ9ĈŋýXķ0ïÑþĘS06œĝķ0dgąĖíķeŉjánÆe{RKġo9İĠ5įķ1.Áeĭë4kĿ9Ċ8000000",
-sun0: "0g0ghZŤYZšYZUYEĉWAùZwëZoKYkÀYgSHc(H8wW4gW00W000sÝZ8wHsÝY02xùĎ/ičĕö02ylĭ/ičĕö8Rylĭ/iŜĕögXyĠĮ/ičĕöp8ÅSĮRÌčęöx^ŏoŏRÌĝęö#ĄÐt8_ĻĝęöMõàĉ9_ĽĞMö.ĵáxFæþĞMöRgXčŖÂĽĭMö^Âÿĥ_ÈĿĭMöÂĆč%ØÉoĭMöÈĽĝĕÙÐoĭMöÈĽĞMõÐoĭMöÐoĭMõÐoĭMöØÈĽĝĕØÈĽĝĕ",
-sun1: "0g0gh00W4gW8wWc(HgSHkÀYoKYwëZAùZEĉWZUYZšYZŤYsÝZ8wHsÝY00002hcïMķý%õ02hcïO}ï%õ02ncïO}ï%Ø02hcïFĂâF^00h-ÑFĆĺĉ900gĠÑx{ŝĄŏ00gòĪxaÐ*ď000ïĪp8ÂĀĭ000X}oįRüč0004yàðNgX0000x8ĄňõÐ000018Rx-R000000RgXx00000000Xx0000000000Xx8RgXx8Rg",
-sun2: "0g0gh00W0004gW8wW8wHc(HgSHkÀYoKYwëZsÝZAùZsÝYEĉWZUYZšYZŤY00000000010000000001gXw0000001gXx8S00001oįMIRg0001F^ÂgÏgë001MõÏüXoX001.ĵàočwīw01RgàĀĬF4w01^üXsĭF6x01ÈÂĎwōM]x01×ĽýM7M]M01àĄŋđ7.óM81çŅŌč].óT81XuŌč].óM81XuōĕE.óM81",
-sun3: "0g0gg00W4gW8wW8wHc(HgSHkÀYoKYsÝZwëZsÝYAùZEĉWZUYZšYZŤY0000000000000000000000hh00001hhh0001hizy000hiOQQ001iOQVV00hzQVÓÓ00h)?ÄÔG01i)VÔäò01j?Äæòă01z?ÔĐăĤ0hAÄÔòńń0h)ÄäăŅŕ0hAÄäăŅZ0hAÄåĤŅZ",
 soulFire: "0g0g]00028H2oY2.W2PH2ÇY2ÖZ2.H2EZ3sZ3cY2ţW2ĒZ2ģH2ēW2×W2ĂY7%Wz÷H_ĶHzêHb<W2ţH2ŒZ3sY2łY2ģWnËZWYW:ėWnÚZf|YOĖZ[YH2óY7$ZÔņYďZZvêWrÚZf|H3cH2óHÜŖZZZZ7sZOĆZłZZD÷HjËYHŖZçŖZîŖZÅĶYñŖZD÷Y2ĲH_YHģZZôŖZÐņYb<HğZZjËZċZZÃĶYĺZZàŖZ#÷Y2ÇZ2ĂZÉņY0000000000000000000000000000000000000000000000000200000000000012000SS000000026gEKKS00sS01Qóm(Kĸħħ00cäÏ4PjEUęÞì000Kđû?ĴĄ/äòś3S02XùĉĐúJ]ýNâaV0ÂĕÎ?čÅtÆęç3Ù@0ÂİāĽBÆĜ×ŀġÂŕbXcŌOn2ąOãīıû3@0)ïÎM#m;æŠÏĬôvëCĘŏú?m$ì6j-ÝĽ$UEĩĎ#mQËkFşĶÐï",
 "soulFire0": "0g0g]00028H2oY2.W2PH2ÇY2ÖZ2.H2EZ3sZ3cY2ţW2ĒZ2ģH2ēW2×W2ĂY7%Wz÷H_ĶHzêHb<W2ţH2ŒZ3sY2łY2ģWnËZWYW:ėWnÚZf|YOĖZ[YH2óY7$ZÔņYďZZvêWrÚZf|H3cH2óHÜŖZZZZ7sZOĆZłZZD÷HjËYHŖZçŖZîŖZÅĶYñŖZD÷Y2ĲH_YHģZZôŖZÐņYb<HğZZjËZċZZÃĶYĺZZàŖZ#÷Y2ÇZ2ĂZÉņY0000000000000000000000000000000000000000000000000200000000000012000SS000000026gEKKS00sS01Qóm(Kĸħħ00cäÏ4PjEUęÞì000Kđû?ĴĄ/äòś3S02XùĉĐúJ]ýNâaV0ÂĕÎ?čÅtÆęç3Ù@0ÂİāĽBÆĜ×ŀġÂŕbXcŌOn2ąOãīıû3@0)ïÎM#m;æŠÏĬôvëCĘŏú?m$ì6j-ÝĽ$UEĩĎ#mQËkFşĶÐï",
 "soulFire1": "0g0g_00028H2oY2EZ2.W2oZ2ģW2ĒZ2×W2æW2ÇY2ŒZb<HvêW2ţW2ēW2ĂZ2óH2ģH7%WvêHrÛW2ţH3sYf|H2æHnËZ2łYjËY,ĖZ_YHb<W2PHOĖZYZZf|YîŖZôŖZØņZ2ÖZ2óY>YH[YHzêH7$Z3cY[YW:ĖZÃĶH~ĶH_ĶH2ĲH2ĲY2ĂYZZZD÷HğZZÔņZñŖZ3sZçŖZņZZăZZÍņYÉņYŎZZOĆZ2œW7<WLĆZD÷YnÚZ2łZWYWÐņY00000000000000000000000000000000000000000000000000000000000000028oSS0000001>6ewSú0S004wTRĭdo-(Ř1S00sÇ2Aòü!{ęà6S00ÕĨĚy[s/äĨřŋù0yïiMÒök]ýMĩÒĺëÀčÂĝôPĖÌħđßTį06ĔňMŉĿĖÑMă>ÚÃëkĕěßĵrFCŌěñ|ąë(ŘĢĸĬÌĞ{đřÔŗwĩS/pĀöă?õARħŋķXCŀęIŔú+ÔxěÖNă+",
 "soulFire2": "0g0g?0002ÇZ2ÖZ2.W2PH28H2EZ2ĂY2ţW7%W2ēW2æH2×W2.H2ÇY2ţHb<Hb<W2ģH2ĲH2ĂZ7$ZrÛWvêH3sY2łY2óH2oYjËY_ĶH3sZf|H>YW[YHOĖZD÷Yf|Y3cHzêHLĆZ2œW2æWz÷HD÷H2ĒZàŖZ~ĶHZZZ#÷Y:ėWÅņY>YH,ĖZnËZøŖZÔņZ[YWWYWÐņYĲZZnÚZôŖZĺZZ2ģWņZZOĆZYZZďZZÅĶY00000000000000000000000000000000000000000000000000000000000000í2coSK0000EÀĨī9gEÆĨĈ000--xĨĮùywúM1000wåS>òl$ÊħŚCöëcÝŐìQøvSïhÁ4ĨëqËqT6ÂĎ{ĄšíóSë0S]ŗŋý#@KÂĩëìëaTÖŚ#ÿĘ;ĬçCØĳëAĸĒîDrLRòĢŎeËoa{ĂûbńĘ$Ö^Á@u5CĥåkôŅĦê^2śķÎLÍdæřĸ8F6dwûxĸ÷",
+sun0: "0g0ghZŤYZšYZUYEĉWAùZwëZoKYkÀYgSHc(H8wW4gW00W000sÝZ8wHsÝY02xùĎ/ičĕö02ylĭ/ičĕö8Rylĭ/iŜĕögXyĠĮ/ičĕöp8ÅSĮRÌčęöx^ŏoŏRÌĝęö#ĄÐt8_ĻĝęöMõàĉ9_ĽĞMö.ĵáxFæþĞMöRgXčŖÂĽĭMö^Âÿĥ_ÈĿĭMöÂĆč%ØÉoĭMöÈĽĝĕÙÐoĭMöÈĽĞMõÐoĭMöÐoĭMõÐoĭMöØÈĽĝĕØÈĽĝĕ",
+sun1: "0g0gh00W4gW8wWc(HgSHkÀYoKYwëZAùZEĉWZUYZšYZŤYsÝZ8wHsÝY00002hcïMķý%õ02hcïO}ï%õ02ncïO}ï%Ø02hcïFĂâF^00h-ÑFĆĺĉ900gĠÑx{ŝĄŏ00gòĪxaÐ*ď000ïĪp8ÂĀĭ000X}oįRüč0004yàðNgX0000x8ĄňõÐ000018Rx-R000000RgXx00000000Xx0000000000Xx8RgXx8Rg",
+sun2: "0g0gh00W0004gW8wW8wHc(HgSHkÀYoKYwëZsÝZAùZsÝYEĉWZUYZšYZŤY00000000010000000001gXw0000001gXx8S00001oįMIRg0001F^ÂgÏgë001MõÏüXoX001.ĵàočwīw01RgàĀĬF4w01^üXsĭF6x01ÈÂĎwōM]x01×ĽýM7M]M01àĄŋđ7.óM81çŅŌč].óT81XuŌč].óM81XuōĕE.óM81",
+sun3: "0g0gg00W4gW8wW8wHc(HgSHkÀYoKYsÝZwëZsÝYAùZEĉWZUYZšYZŤY0000000000000000000000hh00001hhh0001hizy000hiOQQ001iOQVV00hzQVÓÓ00h)?ÄÔG01i)VÔäò01j?Äæòă01z?ÔĐăĤ0hAÄÔòńń0h)ÄäăŅŕ0hAÄäăŅZ0hAÄåĤŅZ",
 "soulFire3": "0g0g?0002oZ2EZ28H2oY2ÇY2ĒZ2łY2æW2PY2.H2PH2.W2ÖZ2ģH3cH2ţW2ģW2óH2ĂZ2ĂY2ēW2óY2œW7%Wb<WrÛW3sYvêWzêHnËZj|Yf|HjËYrÚZ3sZ2ţH2ĲYb<HLĆYØņZZZZD÷YďZZjËZ2ĲHÃĶH#÷YWYWOĆZD÷H2æH2ŒZñŖZàŖZvêHf|Y2×WÉņYÍņYÃĶYľZZôŖZYZZOĖZ7$Z_ĶH>YW:ėW000000000000000000000000000000000000000000000000í4cwSK0000001>7cw]Ĉë000cÆĨî[fwQúyÎ000ÀĐĸRôn(Ñ-ŉìS00;ķÞ4îă-áŘßAìë0KŠĚxîĈRòoň1T00ùæÁ4ĺvRSĈìĊí00ú.ĚďUu]Ö^ċóİ0aĘĩĸĭnFÌÞîkœāO0{(ĽöÉ,ÝPăSīc0ßč^OaË:cpßğ7Ć<æŠšĜ(c84!a*ČĶcXŏĳ8×Kb;ČúÂÁ40",
 "soulFire4": "0g0gS0002oZ2ÇZ2óH2ÖZ2.H2EZ2oY28H2.W2ģH2ģW2æW2ÇY2œW2ţW2ĂZ2ĒZ3sZ2ĂY2PH2łYb<Wb<H2ēW2æH2ŒZ3sY3cY7$Z2ĲY2ţH2ĲHf|HLĆY7%WÐņYLĆZėZZnËZjËYzêHvêHrÚZ7<W2×W2PY:ĖZWYWZZZîŖZ:ėW2óYvêWWėWD÷YOĖZÉņYçŖZÅĶYrÛW,ĖZz÷Hf|Y0000000000000000000000000000000000000000gîgÁñ00001įwùı$Ī|)000Á94Îb-ś3gK01kûÀĻlÇáĀÑķ01ĎļcīÊâÐû)K01ñù)Įł^3dÀg01IVdÕċVÖx÷V01ğĸTİÓĆó×Ėô72ĽÛ&ţDõOaTÄërs~à$ŉķ<ãÚŁGŊĆģÉīõoûĶ%,]ċĿŜŊt?Û@>ĞîSŢřĭæ6ŐcĚSCĻę",
 "soulFire5": "0g0g;0002EZ2PH2oY2ÇY2æH2æW2oZ28H2.H2ēW2ĒZ2ÖZ2.W2ģH2ÇZ2ĂZ2ţW2ţH2łY2PY2ĂY2ĲY2œW2ģW2×W2ŒZf|HvêW3cH7%WnËZ[YW7$Zf|Yb<W3sZ2óHzêHÅĶYćZZ2ĲH:ėWvêHjËYjËZ,ĖZ[YH#ĆY3sYb<H2łZ7sZZZZÐņYğZZûŖZOĖZîŖZWėW00000000000000000000000000000R4(00000000M5owTs0000>0í?Eě4)000>ø4jg?AĭÀÝ01VùgxþËCp)ë01ü6A@jÖ1d4001üÀMãĸFDtÖŇħ1îïp,Ňæoă÷Qħ0xdýŠċáÓ_üĊħ2æF}ĒœoįÚ|ďúðŒŗĮAõsjþUÄëĴĴrăÄĴ.ĪchzSãQdčÑĆqÀSsQŝļŎ,Ŋú7HČİnğV",
@@ -2961,7 +2987,7 @@ pointedDripstoneUpTip: "0g0g5000úōHìïHĊ,WÞVW000000000000000000000000000000
 dripstoneBlock: "0g0g5ìïHĊ,WúōHÞVWÎAH4Ĉ3ùwùQüge@ĸùyÂÚīă9gJR4ùÙBr1Ęi8ĈĿPĊIQĞ2{4ûëČĂ0i4ÕùiTiUQüŋõ4AKüÀúië90łdëûEüë|A^úi^J)ëdČ3Tëł1k]dĞi",
 pointedDripstone: "0g0g5000ÞVWìïHúōHĊ,W02ÂPĈ004^|ë000_Úë000ÃJ0000^Ú0000bÙ0000cù0000bù00002Ù00002Õ00002K00000000000000000000000000000000",
 soulFireFlame: "0g0g50002.W2ĂZÐņYZZZ0g00000y00000)00000)00001+00001ĭë0001įħ0001+ë000000000000000000000000000000000000000000000000000",
-lava: "0g0g5000ŤĈWZKWţ0WZŃH0000000000000Čħ0001QS0001]ë0000ČS000000000000000000000000000000000000000000000000000000000000000",
+lavaParticle: "0g0g5000ŤĈWZKWţ0WZŃH0000000000000Čħ0001QS0001]ë0000ČS000000000000000000000000000000000000000000000000000000000000000",
 flame: "0g0g5000ţ0WŤĈWZKWZŃH0g00000y00000)00000)00001+00001ĭë0001įħ0001+ë000000000000000000000000000000000000000000000000000",
 glint: "0g0g50002ÁW2ĩY3AZ3āH0g00000w00000Ě0000FĭI0000Ě00000w00000g0000000000000000000000000000000000000000000000000000000000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
@@ -4392,6 +4418,7 @@ world.setBlock(x,y,z,blockIds.obsidian,false,false,false,false,dimension)
 temperature:25,
 tick:function(x,y,z,dimension){
 blockData[blockIds.fire].spread(x,y,z,dimension)
+if(rand() < 0.05) world.addParticle(new LavaParticle(x,y+0.5,z),dimension)
 }
 },
 {
@@ -7217,7 +7244,13 @@ spyglass:true
 {
 name:"egg",
 Name:"Egg",
-item:true
+item:true,
+onuse:function(x,y,z,b,replaceItem,useDurability,minusOne,dimension){
+var pd = p.direction
+world.addEntity(new Egg(p.x+pd.x,p.y+pd.y,p.z+pd.z, pd.x*0.8, pd.y*0.8, pd.z*0.8),false,dimension)
+},
+minusOnUse:true,
+useAnywhere:true
 },
 {
 name:"noodles",
@@ -11744,21 +11777,22 @@ gl.vertexAttribPointer(glCache.skyboxVertex, 3, gl.FLOAT, false, 0, 0)
 gl.enableVertexAttribArray(glCache.skyboxVertex)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
 this.faces = size
-/*var tex = textureCoords[textureMap.sun0]
-this.sun = generateVAO(shapes.sun, tex[0],tex[1])*///works if shapes is cube
+var tex = textureCoords[textureMap.sun0]
+this.sun = generateVAO(shapes.sun, tex[0],tex[1])
 }
 render() {
+gl.depthFunc(gl.ALWAYS);
+gl.disable(gl.CULL_FACE);
 gl.useProgram(skyboxProgram);
 gl.uniform1f(glCache.skyboxLight, skyLight);
 gl.uniform3f(glCache.skyboxSky, sky[0], sky[1], sky[2])
 gl.uniform3f(glCache.skyboxSkyBottom, skyBottom[0],skyBottom[1],skyBottom[2]);
 gl.uniformMatrix4fv(glCache.skyboxView, false, matrix)
-gl.depthFunc(gl.ALWAYS);
-gl.disable(gl.CULL_FACE);
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
-/*var rotation = ((worldTime%1000)*Math.PI/500)+Math.PI
+gl.blendFunc(gl.ONE,gl.ONE)
+var rotation = ((worldTime%1000)*Math.PI/500)+Math.PI
 let diff = (performance.now() - p.lastUpdate) / tickTime
 if (diff > 1) diff = 1
 let px = (p.x - p.previousX) * diff + p.previousX
@@ -11767,8 +11801,10 @@ let pz = (p.z - p.previousZ) * diff + p.previousZ
 gl.useProgram(programEntity)
 const modelMatrix = entityMatrices.modelMatrix;
 modelMatrix.identity()
-modelMatrix.translate(px+sin(rotation)*4, py+cos(rotation)*4, pz)
-modelMatrix.rotZ(rotation+Math.PI2)
+modelMatrix.translate(px+sin(rotation)*100, py+cos(rotation)*100, pz)
+modelMatrix.rotZ(-rotation+Math.PI2)
+modelMatrix.rotY(Math.PI2)
+modelMatrix.scale(25,25,25)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
 let projectionMatrix = entityMatrices.projectionMatrix
@@ -11788,9 +11824,10 @@ gl.uniform1f(glCache.harmEffectEntity, 0)
 gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
 glExtensions.vertex_array_object.bindVertexArrayOES(this.sun.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.sun.size, gl.UNSIGNED_INT, 0)
-glExtensions.vertex_array_object.bindVertexArrayOES(null)*/
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
 gl.depthFunc(gl.LESS);
 gl.enable(gl.CULL_FACE)
+gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 }
 }
 let skybox
@@ -12035,7 +12072,7 @@ genIcons()
 let blockMode   = CUBE
 win.changeBlockMode = m => blockMode = m
 let tex
-let textureAtlas
+let textureAtlas, textAtlas
 let textureMap
 let dirtBuffer, netherBuffer, endBuffer
 let dirtTexture, netherTexture, endTexture, explodeTexture, panoramaTexture, genericTexture, skinTexture, endPortalTexture
@@ -13338,6 +13375,8 @@ let vertexShaderSrcEntity
 let fragmentShaderSrcEntity
 let vertexShaderSrcParticle
 let fragmentShaderSrcParticle
+let vertexShaderSrcText
+let fragmentShaderSrcText
 function updateGLSL(){
 vertexShaderSrc3D = document.getElementById("blockVertexShader").text
 fragmentShaderSrc3D = document.getElementById("blockFragmentShader").text
@@ -13349,6 +13388,8 @@ vertexShaderSrcEntity = document.getElementById("entityVertexShader").text
 fragmentShaderSrcEntity = document.getElementById("entityFragmentShader").text
 vertexShaderSrcParticle = document.getElementById("particleVertexShader").text
 fragmentShaderSrcParticle = document.getElementById("particleFragmentShader").text
+vertexShaderSrcText = document.getElementById("textVertexShader").text
+fragmentShaderSrcText = document.getElementById("textFragmentShader").text
 }
 updateGLSL()
 win.updateGLSL = updateGLSL
@@ -13374,7 +13415,7 @@ throw "Error linking shaders."
 }
 return programObject
 }
-let program3D, program2D, skyboxProgram, programEntity, programParticle
+let program3D, program2D, skyboxProgram, programEntity, programParticle, programText
 function objectify(x, y, z, width, height, textureX, textureY, texXFlip,texYFlip,rotateTex,texW,texH,textureTag) {
 return {
 x: x,
@@ -15571,10 +15612,10 @@ sun:{
 verts:[
 [],[],[],
 [
-objectify(-8,24,8,16,16,0,0),
-objectify(8,24,8,16,16,16,0),
-objectify(-8,8,8,16,16,32,0),
-objectify(8,8,8,16,16,48,0),
+objectify(-8,8,8,16,16,0,0),
+objectify(8,8,8,16,16,16,0),
+objectify(-8,24,8,16,16,32,0),
+objectify(8,24,8,16,16,48,0),
 ],
 [],[]
 ],
@@ -18958,7 +18999,7 @@ if(p.thirdPerson === "front" || !p.thirdPerson) p.setDirection() // make it corr
 analytics.totalRenderTime += performance.now() - renderStart
 }
 var ambientDist = 16
-let blockTemps = []
+let blockTempCount = 0, avgBlockTemp = 0, avgBlockTempDist = 0
 function updateAmbient(){ //todo: some sounds have different distances you can hear it from
 let pminX = p2.x - ambientDist
 let pmaxX = p2.x + ambientDist
@@ -18966,7 +19007,8 @@ let pminY = p2.y - ambientDist
 let pmaxY = p2.y + ambientDist
 let pminZ = p2.z - ambientDist
 let pmaxZ = p2.z + ambientDist
-blockTemps.splice(0,blockTemps.length)
+blockTempCount = 0
+avgBlockTemp = 0, avgBlockTempDist = 0
 for(var i in currentAmbient) currentAmbientVolume[i] = 0
 for (let x = pminX; x <= pmaxX; x++) {
 for (let y = pminY; y <= pmaxY; y++) {
@@ -18986,7 +19028,9 @@ currentAmbientVolume[blockObj.name] = v
 }
 var dist = max(abs(x-p.x),abs(y-p.y),abs(z-p.z))
 if(block && (blockObj.temperature || blockObj.temperature === 0) && dist < 5){
-blockTemps.push(blockObj.temperature,dist/5)
+avgBlockTemp += blockObj.temperature
+avgBlockTempDist += dist/5
+blockTempCount ++
 }
 }
 }
@@ -19004,6 +19048,7 @@ var blockObj = blockData[blockIds[i]]
 playSound(blockObj.ambientSound, 0, v, null, null, true, (source, gainNode) => {currentAmbient[i] = gainNode; currentAmbient[i].source = source})
 }
 }
+avgBlockTemp /= blockTempCount, avgBlockTempDist /= blockTempCount
 }
 let renderPlayer = function(){
 if(!p.spectator){
@@ -19022,7 +19067,12 @@ if((move.x > 0 && move.z > 0) || (move.x < 0 && move.z < 0)) p.bodyRot = lerp(0.
 if((move.x < 0 && move.z > 0) || (move.x > 0 && move.z < 0)) p.bodyRot = lerp(0.4, p.bodyRot, p.ry+Math.PI4) //diagnal
 if(p.punchEffect > 0) p.bodyRot = lerp(0.4, p.bodyRot, p.ry)
 p.character.setPos(p.x,p.y,p.z)
+p.character.previousX = p.previousX
+p.character.previousY = p.previousY
+p.character.previousZ = p.previousZ
+p.character.lastUpdate = p.lastUpdate
 p.character.setRot(-p.rx,-p.ry, -p.bodyRot)
+p.character.dimension = p.dimension
 p.character.burning = p.burning
 p.character.sneaking = p.sneaking
 p.character.walking = p.walking
@@ -21531,7 +21581,7 @@ this.ceils = new Uint8Array(16 * 16) //for nether
 this.biomes = new Array(16 * 16) // biome type at every (x,z) coordinate
 this.optimized = false
 this.generated = false; // Terrain
-this.populated = superflat === true // Trees and ores
+this.populated = superflat === true || superflat === "void" // Trees and ores
 this.lit = false
 this.lazy = false
 this.edited = false
@@ -22747,7 +22797,7 @@ this.parts = {}
 this.faces = faces
 if(vao){
 this.vao = vao
-}else{
+}else if(vertices && texture){
 this.vao = glExtensions.vertex_array_object.createVertexArrayOES()
 const verticesBuffer = gl.createBuffer()
 const textureBuffer = gl.createBuffer()
@@ -23701,6 +23751,83 @@ this.canDespawn = true
 if (fromMe && (now - this.spawn > this.despawns || this.hasCollided)) {
 this.canDespawn = true
 }
+if(this.canDespawn) blockParticles(this.block,this.x,this.y,this.z,30, "break",world,this.dimension)
+this.canFacePlayer = true
+}
+render(){
+if(this.canFacePlayer) {
+this.facePlayer()
+this.canFacePlayer = false
+}
+let diff = (performance.now() - this.lastUpdate) / tickTime
+if (diff > 1) diff = 1
+const offsetY = this.offsetY
+let renderx = (this.x - this.previousX) * diff + this.previousX
+let rendery = ((this.y - this.previousY) * diff + this.previousY) + offsetY
+let renderz = (this.z - this.previousZ) * diff + this.previousZ
+const modelMatrix = entityMatrices.modelMatrix;
+modelMatrix.identity()
+modelMatrix.translate(renderx, rendery, renderz)
+modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
+modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
+const viewMatrix = p.transformation.elements
+const proj = p.projection
+let projectionMatrix = entityMatrices.projectionMatrix
+projectionMatrix.set(proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0)
+projectionMatrix = projectionMatrix.elements
+const modelViewProjectionMatrix = entityMatrices.modelViewProjectionMatrix
+modelViewProjectionMatrix.identity()
+modelViewProjectionMatrix.mult(projectionMatrix)
+modelViewProjectionMatrix.mult(viewMatrix)
+modelViewProjectionMatrix.mult(modelMatrix.elements)
+// row major to column major
+modelViewProjectionMatrix.transpose()
+const x = round(this.x)
+const y = round(this.y)
+const z = round(this.z)
+const blockLight = world.getLight(x, y, z, 1, this.dimension)
+const skysLight = world.getLight(x, y, z, 0, this.dimension)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
+gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
+gl.uniform1i(glCache.uSamplerEntity, 0)
+gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
+gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
+glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
+}
+}
+class Egg extends BlockEntity{
+constructor(x,y,z,velx,vely,velz){
+super(blockIds.egg, x,y,z)
+this.type = "Egg"
+this.velx = velx
+this.vely = vely
+this.velz = velz
+this.from = userId
+this.defaultGravityStength = -0.05
+}
+update() {
+let now = performance.now()
+this.updateVelocity(now)
+this.move(now)
+var collided = entCollided(this)
+if(collided && collided !== this){
+if(entPlayerCollided){
+send({type:"hit", username:username, data:1, message:username+" killed "+ent.username+" with eggs."}, ent.id)
+}else{
+if(collided.onhit) collided.onhit(1)
+}
+this.canDespawn = true
+}else if(collidedWithMe && survival){
+damage(1, username+" killed themself with an egg.")
+this.canDespawn = true
+}
+if (now - this.spawn > this.despawns || this.hasCollided) {
+this.canDespawn = true
+}
+if(this.canDespawn) blockParticles(this.block,this.x,this.y,this.z,30, "break",world,this.dimension)
 this.canFacePlayer = true
 }
 render(){
@@ -24223,6 +24350,9 @@ this.skinImg = images.skin
 this.capeSet = false
 this.capeURL = null
 this.capeImg = null
+this.nameText = null
+this.previousUsername = null
+this.username = null
 }
 setSkin(url){
 this.skinSet = true
@@ -24306,6 +24436,21 @@ this.dieRotate = 0
 this.hidden = true
 poof(this.x,this.y,this.z, 20,this.dimension)
 }
+}
+if(this.previousUsername !== this.username && this.username){
+this.previousUsername = this.username
+if(this.nameText){
+this.nameText.setText(this.username)
+}else{
+this.nameText = world.generateTextForEntity(this.username,this,1/32, null,[0,0,0,0.8])
+}
+}
+if(this.nameText) {
+this.nameText.update()
+this.nameText.dimension = this.dimension
+this.nameText.x = this.x
+this.nameText.y = this.y+0.5
+this.nameText.z = this.z
 }
 for(var p in this.parts){
 var part = this.parts[p]
@@ -24528,6 +24673,7 @@ gl.uniform1i(glCache.isTextureAtlasEntity,1)
 if(this.burning){
 entityFire.render(this)
 }
+if(this.nameText) world.renderTextEntity(this.nameText)
 }
 renderPart(part, modelMatrix, modelViewProjectionMatrix, projectionMatrix, viewMatrix, x,y,z){
 if(part.name === "cape"){
@@ -25434,6 +25580,52 @@ this.canDespawn = true
 this.canFacePlayer = true
 }
 }
+class LavaParticle extends Particle{
+constructor(x,y,z){
+const shape = shapes.blockParticle
+const shapeVerts = shape.verts
+const shapeTexVerts = shape.texVerts
+const size = shape.size
+let blockSides = Object.keys(Block)
+let texture = []
+let index = 0
+for (let n = 0; n < 6; n++) {
+let side = blockSides[n]
+let directionalFaces = shapeVerts[Sides[side]]
+for (let facei = 0; facei < directionalFaces.length; facei++) {
+let texVerts = textureCoords[textureMap.lavaParticle]
+let tx = texVerts[0]
+let ty = texVerts[1]
+let texShapeVerts = shapeTexVerts[n][facei]
+texture[index    ] = tx + (texShapeVerts[0]/2)
+texture[index + 1] = ty + (texShapeVerts[1]/2)
+texture[index + 2] = tx + (texShapeVerts[2]/2)
+texture[index + 3] = ty + (texShapeVerts[3]/2)
+texture[index + 4] = tx + (texShapeVerts[4]/2)
+texture[index + 5] = ty + (texShapeVerts[5]/2)
+texture[index + 6] = tx + (texShapeVerts[6]/2)
+texture[index + 7] = ty + (texShapeVerts[7]/2)
+index += 8
+}
+}
+super(x, y+0.125, z, 0, 0, rand(-0.4,0.4),0.2,rand(-0.4,0.4), 0.25, 0.25, 0.25, new Float32Array(shapeVerts.flat(Infinity)), new Float32Array(texture), size, 2000)
+this.defaultGravityStength = -0.024
+}
+update() {
+let now = performance.now()
+world.addParticle(new SmokeParticle(this.x,this.y,this.z), this.dimension)
+this.updateVelocity(now)
+this.move(now)
+if (now - this.spawn > this.despawns) {
+this.canDespawn = true
+}
+if(this.hasCollided){
+this.width = this.height = this.depth = this.width - 0.02
+if(this.width <= 0) this.canDespawn = true
+}
+this.canFacePlayer = true
+}
+}
 function initParticles(){
 win.explodeVaos = explodeVaos
 let shape = shapes.blockParticle
@@ -25569,6 +25761,112 @@ gl.enableVertexAttribArray(glCache.aTextureParticle)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
 genericVaos.push(vao)
 }
+}
+}
+class TextEntity extends Entity{
+constructor(x,y,z,text,user,size,color,background) {
+size = size || 1/16
+super(x, y, z, 0, 0, 0, 0, 0, size, size, size, null,null, 0, 0)
+this.defaultGravityStength = 0
+this.user = user
+this.vao = glExtensions.vertex_array_object.createVertexArrayOES()
+this.buffer = gl.createBuffer()
+this.setText(text)
+this.color = color || [1,1,1]
+this.background = background || [0,0,0,0]
+}
+setText(text){
+let data = new Float32Array(text.length*16)
+let x = 0, y = 0
+let i = 0
+for (let l of text) {
+if(l === "\n"){
+x = 0
+y -= 8
+continue
+}
+let coords = textCoords[l] || textCoords.unknown
+data[i] = x
+data[i+1] = y + coords[5]
+data[i+2] = coords[0]
+data[i+3] = coords[1]
+data[i+4] = x + coords[4]
+data[i+5] = y + coords[5]
+data[i+6] = coords[0] + coords[2]
+data[i+7] = coords[1]
+data[i+8] = x + coords[4]
+data[i+9] = y
+data[i+10] = coords[0] + coords[2]
+data[i+11] = coords[1] + coords[3]
+data[i+12] = x
+data[i+13] = y
+data[i+14] = coords[0]
+data[i+15] = coords[1] + coords[3]
+x += coords[4]
+i += 16
+}
+this.offsetX = -x / 2
+this.faces = i / 16
+glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
+gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
+gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW)
+gl.enableVertexAttribArray(glCache.aVertexText)
+gl.enableVertexAttribArray(glCache.aTextureText)
+gl.vertexAttribPointer(glCache.aVertexText, 2, gl.FLOAT, false, 16, 0)
+gl.vertexAttribPointer(glCache.aTextureText, 2, gl.FLOAT, false, 16, 8)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
+}
+update() {
+let now = performance.now()
+this.updateVelocity(now)
+this.move(now)
+this.canFacePlayer = true
+}
+render() {
+let diff = (performance.now() - this.lastUpdate) / tickTime
+if (diff > 1) diff = 1
+let renderx = (this.x - this.previousX) * diff + this.previousX
+let rendery = (this.y - this.previousY) * diff + this.previousY
+let renderz = (this.z - this.previousZ) * diff + this.previousZ
+if(this.canFacePlayer){
+this.facePlayer()
+this.canFacePlayer = false
+}
+const offsetY = this.offsetY, offsetX = this.offsetX
+const modelMatrix = new Matrix();
+modelMatrix.identity()
+modelMatrix.translate(renderx, rendery + offsetY, renderz)
+modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
+modelMatrix.scale(this.width, this.height, this.depth)
+modelMatrix.translate(offsetX,0,0)
+const viewMatrix = p.transformation.elements
+const proj = p.projection
+const projectionMatrix = [proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0]
+const modelViewProjectionMatrix = new Matrix()
+modelViewProjectionMatrix.identity()
+modelViewProjectionMatrix.mult(projectionMatrix)
+modelViewProjectionMatrix.mult(viewMatrix)
+modelViewProjectionMatrix.mult(modelMatrix.elements)
+// row major to column major
+modelViewProjectionMatrix.transpose()
+const x = round(this.x)
+const y = round(this.y)
+const z = round(this.z)
+const blockLight = world.getLight(x, y, z, 1, this.dimension)
+const skysLight = world.getLight(x, y, z, 0, this.dimension)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
+gl.activeTexture(gl.TEXTURE9)
+gl.bindTexture(gl.TEXTURE_2D, textAtlas)
+gl.uniform1i(glCache.uSamplerText, 9)
+gl.uniform1f(glCache.uLightLevelText, lightLevel)
+gl.uniform3f(glCache.colorText, ...this.color)
+gl.uniform4f(glCache.backgroundText, ...this.background)
+gl.uniformMatrix4fv(glCache.uViewText, false, modelViewProjectionMatrix.elements)
+glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
 }
 let analytics = {
@@ -26272,6 +26570,7 @@ this.netherLoadFrom = []
 this.endLoadFrom = []
 this.entities = []
 this.particles = []
+this.textEntities = [] //Text to draw
 this.lastChunk = ","
 this.netherLastChunk = ","
 this.endLastChunk = ","
@@ -26426,6 +26725,8 @@ chunk.setBlock(i, gen - 3, k, blockIds.dirt)
 chunk.biomes[k * 16 + i] = "field"
 }
 }
+} else if(superflat === "void"){
+chunk.biomes[k * 16 + i] = "field"
 } else if(superflat){
 chunk.tops[k * 16 + i] = gen;
 chunk.biomes[k * 16 + i] = "field"
@@ -26534,7 +26835,7 @@ chunk.setBlock(i, gen - 1, k, blockIds.gravel);
 }
 }
 }
-if(chunk.type === ""){
+if(chunk.type === "" && superflat !== "void"){
 for (let j = 1; j < gen - 3; j++) {
 chunk.setBlock(i, j, k, blockIds.stone)
 }
@@ -26949,6 +27250,9 @@ break
 case "Snowball":
 ent = new Snowball(0,0,0,0,0,0)
 break
+case "Egg":
+ent = new Egg(0,0,0,0,0,0)
+break
 case "SlingshotShot":
 ent = new SlingshotShot(0,0,0,0,0,0)
 break
@@ -26998,6 +27302,11 @@ dimension:ent.dimension
 addParticle(particle,dimension){
 if(dimension || dimension === "") particle.dimension = dimension
 this.particles.push(particle)
+}
+generateTextForEntity(text,user,size,color,background){
+var e = new TextEntity(user.x,user.y,user.z,text,user,size,color,background)
+e.dimension = user.dimension || ""
+return e
 }
 getRedstoneConnectedTo(x,y,z, level, dimension){
 var spreaded = []
@@ -27350,6 +27659,7 @@ if(inWater === 0){
 skybox.render()
 }
 }
+this.textEntities.length = 0
 gl.useProgram(program3D);
 renderedChunks = 0
 let dist = (settings.renderDistance) * 16
@@ -27429,6 +27739,13 @@ for (let i = this.particles.length - 1; i >= 0; i--) {
 const particle = this.particles[i]
 if(particle.dimension === p.dimension) particle.render()
 }
+gl.disable(gl.CULL_FACE)
+gl.useProgram(programText)
+for (let i = this.textEntities.length - 1; i >= 0; i--) {
+const entity = this.textEntities[i]
+if(entity.dimension === p.dimension) entity.render()
+}
+gl.enable(gl.CULL_FACE)
 gl.useProgram(program3D)
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 gl.uniform1i(glCache.uSampler, 0)
@@ -27445,6 +27762,9 @@ gl.clearColor(1, 1, 1, 1);
 gl.colorMask(false, false, false, true);
 gl.clear(gl.COLOR_BUFFER_BIT);
 gl.colorMask(true, true, true, true);
+}
+renderTextEntity(e){
+this.textEntities.push(e)
 }
 loadChunks() {
 let renderDistance = settings.renderDistance + 3
@@ -27619,7 +27939,7 @@ endPallete = {}
 endBlocks.forEach((block, index) => endBlocks[block] = index)
 endBlocks = (this.endHasLoaded || !this.endSaveStr) ? endBlocks.map(b => b.toString(36)).join(",") : this.endSaveStr.pallete
 let rnd = round
-let options = p.flying | (superflat==="island" ? 2 : superflat) << 1 | p.spectator << 3 | caves << 4 | trees << 5 | survival << 6
+let options = p.flying | (superflat==="island" ? 2 : (superflat === "void" ? 3 : superflat)) << 1 | p.spectator << 3 | caves << 4 | trees << 5 | survival << 6
 let str = world.name + ";" + worldSeed.toString(36) + ";"
 + rnd(p.x).toString(36) + "," + rnd(p.y).toString(36) + "," + rnd(p.z).toString(36) + ","
 + (p.rx * 100 | 0).toString(36) + "," + (p.ry * 100 | 0).toString(36) + "," + options.toString(36) + ";"
@@ -27792,9 +28112,10 @@ let extra = verMoreThan(v, "1.0.3") || v === "1.0.3"
 p.flying = options & 1
 superflat = options >> 1 & 3
 p.spectator = options >> (2+extra) & 1
-if(superflat === 0){superflat = false}
-if(superflat === 1){superflat = true}
-if(superflat === 2){superflat = "island"}
+if(superflat === 0) superflat = false
+if(superflat === 1) superflat = true
+if(superflat === 2) superflat = "island"
+if(superflat === 3) superflat = "void"
 caves = options >> (3+extra) & 1
 trees = options >> (4+extra) & 1
 survival = (options >> (5+extra) & 1) ? true : false
@@ -28303,22 +28624,22 @@ location.href = "https://www.thingmaker.repl.co"
 })
 Button.add(width / 2 - 235, height / 2 + 160, 40, 40, "?", "main menu", r => changeScene("options help"))
 // Creation menu buttons
-Button.add(width / 2-155, 135, 300, 40, ["World Type: Normal", "World Type: Superflat", "World Type: Island"], "creation menu", r => {superflat = r === "World Type: Superflat"; if(r==="World Type: Island")superflat="island"})
+Button.add(width / 2-155, 135, 300, 40, ["World Type: Normal", "World Type: Superflat", "World Type: Island", "World Type: Void"], "creation menu", r => {superflat = r === "World Type: Superflat"; if(r==="World Type: Island")superflat="island"; if(r==="World Type: Void")superflat="void"})
 Button.add(width / 2-155, 185, 300, 40, ["Trees: On", "Trees: Off"], "creation menu", r => trees = r === "Trees: On", function() {
-if (superflat === true) {
+if (superflat === true || superflat === "void") {
 trees = false
 }else if(!cheats){
 trees = true
 }
-return superflat === true || !cheats
+return superflat === true || superflat === "void" || !cheats
 }, null, () => trees ? 0 : 1)
 Button.add(width / 2-155, 235, 300, 40, ["Caves: On", "Caves: Off"], "creation menu", r => caves = r === "Caves: On", function() {
-if (superflat === true) {
+if (superflat === true || superflat === "void") {
 caves = false
 }else if(!cheats){
 caves = true
 }
-return superflat === true || !cheats
+return superflat === true || superflat === "void" || !cheats
 }, null, () => caves ? 0 : 1)
 Button.add(width / 2+155, 135, 300, 40, ["Game Mode: Creative", "Game Mode: Survival"], "creation menu", r => {
 survival = r === "Game Mode: Survival"
@@ -28539,6 +28860,7 @@ window.open("https://www.thingmaker.repl.co/website/login.html?redirect=account.
 Button.add(width * 0.75, height/2 + -245, width / 3, 40, "World Options", "options", r => changeScene("options worldSettings"), () => beforeOptionsScreen !== "pause")
 Button.add(width * 0.75, height/2 + -185, width / 3, 40, "Narrator Options", "options", r => changeScene("options narrator"))
 Button.add(width * 0.75, height/2 + -125, width / 3, 40, "Help", "options", r => changeScene("options help"))
+Button.add(width * 0.75, height/2 + -65, width / 3, 40, ["First person","Third person back","Third person front"], "options", r => p.thirdPerson = r === "Third person front" ? "front" : (r === "Third person back"), null,null, () => p.thirdPerson === "front" ? 2 : (p.thirdPerson ? 1 : 0))
 Button.add(width / 2, height - 50, width / 3, 40, "Back", "options", r => changeScene(beforeOptionsScreen))
 // World settings buttons
 var needsCheats = () => !cheats
@@ -28563,6 +28885,40 @@ speakIt()
 Slider.add(width / 2, height/2 + -185, width / 3, 40, "options narrator", "Narrator Rate", 0.1,10, "narratorRate", val => settings.narratorRate = val, true, val => speakIt())
 Slider.add(width / 2, height/2 + -125, width / 3, 40, "options narrator", "Narrator Pitch", 0,10, "narratorPitch", val => settings.narratorPitch = val, true, val => speakIt())
 Button.add(width / 2, height - 50, width / 3, 40, "Back", "options narrator", r => changeScene(previousScreen))
+}
+let textLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 `~!@#$%^&*()_+-=[]\\{}|;':\",.<>/?"
+let textCoords, textCanvas
+function initTextTexture(){
+textCoords = {unknown:[0,0,0,0,0,0]}
+textCanvas = document.createElement("canvas")
+var textCtx = textCanvas.getContext("2d")
+textCtx.font = "8px VT323"
+var textSize = textCtx.measureText(textLetters)
+textCanvas.width = textSize.width
+textCanvas.height = 8
+textCtx.font = "8px VT323"
+textCtx.fillStyle = "white"
+textCtx.textBaseline = "top"
+var offsetX = 0, offsetY = 0
+for(var letter of textLetters){
+var size = textCtx.measureText(letter)
+var w = size.width, h = 8
+textCoords[letter] = [ offsetX/textCanvas.width,offsetY/textCanvas.height, w/textCanvas.width,h/textCanvas.height, w,h ]
+textCtx.fillText(letter,offsetX,offsetY)
+offsetX += w
+}
+win.textCanvas = textCanvas
+win.textCoords = textCoords
+textAtlas = gl.createTexture()
+gl.activeTexture(gl.TEXTURE9)
+gl.bindTexture(gl.TEXTURE_2D, textAtlas)
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textCanvas)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+gl.useProgram(programText)
+gl.uniform1i(glCache.uSamplerText, 9)
 }
 let texturePixels
 let textureImageData //for drawing on canvas
@@ -28861,6 +29217,7 @@ gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
 })
+initTextTexture() //TEXTURE9
 genIcons()
 }
 function updateTextures() {
@@ -30753,6 +31110,7 @@ program2D = createProgramObject(gl, vertexShaderSrc2D, fragmentShaderSrc2D)
 skyboxProgram = createProgramObject(gl, skyboxVertex, skyboxFragment);
 programEntity = createProgramObject(gl, vertexShaderSrcEntity, fragmentShaderSrcEntity)
 programParticle = createProgramObject(gl, vertexShaderSrcParticle, fragmentShaderSrcParticle)
+programText = createProgramObject(gl, vertexShaderSrcText, fragmentShaderSrcText)
 gl.useProgram(program2D)
 glCache.uSampler2 = gl.getUniformLocation(program2D, "uSampler")
 glCache.aTexture2 = gl.getAttribLocation(program2D, "aTexture")
@@ -30787,6 +31145,14 @@ glCache.tintGrayParticle = gl.getUniformLocation(programParticle, "tintGray")
 gl.uniform1i(glCache.isTextureAtlasParticle, 1)
 gl.uniform3f(glCache.tintParticle, 1,1,1)
 gl.uniform1i(glCache.tintGrayParticle, 0)
+gl.useProgram(programText)
+glCache.aVertexText = gl.getAttribLocation(programText, "aVertex")
+glCache.aTextureText = gl.getAttribLocation(programText, "aTexture")
+glCache.uSamplerText = gl.getUniformLocation(programText, "uSampler")
+glCache.uLightLevelText = gl.getUniformLocation(programText, "uLightLevel")
+glCache.uViewText = gl.getUniformLocation(programText, "uView")
+glCache.colorText = gl.getUniformLocation(programText, "textColor")
+glCache.backgroundText = gl.getUniformLocation(programText, "background")
 gl.useProgram(program3D)
 glCache.uSampler = gl.getUniformLocation(program3D, "uSampler")
 glCache.uPos = gl.getUniformLocation(program3D, "uPos")
@@ -32284,7 +32650,7 @@ gain: gainNode.gain
 loadSoundsObj(sounds)
 loadMusicObj(music)
 }
-function playSound(name, start, volume, pitch, onend, loop, getSourceFunc){ //from https://www.html5rocks.com/en/tutorials/webaudio/intro/
+function playSound(name, start, volume, pitch, onend, loop, getSourceFunc, reverb){ //from https://www.html5rocks.com/en/tutorials/webaudio/intro/
 if(!settings.volume) return
 var sound
 var soundVol
@@ -32312,12 +32678,24 @@ var buffer = sound
 if(audioCtx && (typeof buffer !== "string") && volume > 0){
 var source = audioCtx.createBufferSource();
 source.buffer = buffer;
-var gainNode
+var gainNode, convolver
 if(((!(volume || volume === 0)) || volume === 1) && !getSourceFunc){
+if(reverb){
+convolver = audioCtx.createConvolver()
+source.connect(convolver);
+convolver.connect(audioCtx.destination)
+}else{
 source.connect(audioCtx.destination);
+}
 }else{
 gainNode = audioCtx.createGain();
+if(reverb){
+convolver = audioCtx.createConvolver()
+source.connect(convolver);
+convolver.connect(gainNode)
+}else{
 source.connect(gainNode);
+}
 gainNode.connect(audioCtx.destination);
 gainNode.gain.value = volume;
 }
@@ -32466,9 +32844,11 @@ function tryPlayMusic(){
 currentMusic.audio.play()
 audioCtx.resume()
 document.removeEventListener("mousedown", tryPlayMusic)
+document.removeEventListener("touchstart", tryPlayMusic)
 console.log("%cTry Play Music!", "background:#0a0;color:white;padding:10px 20px;")
 }
 document.addEventListener("mousedown", tryPlayMusic)
+document.addEventListener("touchstart", tryPlayMusic)
 document.body.onmousedown = e => {if(e.target && e.target.tagName.toLowerCase() === "button") playSound("click")}
 let maxStartLoad = 0, loaded = 0
 win.allLoaded = false
@@ -33373,11 +33753,7 @@ var temp = getBiomeTemperature(biome)
 const skysLight = world.getLight(p2.x, p2.y, p2.z, 0, p.dimension)
 const lightLevel = min((skysLight * skyLight / 15) * 0.9 + 0.1, 1.0)
 temp -= (1 - lightLevel) * 4
-if(blockTemps.length){
-for(var i=0; i<blockTemps.length; i+=2){
-temp = lerp(blockTemps[i+1], blockTemps[i], temp)
-}
-}
+if(blockTempCount) temp = lerp(avgBlockTempDist, avgBlockTemp, temp)
 if(p.burning){
 temp = lerp(p.burnTimer / 16, temp, 20)
 }
@@ -33774,12 +34150,10 @@ textSize(25)
 text("Downloading...", width / 2, height / 2)
 }
 })()
-// Give the font time to load and redraw the homescreen
-setTimeout(e => {
-drawScreens[screen]()
-Button.draw()
-Slider.draw()
-}, 100)
+//Wait for font to load
+document.fonts.ready.then(() => {
+initTextTexture()
+})
 let debugMenu = false
 function gameLoop() {
 let frameStart = performance.now()
