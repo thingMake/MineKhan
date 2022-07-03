@@ -508,6 +508,15 @@ border:1px solid #eee;
 border:1px solid #eee;
 padding:5px;
 }
+#editSignBox{
+position:absolute;
+top:25%;
+left:25%;
+width:50%;
+height:50%;
+font:32px VT323;
+z-index:1;
+}
 </style>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VRNT3CCCGH"></script>
@@ -527,6 +536,7 @@ gtag('config', 'G-VRNT3CCCGH');
 <div id="editworld" class="hidden">
 <input type="text" id="url" spellcheck="false" placeholder="Enter thumbnail url">
 </div>
+<textarea id="editSignBox" class="hidden"></textarea>
 <div id="onhover" class="hidden"></div>
 <p id="savedirections" class="hidden" style="position: absolute; top: 40px; left: 10px; z-index: 1; background-color: rgba(255, 255, 255, 0.3);">
 To save your world, copy/paste the saveString<br>
@@ -1045,6 +1055,7 @@ window.messageHolder = document.getElementById("messagesHolder")
 window.messageInput = document.getElementById("messageInput")
 window.url = document.querySelector("#editworld #url")
 window.editworld = document.getElementById("editworld")
+window.editSignBox = document.getElementById("editSignBox")
 var hoverbox = document.getElementById("onhover")
 window.controls = document.getElementById("controls")
 window.controlDetect = document.getElementById("controlDetect")
@@ -1283,7 +1294,6 @@ setPixel(n, x, y, 190 * r, 154 * r, 96 * r);
 }
 }
 },*/
-oakPlanks: "0g0g7ĢVZĖ*HĩãWýĻWĆkZéîHÒRZ4AJ9Aî0ÿ80ùAw2cJi3ãğãğËĖaAüP2KwoÐXë1ùí_0jAŁľãŁŁŕ92ÂPAX40cùĪzSāAAā4ŁğãļłĞÀA4PQiA9cëgPNgÐ0İAĽŔÉGËĞ",
 hitbox: "0g0g100W",
 /*n => {
 for (let x = 0; x < 16; ++x) {
@@ -1314,6 +1324,7 @@ dirt: "0g0g7ĢlZýĜYåÃYÆřYðoHÚĞZâÑH4Č9PČg?ČÐSĈÉ9(J9Cĩ)yķBkaEð
 stone: "0g0g4÷-ZéŞZâľHÖĎY0ÖĢVÇýÅōÜēđVÀ?5×þĎSB?VØĠü8!VėĢÈý1k5ÄÁÀk1ŀėā×VTV4×@ÿŕ6þčĐÖVV0VÈTÒ",
 logSide: "0g0g6âÐH{řHúīW-ĉYËyYāŋY50ķcyX6ħœcy4eSœ4i4{SQgNkQSīĘSÀSXTęgÀëïwT0ÀìXy1Tg5ķyh?g0ķwhko0x3gko4x3Ĉ/8Č5jĘ(wĈX1Àg0SĈj4iëSĊh42X",
 logTop: "0g0g9ËyY{řHâÐHĢVZĖ*HĩãWéîHýĻWĆkZ1210x0g0jO))U>OM3ÓGñIIGÀ3ÒÃO)O,(4àQQQQ-Sjî[äñá,T4á@QQá[(4î[]XX-S4î[]áá,Skî[QQX[T4à[ãäX-S4îQQQQ,Sjî)OO*,T3ññGGGG(3OQ)?QO(1010x0i0",
+oakPlanks: "0g0g7ĢVZĖ*HĩãWýĻWĆkZéîHÒRZ4AJ9Aî0ÿ80ùAw2cJi3ãğãğËĖaAüP2KwoÐXë1ùí_0jAŁľãŁŁŕ92ÂPAX40cùĪzSāAAā4ŁğãļłĞÀA4PQiA9cëgPNgÐ0İAĽŔÉGËĞ",
 bedrock: "0g0g5ÎðW(ĪWVVHþÇHwíW4JĀ|iów(Ī%IÁ(ĀPÒAķ{5j]J^ïJ^A+1FyúMyÎÙwĿTĘĳPkú(üRdĊÂdðłQĩóxiÆ1ùŀïĞ9òyÀÚ0ŃQùòcJ^c*hCkr1iòTĜ^(ĀĿERÀ",
 glass: "0g0g5ĺĖYē|Yí80æģHôcZ0000019AJPAú9wJPAû94JPAû8ČJPAû9AJPAü9AJPAû9AJPAü9AJPAü9AJPAü9AJPAü9AJPAüFAJPAk9AJPwüFAJPAúCpAJP9",
 cobblestone: "0g0g6ÚĞZÎðWĎĂHÁ?WĞłHóoY5C^óăl!ÈŋÄě?!ĈVĐmÕCíÕĈļ_KĿöCAđì_TãĬ?UļÕA!cĜbTęh|6wdþĹÆMÁSĜîÁĊó_wmüĈi$QģBmwÏĐr?MÈVmíÕ^ó8ĜlP)úT4ĿĐ",
@@ -2887,9 +2898,9 @@ muddyMangroveRootsSide: "0g0gb;ŊH;ĚW-ŊZ{řH(ĪYQĹWPAZÇyZ?3ZTkH(ěH1iz?(zÔM
 muddyMangroveRootsTop: "0g0gd;ŊH{řH;ĚW-ŊZQĹW(ĪYÇyZÒ>H(ěHTkH?3ZPAZ|)Y1z)ÁgNxBÓlÂCÏ3miÎykmhRÓÞyMjÆURiF0CÏÂđxđyhÓkNxÎ3ÂABÃĒkÓB!wĊÁwÎ2k>ÎihÔÏăAiÓBFmÐĒÁÒĉ.^2hMÂhÓÎQđiðjk@gmÎEÄÖAIQÓãiþhyÂThÓihðlÂi1ÂjÁĨj",
 mangroveRootsSide: "0g0g5000;ĚW{řHQĹWÇyZ4ëîSxha2ĪìĨwiR4ìSĈ2C4RSķ1(4ywÆ1Ęa1wį1Ĉi1Ę]1wz1ùÆ2wċ0ùŁ2Mx1Ĉk6Mw1QAagĈ1]Ai0Ŀ0Aq90Æ0)350]0m34ëİ0ma",
 mangroveRootsTop: "0g0g6000{řH;ĚWQĹWÇyZÒ>H50ĨwAÀùëüI3aïyīBđF]i0dĊù1]í1giCRĩ@g2|00&QgSwÀXyĿXĊÒI4ıú4cë0K462AgòJmħERbÝîxS]j1ġ$ERÂ9JÑEú88ĈRwg]",
-mangrovePlanks: "0g0g7é3HáŊHòOYÙĊZáĪHÑJWÊÞZ4AJ9Aî0ÿ80ùAw2cJi3ãğãğËĖaAüP2KwoÐXë1ùí_0jAŁľãŁŁŕ92ÂPAX40cùĪzSāAAā4ŁğãļłĞÀA4PQiA9cëgPNgÐ0ĩÑĽŔÉGËĞ",
-mangroveLogTop: "0g0ga{řHQĹWÇyZ;ĚWÒ>WáŊHÙĊZé3HÊÞZÑJW1xyj3NRwBVÄÄãÒVÀ?IIĀāāIß?ñâVÄVÆÂCïÓÓÓÓÇÏBýÕòĀðÆÏCðÕÓÓðÕÀ@ýÕÖþþÇK@ýÕÖððÆÏ@ýÕÓÓþÕÏ@ïÕIòþÇÏ@ýÓÓÓÓÆKBýÄVVÅÆÏ5ĀĀIIIIU5VÓÄÔÓVÀ0w4jx(Qw",
 mangroveLog: "0g0g5{řHÇyZÒ>WQĹW;ĚW0kJQüIc0Â1ġrwkIAXú00ł5yrdë0AJP]í]0A1ÚĘPPwĪõJ>Ù6sAČ]AëĿÙ0ÂPiÑJ0aQùŃ0iÃÑĊPPg04íJ]ðħ109w+rJN11gP0JS",
+mangroveLogTop: "0g0ga{řHQĹWÇyZ;ĚWÒ>WáŊHÙĊZé3HÊÞZÑJW1xyj3NRwBVÄÄãÒVÀ?IIĀāāIß?ñâVÄVÆÂCïÓÓÓÓÇÏBýÕòĀðÆÏCðÕÓÓðÕÀ@ýÕÖþþÇK@ýÕÖððÆÏ@ýÕÓÓþÕÏ@ïÕIòþÇÏ@ýÓÓÓÓÆKBýÄVVÅÆÏ5ĀĀIIIIU5VÓÄÔÓVÀ0w4jx(Qw",
+mangrovePlanks: "0g0g7é3HáŊHòOYÙĊZáĪHÑJWÊÞZ4AJ9Aî0ÿ80ùAw2cJi3ãğãğËĖaAüP2KwoÐXë1ùí_0jAŁľãŁŁŕ92ÂPAX40cùĪzSāAAā4ŁğãļłĞÀA4PQiA9cëgPNgÐ0ĩÑĽŔÉGËĞ",
 mangroveLogSW: "0g0g5{řHÇyZÒ>W;ĚWQĹW5wňÞ0S1wňúSwSĈĨ(ħ0(i2(0Ti22wëíy29AIó(4Á4IÂ(8ùX8ic8úIgRciÁIiT%iÁ8kÎ(4]9kxAi8ìiĂwzcggĂ0ċsëoĉ4ĊĿÝĀK",
 strippedMangroveLogTop: "0g0g7ÙĚZáĪWáŊHÙĊZé3HÊÞZÑJW0i000]9AĺöČù!łâłØÎaįJ|BÁeĎłÚĝĀbDÛĽĝÆ&ğÉÛğÀfDÌĶ*ĀfDÌĖĝÆfDÉÜ,ÆeďÚģ*āfCłÚĝÆ#AĹP?ÆbËÚĞłÀ9CĺÞĜù001wi0",
 strippedMangroveLog: "0g0g5áĪWÙĚZäřZäĺWìjW0gĂ{+9%ðłPĘ1BČùdČħK)ħPùĿxīăTČĨdAŁPįĀAðĹÎ(ħ1ČĀAAĀd+û9C9xĜŁSAĨdëĹÙþĹdAČ|Ď9ÖĜĂPAħ%í3P+1dĜă1ĜĀA+ûÑëł",
@@ -2990,6 +3001,15 @@ soulFireFlame: "0g0g50002.W2ĂZÐņYZZZ0g00000y00000)00000)00001+00001ĭë0001į
 lavaParticle: "0g0g5000ŤĈWZKWţ0WZŃH0000000000000Čħ0001QS0001]ë0000ČS000000000000000000000000000000000000000000000000000000000000000",
 flame: "0g0g5000ţ0WŤĈWZKWZŃH0g00000y00000)00000)00001+00001ĭë0001įħ0001+ë000000000000000000000000000000000000000000000000000",
 glint: "0g0g50002ÁW2ĩY3AZ3āH0g00000w00000Ě0000FĭI0000Ě00000w00000g0000000000000000000000000000000000000000000000000000000000",
+oakSign: "0g0ge000ĩãWĢVZĖ*HýĻWÖÃWéîHĆkZÎyHâÐH{řH-ĉYúīWËyY00000000000000000hyONxzS0BOO+ÃÃS0+ÐÒ+ÒÐK0jOOOOOÝ0zÃVOÃÃS0+ÐÓÄÐÐK0jOOOOOÝ0QQQQQQS0IIIIIIë0009ē000000cł000000că000000că0000009ģ000",
+mangroveSign: "0g0gf000òOYé3HáŊHÙĊZÀÞZwKYÑJWáĪHÊÞZQĹW{řH;ĚWÇyZÒ>W00000000000000000hyONxzS0BOO+ÃÃS0+ÐÒ+ÒÐÝ0jOOOOOë0zÃVOÃÃS0+ÐÓÄÐÐÝ0jOOOOOë0QQQQQQS0āāāāāāù000aĤ000000bŁ000000aĤ000000eŁ000000bĔ000",
+darkOakSign: "0g0gf000ÀňY{ĨY]ęH-úWÞNHĢVY(ÝZ;ĉWwÀY;ĨZ(úWEìWÇiY]ňZ00000000000000000hyONxzS0BOO+ÃÃS0+ÐÒ+ÒÐÝ0jOOOOOë0zÃVOÃÃS0+ÐÓÄÐÐÝ0jOOOOOë0QQQQQQS0āāāāāāù000aĤ000000dĔ000000dœ000000dœ000000aĳ000",
+crimsonSign: "0g0gd000ú6WXŜYèŌHÕĻY)ÂHKàYÊīW]ûH;ßZä0WÀÎWĔíW00000000000000000hyONxzS0BOO+ÃÃS0+ÐÒ+ÒÐÝ0jOOOOOë0zÃVOÃÃS0+ÐÓÄÐÐÝ0jOOOOOë0QQQQQQS0āāāāāāù000aġ000000bı0000008ģ000000bò000000aġ000",
+warpedSign: "0g0gh000+åW/-Z/8WFĭH8ĺWhVW%âWtVWgŊHlïYQĝZ;ßZiÕHlşHUěZ]ûH0000000000000000000002h8ÐoXhcë04ÁõÐpóNõë06ÐcĬpõÃcŇ02MõÐoĭMö004NõčoıNõë06ÐcĭFõOcŇ02MõÐoĭMö008RgXx8Rgë0iüčF^Âüčw0000aÉ00000000bØë0000000fÈħ0000000bî00000000eÉ0000",
+spruceSign: "0g0gf000òûYìîYåÐHÎyZ;ĘZwKYÇiHÞRZQęH(ÝY$ÝY$ÀY{ĨH-úW00000000000000000hyONxzS0BOO+ÃÃS0+ÐÒ+ÒÐÝ0jOOOOOë0zÃVOÃÃS0+ÐÓÄÐÐÝ0jOOOOOë0QQQQQQS0āāāāāāù000aĤ000000dĔ000000dœ000000dœ000000aĳ000",
+jungleSign: "0g0gi000Ħ+YĢmHđŌHýČH;ĘZwKYåÃHąīYKřYVMYÀŘHSĸWéßHÇhY;ĨWâJHÖNW0000000000000000000002h8ÐoXhcë04ÁõÐpóNõë06ÐcĬpõÃcŇ02MõÐoĭMö004NõčoıNõë06ÐcĭFõOcŇ02MõÐoĭMö008RgXx8Rgë0iüčF^Âüčw0000aÉ00000000dà00000000bç00000000gôħ0000000eÐ0000",
+acaciaSign: "0g0gf000ĨěZġîHĕàWāRY;ĘZwKYöNYĉÃWÙĨWÖïYÇQYÁAW÷nHåĭY00000000000000000hyONxzS0BOO+ÃÃS0+ÐÒ+ÒÐÝ0jOOOOOë0zÃVOÃÃS0+ÐÓÄÐÐÝ0jOOOOOë0QQQQQQS0āāāāāāù000aĤ000000dĔ000000dœ000000dœ000000aĳ000",
+birchSign: "0g0gh000ľEZľ8HıľYĖGH;ĘZwKYĎÄHĢďHìĜHŚĦYņ|HĦšZZZZÎâH)ĹYŖĵY0000000000000000000002h8ÐoXhcë04ÁõÐpóNõë06ÐcĬpõÃcŇ02MõÐoĭMö004NõčoıNõë06ÐcĭFõOcŇ02MõÐoĭMö008RgXx8Rgë0iüčF^Âüčw0000aÉ00000000dàħ0000000dîë0000000dî00000000eÐ0000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -10107,6 +10127,83 @@ else if(this.pointing(x,y+pointing,z,dimension) === -pointing) target |= TALLCRO
 if(block !== target) world.setBlock(x,y,z,target,false,false,false,false,dimension)
 }
 },
+{
+name:"oakSign",
+Name:"write on oak wood",
+textures:"oakPlanks",
+iconTexture:"oakSign",
+flatIcon:true,
+sign:true,
+breakTime:1.5,
+woodSound:true,
+type:"wood"
+},
+{
+name:"birchSign",
+Name:"Birch Sign",
+textures:"birchPlanks",
+iconTexture:"birchSign",
+flatIcon:true,
+sign:true,
+breakTime:1.5,
+woodSound:true,
+type:"wood"
+},
+{
+name:"acaciaSign",
+Name:"Acacia Sign",
+textures:"acaciaPlanks",
+iconTexture:"acaciaSign",
+flatIcon:true,
+sign:true,
+breakTime:1.5,
+woodSound:true,
+type:"wood"
+},
+{
+name:"jungleSign",
+Name:"Jungle Sign",
+textures:"junglePlanks",
+iconTexture:"jungleSign",
+flatIcon:true,
+sign:true,
+breakTime:1.5,
+woodSound:true,
+type:"wood"
+},
+{
+name:"spruceSign",
+Name:"Spruce Sign",
+textures:"sprucePlanks",
+iconTexture:"spruceSign",
+flatIcon:true,
+sign:true,
+breakTime:1.5,
+woodSound:true,
+type:"wood"
+},
+{
+name:"darkOakSign",
+Name:"Dark Oak Sign",
+textures:"darkOakPlanks",
+iconTexture:"darkOakSign",
+flatIcon:true,
+sign:true,
+breakTime:1.5,
+woodSound:true,
+type:"wood"
+},
+{
+name:"mangroveSign",
+Name:"Mangrove Sign",
+textures:"mangrovePlanks",
+iconTexture:"mangroveSign",
+flatIcon:true,
+sign:true,
+breakTime:1.5,
+woodSound:true,
+type:"wood"
+},
 /*
 { name: "pigFace" },
 { 
@@ -10646,6 +10743,13 @@ const crafts = {
 "mud,wheat":{name:"packedMud",shapeless:true},
 "packedMud,packedMud,air,packedMud,packedMud":{name:"mudBricks",shaped:true},
 "pointedDripstone,pointedDripstone,air,pointedDripstone,pointedDripstone":{name:"dripstoneBlock",shaped:true},
+"oakPlanks,oakPlanks,oakPlanks,oakPlanks,oakPlanks,oakPlanks,air,stick":{name:"oakSign",amount:3},
+"birchPlanks,birchPlanks,birchPlanks,birchPlanks,birchPlanks,birchPlanks,air,stick":{name:"birchSign",amount:3},
+"acaciaPlanks,acaciaPlanks,acaciaPlanks,acaciaPlanks,acaciaPlanks,acaciaPlanks,air,stick":{name:"acaciaSign",amount:3},
+"junglePlanks,junglePlanks,junglePlanks,junglePlanks,junglePlanks,junglePlanks,air,stick":{name:"jungleSign",amount:3},
+"sprucePlanks,sprucePlanks,sprucePlanks,sprucePlanks,sprucePlanks,sprucePlanks,air,stick":{name:"spruceSign",amount:3},
+"darkOakPlanks,darkOakPlanks,darkOakPlanks,darkOakPlanks,darkOakPlanks,darkOakPlanks,air,stick":{name:"darkOakSign",amount:3},
+"mangrovePlanks,mangrovePlanks,mangrovePlanks,mangrovePlanks,mangrovePlanks,mangrovePlanks,air,stick":{name:"mangroveSign",amount:3},
 }
 /*
 //replace anything in crafts starting with _
@@ -12202,6 +12306,14 @@ window.messageHolder.classList.remove("chat")
 Messages.showArr()
 }
 },
+"edit sign":{
+enter:[editSignBox],
+exit:[editSignBox],
+onenter: () => {
+editSignBox.value = editingSign.text
+editSignBox.focus()
+}
+},
 "options controls":{
 enter: [window.controls],
 exit: [window.controls, window.controlDetect]
@@ -13316,6 +13428,19 @@ inventory.hotbar = arr
 for(var i=0; i<9; i++){
 inventory.hotbar[i] = {id:inventory.hotbar[i],amount:64}
 }
+}
+let editingSign = {}
+editSignBox.oninput = function(){
+editingSign.text = this.value
+}
+function editSign(x,y,z,dimension){
+editingSign.x = x
+editingSign.y = y
+editingSign.z = z
+editingSign.dimension = dimension
+editingSign.text = world.getTagByName(x,y,z,"text",dimension) || ""
+changeScene("edit sign")
+releasePointer()
 }
 function play() {
 canvas.onblur()
@@ -15608,6 +15733,42 @@ west: 0
 },
 rotate:true
 },
+sign:{
+verts:[
+[objectify(-4,14,7,16,2,0,0),objectify(7,0,7,2,2,-16,0),objectify(12,14,7,8,2,0,0)],
+[objectify(-4,26,9,16,2,0,0),objectify(12,26,9,8,2,0,0)],
+[objectify(20,26,9,16,12,0,0),objectify(9,14,9,2,14,-32,0),objectify(4,26,9,8,12,0,0)],
+[objectify(-4,26,7,16,12,0,0),objectify(7,14,7,2,14,-32,0),objectify(12,26,7,8,12,0,0)],
+[objectify(20,26,7,2,12,0,0),objectify(9,14,7,2,14,-32,0)],
+[objectify(-4,26,9,2,12,0,0),objectify(7,14,9,2,14,-32,0)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+},
+wallSign:{
+verts:[
+[objectify(-4,6,16.7,16,2,0,0),objectify(12,6,16.7,8,2,0,0)],
+[objectify(-4,18,18.7,16,2,0,0),objectify(12,18,18.7,8,2,0,0)],
+[objectify(20,18,18.7,16,12,0,0),objectify(4,18,18.7,8,12,0,0)],
+[objectify(-4,18,16.7,16,12,0,0),objectify(12,18,16.7,8,12,0,0)],
+[objectify(20,18,16.7,2,12,0,0)],
+[objectify(-4,18,18.7,2,12,0,0)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+},
+},
 sun:{
 verts:[
 [],[],[],
@@ -16558,6 +16719,20 @@ if(on && tx === x && ty === y && tz === z){
 return true
 }
 }
+var signSet = function(x,y,z,dimension,block){
+for(var ent of world.entities){
+if(ent.type === "Sign" && ent.x === x && ent.y === y && ent.z === z) return
+}
+var signBlock = (block & STAIR) === STAIR ? (this.id | CROSS) : (this.id | SLAB)
+world.addEntity(new Sign(x,y,z,signBlock,block),false,dimension)
+}
+var signOnplace = function(x,y,z, dimension){
+var block = world.getBlock(x,y,z,dimension)
+var rot = round(p.ry*16/Math.PId)
+if((block & STAIR) === STAIR) rot = round(rot/4)*4
+world.setTagByName(x,y,z, "rot",rot,false,dimension)
+this.set(x,y,z,dimension,block)
+}
 for (let i = 0; i < BLOCK_COUNT; i++) {
 let baseBlock = blockData[i]
 for(var t=0; t<baseBlock.textures.length; t++){
@@ -17090,6 +17265,22 @@ makeBlock(new Array(6).fill("pointedDripstoneUpTipMerge"), shapes.cross, tallcro
 var flip = Object.create(baseBlock)
 makeBlock(new Array(6).fill("pointedDripstoneDownTipMerge"), shapes.cross, flip, baseBlock)
 blockData[i | TALLCROSS | FLIP] = flip
+}
+if(baseBlock.sign){
+slabBlock.shape = shapes.sign
+slabBlock.textures = baseBlock.textures
+slabBlock.drop = i
+crossBlock.shape = shapes.wallSign
+crossBlock.textures = baseBlock.textures
+crossBlock.drop = i
+baseBlock.textures = new Array(6).fill("none")
+baseBlock.transparent = true
+baseBlock.shadow = false
+baseBlock.solid = false
+baseBlock.onplace = signOnplace
+baseBlock.set = signSet
+baseBlock.onclick = editSign
+stairBlock.shape = shapes.cube
 }
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
@@ -18360,7 +18551,7 @@ entPlayerCollided = false
 var dimension = p.dimension
 for(var i=0; i<world.entities.length; i++){
 var ent = world.entities[i]
-if(ent.dimension !== dimension) continue
+if(ent.dimension !== dimension || ent.noHitbox) continue
 let c = entityRayTrace(ent.x,ent.y,ent.z,ent.width,ent.height,ent.depth)
 if(c[0] < entHitbox.closest){
 entHitbox.closest = c[0]
@@ -19583,6 +19774,10 @@ if(blockData[holding].name === "pointedDripstone"){
 if(hitBox.face === "top") blockMode = CUBE
 else blockMode = FLIP
 }
+if(blockData[holding].sign){
+if(side) blockMode = STAIR
+else blockMode = CUBE
+}
 if(side && blockIds[blockData[block].name+"SW"]){
 block = blockIds[blockData[block].name+"SW"]
 }
@@ -19639,6 +19834,9 @@ updateHUD = true
 }
 //play sound
 blockSound(block, "place", x,y,z)
+if(blockData[holding].sign){
+editSign(x,y,z,p.dimension)
+}
 }
 holding = pholding
 }
@@ -21529,6 +21727,9 @@ blockData[block].tick(x,y,z,this.type)
 if(blockData[block].name === "torch" || blockData[block].name === "soulTorch"){
 blockData[block].tick(block,x,y,z,this.type)
 }
+if(blockData[block].sign){
+blockData[block].set(x,y,z,this.type,block)
+}
 }
 }
 getLight(x, y, z, block = 0) {
@@ -23242,6 +23443,7 @@ this.from = userId
 this.durability = durability
 //this.amount = amount || 1
 this.defaultGravityStength = -0.032
+this.noHitbox = true
 if(autoSetVel){
 this.velx = (Math.random()-0.5) * 0.2
 this.vely = Math.random() * 0.2
@@ -24031,6 +24233,88 @@ gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elemen
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
+}
+}
+class Sign extends BlockEntity{
+constructor(x,y,z,block,base){
+super(block, x,y,z)
+this.type = "Sign"
+this.width = this.height = this.depth = 0.7
+this.offsetY = -0.15
+this.from = userId
+this.baseBlock = base
+this.noHitbox = true
+this.textEnt = null
+this.prevText = null
+this.defaultGravityStength = 0
+}
+update() {
+if(world.getBlock(this.x,this.y,this.z,this.dimension) !== this.baseBlock) this.canDespawn = true
+if(this.canDespawn) return blockParticles(this.block,this.x,this.y,this.z,30, "break",world,this.dimension)
+var tags = world.getTags(this.x,this.y,this.z,this.dimension)
+var rotation = tags.rot || 0
+this.yaw = -rotation * Math.PId / 16
+if(this.textEnt){
+this.textEnt.yaw = this.yaw + Math.PI
+}
+if(tags.text !== this.prevText && (tags.text || tags.text === "")){
+this.prevText = tags.text
+if(this.textEnt){
+this.textEnt.setText(tags.text)
+}else{
+this.textEnt = world.generateTextForEntity(tags.text,this,1/64,[0,0,0],null)
+if((this.baseBlock & STAIR) === STAIR){
+this.textEnt.offsetZ = -6/16
+}else{
+this.textEnt.offsetZ = 1/16
+this.textEnt.y += 0.35
+}
+}
+}
+}
+render(){
+if(this.canFacePlayer) {
+this.facePlayer()
+this.canFacePlayer = false
+}
+let diff = (performance.now() - this.lastUpdate) / tickTime
+if (diff > 1) diff = 1
+const offsetY = this.offsetY
+let renderx = (this.x - this.previousX) * diff + this.previousX
+let rendery = ((this.y - this.previousY) * diff + this.previousY) + offsetY
+let renderz = (this.z - this.previousZ) * diff + this.previousZ
+const modelMatrix = entityMatrices.modelMatrix;
+modelMatrix.identity()
+modelMatrix.translate(renderx, rendery, renderz)
+modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
+modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
+const viewMatrix = p.transformation.elements
+const proj = p.projection
+let projectionMatrix = entityMatrices.projectionMatrix
+projectionMatrix.set(proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0)
+projectionMatrix = projectionMatrix.elements
+const modelViewProjectionMatrix = entityMatrices.modelViewProjectionMatrix
+modelViewProjectionMatrix.identity()
+modelViewProjectionMatrix.mult(projectionMatrix)
+modelViewProjectionMatrix.mult(viewMatrix)
+modelViewProjectionMatrix.mult(modelMatrix.elements)
+// row major to column major
+modelViewProjectionMatrix.transpose()
+const x = round(this.x)
+const y = round(this.y)
+const z = round(this.z)
+const blockLight = world.getLight(x, y, z, 1, this.dimension)
+const skysLight = world.getLight(x, y, z, 0, this.dimension)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
+gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
+gl.uniform1i(glCache.uSamplerEntity, 0)
+gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
+gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
+glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
+if(this.textEnt) world.textEntities.push(this.textEnt)
 }
 }
 class ExperienceOrb extends Entity{
@@ -25769,6 +26053,8 @@ size = size || 1/16
 super(x, y, z, 0, 0, 0, 0, 0, size, size, size, null,null, 0, 0)
 this.defaultGravityStength = 0
 this.user = user
+this.offsetZ = 0
+this.offsetX = 0
 this.vao = glExtensions.vertex_array_object.createVertexArrayOES()
 this.buffer = gl.createBuffer()
 this.setText(text)
@@ -25777,12 +26063,16 @@ this.background = background || [0,0,0,0]
 }
 setText(text){
 let data = new Float32Array(text.length*16)
+let lineData = []
 let x = 0, y = 0
+let lineW = []
+let line = 0
 let i = 0
 for (let l of text) {
 if(l === "\n"){
 x = 0
 y -= 8
+line++
 continue
 }
 let coords = textCoords[l] || textCoords.unknown
@@ -25803,9 +26093,14 @@ data[i+13] = y
 data[i+14] = coords[0]
 data[i+15] = coords[1] + coords[3]
 x += coords[4]
+lineData[i/16] = line
+lineW[line] = x
 i += 16
 }
-this.offsetX = -x / 2
+for(i = 0; i<data.length; i+=4){
+data[i] -= lineW[lineData[floor(i/16)]] / 2
+data[i+1] -= y/2
+}
 this.faces = i / 16
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
@@ -25833,12 +26128,13 @@ if(this.canFacePlayer){
 this.facePlayer()
 this.canFacePlayer = false
 }
-const offsetY = this.offsetY, offsetX = this.offsetX
+const offsetY = this.offsetY, offsetX = this.offsetX, offsetZ = this.offsetZ
 const modelMatrix = new Matrix();
 modelMatrix.identity()
 modelMatrix.translate(renderx, rendery + offsetY, renderz)
 modelMatrix.rotY(this.yaw)
 modelMatrix.rotX(this.pitch)
+modelMatrix.translate(0,0,offsetZ)
 modelMatrix.scale(this.width, this.height, this.depth)
 modelMatrix.translate(offsetX,0,0)
 const viewMatrix = p.transformation.elements
@@ -28825,6 +29121,11 @@ Button.add(width / 2, 225, 300, 40, "Respawn", "dead", r => {
 respawn()
 play()
 }, () => performance.now() - lastDeathTime < 1000)
+//Edit sign buttons
+Button.add(width / 2, height-30, width / 3, 40, "Done", "edit sign", r => {
+world.setTagByName(editingSign.x,editingSign.y,editingSign.z,"text",editingSign.text,false,editingSign.dimension)
+play()
+})
 //Help buttons
 Button.add(60, 30, 80, 30, "Back", "options help", r => changeScene(previousScreen))
 // Marketplace buttons
@@ -30370,17 +30671,7 @@ data.canBurn = true
 }
 }
 var block = world.getBlock(furnaceData.x,furnaceData.y,furnaceData.z,furnaceData.dimension)
-var needs
-if((block & WEST) === WEST){
-needs = WEST
-}else if((block & EAST) === EAST){
-needs = EAST
-}else if((block & SOUTH) === SOUTH){
-needs = SOUTH
-}else{
-needs = NORTH
-}
-needs |= blockIds.furnace
+var needs = blockIds.furnace | (block & ROTATION)
 if(data.smelting){
 needs |= SLAB
 }
@@ -32818,7 +33109,7 @@ win.menuMusicVolume = 1
 win.menuMusicIdx = 0
 win.currentMusic = null
 function updateMusic(){
-if(screen === "play" || screen === "pause" || screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "options" || screen.startsWith("options ") || screen === "chat"){
+if(screen === "play" || screen === "pause" || screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "options" || screen.startsWith("options ") || screen === "chat" || screen === "edit sign"){
 if(menuMusicVolume > 0) menuMusicVolume -= 0.01
 if(menuMusicVolume < 0) menuMusicVolume = 0
 if(currentMusic && menuMusicVolume === 0){
@@ -34044,6 +34335,14 @@ drawScreens.chat = () => {
 defineWorld(tick)
 clear()
 }
+drawScreens["edit sign"] = () => {
+defineWorld(tick)
+clear()
+textSize(50)
+fill(0, 0, 0)
+ctx.textAlign = 'center'
+text("Edit Sign", width / 2, 60)
+}
 drawScreens.inventory = drawInv
 drawScreens.crafting = drawCrafting
 drawScreens.furnace = drawFurnace
@@ -34179,7 +34478,7 @@ drawScreens[screen]()
 Button.draw()
 Slider.draw()
 }
-if (screen === "play" || screen === "loading" || screen === "netherLoading" || screen === "endLoading" || screen === "dead" || screen === "chat") {
+if (screen === "play" || screen === "loading" || screen === "netherLoading" || screen === "endLoading" || screen === "dead" || screen === "chat" || screen === "edit sign") {
 drawScreens[screen]()
 Button.draw()
 Slider.draw()
