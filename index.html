@@ -3010,6 +3010,11 @@ spruceSign: "0g0gf000òûYìîYåÐHÎyZ;ĘZwKYÇiHÞRZQęH(ÝY$ÝY$ÀY{ĨH-úW0
 jungleSign: "0g0gi000Ħ+YĢmHđŌHýČH;ĘZwKYåÃHąīYKřYVMYÀŘHSĸWéßHÇhY;ĨWâJHÖNW0000000000000000000002h8ÐoXhcë04ÁõÐpóNõë06ÐcĬpõÃcŇ02MõÐoĭMö004NõčoıNõë06ÐcĭFõOcŇ02MõÐoĭMö008RgXx8Rgë0iüčF^Âüčw0000aÉ00000000dà00000000bç00000000gôħ0000000eÐ0000",
 acaciaSign: "0g0gf000ĨěZġîHĕàWāRY;ĘZwKYöNYĉÃWÙĨWÖïYÇQYÁAW÷nHåĭY00000000000000000hyONxzS0BOO+ÃÃS0+ÐÒ+ÒÐÝ0jOOOOOë0zÃVOÃÃS0+ÐÓÄÐÐÝ0jOOOOOë0QQQQQQS0āāāāāāù000aĤ000000dĔ000000dœ000000dœ000000aĳ000",
 birchSign: "0g0gh000ľEZľ8HıľYĖGH;ĘZwKYĎÄHĢďHìĜHŚĦYņ|HĦšZZZZÎâH)ĹYŖĵY0000000000000000000002h8ÐoXhcë04ÁõÐpóNõë06ÐcĬpõÃcŇ02MõÐoĭMö004NõčoıNõë06ÐcĭFõOcŇ02MõÐoĭMö008RgXx8Rgë0iüčF^Âüčw0000aÉ00000000dàħ0000000dîë0000000dî00000000eÐ0000",
+composterCompost: "0g0g7000]ĨYÖhYÁMWÀŘYòÏWĕJW0000000000000üňJNS0ĎĊUüS1]ÏıES2jkđyS2Aă]Ĭ02EŋÀā00ĬyC>02kUIĽħ2CÏÁ]ħ1R{^O00JÄĒ-S0āzðRS000000000000",
+composterBottom: "0g0g4ïÏZåxZÊĸWÀĈY41SgLėYĔáÞ]tAxc8xÎc]wÒ9Æ)wpsÒwotÞáÆtMB]sxB8]xx]]M({{ÞÝP|=šZĤ41Sg",
+composterReady: "0g0gb000]ĨYÖhYÁMWÀŘYìüYł^HĞďWËzWòÏWĕJW00000000000000000hzTQÁh00iÏ?DÒx00CÔíðäT00]ÄÑýßh00RDÃyoU00?ïïUïÆ00oAÓâQk00QDÔVâO00[ÕRDÓ>00BãáÂÅk00hÆ!J>T00hQ>TQh00000000000000000",
+composterSide: "0g0gcĝĺZĉīWïÏZåxZÀĈYÊĸW;ùZAÀHQħZÊŇZéMH?0H100h01g1yNyNyzNyzyOzzOyO?U?QQVQ?ÔãðòđòñãNhixhNhiOyyONyzzQQQQQQQQñãĀòÓIÔãzxhhihzyyNzNyzyzQQQQQQQQñãÓĂđôñãzxhhyNhhyzyONyyzQQQQQQQQ",
+composterTop: "0g0g5ĝĺZĉīWïÏZåxZ0000ë900SFĜă|ĜĀePAJPoaPAJPhaPAJPhaPAJPg&PAJPo!PAJPoePAJPpePAJPpaPAJPgaPAJPg!PAJPoePAJPpdĎĹPĜĿ0ë90gS",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -3219,7 +3224,8 @@ world.setBlock(x,y,z,blockIds.grass | CROSS,false,false,false,false,dimension)
 }else if(b === (blockIds.grass | CROSS) && !isSnow){
 world.setBlock(x,y,z,blockIds.grass,false,false,false,false,dimension)
 }
-}
+},
+compostChance:0.3
 },
 { name: "dirt", Name:"Dirt", breakTime:0.75, blastResistance:0.5, type:"ground",
 digSound: ["block.gravel.dig1", "block.gravel.dig2", "block.gravel.dig3", "block.gravel.dig4"],
@@ -3269,6 +3275,7 @@ dropSelfWhenSheared:true,
 shearBreakTime:0.05,
 burnChance: 0.2,
 burnTime: 30,
+compostChance:0.3,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -3991,6 +3998,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "poppy",
 Name:"Poppy",
@@ -3999,6 +4007,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "dandelion",
 Name:"Dandelion",
@@ -4007,6 +4016,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "blueOrchid",
 Name:"Blue Orchid",
@@ -4014,6 +4024,7 @@ solid: false,
 transparent: true,
 shadow: false,
 crossShape: true,
+compostChance:0.65
 },
 { name: "pinkTulip",
 Name:"Pink Tulip",
@@ -4022,6 +4033,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "orangeTulip",
 Name:"Orange Tulip",
@@ -4030,6 +4042,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "redTulip",
 Name:"Red Tulip",
@@ -4038,6 +4051,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "whiteTulip",
 Name:"White Tulip",
@@ -4046,6 +4060,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "azureBluet",
 Name:"Azure Bluet",
@@ -4054,6 +4069,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "cornFlower",
 Name:"Cornflower",
@@ -4062,6 +4078,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "purpleFlower",
 Name:"Purple Flower (i don't think this exsists in minecraft)",
@@ -4070,6 +4087,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "allium",
 Name:"Allium",
@@ -4078,6 +4096,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "oxeyeDaisy",
 Name:"Oxeye Daisy",
@@ -4086,6 +4105,7 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
+compostChance:0.65
 },
 { name: "lilac",
 Name:"Lilac",
@@ -4094,6 +4114,7 @@ transparent: true,
 shadow: false,
 textures: "lilacTop",
 tallcrossShape: true,
+compostChance:0.65
 },
 { name: "roseBush",
 Name:"Rose Bush",
@@ -4102,6 +4123,7 @@ transparent: true,
 shadow: false,
 textures: "roseBushTop",
 tallcrossShape: true,
+compostChance:0.65
 },
 { name: "peony",
 Name:"Peony",
@@ -4110,6 +4132,7 @@ transparent: true,
 shadow: false,
 textures: "peonyTop",
 tallcrossShape: true,
+compostChance:0.65
 },
 { name: "witherRose",
 Name:"Wither Rose",
@@ -4118,7 +4141,8 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-ontouch: () => {witherEffect = 120; witherDamage = 1; witherTime = 2000}
+ontouch: () => {witherEffect = 120; witherDamage = 1; witherTime = 2000},
+compostChance:0.65
 },
 {
 name: "TallGrass",
@@ -4137,6 +4161,7 @@ biomeTintNorth:true,
 biomeTintSouth:true,
 biomeTintEast:true,
 biomeTintWest:true,
+compostChance:0.5
 },
 { 
 name: "oakDoor",
@@ -4350,7 +4375,8 @@ damage: 1,
 potCross: true,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
-}
+},
+compostChance:0.5
 },
 {
 name: "glassPane",
@@ -4387,7 +4413,8 @@ biomeTintEast:true,
 biomeTintWest:true,
 biomeTintNorth:true,
 biomeTintSouth:true,
-invTint:[leafColor.r,leafColor.g,leafColor.b]
+invTint:[leafColor.r,leafColor.g,leafColor.b],
+compostChance:0.5
 },
 {
 name: "Water",
@@ -4477,14 +4504,14 @@ stemSound: true,
 type:"wood"
 },
 { name: "netherWartBlock",
-Name:"Nether Wart Block",breaktime:1.5,
+Name:"Nether Wart Block",breaktime:1.5,compostChance:0.85,
 digSound: ["block.netherwart.dig1", "block.netherwart.dig2", "block.netherwart.dig3", "block.netherwart.dig4", "block.netherwart.dig5", "block.netherwart.dig6"],
 stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"]},
 { name: "warpedWartBlock",
-Name:"Warped Wart Block",breaktime:1.5,
+Name:"Warped Wart Block",breaktime:1.5,compostChance:0.85,
 digSound: ["block.netherwart.dig1", "block.netherwart.dig2", "block.netherwart.dig3", "block.netherwart.dig4", "block.netherwart.dig5", "block.netherwart.dig6"],
 stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"]},
-{ name: "shroomlight", lightLevel:15,Name:"Shroomlight",breaktime:1.5,
+{ name: "shroomlight", lightLevel:15,Name:"Shroomlight",breaktime:1.5,compostChance:0.65,
 digSound: ["block.shroomlight.dig1", "block.shroomlight.dig2", "block.shroomlight.dig3", "block.shroomlight.dig4", "block.shroomlight.dig5"],
 stepSound: ["block.shroomlight.step1", "block.shroomlight.step2","block.shroomlight.step3","block.shroomlight.step4","block.shroomlight.step5","block.shroomlight.step6"]},
 { 
@@ -4495,6 +4522,7 @@ shadow: false,
 transparent: true,
 crossShape: true,
 potCross: true,
+compostChance:0.65,
 digSound: ["block.fungus.dig1", "block.fungus.dig2", "block.fungus.dig3", "block.fungus.dig4", "block.fungus.dig5", "block.fungus.dig6"]
 },
 {
@@ -4553,6 +4581,7 @@ shadow: false,
 transparent: true,
 crossShape: true,
 potCross: true,
+compostChance:0.65,
 digSound: ["block.fungus.dig1", "block.fungus.dig2", "block.fungus.dig3", "block.fungus.dig4", "block.fungus.dig5", "block.fungus.dig6"]
 },
 { 
@@ -4562,7 +4591,8 @@ transparent: true,
 solid: false,
 shadow: false,
 crossShape: true,
-rootSound: true
+rootSound: true,
+compostChance:0.65
 },
 { 
 name: "crimsonRoots",
@@ -4571,7 +4601,8 @@ transparent: true,
 solid: false,
 shadow: false,
 crossShape: true,
-rootSound: true
+rootSound: true,
+compostChance:0.65
 },
 { 
 name: "twistingVines",
@@ -4642,6 +4673,7 @@ solid: false,
 shadow: false,
 transparent: true,
 crossShape: true,
+compostChance:0.5,
 digSound: ["block.nether_sprouts.dig1", "block.nether_sprouts.dig2", "block.nether_sprouts.dig3", "block.nether_sprouts.dig4"],
 stepSound: ["block.nether_sprouts.step1", "block.nether_sprouts.step2","block.nether_sprouts.step3","block.nether_sprouts.step4","block.nether_sprouts.step5"]
 },
@@ -4817,7 +4849,8 @@ world.setBlock(wx + 1, top + 1, wz, leaf, false,false,false,false,dimension)
 world.setBlock(wx, top + 1, wz - 1, leaf, false,false,false,false,dimension)
 world.setBlock(wx, top + 1, wz + 1, leaf, false,false,false,false,dimension)
 world.setBlock(wx - 1, top + 1, wz, leaf, false,false,false,false,dimension)
-}
+},
+compostChance:0.3
 },
 { 
 name: "crimsonTrapdoor",
@@ -4910,7 +4943,8 @@ transparent: true,
 shadow: false,
 solid: false,
 crossShape: true,
-potCross: true
+potCross: true,
+compostChance:0.3
 },
 {
 name: "birchSapling",
@@ -4988,7 +5022,8 @@ world.setBlock(wx + 1, top + 1, wz, leaf, false,false,false,false,dimension)
 world.setBlock(wx, top + 1, wz - 1, leaf, false,false,false,false,dimension)
 world.setBlock(wx, top + 1, wz + 1, leaf, false,false,false,false,dimension)
 world.setBlock(wx - 1, top + 1, wz, leaf, false,false,false,false,dimension)
-}
+},
+compostChance:0.3
 },
 {
 name: "darkOakSapling",
@@ -4997,7 +5032,8 @@ transparent: true,
 shadow: false,
 solid: false,
 crossShape: true,
-potCross: true
+potCross: true,
+compostChance:0.3
 },
 {
 name: "jungleSapling",
@@ -5006,7 +5042,8 @@ transparent: true,
 shadow: false,
 solid: false,
 crossShape: true,
-potCross: true
+potCross: true,
+compostChance:0.3
 },
 {
 name: "spruceSapling",
@@ -5015,7 +5052,8 @@ transparent: true,
 shadow: false,
 solid: false,
 crossShape: true,
-potCross: true
+potCross: true,
+compostChance:0.3
 },
 {
 name: "blueOrchidPot",
@@ -5147,7 +5185,8 @@ shadow: false,
 solid: false,
 crop: true,
 flatIcon:true,
-iconTexture:"netherWartIcon"
+iconTexture:"netherWartIcon",
+compostChance:0.65
 },
 {
 name: "wheat",
@@ -5168,6 +5207,7 @@ textures4:new Array(6).fill('wheatStage4'),
 textures5:new Array(6).fill('wheatStage5'),
 textures6:new Array(6).fill('wheatStage6'),
 textures7:new Array(6).fill('wheat'),
+compostChance:0.65
 },
 {
 name: "lodestone",
@@ -5351,6 +5391,7 @@ biomeTintNorth:true,
 biomeTintSouth:true,
 biomeTintEast:true,
 biomeTintWest:true,
+compostChance:0.3
 },
 {
 name:"apple",
@@ -5360,7 +5401,8 @@ edible: true,
 eatWhenFull: false,
 food: 4,
 saturation: 2.4,
-eatResult: "appleCore"
+eatResult: "appleCore",
+compostChance:0.65
 },
 {
 name:"woodenPickaxe",
@@ -5412,14 +5454,16 @@ attackDamage: 5
 name:"mossBlock",
 Name: "Moss Block",
 breakTime:0.15,
-type: "plant2"
+type: "plant2",
+compostChance:0.65
 },
 {
 name:"mossCarpet",
 Name: "Moss Carpet",
 textures: "mossBlock",
 breakTime:0.15,
-carpet: true
+carpet: true,
+compostChance:0.3
 },
 {
 name: "caveVines",
@@ -5484,7 +5528,8 @@ name:"sporeBlossom",
 Name:"Spore Blossom",
 sporeBlossom: true,
 shadow:false,
-transparent: true
+transparent: true,
+compostChance:0.65
 },
 {
 name: "rootedDirt",
@@ -5496,7 +5541,8 @@ Name: "Hanging Roots",
 solid: false,
 transparent: true,
 shadow: false,
-crossShape: true
+crossShape: true,
+compostChance:0.3
 },
 {
 name:"azalea",
@@ -5505,7 +5551,8 @@ textures: ["azaleaTop", "azaleaSide"],
 potTex:["pottedAzaleaBushTop","pottedAzaleaBushSide"],
 azalea: true,
 transparent: true,
-potCross:true
+potCross:true,
+compostChance:0.65
 },
 {
 name:"floweringAzalea",
@@ -5514,7 +5561,8 @@ textures: ["floweringAzaleaTop","floweringAzaleaSide"],
 potTex:["pottedFloweringAzaleaBushTop","pottedFloweringAzaleaBushSide"],
 azalea: true,
 transparent: true,
-potCross:true
+potCross:true,
+compostChance:0.85
 },
 {
 name:"sunflower",
@@ -5585,6 +5633,7 @@ crossShape: true,
 solid: false,
 transparent: true,
 shadow: false,
+compostChance:0.5
 },
 {
 name:"woodenSword",
@@ -5641,6 +5690,7 @@ else return "floweringAzalea"
 },
 burnChance: 0.2,
 burnTime: 30,
+compostChance:0.3,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -5659,6 +5709,7 @@ else return "floweringAzalea"
 },
 burnChance: 0.2,
 burnTime: 30,
+compostChance:0.5,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -5779,7 +5830,8 @@ edible: true,
 item:true,
 eatWhenFull: false,
 food: 6,
-saturation: 11
+saturation: 11,
+compostChance:0.85
 },
 {
 name:"boneBlock",
@@ -5799,7 +5851,8 @@ edible: true,
 item:true,
 eatWhenFull: false,
 food: 2,
-saturation: 0.4
+saturation: 0.4,
+compostChance:0.3,
 },
 {
 name:"hayBlock",
@@ -5815,7 +5868,8 @@ name:"hayBlockSW",
 textures: ["hayBlockSide","hayBlockSide","hayBlockTop","hayBlockSW"],
 rotate: true,
 type:"plant2",
-damageResistance:0.8
+damageResistance:0.8,
+compostChance:0.85
 },
 {
 name:"woodenShovel",
@@ -6021,7 +6075,8 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-lightLevel:1
+lightLevel:1,
+compostChance:0.65
 },
 {
 name:"brownMushroom",
@@ -6031,22 +6086,26 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-lightLevel:1
+lightLevel:1,
+compostChance:0.65
 },
 {
 name:"mushroomStem",
 Name: "Mushroom Stem",
-mushroomBlock:true
+mushroomBlock:true,
+compostChance:0.65
 },
 {
 name:"redMushroomBlock",
 Name: "Red Mushroom Block",
-mushroomBlock:true
+mushroomBlock:true,
+compostChance:0.85
 },
 {
 name:"brownMushroomBlock",
 Name: "Brown Mushroom Block",
-mushroomBlock:true
+mushroomBlock:true,
+compostChance:0.85
 },
 {
 name:"mycelium",
@@ -6216,7 +6275,8 @@ item:true,
 useAs:function(x,y,z,block,face){
 if(!block) return
 if(face === "top" && blockData[block].name === "farmland") return "wheat"
-}
+},
+compostChance:0.3
 },
 {
 name:"yellowStainedGlass",
@@ -6884,7 +6944,8 @@ textures:["cakeBottom","cakeTop","cakeSide"],
 cake:true,
 transparent:true,
 flatIcon:true,
-iconTexture:"cake"
+iconTexture:"cake",
+compostChance:1
 },
 {
 name:"smithingTable",
@@ -6929,20 +6990,23 @@ item:true
 {
 name:"pumpkin",
 Name:"Pumpkin",
-textures:["pumpkinSide","pumpkinTop","pumpkinSide"]
+textures:["pumpkinSide","pumpkinTop","pumpkinSide"],
+compostChance:0.65
 },
 {
 name:"carvedPumpkin",
 Name:"Carved Pumpkin",
 textures:["pumpkinSide","pumpkinTop","pumpkinSide","carvedPumpkin","pumpkinSide","pumpkinSide"],
-rotate:true
+rotate:true,
+compostChance:0.65
 },
 {
 name:"jackOLantern",
 Name:"Jack o'Lantern",
 textures:["pumpkinSide","pumpkinTop","pumpkinSide","jackOLantern","pumpkinSide","pumpkinSide"],
 lightLevel:15,
-rotate:true
+rotate:true,
+compostChance:0.65
 },
 {
 name:"shears",
@@ -6953,12 +7017,14 @@ shears:true
 {
 name:"pumpkinSeeds",
 Name:"Pumpkin Seeds",
-item:true
+item:true,
+compostChance:0.3
 },
 {
 name:"melonSeeds",
 Name:"Watermelon Seeds",
-item:true
+item:true,
+compostChance:0.3
 },
 {
 name:"melon",
@@ -6966,7 +7032,8 @@ Name:"Watermelon",
 textures:["melonSide","melonTop","melonSide"],
 breakTime:1.5,
 drop:"melonSlice",
-dropAmount:[3,7]
+dropAmount:[3,7],
+compostChance:0.65
 },
 {
 name:"melonSlice",
@@ -6974,7 +7041,8 @@ Name:"Slice of Watermelon",
 item:true,
 edible: true,
 food: 2,
-saturation: 1.2
+saturation: 1.2,
+compostChance:0.5
 },
 {
 name:"redstoneLamp",
@@ -7114,6 +7182,7 @@ dropSelfWhenSheared:true,
 shearBreakTime:0.05,
 burnChance: 0.2,
 burnTime: 30,
+compostChance:0.3,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
 tint:leafTint,
@@ -7143,6 +7212,7 @@ dropSelfWhenSheared:true,
 shearBreakTime:0.05,
 burnChance: 0.2,
 burnTime: 30,
+compostChance:0.3,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
 tint:leafTint,
@@ -7172,6 +7242,7 @@ dropSelfWhenSheared:true,
 shearBreakTime:0.05,
 burnChance: 0.2,
 burnTime: 30,
+compostChance:0.3,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -7194,6 +7265,7 @@ dropSelfWhenSheared:true,
 shearBreakTime:0.05,
 burnChance: 0.2,
 burnTime: 30,
+compostChance:0.3,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
 tint:leafTint,
@@ -7223,6 +7295,7 @@ dropSelfWhenSheared:true,
 shearBreakTime:0.05,
 burnChance: 0.2,
 burnTime: 30,
+compostChance:0.3,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
 tint:leafTint,
@@ -7252,6 +7325,7 @@ dropSelfWhenSheared:true,
 shearBreakTime:0.05,
 burnChance: 0.2,
 burnTime: 30,
+compostChance:0.3,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -7318,6 +7392,7 @@ solid: false,
 transparent: true,
 shadow: false,
 crossShape: true,
+compostChance:0.65
 },
 {
 name: "largeFern",
@@ -7327,6 +7402,7 @@ transparent: true,
 shadow: false,
 textures: "largeFernTop",
 tallcrossShape: true,
+compostChance:0.65
 },
 {
 name:"fire",
@@ -7789,7 +7865,8 @@ transparent: true,
 shadow: false,
 wallFlat: true,
 flatIcon:true,
-lightLevel:7
+lightLevel:7,
+compostChance:0.5
 },
 {
 name:"sponge",
@@ -8013,7 +8090,8 @@ crossShape: true,
 cactusFruit:true,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
-}
+},
+compostChance:0.3
 },
 {
 name:"greenCactusFruit",
@@ -8025,7 +8103,8 @@ crossShape: true,
 cactusFruit:true,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
-}
+},
+compostChance:0.4
 },
 {
 name:"redCactusFruit",
@@ -8041,7 +8120,8 @@ saturation: 1,
 cactusFruit:true,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
-}
+},
+compostChance:0.5
 },
 {
 name:"purpleCactusFruit",
@@ -8057,7 +8137,8 @@ saturation: 2,
 cactusFruit:true,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
-}
+},
+compostChance:0.6
 },
 {
 name:"cherry",
@@ -8067,6 +8148,7 @@ edible:true,
 eatWhenFull: false,
 food: 1,
 saturation: 1,
+compostChance:0.5
 },
 {
 name:"cherryLog",
@@ -9682,7 +9764,8 @@ name:"thatch",
 Name:"Thatch",
 type:"plant2",
 burnChance: 0.2,
-burnTime: 20
+burnTime: 20,
+compostChance:0.85
 },
 {
 name:"pearlescentFroglight",
@@ -9815,7 +9898,8 @@ transparent:true,
 type:"wood",
 breakTime:1.05,
 blastResistance:0.7,
-cullFace:"never"
+cullFace:"never",
+compostChance:0.3
 },
 {
 name:"muddyMangroveRoots",
@@ -9988,7 +10072,8 @@ edible:true,
 food:4,
 saturation: 1.2,
 eatResult: "stick",
-useAs: "sweetBerryBush"
+useAs: "sweetBerryBush",
+compostChance:0.3
 },
 {
 name:"sweetBerryBush",
@@ -10203,6 +10288,51 @@ sign:true,
 breakTime:1.5,
 woodSound:true,
 type:"wood"
+},
+{
+name:"composter",
+Name:"Make bonemeal",
+textures:"composterCompost",
+transparent:true,
+blastResistance:0.6,
+breakTime:0.9,
+woodSound:true,
+type:"wood",
+onclick:function(x,y,z,dimension){
+if(!holding || !blockData[holding].compostChance) return true
+var id = blockIds.composter
+var target = id
+var block = world.getBlock(x,y,z,dimension)
+var add = rand() <= blockData[holding].compostChance
+switch(block){
+case id:
+target |= SLAB
+break
+case id | SLAB:
+target |= STAIR
+break
+case id | STAIR:
+target |= CROSS
+break
+case id | CROSS:
+target |= TALLCROSS
+break
+case id | TALLCROSS:
+target |= DOOR
+break
+case id | DOOR:
+target |= TORCH
+break
+case id | TORCH:
+target |= LANTERN
+break
+case id | LANTERN:
+if(add) world.addEntity(new Item(x,y,z+0.5,0,0,0,blockIds.boneMeal,true, 1),false,dimension)
+}
+minusOne()
+if(add) world.setBlock(x,y,z,target,false,false,false,false,dimension)
+glint(x,y,z,dimension)
+}
 },
 /*
 { name: "pigFace" },
@@ -10750,6 +10880,7 @@ const crafts = {
 "sprucePlanks,sprucePlanks,sprucePlanks,sprucePlanks,sprucePlanks,sprucePlanks,air,stick":{name:"spruceSign",amount:3},
 "darkOakPlanks,darkOakPlanks,darkOakPlanks,darkOakPlanks,darkOakPlanks,darkOakPlanks,air,stick":{name:"darkOakSign",amount:3},
 "mangrovePlanks,mangrovePlanks,mangrovePlanks,mangrovePlanks,mangrovePlanks,mangrovePlanks,air,stick":{name:"mangroveSign",amount:3},
+"oakPlanks,air,oakPlanks,oakPlanks,air,oakPlanks,oakPlanks,oakPlanks,oakPlanks":{name:"composter",amount:2}
 }
 /*
 //replace anything in crafts starting with _
@@ -15769,6 +15900,150 @@ east: 0,
 west: 0
 },
 },
+composter:{
+verts:[
+[objectify(0,0,0,16,16,16,0)],
+[objectify(0,2,16,16,16,16,0),objectify(0,16,16,14,2,66,0),objectify(14,16,16,2,14,64,0),objectify(2,16,2,14,2,64,14),objectify(0,16,14,2,14,78,2)],
+[objectify(16,16,16,16,16,48,0),objectify(16,16,2,16,16,48,0)],
+[objectify(0,16,0,16,16,48,0),objectify(0,16,14,16,16,48,0)],
+[objectify(16,16,0,16,16,48,0),objectify(2,16,0,16,16,48,0)],
+[objectify(0,16,16,16,16,48,0),objectify(14,16,16,16,16,48,0)]
+],
+cull: {
+top: 3,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+composter2:{
+verts:[
+[objectify(0,0,0,16,16,16,0)],
+[objectify(0,4,16,16,16,0,0),objectify(0,16,16,14,2,66,0),objectify(14,16,16,2,14,64,0),objectify(2,16,2,14,2,64,14),objectify(0,16,14,2,14,78,2)],
+[objectify(16,16,16,16,16,48,0),objectify(16,16,2,16,16,48,0)],
+[objectify(0,16,0,16,16,48,0),objectify(0,16,14,16,16,48,0)],
+[objectify(16,16,0,16,16,48,0),objectify(2,16,0,16,16,48,0)],
+[objectify(0,16,16,16,16,48,0),objectify(14,16,16,16,16,48,0)]
+],
+cull: {
+top: 3,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+composter3:{
+verts:[
+[objectify(0,0,0,16,16,16,0)],
+[objectify(0,6,16,16,16,0,0),objectify(0,16,16,14,2,66,0),objectify(14,16,16,2,14,64,0),objectify(2,16,2,14,2,64,14),objectify(0,16,14,2,14,78,2)],
+[objectify(16,16,16,16,16,48,0),objectify(16,16,2,16,16,48,0)],
+[objectify(0,16,0,16,16,48,0),objectify(0,16,14,16,16,48,0)],
+[objectify(16,16,0,16,16,48,0),objectify(2,16,0,16,16,48,0)],
+[objectify(0,16,16,16,16,48,0),objectify(14,16,16,16,16,48,0)]
+],
+cull: {
+top: 3,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+composter4:{
+verts:[
+[objectify(0,0,0,16,16,16,0)],
+[objectify(0,8,16,16,16,0,0),objectify(0,16,16,14,2,66,0),objectify(14,16,16,2,14,64,0),objectify(2,16,2,14,2,64,14),objectify(0,16,14,2,14,78,2)],
+[objectify(16,16,16,16,16,48,0),objectify(16,16,2,16,16,48,0)],
+[objectify(0,16,0,16,16,48,0),objectify(0,16,14,16,16,48,0)],
+[objectify(16,16,0,16,16,48,0),objectify(2,16,0,16,16,48,0)],
+[objectify(0,16,16,16,16,48,0),objectify(14,16,16,16,16,48,0)]
+],
+cull: {
+top: 3,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+composter5:{
+verts:[
+[objectify(0,0,0,16,16,16,0)],
+[objectify(0,10,16,16,16,0,0),objectify(0,16,16,14,2,66,0),objectify(14,16,16,2,14,64,0),objectify(2,16,2,14,2,64,14),objectify(0,16,14,2,14,78,2)],
+[objectify(16,16,16,16,16,48,0),objectify(16,16,2,16,16,48,0)],
+[objectify(0,16,0,16,16,48,0),objectify(0,16,14,16,16,48,0)],
+[objectify(16,16,0,16,16,48,0),objectify(2,16,0,16,16,48,0)],
+[objectify(0,16,16,16,16,48,0),objectify(14,16,16,16,16,48,0)]
+],
+cull: {
+top: 3,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+composter6:{
+verts:[
+[objectify(0,0,0,16,16,16,0)],
+[objectify(0,12,16,16,16,0,0),objectify(0,16,16,14,2,66,0),objectify(14,16,16,2,14,64,0),objectify(2,16,2,14,2,64,14),objectify(0,16,14,2,14,78,2)],
+[objectify(16,16,16,16,16,48,0),objectify(16,16,2,16,16,48,0)],
+[objectify(0,16,0,16,16,48,0),objectify(0,16,14,16,16,48,0)],
+[objectify(16,16,0,16,16,48,0),objectify(2,16,0,16,16,48,0)],
+[objectify(0,16,16,16,16,48,0),objectify(14,16,16,16,16,48,0)]
+],
+cull: {
+top: 3,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+composter7:{
+verts:[
+[objectify(0,0,0,16,16,16,0)],
+[objectify(0,14,16,16,16,0,0),objectify(0,16,16,14,2,66,0),objectify(14,16,16,2,14,64,0),objectify(2,16,2,14,2,64,14),objectify(0,16,14,2,14,78,2)],
+[objectify(16,16,16,16,16,48,0),objectify(16,16,2,16,16,48,0)],
+[objectify(0,16,0,16,16,48,0),objectify(0,16,14,16,16,48,0)],
+[objectify(16,16,0,16,16,48,0),objectify(2,16,0,16,16,48,0)],
+[objectify(0,16,16,16,16,48,0),objectify(14,16,16,16,16,48,0)]
+],
+cull: {
+top: 3,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
+composter8:{
+verts:[
+[objectify(0,0,0,16,16,16,0)],
+[objectify(0,15,16,16,16,32,0),objectify(0,16,16,14,2,66,0),objectify(14,16,16,2,14,64,0),objectify(2,16,2,14,2,64,14),objectify(0,16,14,2,14,78,2)],
+[objectify(16,16,16,16,16,48,0),objectify(16,16,2,16,16,48,0)],
+[objectify(0,16,0,16,16,48,0),objectify(0,16,14,16,16,48,0)],
+[objectify(16,16,0,16,16,48,0),objectify(2,16,0,16,16,48,0)],
+[objectify(0,16,16,16,16,48,0),objectify(14,16,16,16,16,48,0)]
+],
+cull: {
+top: 3,
+bottom: 3,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
 sun:{
 verts:[
 [],[],[],
@@ -16728,9 +17003,12 @@ world.addEntity(new Sign(x,y,z,signBlock,block),false,dimension)
 }
 var signOnplace = function(x,y,z, dimension){
 var block = world.getBlock(x,y,z,dimension)
-var rot = round(p.ry*16/Math.PId)
+var rot = world.getTagByName(x,y,z,"rot",dimension)
+if(!rot && rot !== 0){
+rot = round(p.ry*16/Math.PId)
 if((block & STAIR) === STAIR) rot = round(rot/4)*4
 world.setTagByName(x,y,z, "rot",rot,false,dimension)
+}
 this.set(x,y,z,dimension,block)
 }
 for (let i = 0; i < BLOCK_COUNT; i++) {
@@ -17281,6 +17559,16 @@ baseBlock.onplace = signOnplace
 baseBlock.set = signSet
 baseBlock.onclick = editSign
 stairBlock.shape = shapes.cube
+}
+if(baseBlock.name === "composter"){
+baseBlock.shape = shapes.composter
+makeBlock(baseBlock.textures, shapes.composter2, slabBlock, baseBlock)
+makeBlock(baseBlock.textures, shapes.composter3, stairBlock, baseBlock)
+makeBlock(baseBlock.textures, shapes.composter4, crossBlock, baseBlock)
+makeBlock(baseBlock.textures, shapes.composter5, tallcrossBlock, baseBlock)
+makeBlock(baseBlock.textures, shapes.composter6, doorBlock, baseBlock)
+makeBlock(baseBlock.textures, shapes.composter7, torchBlock, baseBlock)
+makeBlock(baseBlock.textures, shapes.composter8, lanternBlock, baseBlock)
 }
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
@@ -19534,6 +19822,7 @@ updateHUD = true
 }
 }
 function minusOne(){
+if(!survival) return
 inventory.hotbar[inventory.hotbarSlot].amount --
 inventory.hotbar[inventory.hotbarSlot].animation = 1.5
 updateHUD = true
@@ -24252,6 +24541,7 @@ update() {
 if(world.getBlock(this.x,this.y,this.z,this.dimension) !== this.baseBlock) this.canDespawn = true
 if(this.canDespawn) return blockParticles(this.block,this.x,this.y,this.z,30, "break",world,this.dimension)
 var tags = world.getTags(this.x,this.y,this.z,this.dimension)
+if(tags){
 var rotation = tags.rot || 0
 this.yaw = -rotation * Math.PId / 16
 if(this.textEnt){
@@ -24268,6 +24558,7 @@ this.textEnt.offsetZ = -6/16
 }else{
 this.textEnt.offsetZ = 1/16
 this.textEnt.y += 0.35
+}
 }
 }
 }
@@ -24314,7 +24605,7 @@ gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elemen
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
-if(this.textEnt) world.textEntities.push(this.textEnt)
+if(this.textEnt) this.textEnt.render()
 }
 }
 class ExperienceOrb extends Entity{
@@ -24957,7 +25248,7 @@ gl.uniform1i(glCache.isTextureAtlasEntity,1)
 if(this.burning){
 entityFire.render(this)
 }
-if(this.nameText) world.renderTextEntity(this.nameText)
+if(this.nameText) this.nameText.render()
 }
 renderPart(part, modelMatrix, modelViewProjectionMatrix, projectionMatrix, viewMatrix, x,y,z){
 if(part.name === "cape"){
@@ -26048,13 +26339,13 @@ genericVaos.push(vao)
 }
 }
 class TextEntity extends Entity{
-constructor(x,y,z,text,user,size,color,background) {
+constructor(x,y,z,text,size,color,background) {
 size = size || 1/16
 super(x, y, z, 0, 0, 0, 0, 0, size, size, size, null,null, 0, 0)
 this.defaultGravityStength = 0
-this.user = user
 this.offsetZ = 0
 this.offsetX = 0
+this.type = "TextEntity"
 this.vao = glExtensions.vertex_array_object.createVertexArrayOES()
 this.buffer = gl.createBuffer()
 this.setText(text)
@@ -26111,14 +26402,15 @@ gl.enableVertexAttribArray(glCache.aTextureText)
 gl.vertexAttribPointer(glCache.aVertexText, 2, gl.FLOAT, false, 16, 0)
 gl.vertexAttribPointer(glCache.aTextureText, 2, gl.FLOAT, false, 16, 8)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
+this.text = text
 }
 update() {
-let now = performance.now()
-this.updateVelocity(now)
-this.move(now)
 this.canFacePlayer = true
 }
-render() {
+render(){
+world.renderTextEntity(this)
+}
+renderText() {
 let diff = (performance.now() - this.lastUpdate) / tickTime
 if (diff > 1) diff = 1
 let renderx = (this.x - this.previousX) * diff + this.previousX
@@ -26165,6 +26457,7 @@ gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
 }
+win.TextEntity = TextEntity
 let analytics = {
 totalTickTime: 0,
 worstFrameTime: 0,
@@ -27495,7 +27788,7 @@ return i
 }
 }
 getEntPos(ent){
-return {x:ent.x, y:ent.y, z:ent.z, yaw:ent.yaw, pitch:ent.pitch, block:ent.block, velx:ent.velx, vely:ent.vely, velz:ent.velz, amount:ent.amount, solidOnGround:ent.solidOnGround,harmEffect:ent.harmEffect, health:ent.health, from:ent.from, spawn:ent.spawn, value:ent.value, burning:ent.burning, durability:ent.durability, sx:ent.sx,sy:ent.sy,sz:ent.sz,mx:ent.mx,my:ent.my,mz:ent.mz,despawns:ent.despawns,solidWhenDone:ent.solidWhenDone}
+return {x:ent.x, y:ent.y, z:ent.z, yaw:ent.yaw, pitch:ent.pitch, block:ent.block, velx:ent.velx, vely:ent.vely, velz:ent.velz, amount:ent.amount, solidOnGround:ent.solidOnGround,harmEffect:ent.harmEffect, health:ent.health, from:ent.from, spawn:ent.spawn, value:ent.value, burning:ent.burning, durability:ent.durability, sx:ent.sx,sy:ent.sy,sz:ent.sz,mx:ent.mx,my:ent.my,mz:ent.mz,despawns:ent.despawns,solidWhenDone:ent.solidWhenDone,text:ent.text,size:ent.size,color:ent.color,background:ent.background}
 }
 addEntity(ent, remote, dimension){
 if(!ent.id)ent.id = Date.now()
@@ -27523,6 +27816,7 @@ var i = this.getEntity(d.id)
 var ent
 if(i || i===0){
 ent = this.entities[i]
+if(ent.type === "TextEntity" && ent.text !== p.text) ent.setText(p.text)
 }else{
 switch(d.entType){
 case "Item":
@@ -27561,6 +27855,8 @@ break
 case "Pig":
 ent = new Pig(0,0,0)
 break
+case "TextEntity":
+ent = new TextEntity(0,0,0,p.text,p.size,p.color,p.background)
 default:
 break
 }
@@ -27600,7 +27896,7 @@ if(dimension || dimension === "") particle.dimension = dimension
 this.particles.push(particle)
 }
 generateTextForEntity(text,user,size,color,background){
-var e = new TextEntity(user.x,user.y,user.z,text,user,size,color,background)
+var e = new TextEntity(user.x,user.y,user.z,text,size,color,background)
 e.dimension = user.dimension || ""
 return e
 }
@@ -28039,7 +28335,7 @@ gl.disable(gl.CULL_FACE)
 gl.useProgram(programText)
 for (let i = this.textEntities.length - 1; i >= 0; i--) {
 const entity = this.textEntities[i]
-if(entity.dimension === p.dimension) entity.render()
+if(entity.dimension === p.dimension) entity.renderText()
 }
 gl.enable(gl.CULL_FACE)
 gl.useProgram(program3D)
