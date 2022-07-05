@@ -980,9 +980,20 @@ uniform sampler2D uSampler;
 uniform float uLightLevel;
 uniform vec3 textColor;
 uniform vec4 background;
+uniform bool glow;
 varying vec2 vTexture;
+const float pixSize = 1./8.;
 void main(){
 vec4 color = texture2D(uSampler, vTexture);
+if(glow && color.a == 0.){
+float up = texture2D(uSampler, vec2(vTexture.x,vTexture.y+pixSize)).a;
+float down = texture2D(uSampler, vec2(vTexture.x,vTexture.y-pixSize)).a;
+float left = texture2D(uSampler, vec2(vTexture.x-pixSize,vTexture.y)).a;
+float right = texture2D(uSampler, vec2(vTexture.x+pixSize,vTexture.y)).a;
+if(up != 0. || down != 0. || left != 0. || right != 0.){
+color = vec4(textColor*0.75, 1.);
+}
+}
 gl_FragColor = vec4(mix(background.rgb, color.rgb*textColor, color.a) * uLightLevel, mix(background.a, 1., color.a));
 if (gl_FragColor.a == 0.0) discard;
 }
@@ -3015,6 +3026,50 @@ composterBottom: "0g0g4ïÏZåxZÊĸWÀĈY41SgLėYĔáÞ]tAxc8xÎc]wÒ9Æ)wpsÒw
 composterReady: "0g0gb000]ĨYÖhYÁMWÀŘYìüYł^HĞďWËzWòÏWĕJW00000000000000000hzTQÁh00iÏ?DÒx00CÔíðäT00]ÄÑýßh00RDÃyoU00?ïïUïÆ00oAÓâQk00QDÔVâO00[ÕRDÓ>00BãáÂÅk00hÆ!J>T00hQ>TQh00000000000000000",
 composterSide: "0g0gcĝĺZĉīWïÏZåxZÀĈYÊĸW;ùZAÀHQħZÊŇZéMH?0H100h01g1yNyNyzNyzyOzzOyO?U?QQVQ?ÔãðòđòñãNhixhNhiOyyONyzzQQQQQQQQñãĀòÓIÔãzxhhihzyyNzNyzyzQQQQQQQQñãÓĂđôñãzxhhyNhhyzyONyyzQQQQQQQQ",
 composterTop: "0g0g5ĝĺZĉīWïÏZåxZ0000ë900SFĜă|ĜĀePAJPoaPAJPhaPAJPhaPAJPg&PAJPo!PAJPoePAJPpePAJPpaPAJPgaPAJPg!PAJPoePAJPpdĎĹPĜĿ0ë90gS",
+cocoaStage2: "0g0g8ÀKYÑĘYëŗZ000ŉĮZı*WýÁYġĪH5A]ÚĞŌ:HęÚğFÉłřÚġàÌĲæÚģôÌŠæ4J]ÉŖřWéÖ:BęWńŐ4üI=ĴŠÚĞł=ĲőÚĞłÌĶőÚĞłÍņőÚĞłÍé×ÚĞł9AùÚĞłÚĞłÚĞłÚĞłÚĞłÚĞł",
+cocoaStage1: "0g0g8UĸYÚNHUňY000ĵýHĢVWĚAHâiW4JăÚĞŌ+ÊÉÚğFNÈÉÚġà+œÉÚģô/œÉKJ>4JrÔË_ÚĞłÓĴ_ÚĞłÓĴ_ÚĞłêĴçÚĞłHËģÚĞłÐZĪÚĞłÚĞłÚĞłÚĞłÚĞłÚĞłÚĞłÚĞłÚĞłÚĞł",
+cocoaStage0: "0g0gaÒJYÚĪHâĪH000ĞŜYĊüYĊČZóQWåĺHÖíZ1wOOOOO?kÏOOOO)ÏCÞOOOO@à2gOOOOÅzOOOOO(äûOOOOON@zOOOOON@zOOOOOMÅjOOOOO(h3OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+cocoaBeans: "0g0g5000ýüH{ĉWÞiH(KY0000000000000000000004ë0000?ħ000Æ9S004ķ20008ĈÕ70013(O00+4ë*00Nëc800D0Ó00094×00000ù00000000000000",
+goldenApple: "0g0ga000áĈWęúWUùYŁìWZťHŖAHŒĝHŞŐWUSY00000000000010000000z0000000g000002xMg0002?>CTg00AäVÆáh00AGGGÔT00AÔÔÓÔÖ00k@Ñ@[Ö00kQQÑ[P001QÑQÑù001AQÓRù000JRAF00009hpù0000000000",
+rabbitStew: "0g0gk000č>WĹ5HāyZÙęYťûZť(YŉáYĸĈZřĝYĝùZĵ+Z;ĈYQħZĸŜWsÀWÞ(ZÀŇY-ùH(ëY0000000000000000000000000000000000000000000000000000001g0000000cÑh{00000MĄQhùMë006áĐĩyīÒõ00oĽI>rXĽĤ00p8ĝĕØÉp;001-RgXzDë0007Ħ(XÌŗ000001Ŗçħ00000000000000000000000",
+goldenCarrot: "0g0gb000ÞSYUŗHÀĈHUSYŖAHŁìW(ÀWęúWŒĝHZťH000000000001i0000000x(i0002jxNj0000zjxw0000?ÐNà0008Çþ[N(008ĂýÑàà00ðĒÄXO000òýÓ[3008ÖÄX00008ÄÑS0000ïÕS00000ðQ000000Q00000000000000",
+carrot: "0g0gb000NŚWuÎZ1ùWáĈWť(YĸĈZ1SWĔŇWťûZZ7H000000000001i0000000x(i0002jxNj0000zjxw0000?ÐNà0008Çþ[N(008ĂýÑàà00ðĒÄXO000òýÓ[3008ÖÄX00008ÄÑS0000ïÕS00000ðQ000000Q00000000000000",
+beetrootSoup: "0g0gb000;ĈYXÀZÙÁHĠċWsÀWQħZÞ(ZÀŇY-ùH(ëY0000000000000000000000000000000000000000001hhg0001izOMg00iQQRy*00mÐyy+Ò00nðÓÓÕý00aGGGòÀ000VñäV00000VV000000000000000000000000000",
+beetroot: "0g0g8000õĚZÝÀZÆÞHĝAZĨĮYČJZŅłH0000000000000005000000Ď000iSĘ000čò+005ČŠë005AķĘ005čł(00z+ĀĘ00%ĎBë00yłÙ000+000006ħ000000000000000",
+tropicalFish: "0g0gb000ġRZŝAYńKYč2WőįZŜĚWŕšWŢÙWÕĘY00W00000000000001g0000001x000000izS001ghÄ)S00nMÕâS000oÓÓÇ0000nIãp0001ÓÏyp0001myxù000oñÓVù000qÔÎp0000mÒÁù0000ûMā000009ā0000000000000",
+cookedSalmon: "0g0gg000ÚiHĹGHĥśY;ĊYÑĸZġNWąhZńŜWÝřWoĊH<)WËĽHÓÅWkÁH|ïW00000000000001g0000001x000000izS001gVÔ)S00i*ãòS000jÓÕ×0000ÄÓðæ000bĳäÔĂ000bĤľÖĈ000ĤĲĳāĈ000ĦZĲĂ0000Y1ģĈ0000Ę3q000000O0000000000000",
+rawSalmon: "0g0gg000Ç3ZĦ]YāĭZ;ĊYÑĸZĐĺWùĊYĥkHÝĺWoĊH<)WËĽHÓÅWkÁH|ïW00000000000001g0000001x000000izS001gVÔ)S00i*ãòS000jÓÕ×0000ÄÓðæ000bĳäÔĂ000bĤľÖĈ000ĤĲĳāĈ000ĦZĲĂ0000Y1ģĈ0000Ę3q000000O0000000000000",
+cookedRabbit: "0g0g8000äŘZĹ+WŁĀWōšWđàWòiWÆęH0000000000J00i]5)S0Ďĸ!@I6ğAJ@Ş5DAJ+Ŗ5ÈŋãČŖ0ĬÄĒQğ3İGĚ]Ġ3đĦő?ħ0âĮŤ#ħ0fħvÉĠ0003ŤĠ0000fş000000000000",
+rawRabbit: "0g0g8000ĝōHŕšZŚ#ZZąWŁIZĢnWïQH0000000000J00i]5)S0Ďĸ!@I6ğAJ@Ş5DAJ+Ŗ5ÈŋãČŖ0ĬÄĒQğ3İGĚPä3đĦő?ħ0âĮŤ#ħ0fħvÉĠ0003ŤĠ0000fş000000000000",
+cookedPorkchop: "0g0gb000öċWāŋWĦÿHł!HËNHĭğHĺ8YŊ^ZĵŏWìíY00000000000000000000000000001yg00000j>B00001+äÏÀ000kGüíÀ001+XGJÀ00jñÿXÏÀ02+]GüÒ00zPGPÏB00CÕÿþ!À002)ðxč0001yyl000005VÀ00000000000",
+rawPorkchop: "0g0g9000č?WŔĮWŤľHXŚZť-ZťĢZÀJHZsH000000000000000000001hg00000iy)00001y*ÁS000mÂzÏS00hNÃ*ÐS01VyO*ÏÝ01+NzÓÑÝ0iBÏ+ðA00izÕÕÏ[00iOIðAÝ004mIUG0004TÐ[000007GÝ00000000000",
+cookedMutton: "0g0ga000ÀęZÕŉYąXHé2ZìzYąčHĉĬYEÀZò)W00000000000001g000000zT000000zÁ000002+Á000002Ô]00000Dÿ]00002åÄo0002zãþg000DàÿOg002àVÃáë00DýVÇÞë00D.VûÁ000k+GÑo000ìhhoë0008IIë000",
+rawMutton: "0g0ga000üìYĔĩZňïYĤĊWķĚHňĭYőEWQwHŃŊW00000000000001g000000zT000000zÁ000002+Á000002Ô]00000Dÿ]00002åÄo0002zãþg000DàÿOg002àVÃáë00DýVÇÞë00D.VûÁ000k+GÑo000ìhhoë0008IIë000",
+cookedCod: "0g0ga000ĖCHľqZĭñWāĜZŊĄHĵŏZ00WĚBWÖiY00000000000001g0000001x0000001zg0000hhMS000hÂxkS001ÂlÁ0000iÁyA0001ÂlÂÑ0001xyCS000Q>ÂÑ0000[)ÓS0000>-Q00000]ò0000009ā0000000000000",
+rawCod: "0g0g7000ĭñWĚBWľqZāĜZÖiY00W0000000000k00000,00001ĚĈ00ùùčw04ŃEİÕ04İ?À008ó!À00RÃÓÀ00]ÉNë02jaJë02Ïõü002iÑĈ002č%0000ÉS000000000",
+cookedChicken: "0g0ga000òiWĴśYŅGYĹ+WĕàWōšHÆęWŅĐWŖ!Z00000000001hg00000i)xg0000ÃBÂÁ0001RÂ+ÑÝ001R>ÓÐD001i+ÓORÝ0k*+Ð)RÝ0kT*hQBÝ0kxjÐiD00ilmÐÁÅ00ìÁzNnÝ00ÿhOxÝ0000ähG00000ÿG000000000000",
+rawChicken: "0g0ga000ĝōHŅđHŕšZĩ]WZąZïQHŚ#ZŅĐWŖ!Z00000000001hg00000iOxg0000>ART0001NR*ÃK001N,VÅC001jâVGNK0j)âÅàNK0jMáhOAK0jxjÃiC00iklÃT@00ìTBNmK00þhOxK0000ÕhÓ00000þÓ000000000000",
+pumpkinPie: "0g0gd000đļZZ,ZőĽWőãWŁBWŕĞZřŎYĝÞWčÁWâÁZŀĹWĽáY00000000000000000000000000000000001hhg0001iyOMg00j)VV>M01)V@ÑV>g1*Ô]þ?ÂĈ1@ĠòÑVRĈ1ôĠÿVUzĈaģóČyy;Ĉ0ĒĈĔOOı0000ĔOıĈ0000aĒĈ0000000000",
+cookie: "0g0g8000ġĪHòyY]ĉHŁ3ZőÒWUęYQĉW00000000000000PAë00iĄJi00ĲÚĚĿë6ń×âÇÀj_CG_]iŁĔĞÈIiıŔĚÇ]aÇÏãŒ-t|ÚĞĿĠ3ċA÷lħ0êòBê001ZZë0000000000000",
+cookedBeef: "0g0ga000{úYÝřZézHö>ZÀęZāáWÑĹYEÀZ;ìH00000000000000000000000000001hg00000iNT00001Ä[Dg000k?)Âë00hâÑÃBë01Ã[ÄRåë01BÑ?ÔĀ00i+ÄRÇĀ00mzÒzåë001Ñ>åĀ0008ïāĀë00008Ië00000000000",
+rawBeef: "0g0g9000ĔÞHőDWňïYŇŚHňĭYňQYäÁWQwH00000000000000000000000000001hg00000i)Á00001C?)g000jÓÑ)Ý00h@Ð@xë01@Ñ)Ï[ë01Ð?Ó)äë0kAÓ*[ä00iÓ*UGë00ìyUhä0008hhäë0000IIë00000000000",
+bakedPotato: "0g0gb000āÀWĖkHŁčWıÃYąĹZĽěHŚ*YĞÑWÙķWïċZ0000000000000000000000000001hh00001iOQg000j)VVÁ001)VÔãì001?ÔGÒUg0iÄGãÃQù0jÅãïO^ù0kÄïÃ)Vù0lIÃN?đ009ï>QÇù000ĂyÇù00009āù00000000000",
+potato: "0g0ga000āÀWąĹZŁčWıÃYĖkHőōWÙķWŢ]HïċZ000000000000000000000000000000000000hh00001hz?g000iÃ)OT001+ÓO)[00kÕðO)ÿ00jÕîORD00áÄOUyÝ00ßU)RG0007ýÂG00000GG00000000000000000000",
+milkBucket: "0g0gb000)ĺHåŎYĂÖYė<HņĶHZZZłÚYĒĒYÞĮWþÇH00000000001hhg0001izOMg00i?ÓÒUx00kÓÓÓÓT00hkVÓTh00nìhhpĉ00nGäóāĉ00nãäóāì00oãäóāì00pãäóāĉ001GäóĂg001ñäĒĂg000oäđĉ00001hhg0000000000",
+sugar: "0g0g6000ĢœYŒĖYZZZľËZVÄY000000000000000000001w0000aÑ0000Éßë002ł}À00młÝı00ĎĻ×OS0ĜłÂpS2ĭŁ÷>S0ÆĻNq00b{ðķ000%Ĝ00000000000000",
+beetrootSeeds: "0g0g4000ïĜYViYŅĮH0000000000m000éë1Îŝ07ŇĐ0bK009ë1S2ë5Ň057Ň0vòĈ0Hí00ąë00!0000000000",
+beetrootsStage3: "0g0g8000ÄĊZ^NYFĩYBíHáëWĀìYĤJY00000000000000000000000000000000000002À0Ĉ082I5(hAðÁòħòM@Ăþ+ÈVĐĻĘ/üaŀsĈ[Ãiħ5Ĉ9ÆnÀ&ĜbĐrķ,ĻdŏYŒHĽŖŜ",
+beetrootsStage2: "0g0g7000ÄĊZ^NYFĩYBíHáëWĀìY00000000000000000000000000000000000000000000000000]00h82ôhëòQ)ÁõĘÈC+Âï)üEĀôPĭI9Ĉh{CÀ903K)ëlħAĻÅĐ",
+beetrootsStage1: "0g0g5000ÄĊZ^NYFĩYBíH00000000000000000000000000000000000000000000000000000000000000000000À0000ùI80I9Ĉh{wÀ9030)ë1ħA060",
+beetrootsStage0: "0g0g5000ÄĊZ^NYFĩYBíH0000000000000000000000000000000000000000000000000000000000000000000000000090000wgwg0100S401ħz0E0",
+potatoesStage3: "0g0g9000FĩY^NYÄĊZBíHúĻWĒ)YïċYıXY00001000002(1(000003yj0000020O00003k(00000Mww00000O02O00000031(0001w20w00010w0000j0Aw0g001w3x0(000g2g200021xR10005UlUlÁ00ÄÔÆñÆÔ0",
+potatoesStage2: "0g0g8000ÄĊZ^NYFĩYBíHúĻWïċYĒ)Y000000000000000000000000000000001S0000850000j400000800000S0000kS00061{00022K2000ĺI(001tęëħ0ËėšŔS",
+potatoesStage1: "0g0g6000ÄĊZ^NYBíHFĩYúĻW000000000000000000000000000000000000000000000000000w00000Q00002800000S0000jS00021Sg001kÕS000ŌĖ0ħ",
+potatoesStage0: "0g0g5000ÄĊZBíH^NYFĩY000000000000000000000000000000000000000000000000000000000000000000000w00002w0000iK00001Kg000X}S0",
+carrotsStage3: "0g0ga000BíH^NYFĩYÄĊZxiHĬęHŉxZđìWèŗZ0000000000000000000000000g0w0O0002023w0(00x32040012R)0S0033AA3w01zA)jzN(0iNRkTR002TzAzz003xONhM001(jh1(001À1À5g006Ý6ÝñK00ñäÿäÔä0",
+carrotsStage2: "0g0g6000FĩY^NYBíHÄĊZèŗZ00000000000000000000000000000000000000S0008ëg0Ę010w5030íĩg081ĘĲÕ(SÒNĉÛyĹcĈÂÒmI1ĊŀFĚë0+pÚíħ0È5ĈÈ0",
+carrotsStage1: "0g0g5000^NYÄĊZFĩYBíH00000000000000000000000000000000000000000000000000000000000000000002ûdy0hùİXĘÊ2,xÓ@Ň064ù60080ë80",
+carrotsStage0: "0g0g4000FĩY^NYBíH000000000000000000000000000000000000000000000000000006A0dtts0ħħħ",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -7995,6 +8050,12 @@ minusOne()
 world.setBlock(x,y,z, blockIds.wheat|LANTERN,false,false,false,false,dimension)
 }else if(blockData[block].name === "tomatoPlant"){
 world.setBlock(x,y,z, blockIds.tomatoPlant|TALLCROSS,false,false,false,false,dimension)
+}else if(blockData[block].name === "beetroots"){
+world.setBlock(x,y,z, blockIds.beetroots|CROSS,false,false,false,false,dimension)
+}else if(blockData[block].name === "carrots"){
+world.setBlock(x,y,z, blockIds.carrots|CROSS,false,false,false,false,dimension)
+}else if(blockData[block].name === "potatoes"){
+world.setBlock(x,y,z, blockIds.potatoes|CROSS,false,false,false,false,dimension)
 }else return
 glint(x,y,z,dimension)
 },
@@ -9667,82 +9728,98 @@ item:true
 {
 name:"redDye",
 Name:"Red Dye",
-item:true
+item:true,
+dye:[176/255, 46/255, 38/255]
 },
 {
 name:"lightGrayDye",
 Name:"Light Gray Dye",
-item:true
+item:true,
+dye:[157/255, 157/255, 151/255]
 },
 {
 name:"lightBlueDye",
 Name:"Light Blue Dye",
-item:true
+item:true,
+dye:[58/255, 178/255, 218/255]
 },
 {
 name:"magentaDye",
 Name:"Magenta Dye",
-item:true
+item:true,
+dye:[199/255, 78/255, 189/255]
 },
 {
 name:"yellowDye",
 Name:"Yellow Dye",
-item:true
+item:true,
+dye:[254/255, 215/255, 61/255]
 },
 {
 name:"purpleDye",
 Name:"Purple Dye",
-item:true
+item:true,
+dye:[137/255, 50/255, 184/255]
 },
 {
 name:"orangeDye",
 Name:"Orange Dye",
-item:true
+item:true,
+dye:[249/255, 128/255, 29/255]
 },
 {
 name:"whiteDye",
 Name:"White Dye",
-item:true
+item:true,
+dye:[249/255, 1, 254/255]
 },
 {
 name:"greenDye",
 Name:"Green Dye",
-item:true
+item:true,
+dye:[93/255, 124/255, 22/255]
 },
 {
 name:"brownDye",
 Name:"Brown Dye",
-item:true
+item:true,
+dye:[131/255, 84/255, 50/255]
 },
 {
 name:"blackDye",
 Name:"Black Dye",
-item:true
+item:true,
+dye:[29/255, 29/255, 33/255]
 },
 {
 name:"pinkDye",
 Name:"Pink Dye",
-item:true
+item:true,
+dye:[243/255, 139/255, 170/255]
 },
 {
 name:"limeDye",
 Name:"Lime Dye",
-item:true
+item:true,
+dye:[128/255, 199/255, 31/255]
 },
 {
 name:"grayDye",
 Name:"Gray Dye",
-item:true
+item:true,
+dye:[71/255, 79/255, 82/255]
 },
 {
 name:"cyanDye",
 Name:"Cyan Dye",
-item:true
+item:true,
+dye:[22/255, 156/255, 156/255]
 },
 {
 name:"blueDye",
 Name:"Blue Dye",
-item:true
+item:true,
+dye:[60/255, 67/255, 170/255]
 },
 {
 name:"endPortal",
@@ -10276,7 +10353,8 @@ flatIcon:true,
 sign:true,
 breakTime:1.5,
 woodSound:true,
-type:"wood"
+type:"wood",
+color:[0.85,0.7,0.2]
 },
 {
 name:"mangroveSign",
@@ -10333,6 +10411,295 @@ minusOne()
 if(add) world.setBlock(x,y,z,target,false,false,false,false,dimension)
 glint(x,y,z,dimension)
 }
+},
+{
+name:"cocoaBeans",
+Name:"Cocoa Beans",
+item:true,
+useAs:"cocoa"
+},
+{
+name:"cocoa",
+textures:"cocoaStage0",
+breakTime:0.3,
+blastResistance:3,
+transparent:true,
+shadow:false,
+drop:"cocaBeans",
+woodSound:true
+},
+{
+name:"cookie",
+Name:"Cookie",
+item:true,
+edible: true,
+food: 2,
+saturation: 0.4,
+compostChance:0.85
+},
+{
+name:"pumpkinPie",
+Name:"Pumpkin Pie",
+item:true,
+edible: true,
+food: 8,
+saturation: 4.8,
+compostChance:1
+},
+{
+name:"rawChicken",
+Name:"Raw Chicken",
+item:true,
+edible: true,
+food: 2,
+saturation: 1.2
+},
+{
+name:"cookedChicken",
+Name:"Cooked Chicken",
+item:true,
+edible: true,
+food: 6,
+saturation: 7.2
+},
+{
+name:"rawCod",
+Name:"Raw Cod",
+item:true,
+edible: true,
+food: 2,
+saturation: 0.4
+},
+{
+name:"cookedCod",
+Name:"Cooked Cod",
+item:true,
+edible: true,
+food: 5,
+saturation: 6
+},
+{
+name:"rawMutton",
+Name:"Raw Mutton",
+item:true,
+edible: true,
+food: 2,
+saturation: 1.2
+},
+{
+name:"cookedMutton",
+Name:"Cooked Mutton",
+item:true,
+edible: true,
+food: 6,
+saturation: 9.6
+},
+{
+name:"rawPorkchop",
+Name:"Raw Porckchop",
+item:true,
+edible: true,
+food: 3,
+saturation: 1.8
+},
+{
+name:"cookedPorkchop",
+Name:"Stupido",
+item:true,
+edible: true,
+food: 8,
+saturation: 12.8
+},
+{
+name:"rawRabbit",
+Name:"Raw Rabbit",
+item:true,
+edible: true,
+food: 3,
+saturation: 1.8
+},
+{
+name:"cookedRabbit",
+Name:"Cooked Rabbit",
+item:true,
+edible: true,
+food: 5,
+saturation: 6
+},
+{
+name:"rawSalmon",
+Name:"Raw Salmon",
+item:true,
+edible: true,
+food: 2,
+saturation: 0.4
+},
+{
+name:"cookedSalmon",
+Name:"Cooked Salmon",
+item:true,
+edible: true,
+food: 6,
+saturation: 9.6
+},
+{
+name:"tropicalFish",
+Name:"Tropical Fish",
+item:true,
+edible: true,
+food: 1,
+saturation: 0.2
+},
+{
+name:"beetroot",
+Name:"Beetroot",
+item:true,
+edible: true,
+food: 1,
+saturation: 1.2,
+compostChance:0.65
+},
+{
+name:"beetrootSoup",
+Name:"Beetroot Soup",
+item:true,
+edible: true,
+food: 7.2,
+saturation: 13.2,
+eatResult:"bowl"
+},
+{
+name:"carrot",
+Name:"Carrot",
+item:true,
+edible: true,
+food: 3,
+saturation: 3.6,
+compostChance:0.65,
+useAs:function(x,y,z,block,face){
+if(!block) return
+if(face === "top" && blockData[block].name === "farmland") return "carrots"
+},
+},
+{
+name:"goldenCarrot",
+Name:"Golden Carrot",
+item:true,
+edible: true,
+food: 6,
+saturation: 14.4
+},
+{
+name:"rabbitStew",
+Name:"Rabbit Stew",
+item:true,
+edible: true,
+food: 10,
+saturation: 12
+},
+{
+name:"goldenApple",
+Name:"Golden Apple",
+item:true,
+edible: true,
+food: 4,
+saturation: 9.6
+},
+{
+name:"rawBeef",
+Name:"Raw Beef",
+item:true,
+edible: true,
+food: 3,
+saturation: 1.8
+},
+{
+name:"cookedBeef",
+Name:"stake cooked befe",
+item:true,
+edible: true,
+food: 8,
+saturation: 12.8
+},
+{
+name:"potato",
+Name:"Potato",
+item:true,
+edible: true,
+food: 1,
+saturation: 0.6,
+compostChance:0.85,
+useAs:function(x,y,z,block,face){
+if(!block) return
+if(face === "top" && blockData[block].name === "farmland") return "potatoes"
+},
+},
+{
+name:"bakedPotato",
+Name:"Baked Potato",
+item:true,
+edible: true,
+food: 5,
+saturation: 6,
+compostChance:0.85
+},
+{
+name:"sugar",
+Name:"Sugar",
+item:true
+},
+{
+name:"milkBucket",
+Name:"Milk Bucket",
+item:true
+},
+{
+name:"beetrootSeeds",
+Name:"Beetroot Seeds",
+item:true,
+useAs:function(x,y,z,block,face){
+if(!block) return
+if(face === "top" && blockData[block].name === "farmland") return "beetroots"
+},
+},
+{
+name:"beetroots",
+textures:"beetrootsStage0",
+textures1:new Array(6).fill("beetrootsStage1"),
+textures2:new Array(6).fill("beetrootsStage2"),
+textures3:new Array(6).fill("beetrootsStage3"),
+crop:true,
+transparent: true,
+shadow: false,
+solid: false,
+crop: true,
+drop:"beetrootSeeds"
+},
+{
+name:"potatoes",
+textures:"potatoesStage0",
+textures1:new Array(6).fill("potatoesStage1"),
+textures2:new Array(6).fill("potatoesStage2"),
+textures3:new Array(6).fill("potatoesStage3"),
+crop:true,
+transparent: true,
+shadow: false,
+solid: false,
+crop: true,
+drop:"potato"
+},
+{
+name:"carrots",
+textures:"carrotsStage0",
+textures1:new Array(6).fill("carrotsStage1"),
+textures2:new Array(6).fill("carrotsStage2"),
+textures3:new Array(6).fill("carrotsStage3"),
+crop:true,
+transparent: true,
+shadow: false,
+solid: false,
+crop: true,
+drop:"carrot"
 },
 /*
 { name: "pigFace" },
@@ -10880,7 +11247,16 @@ const crafts = {
 "sprucePlanks,sprucePlanks,sprucePlanks,sprucePlanks,sprucePlanks,sprucePlanks,air,stick":{name:"spruceSign",amount:3},
 "darkOakPlanks,darkOakPlanks,darkOakPlanks,darkOakPlanks,darkOakPlanks,darkOakPlanks,air,stick":{name:"darkOakSign",amount:3},
 "mangrovePlanks,mangrovePlanks,mangrovePlanks,mangrovePlanks,mangrovePlanks,mangrovePlanks,air,stick":{name:"mangroveSign",amount:3},
-"oakPlanks,air,oakPlanks,oakPlanks,air,oakPlanks,oakPlanks,oakPlanks,oakPlanks":{name:"composter",amount:2}
+"oakPlanks,air,oakPlanks,oakPlanks,air,oakPlanks,oakPlanks,oakPlanks,oakPlanks":{name:"composter",amount:2},
+"cocoaBeans":{name:"brownDye",shapeless:true},
+"wheat,cocoaBeans,wheat":{name:"cookie",shapeless:true,amount:8},
+"pumpkin,sugar,egg":{name:"pumpkinPie",shapeless:true},
+"beetroot":{name:"redDye",shapeless:true},
+"beetroot,beetroot,beetroot,beetroot,beetroot,beetroot,air,bowl":{name:"beetrootSoup"},
+"goldNugget,goldNugget,goldNugget,goldNugget,carrot,goldNugget,goldNugget,goldNugget,goldNugget":{name:"goldenCarrot"},
+"cookedRabbit,carrot,bakedPotato,redMushroom,bowl":{name:"rabbitStew",shapeless:true},
+"cookedRabbit,carrot,bakedPotato,brownMushroom,bowl":{name:"rabbitStew",shapeless:true},
+"goldIngot,goldIngot,goldIngot,goldIngot,apple,goldIngot,goldIngot,goldIngot,goldIngot":{name:"goldenApple"},
 }
 /*
 //replace anything in crafts starting with _
@@ -10939,6 +11315,14 @@ clay: {name:"terracotta",time:200,xp:0.35},
 clayBall: {name:"brick",time:200,xp:0.3},
 ancientDebris: {name:"netheriteScrap", time:200, xp:1},
 cactus: {name:"greenDye", time:200, xp:0.1},
+rawChicken: {name:"cookedChicken",time:200,xp:0.35},
+rawBeef: {name:"cookedBeef",time:200,xp:0.35},
+rawCod: {name:"cookedCod",time:200,xp:0.35},
+rawMutton: {name:"cookedMutton",time:200,xp:0.35},
+rawPorkchop: {name:"cookedPorkchop",time:200,xp:0.35},
+rawRabbit: {name:"cookedRabbit",time:200,xp:0.35},
+rawSalmon: {name:"cookedSalmon",time:200,xp:0.35},
+potato: {name:"cookedPotato",time:200,xp:0.35},
 }
 var smeltFuel = { //time is in seconds
 oakLog: {time:15},
@@ -16044,6 +16428,63 @@ east: 0,
 west: 0
 }
 },
+cocoaStage0:{
+verts:[
+[objectify(6,7,11,4,4,0,0)],
+[objectify(6,12,15,4,4,0,0)],
+[objectify(10,12,15,4,5,11,4)],
+[objectify(6,12,11,4,5,11,4)],
+[objectify(10,12,11,4,5,11,4),objectify(8,16,12,4,4,12,0,true)],
+[objectify(6,12,15,4,5,11,4),objectify(8,16,16,4,4,12,0)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 3,
+south: 0,
+east: 0,
+west: 0
+},
+rotate:true
+},
+cocoaStage1:{
+verts:[
+[objectify(5,5,9,6,6,0,0)],
+[objectify(5,12,15,6,6,0,0)],
+[objectify(11,12,15,6,7,9,4)],
+[objectify(5,12,9,6,7,9,4)],
+[objectify(11,12,9,6,7,9,4),objectify(8,16,12,4,4,12,0,true)],
+[objectify(5,12,15,6,7,9,4),objectify(8,16,16,4,4,12,0)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 3,
+south: 0,
+east: 0,
+west: 0
+},
+rotate:true
+},
+cocoaStage2:{
+verts:[
+[objectify(4,3,7,8,8,0,0)],
+[objectify(4,12,15,8,8,0,0)],
+[objectify(12,12,15,8,9,8,4)],
+[objectify(4,12,7,8,9,8,4)],
+[objectify(12,12,7,8,9,8,4),objectify(8,16,12,4,4,12,0,true)],
+[objectify(4,12,15,8,9,8,4),objectify(8,16,16,4,4,12,0)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 3,
+south: 0,
+east: 0,
+west: 0
+},
+rotate:true
+},
 sun:{
 verts:[
 [],[],[],
@@ -17011,6 +17452,13 @@ world.setTagByName(x,y,z, "rot",rot,false,dimension)
 }
 this.set(x,y,z,dimension,block)
 }
+var signOnclick = function(x,y,z,dimension){
+if(holding && blockData[holding].dye){
+world.setTagByName(x,y,z, "color",blockData[holding].dye.slice(),false,dimension)
+}else{
+editSign(x,y,z,dimension)
+}
+}
 for (let i = 0; i < BLOCK_COUNT; i++) {
 let baseBlock = blockData[i]
 for(var t=0; t<baseBlock.textures.length; t++){
@@ -17557,7 +18005,7 @@ baseBlock.shadow = false
 baseBlock.solid = false
 baseBlock.onplace = signOnplace
 baseBlock.set = signSet
-baseBlock.onclick = editSign
+baseBlock.onclick = signOnclick
 stairBlock.shape = shapes.cube
 }
 if(baseBlock.name === "composter"){
@@ -17569,6 +18017,32 @@ makeBlock(baseBlock.textures, shapes.composter5, tallcrossBlock, baseBlock)
 makeBlock(baseBlock.textures, shapes.composter6, doorBlock, baseBlock)
 makeBlock(baseBlock.textures, shapes.composter7, torchBlock, baseBlock)
 makeBlock(baseBlock.textures, shapes.composter8, lanternBlock, baseBlock)
+}
+if(baseBlock.name === "cocoa"){
+baseBlock.shape = shapes.cocoaStage0
+baseBlock.textures.fill("cocoaStage0")
+makeBlock(new Array(6).fill("cocoaStage1"), shapes.cocoaStage1, slabBlock, baseBlock)
+makeBlock(new Array(6).fill("cocoaStage2"), shapes.cocoaStage2, stairBlock, baseBlock)
+stairBlock.dropAmount = [2,3]
+}
+if(baseBlock.name === "beetroots"){
+makeBlock(baseBlock.textures1, shapes.crop, slabBlock, baseBlock)
+makeBlock(baseBlock.textures2, shapes.crop, stairBlock, baseBlock)
+makeBlock(baseBlock.textures3, shapes.crop, crossBlock, baseBlock)
+crossBlock.drop = ["beetrootSeeds","beetroot"]
+crossBlock.dropAmount = [1,4]
+}
+if(baseBlock.name === "potatoes"){
+makeBlock(baseBlock.textures1, shapes.crop, slabBlock, baseBlock)
+makeBlock(baseBlock.textures2, shapes.crop, stairBlock, baseBlock)
+makeBlock(baseBlock.textures3, shapes.crop, crossBlock, baseBlock)
+crossBlock.dropAmount = [1,5]
+}
+if(baseBlock.name === "carrots"){
+makeBlock(baseBlock.textures1, shapes.crop, slabBlock, baseBlock)
+makeBlock(baseBlock.textures2, shapes.crop, stairBlock, baseBlock)
+makeBlock(baseBlock.textures3, shapes.crop, crossBlock, baseBlock)
+crossBlock.dropAmount = [2,5]
 }
 blockData[i | SLAB] = slabBlock
 blockData[i | STAIR] = stairBlock
@@ -20212,8 +20686,8 @@ crack.idx = floor(prog * crack.length)
 crack.tex = crack[crack.idx]
 pTouch.digProg = prog
 crack.soundTimer ++
-if(crack.soundTimer > 15){
-crack.soundTimer -= 15
+if(crack.soundTimer > 5){
+crack.soundTimer -= 5
 blockSound(block, "breaking", hitBox.pos[0], hitBox.pos[1], hitBox.pos[2])
 var x = hitBox.pos[0], y = hitBox.pos[1], z = hitBox.pos[2]
 blockParticles(block, x,y,z, 4, "breaking", world,p.dimension,hitBox.face)
@@ -21997,6 +22471,61 @@ let x = (rnd >> 8) + this.x
 let y = (rnd >> 4 & 15) + this.y
 let z = (rnd & 15) + this.z
 world.setBlock(x, y, z, blockIds.sweetBerryBush|CROSS, false,false,false,false, this.type)
+}else if(this.blocks[rnd] === (blockIds.cocoa | (this.blocks[rnd] & ROTATION))){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, blockIds.cocoa|SLAB|(this.blocks[rnd]&ROTATION), false,false,false,false, this.type)
+}else if(this.blocks[rnd] === (blockIds.cocoa | SLAB | (this.blocks[rnd] & ROTATION))){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, blockIds.cocoa|STAIR|(this.blocks[rnd]&ROTATION), false,false,false,false, this.type)
+}else if(this.blocks[rnd] === blockIds.beetroots){//beetroot
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, (blockIds.beetroots|SLAB), false,false,false,false, this.type)
+}else if(this.blocks[rnd] === (blockIds.beetroots | SLAB)){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, (blockIds.beetroots|STAIR), false,false,false,false, this.type)
+}else if(this.blocks[rnd] === (blockIds.beetroots | STAIR)){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, (blockIds.beetroots|CROSS), false,false,false,false, this.type)
+}else if(this.blocks[rnd] === blockIds.potatoes){//potato
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, (blockIds.potatoes|SLAB), false,false,false,false, this.type)
+}else if(this.blocks[rnd] === (blockIds.potatoes | SLAB)){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, (blockIds.potatoes|STAIR), false,false,false,false, this.type)
+}else if(this.blocks[rnd] === (blockIds.potatoes | STAIR)){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, (blockIds.potatoes|CROSS), false,false,false,false, this.type)
+}else if(this.blocks[rnd] === blockIds.carrots){//carrot
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, (blockIds.carrots|SLAB), false,false,false,false, this.type)
+}else if(this.blocks[rnd] === (blockIds.carrots | SLAB)){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, (blockIds.carrots|STAIR), false,false,false,false, this.type)
+}else if(this.blocks[rnd] === (blockIds.carrots | STAIR)){
+let x = (rnd >> 8) + this.x
+let y = (rnd >> 4 & 15) + this.y
+let z = (rnd & 15) + this.z
+world.setBlock(x, y, z, (blockIds.carrots|CROSS), false,false,false,false, this.type)
 }
 }
 for (i = 0; i < 40; i++) {
@@ -24561,6 +25090,16 @@ this.textEnt.y += 0.35
 }
 }
 }
+if(this.textEnt){
+if(tags.color){
+this.textEnt.color = tags.color
+}else if(blockData[this.baseBlock].color){
+var data = blockData[this.baseBlock].color
+this.textEnt.color[0] = data[0]
+this.textEnt.color[1] = data[1]
+this.textEnt.color[2] = data[2]
+}
+}
 }
 }
 render(){
@@ -26351,6 +26890,7 @@ this.buffer = gl.createBuffer()
 this.setText(text)
 this.color = color || [1,1,1]
 this.background = background || [0,0,0,0]
+this.glow = false
 }
 setText(text){
 let data = new Float32Array(text.length*16)
@@ -26448,6 +26988,7 @@ const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0
 gl.activeTexture(gl.TEXTURE9)
 gl.bindTexture(gl.TEXTURE_2D, textAtlas)
 gl.uniform1i(glCache.uSamplerText, 9)
+gl.uniform1i(glCache.glowText, this.glow)
 gl.uniform1f(glCache.uLightLevelText, lightLevel)
 gl.uniform3f(glCache.colorText, ...this.color)
 gl.uniform4f(glCache.backgroundText, ...this.background)
@@ -31217,18 +31758,25 @@ p.rx = -Math.PI / 2
 }
 }
 function trackMouse(e) {
+var redraw = false
 if (screen !== "play") {
 cursor("")
 mouseX = e.x
 mouseY = e.y
 if(screen !== "main menu" && !(screen === "furnace" && furnaceData.data.smelting)){
 drawScreens[screen]()
-Button.draw()
-Slider.draw()
+redraw = true
 Slider.drag()
 }
 }
-if(screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest") moveInv()
+if(screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest"){
+moveInv()
+redraw = true
+}
+if(redraw){
+Button.draw()
+Slider.draw()
+}
 }
 document.onmousemove = trackMouse
 //added by me from mobile test minekhan with more code
@@ -31339,6 +31887,7 @@ if(touchScreen && !e.tOucHScrEeN) return
 mouseX = e.x
 mouseY = e.y
 mouseDown = true
+var redraw = false
 let block, index
 var mouseKey
 switch(e.button) {
@@ -31398,9 +31947,14 @@ if(screen === "crafting")clickCrafting(e.button)
 else if(screen === "furnace")clickFurnace(e.button)
 else if(screen === "chest") clickChest(e.button)
 else clickInv(false, e.button)
+redraw = true
 }
 Button.click()
 Slider.click()
+if(redraw){
+Button.draw()
+Slider.draw()
+}
 }
 canvas.onmouseup = function(e) {
 if(touchScreen && !e.tOucHScrEeN) return
@@ -31607,6 +32161,7 @@ return true
 canvas.onwheel = e => {
 e.preventDefault()
 e.stopPropagation()
+var redraw = false
 if(screen === "play"){
 if (e.deltaY > 0) {
 inventory.hotbarSlot++
@@ -31627,6 +32182,11 @@ invScroll += e.deltaY
 if(invScroll < 0) invScroll = 0
 if(invScroll > invHeight) invScroll = invHeight
 drawScreens[screen]()
+redraw = true
+}
+if(redraw){
+Button.draw()
+Slider.draw()
 }
 }
 document.onwheel = e => {} // Shouldn't do anything, but it helps with a Khan Academy bug somewhat
@@ -31740,6 +32300,7 @@ glCache.uLightLevelText = gl.getUniformLocation(programText, "uLightLevel")
 glCache.uViewText = gl.getUniformLocation(programText, "uView")
 glCache.colorText = gl.getUniformLocation(programText, "textColor")
 glCache.backgroundText = gl.getUniformLocation(programText, "background")
+glCache.glowText = gl.getUniformLocation(programText, "glow")
 gl.useProgram(program3D)
 glCache.uSampler = gl.getUniformLocation(program3D, "uSampler")
 glCache.uPos = gl.getUniformLocation(program3D, "uPos")
@@ -33269,6 +33830,7 @@ var gainNode, convolver
 if(((!(volume || volume === 0)) || volume === 1) && !getSourceFunc){
 if(reverb){
 convolver = audioCtx.createConvolver()
+convolver.buffer = buffer
 source.connect(convolver);
 convolver.connect(audioCtx.destination)
 }else{
@@ -33278,6 +33840,7 @@ source.connect(audioCtx.destination);
 gainNode = audioCtx.createGain();
 if(reverb){
 convolver = audioCtx.createConvolver()
+convolver.buffer = buffer
 source.connect(convolver);
 convolver.connect(gainNode)
 }else{
@@ -33303,7 +33866,7 @@ win.playSound = playSound
 function blockSound(blockID, type, x,y,z, volume){
 var block = blockData[blockID]
 if(!(volume || volume === 0)) volume = posSound(x,y,z)
-var sound
+var sound, pitch = 1, reverb
 switch(type){
 case "place":
 sound = block.placeSound || block.digSound
@@ -33325,7 +33888,7 @@ if(Array.isArray(sound)){
 sound = sound[Math.floor(Math.random()*sound.length)]
 }
 if(sound){
-playSound(sound, 0, volume)
+playSound(sound, 0, volume, pitch,null,null,null,reverb)
 if(multiplayer) send({type:"playSound", data:sound, x:x,y:y,z:z})
 }
 }
@@ -33947,7 +34510,9 @@ text(subtext, width / 2, 180)
 fill(230,220,0)
 ctx.translate(width/2 + 280,170)
 ctx.rotate(-Math.PI/8);
-var s = (size/40)*6+25
+ctx.font = "10px "+font
+var w = ctx.measureText(splash).width
+var s = ((size/10)*(100/w))+10+(500/w)
 ctx.font = "bold "+s+"px " + font
 text(splash, 0,0, s)
 ctx.rotate(Math.PI/8);
@@ -34112,11 +34677,11 @@ updateHUD = true
 standingOn = world.getBlock(p2.x,p2.y-2,p2.z, p.dimension)
 if(tick) controls()
 if(tick) runGravity()
-if(survival){
+if(survival && tick){
 cracks()
 }
-if(witherEffect>0){
-witherEffect --;
+if(witherEffect>0 && tick){
+witherEffect -= 3;
 if(survival && now-lastBlockHarm > witherTime){
 lastBlockHarm = now
 damage(witherDamage, username+" got withered. Ew.")
@@ -34301,17 +34866,17 @@ if(p.oxygen > 20) {
 p.oxygen = 20;
 }
 if(harmEffect > 0){
-harmEffect --
+if(tick) harmEffect -= 3
 p.rz = max(harmEffect-15,0) / 200
 p.character.harmEffect = harmEffect
 updateHUD = true
 }
-if(healEffect > 0){
-healEffect --
+if(healEffect > 0 && tick){
+healEffect -= 4
 updateHUD = true
 }
-if(loseHealthEffect > 0){
-loseHealthEffect --
+if(loseHealthEffect > 0 && tick){
+loseHealthEffect -= 4
 updateHUD = true
 }
 if(p.punchEffect > 0 && tick){
@@ -34418,7 +34983,7 @@ ctx.fill()
 updateHUD=true
 }
 if(survival)ctx.drawImage(canvas2,0,0)
-if(p.health < 1){
+if(p.health <= 0){
 return die()
 }
 if(titleShowing){
@@ -34443,7 +35008,7 @@ updateHUD = true
 }else titleShowing = false
 }
 if(sideMessageTime > 0){
-sideMessageTime --
+if(tick) sideMessageTime -= 3
 var x
 var w = 200
 if(sideMessageTime > 540){
@@ -34465,8 +35030,8 @@ ctx.fillStyle = "#aaa"
 ctx.fillText(sideMessageContent, x+5, 20, w-10)
 ctx.textBaseline = "alphabetic"
 }
-if(inventory.showName > 0){
-inventory.showName -= 0.02
+if(inventory.showName > 0 && tick){
+inventory.showName -= 0.06
 updateHUD = true
 }
 if(p.walking && p.onGround){
@@ -34765,11 +35330,11 @@ tick = true
 }
 if(screen === "options"){
 if(beforeOptionsScreen === "main menu"){
-if(analytics.frames % 2 === 0)renderMainBG()
+if(tick)renderMainBG()
 }
 }
 if(screen === "main menu"){
-if(analytics.frames % 2 === 0)renderMainBG()
+if(tick)renderMainBG()
 drawScreens[screen]()
 Button.draw()
 Slider.draw()
