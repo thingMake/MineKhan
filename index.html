@@ -517,6 +517,18 @@ height:50%;
 font:32px VT323;
 z-index:1;
 }
+#centerMessage{
+width: 99vw;
+min-width: 300px;
+height: calc(100vh - 220px);
+position: absolute;
+bottom: 120px;
+overflow-y: auto;
+background-color: transparent;
+margin: 0 auto;
+color: white;
+font: 16px VT323;
+}
 </style>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VRNT3CCCGH"></script>
@@ -537,6 +549,7 @@ gtag('config', 'G-VRNT3CCCGH');
 <input type="text" id="url" spellcheck="false" placeholder="Enter thumbnail url">
 </div>
 <textarea id="editSignBox" class="hidden"></textarea>
+<div id="centerMessage" class="hidden"></div>
 <div id="onhover" class="hidden"></div>
 <p id="savedirections" class="hidden" style="position: absolute; top: 40px; left: 10px; z-index: 1; background-color: rgba(255, 255, 255, 0.3);">
 To save your world, copy/paste the saveString<br>
@@ -1067,6 +1080,7 @@ window.messageInput = document.getElementById("messageInput")
 window.url = document.querySelector("#editworld #url")
 window.editworld = document.getElementById("editworld")
 window.editSignBox = document.getElementById("editSignBox")
+window.centerMessage = document.getElementById("centerMessage")
 var hoverbox = document.getElementById("onhover")
 window.controls = document.getElementById("controls")
 window.controlDetect = document.getElementById("controlDetect")
@@ -3070,6 +3084,7 @@ carrotsStage3: "0g0ga000BíH^NYFĩYÄĊZxiHĬęHŉxZđìWèŗZ000000000000000000
 carrotsStage2: "0g0g6000FĩY^NYBíHÄĊZèŗZ00000000000000000000000000000000000000S0008ëg0Ę010w5030íĩg081ĘĲÕ(SÒNĉÛyĹcĈÂÒmI1ĊŀFĚë0+pÚíħ0È5ĈÈ0",
 carrotsStage1: "0g0g5000^NYÄĊZFĩYBíH00000000000000000000000000000000000000000000000000000000000000000002ûdy0hùİXĘÊ2,xÓ@Ň064ù60080ë80",
 carrotsStage0: "0g0g4000FĩY^NYBíH000000000000000000000000000000000000000000000000000006A0dtts0ħħħ",
+mudPie: "0g0g9000*KW]ĈWSùW)ÝWEKWs(W(KWwSW000g0000000g11000101110g10gzNy0g12y)OyM00iORQUN00AV>NÃNw0NO))UA(0Â?yRN?(0Äy?>>N(0ÅÕððIÓÀ0ñU?GQïS0XIGÆï[008?U[UG000ÆIIï0000000000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -3362,7 +3377,7 @@ glassSound: true
 { name: "diamondBlock", Name:"Block of Diamond", breakTime:25, type:"metal3", stoneSound:true},
 {
 name: "redstoneBlock", Name:"Block of Redstone", breakTime:25, type:"metal1", stoneSound:true,
-onplace:function(x,y,z,dimension){
+onset:function(x,y,z,dimension){
 world.setPower(x,y,z,16,false,dimension)
 world.spreadPower(x,y,z, 16,dimension)
 },
@@ -3572,7 +3587,7 @@ onpowerupdate:function(x,y,z,sx,sy,sz,blockPowerChanged,dimension){
 var power = world.getRedstonePower(x,y,z,dimension)
 if(power > 0) this.explode(x,y,z,null,dimension)
 },
-onplace:function(x,y,z,dimension){
+onset:function(x,y,z,dimension){
 var power = world.getRedstonePower(x,y,z,dimension)
 if(power > 0) this.explode(x,y,z,null,dimension)
 },
@@ -3679,7 +3694,7 @@ hidden:true,
 drop: "redstone",
 onupdate: function(x,y,z,b,world,sx,sy,sz,dimension){
 var tags = world.getTags(x,y,z,dimension)
-if(!tags) return this.onplace(x,y,z,dimension)
+if(!tags) return this.onset(x,y,z,dimension)
 var pnorthUp = tags.northUp, psouthUp = tags.southUp, peastUp = tags.eastUp, pwestUp = tags.westUp,
 pnorthDown = tags.northDown, psouthDown = tags.southDown, peastDown = tags.eastDown, pwestDown = tags.westDown
 var above = world.getBlock(x,y+1,z)
@@ -3752,7 +3767,7 @@ if(pwestDown !== tags.westDown) world.updateBlock(x+1,y-1,z,false,false,null,nul
 if(peastDown !== tags.eastDown) world.updateBlock(x-1,y-1,z,false,false,null,null,null,dimension), world.unspreadPower(x-1,y-1,z,world.getPower(x-1,y-1,z,dimension), true,dimension)
 this.onpowerupdate(x,y,z,x,y,z,false,dimension)
 },
-onplace:function(x,y,z,dimension){
+onset:function(x,y,z,dimension){
 var tags = {
 power:0,
 north:false,
@@ -4765,12 +4780,7 @@ textures: "bedbottom",
 iconTexture: "bedIcon",
 flatIcon: true,
 onclick: (x,y,z,dimension) => {
-if(dimension !== ""){explode(x,y,z,5,false,dimension); return}
-world.spawnPoint.x=x
-world.spawnPoint.y=y
-world.spawnPoint.z=z
-Messages.add("You can't sleep in beds yet")
-Messages.add("Respawn point set")
+clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
@@ -7111,7 +7121,7 @@ block = this.id | SLAB
 }
 if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,false,false,false,dimension)
 },
-onplace:function(x,y,z,dimension){
+onset:function(x,y,z,dimension){
 this.onpowerupdate(x,y,z,null,null,null,null,dimension)
 }
 },
@@ -7133,7 +7143,7 @@ textures: ["endStone", "endPortalFrameTop", "endPortalFrameSide"]
 {
 name: "eyeOfEnder",
 Name:"Eye of Ender",
-item:true,
+flatIcon:true,
 iconTexture:"enderEye",
 shadow: false,
 canPlace:function(block){
@@ -8429,7 +8439,7 @@ world.unspreadPower(x,y-1,z,15,true,dimension)
 }
 },tickTime*2)
 },
-onplace:function(x,y,z,dimension){
+onset:function(x,y,z,dimension){
 world.setPower(x,y,z,16,false,dimension)
 world.spreadPower(x,y,z,16,dimension)
 },
@@ -9689,7 +9699,7 @@ world.unspreadPower(x-tx,y-ty,z-tz, 15, true,dimension)
 onupdate:function(x,y,z,block,world,sx,sy,sz,dimension){
 this.detected(x,y,z,sx,sy,sz,world,false,dimension)
 },
-onplace:function(x,y,z,dimension){
+onset:function(x,y,z,dimension){
 this.detected(x,y,z,x,y,z,world,true,dimension)
 },
 canHavePower:function(rx,ry,rz, x,y,z, dimension){
@@ -10042,7 +10052,7 @@ block = this.id | SLAB
 }
 if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,false,false,false,dimension)
 },
-onplace:function(x,y,z,dimension){
+onset:function(x,y,z,dimension){
 this.onpowerupdate(x,y,z,null,null,null,null,dimension)
 },
 coloredRedstoneLamp:true
@@ -10059,7 +10069,7 @@ block = this.id | SLAB
 }
 if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,false,false,false,dimension)
 },
-onplace:function(x,y,z,dimension){
+onset:function(x,y,z,dimension){
 this.onpowerupdate(x,y,z,null,null,null,null,dimension)
 },
 coloredRedstoneLamp:true
@@ -10076,7 +10086,7 @@ block = this.id | SLAB
 }
 if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,false,false,false,dimension)
 },
-onplace:function(x,y,z,dimension){
+onset:function(x,y,z,dimension){
 this.onpowerupdate(x,y,z,null,null,null,null,dimension)
 },
 coloredRedstoneLamp:true
@@ -10093,7 +10103,7 @@ block = this.id | SLAB
 }
 if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,false,false,false,dimension)
 },
-onplace:function(x,y,z,dimension){
+onset:function(x,y,z,dimension){
 this.onpowerupdate(x,y,z,null,null,null,null,dimension)
 },
 coloredRedstoneLamp:true
@@ -10701,6 +10711,14 @@ solid: false,
 crop: true,
 drop:"carrot"
 },
+{
+name:"mudPie",
+Name:"Mud Pie",
+item:true,
+edible: true,
+food: 1,
+saturation: 1
+},
 /*
 { name: "pigFace" },
 { 
@@ -11257,6 +11275,10 @@ const crafts = {
 "cookedRabbit,carrot,bakedPotato,redMushroom,bowl":{name:"rabbitStew",shapeless:true},
 "cookedRabbit,carrot,bakedPotato,brownMushroom,bowl":{name:"rabbitStew",shapeless:true},
 "goldIngot,goldIngot,goldIngot,goldIngot,apple,goldIngot,goldIngot,goldIngot,goldIngot":{name:"goldenApple"},
+"dirt,waterBucket":{name:"mud",shapeless:true,replace:{waterBucket:"bucket"}},
+"waterBucket,air,air,lavaBucket":{name:"obsidian",shaped:true,replace:{waterBucket:"bucket",lavaBucket:"bucket"}},
+"waterBucket,lavaBucket":{name:"cobblestone",shapeless:true,replace:{waterBucket:"bucket",lavaBucket:"bucket"}},
+"carrot,dirt,mud":{name:"mudPie",shapeless:true}
 }
 /*
 //replace anything in crafts starting with _
@@ -12829,6 +12851,10 @@ editSignBox.value = editingSign.text
 editSignBox.focus()
 }
 },
+"multiplayer lost long":{
+enter:[window.centerMessage],
+exit:[window.centerMessage]
+},
 "options controls":{
 enter: [window.controls],
 exit: [window.controls, window.controlDetect]
@@ -12876,6 +12902,9 @@ currentAmbient[i].gain.value = 0
 previousScreen = screen
 screen = newScene
 mouseDown = false
+Key.rightMouse = false
+Key.middleMouse = false
+Key.leftMouse = false
 drawScreens[screen]()
 Button.draw()
 Slider.draw()
@@ -13956,6 +13985,45 @@ editingSign.dimension = dimension
 editingSign.text = world.getTagByName(x,y,z,"text",dimension) || ""
 changeScene("edit sign")
 releasePointer()
+}
+var allSleeping = true
+function clickBed(x,y,z,dimension){
+if(dimension !== "") return explode(x,y,z,5,false,dimension)
+world.spawnPoint.x=x
+world.spawnPoint.y=y
+world.spawnPoint.z=z
+Messages.add("Respawn point set")
+if(skyLight < 0.5){
+p.x = x
+p.y = y + 0.25
+p.z = z
+p.rx = Math.PI2
+var block = world.getBlock(x,y,z,dimension)
+switch(block & ROTATION){
+case NORTH:
+p.z += 0.5
+p.ry = Math.PI
+break
+case SOUTH:
+p.z -= 0.5
+p.ry = 0
+break
+case EAST:
+p.x += 0.5
+p.ry = Math.PI2
+break
+case WEST:
+p.x -= 0.5
+p.ry = -Math.PI2
+break
+}
+p.bodyRot = p.ry
+p3.x = p.x, p3.y = p.y, p3.z = p.z, p3.ry = -p.ry, p3.rx = -p.rx, p3.bodyRot = -p.bodyRot
+p3.sleeping = true
+if(multiplayer && multiplayer.sendPos) multiplayer.sendPos(true)
+changeScene("sleep")
+releasePointer()
+}else Messages.add("You can't sleep now.")
 }
 function play() {
 canvas.onblur()
@@ -17444,6 +17512,7 @@ world.addEntity(new Sign(x,y,z,signBlock,block),false,dimension)
 }
 var signOnplace = function(x,y,z, dimension){
 var block = world.getBlock(x,y,z,dimension)
+world.setTagByName(x,y,z,"sign",true, false,dimension)
 var rot = world.getTagByName(x,y,z,"rot",dimension)
 if(!rot && rot !== 0){
 rot = round(p.ry*16/Math.PId)
@@ -17451,6 +17520,7 @@ if((block & STAIR) === STAIR) rot = round(rot/4)*4
 world.setTagByName(x,y,z, "rot",rot,false,dimension)
 }
 this.set(x,y,z,dimension,block)
+editSign(x,y,z,dimension)
 }
 var signOnclick = function(x,y,z,dimension){
 if(holding && blockData[holding].dye){
@@ -18214,6 +18284,7 @@ let trapdoorIconVerts
 let azaleaIconVerts
 let cactusIconVerts
 let snowIconVerts
+let beaconIconVerts
 let blockIcons
 let blockIconError
 {
@@ -18243,11 +18314,11 @@ _2dIconVerts = [
 //-1,-1,0,0,1,          1,-1,1,0,1,        1,1,1,1,1          -1,1,0,1,1 //x, y, tx, ty, useless
 1,1,1,0,1,         1,-1,1,1,1,         -1,-1,0,1,1,    -1,1,0,0,1
 ]
-fenceIconVerts = new Float32Array([
-0, 1, 1, side, 0.5, 1, 0, 0, 1, -side, 0.5, 1,
-0, 0, 1, side, 0.5, 1, side, -0.5, 1, 0, -1, 1,
--side, 0.5, 1, 0, 0, 1, 0, -1, 1, -side, -0.5, 1,
-])
+fenceIconVerts = [
+-0.34641016151377535,0.8,0.25,0.0625,1, 0,1,0,0.0625,1, 0.34641016151377546,0.8,0,0.3125,1, 9.614813431917819e-17,0.6000000000000001,0.25,0.3125,1, 
+0,0.6000000000000001,0.625,0,1, 0.34641016151377535,0.8,0.375,0,1, 0.34641016151377535,-0.8,0.375,1,1, 0,-1,0.625,1,1, 
+-0.34641016151377535,0.8,0.625,0,1, 9.614813431917819e-17,0.6000000000000001,0.375,0,1, 9.614813431917819e-17,-1,0.375,1,1, -0.34641016151377535,-0.8,0.625,1,1,
+]
 wallPostIconVerts = new Float32Array([
 0, 1, 1, side, 0.5, 1, 0, 0, 1, -side, 0.5, 1,
 0, 0, 1, side, 0.5, 1, side, -0.5, 1, 0, -1, 1,
@@ -18293,6 +18364,11 @@ cactusIconVerts = new Float32Array([
 -p, 0, 1, side-p, 0.5, 1, side-p, -0.5, 1, -p, -1, 1,
 -side+p, 0.5, 1, p, 0, 1, p, -1, 1, -side+p, -0.5, 1,
 ])
+beaconIconVerts = [
+-0.5412658773652741,0.3125,0.8125,0.1875,1, 0,0.625,0.1875,0.1875,1, 0.5412658773652741,0.3125,0.1875,0.8125,1, 0,0,0.8125,0.8125,1, -0.8660254037844386,0.5,-1,0,1, 0,1,-2,0,1, 0.8660254037844386,0.5,-2,1,1, 0,0,-1,1,1, -0.649519052838329,-0.3125,-0.25,0.1875,1, 0,0.0625,-1,0.1875,1, 0.649519052838329,-0.3125,-1,0.9375,1, 0,-0.6875,-0.25,0.9375,1, 
+0,0,0.8125,0.1875,1, 0.5412658773652741,0.3125,0.1875,0.1875,1, 0.5412658773652741,-0.3125,0.1875,0.8125,1, 0,-0.625,0.8125,0.8125,1, 0,0,-1,0,1, 0.8660254037844386,0.5,-2,0,1, 0.8660254037844386,-0.5,-2,1,1, 0,-1,-1,1,1, 0,-0.6875,-0.25,0.1875,1, 0.649519052838329,-0.3125,-1,0.1875,1, 0.649519052838329,-0.5,-1,0.375,1, 0,-0.875,-0.25,0.375,1, 
+-0.5412658773652741,0.3125,0.8125,0.1875,1, 0,0,0.1875,0.1875,1, 0,-0.625,0.1875,0.8125,1, -0.5412658773652741,-0.3125,0.8125,0.8125,1, -0.8660254037844386,0.5,-1,0,1, 0,0,-2,0,1, 0,-1,-2,1,1, -0.8660254037844386,-0.5,-1,1,1, -0.649519052838329,-0.3125,-0.25,0.1875,1, 0,-0.6875,-1,0.1875,1, 0,-0.875,-1,0.375,1, -0.649519052838329,-0.5,-0.25,0.375,1,
+]
 }
 function genIcons() {
 blockIcons = [null]
@@ -18443,7 +18519,28 @@ blockIcons[i] = buffer
 blockIcons.lengths[i] = 6 * 3
 blockIcons[i | CACTUS] = buffer
 blockIcons.lengths[i | CACTUS] = 6 * 3
-}else{
+}/*else if(block.beacon){
+v = beaconIconVerts
+for (let j = v.length/5-1; j >= 0; j--) {
+let num = floor(j / (v.length/15))
+let tex = textureCoords[textureMap[block.textures[texOrder[num]]]]
+let tx = tex[0]
+let ty = tex[1]
+data.push(-v[j * 5 + 0] * scale)
+data.push(v[j * 5 + 1] * scale)
+data.push(0.1666666)
+data.push(tx + v[j * 5 + 2] / 16)
+data.push(ty + v[j * 5 + 3] / 16)
+data.push(shadows[num])
+}
+buffer = gl.createBuffer()
+gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW)
+blockIcons[i] = buffer
+blockIcons.lengths[i] = 6 * 3
+blockIcons[i | CACTUS] = buffer
+blockIcons.lengths[i | CACTUS] = 6 * 3
+}*/else{
 for (let j = 11; j >= 0; j--) {
 data.push(-hexagonVerts[j * 3 + 0] * scale)
 data.push(hexagonVerts[j * 3 + 1] * scale)
@@ -18493,20 +18590,24 @@ gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW)
 blockIcons[i | STAIR] = buffer
 blockIcons.lengths[i | STAIR] = 6 * 6
 data = []
+v = fenceIconVerts
 for (let j = 11; j >= 0; j--) {
-let tex = textureCoords[textureMap[block.textures[texOrder[Math.floor(j / 4)]]]]
-data.push(-fenceIconVerts[j * 3 + 0] * scale)
-data.push(fenceIconVerts[j * 3 + 1] * scale)
+let num = floor(j / 4)
+let tex = textureCoords[textureMap[block.textures[texOrder[num]]]]
+let tx = tex[0]
+let ty = tex[1]
+data.push(-v[j * 5 + 0] * scale)
+data.push(v[j * 5 + 1] * scale)
 data.push(0.1666666)
-data.push(tex[(j * 2 + 0) % 8])
-data.push(tex[(j * 2 + 1) % 8])
-data.push(shadows[Math.floor(j / 16)])
+data.push(tx + v[j * 5 + 2] / 16)
+data.push(ty + v[j * 5 + 3] / 16)
+data.push(shadows[num])
 }
 buffer = gl.createBuffer()
 gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW)
 blockIcons[i | FENCE] = buffer
-blockIcons.lengths[i | FENCE] = 6 * 1
+blockIcons.lengths[i | FENCE] = 6 * 3
 data = []
 for (let j = 11; j >= 0; j--) {
 let tex = textureCoords[textureMap[block.textures[texOrder[Math.floor(j / 4)]]]]
@@ -19558,14 +19659,15 @@ return col
 let contacts = {
 array: [],
 size: 0,
-add: function(x, y, z, block) {
+add: function(x, y, z, block, data) {
 if (this.size === this.array.length) {
-this.array.push([ x, y, z, block ])
+this.array.push([ x, y, z, block, data ])
 } else {
 this.array[this.size][0] = x
 this.array[this.size][1] = y
 this.array[this.size][2] = z
 this.array[this.size][3] = block
+this.array[this.size][4] = data
 }
 this.size++
 },
@@ -19617,7 +19719,7 @@ blocksSize ++
 for(var i = 0; i < world.entities.length; i++) {
 var e = world.entities[i]
 if(e.canStandOn && e.block && e.x > pminX && e.x < pmaxX && e.y > pminY && e.y < pmaxY && e.z > pminZ && e.z < pmaxZ) {
-contacts.add(e.x, e.y, e.z, e.block)
+contacts.add(e.x, e.y, e.z, e.block, e)
 }
 }
 p.previousX = p.x
@@ -19713,6 +19815,10 @@ if (p.canStepX && !world.getBlock(block[0], block[1] + 1, block[2], d) && !world
 continue
 }
 hasCollided = true
+/*if(block[4] && block[4].velx){
+if(block[4].velx < 0 && vel.x > block[4].velx) vel.x = block[4].velx
+if(block[4].velx > 0 && vel.x < block[4].velx) vel.x = block[4].velx
+}*/
 //break
 }
 if (sneakLock && onBox(block[0], block[1], block[2], 1, 1, 1)) {
@@ -19734,6 +19840,10 @@ if (p.canStepZ && !world.getBlock(block[0], block[1] + 1, block[2], d) && !world
 continue
 }
 hasCollided = true
+/*if(block[4] && block[4].velz){
+if(block[4].velz < 0 && vel.z > block[4].velz) vel.z = block[4].velz
+if(block[4].velz > 0 && vel.z < block[4].velz) vel.z = block[4].velz
+}*/
 //break
 }
 if (sneakLock && onBox(block[0], block[1], block[2], 1, 1, 1)) {
@@ -19883,6 +19993,7 @@ p3.walking = p.walking
 p3.eating = p.eating
 p3.sprinting = p.sprinting
 p3.punchEffect = p.punchEffect
+p3.sleeping = screen === "sleep"
 p3.hidden = screen === "dead" || p.spectator
 updateTextures()
 let prevX
@@ -19902,7 +20013,7 @@ prevRotY = p.ry
 prevPreviousX = p.previousX
 prevPreviousY = p.previousY
 prevPreviousZ = p.previousZ
-if(!p.thirdPerson){
+if(!p.thirdPerson && !p3.sleeping){
 p.y -= 0.25
 p.previousY -= 0.25
 getRotation(p.rx+Math.PI2,p.ry)
@@ -20033,6 +20144,7 @@ p.character.sprinting = p.sprinting
 p.character.holding = holding || 0
 p.character.punchEffect = p.punchEffect + 2
 p.character.eating = p.eating
+p.character.sleeping = p3.sleeping
 p.character.hidden = p3.hidden
 p.character.update()
 }
@@ -20210,6 +20322,9 @@ world.addEntity(new Item(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2], 0, 0, 0, b
 }
 if (t) {
 p.lastPlace = Date.now()
+if(blockData[t].onplace){
+blockData[t].onplace(hitBox.pos[0],hitBox.pos[1],hitBox.pos[2],p.dimension)
+}
 } else {
 p.lastBreak = Date.now()
 if(!prevBlock) return
@@ -20390,8 +20505,8 @@ if(!onuse(x,y,z, cblock, replaceItem, useDurability, minusOne, p.dimension)){p.l
 }
 }
 var item = holding && blockData[holding].item
-if(item && blockData[holding].canPlace && blockData[holding].canPlace(cblock)){
-item = false
+if(blockData[holding].canPlace && !blockData[holding].canPlace(cblock)){
+item = true
 }
 if(!hitBox.pos || !holding || item) {
 return
@@ -20597,9 +20712,6 @@ updateHUD = true
 }
 //play sound
 blockSound(block, "place", x,y,z)
-if(blockData[holding].sign){
-editSign(x,y,z,p.dimension)
-}
 }
 holding = pholding
 }
@@ -24653,6 +24765,9 @@ var prog = (now - this.spawn) / this.despawns
 this.x = lerp(prog, this.sx, this.mx)
 this.y = lerp(prog, this.sy, this.my)
 this.z = lerp(prog, this.sz, this.mz)
+this.velx = this.x - this.previousX
+this.vely = this.y - this.previousY
+this.velz = this.z - this.previousZ
 }
 }
 win.MovingBlock = MovingBlock
@@ -25436,6 +25551,7 @@ this.sneaking = false
 this.walking = false
 this.sprinting = false
 this.eating = false
+this.sleeping = false
 var part = this.generateVAO(shapes.playerHead,0,0)
 this.addPart("head",part.size,part.vao,0,pix*6,0,1,1,1,0,0)
 part = this.generateVAO(shapes.playerLeftArm,0,0)
@@ -25577,7 +25693,11 @@ this.pOffsetry = this.offsetry
 this.parts.head.rx = this.headPitch
 this.parts.head.ry = 0
 this.parts.head.ry2 = this.headYaw - this.yaw
-if(this.sneaking){
+if(this.sleeping){
+this.offsetY = 0
+this.pitch = -Math.PI2
+this.parts.head.rx += Math.PI2
+}else if(this.sneaking){
 this.offsetY = this.sneakingOffsetY
 var rot = Math.PI / 6
 this.pitch = rot
@@ -27303,8 +27423,8 @@ send({type:"settings", data:worldSettings, time:worldTime})
 }
 }
 }, 500)
-multiplayer.sendPos = () => {
-if(!canSendPos) return
+multiplayer.sendPos = force => {
+if(!canSendPos && !force) return
 var obj = {type:"pos", data:p3, host:host, dimension: p.dimension}
 if(shouldSendInvStuff){
 obj.inv = invStuff
@@ -27442,6 +27562,7 @@ thisplayer.walking = pos.walking
 thisplayer.sprinting = pos.sprinting
 thisplayer.punchEffect = pos.punchEffect
 thisplayer.eating = pos.eating
+thisplayer.sleeping = pos.sleeping
 thisplayer.hidden = pos.hidden
 if(data.inv) playersInv[data.USER] = data.inv
 if(!thisplayer.skinSet && playerSkins[author]){
@@ -27530,21 +27651,22 @@ res = e
 }
 //send({type:"evalRes",data:res,error:error})
 }else if(data.type === "error"){
-if(host){
-alert(data.data)
-}else{
-multiplayerError = data.data
-}
+multiplayerError = data
 console.warn("Multiplayer error!",data.data)
 }
 }
 multiplayer.onclose = e => {
+multiplayerError = multiplayerError || {data:"Disconnected from server"}
 if(host){
-alert("Multiplayer connection lost!")
+alert("Multiplayer connection lost!\n"+multiplayerError.data)
 }else{
 releasePointer()
-multiplayerError = multiplayerError || "Disconnected from server"
+if(multiplayerError.long){
+centerMessage.innerHTML = multiplayerError.data.replace(/\n/g,"<br>")
+changeScene("multiplayer lost long")
+}else{
 changeScene("multiplayer lost")
+}
 }
 clearInterval(multiplayer.pos)
 multiplayer = null
@@ -27554,7 +27676,7 @@ console.warn("Websocket closed with code: "+e.code,e.reason)
 }
 multiplayer.onerror = e => {
 console.warn("WebSocket error!", e)
-multiplayerError = e
+multiplayerError = {data:e.message}
 multiplayer.close()
 }
 win.ban = (username, why) => {
@@ -28072,8 +28194,8 @@ if(!keepTags) this.setTags(x, y, z, null, false, dimension)
 if(!noOnupdate && prev && blockData[prev].ondelete){
 blockData[prev].ondelete(x,y,z, prevTags, prev, dimension)
 }
-if(!noOnupdate && blockID && blockData[blockID].onplace){
-blockData[blockID].onplace(x,y,z, dimension)
+if(!noOnupdate && blockID && blockData[blockID].onset){
+blockData[blockID].onset(x,y,z, dimension)
 }
 if(multiplayer && !remote){
 send({type:"setBlock", data:{x:x, y:y, z:z, block:blockID, dimension:dimension, keepTags:keepTags, prevBlock:prev}})
@@ -28656,7 +28778,11 @@ this[lastChunk] = chunk
 this.loadChunks()
 this.chunkGenQueue.sort(sortChunks)
 }
-if(worldSettings.dayNightCycle) worldTime += 0.125
+if(worldSettings.dayNightCycle){
+if(screen === "sleep" && allSleeping){
+worldTime += 6.25
+}else worldTime += 0.125
+}
 var touchBreak = pTouch.touching && pTouch.canDig && Date.now() - pTouch.touchStart > touchMoveLimit
 if (((controlMap.break.pressed && !Key.control) || touchBreak) && p.lastBreak < Date.now() - 250 && screen === "play" && !survival && !entHitbox.ent) { // survival breaking isn't instant
 changeWorldBlock(0)
@@ -29867,6 +29993,7 @@ window.open("https://"+selectedWorld.replace("external:",""), "_blank")
 Button.add(mid, height / 2 + 40, w2, 40, "Cancel", "multiplayer connecting", r => {multiplayer.close();changeScene("multiplayer lost")})
 //multiplayer lost buttons
 Button.add(mid, height / 2 + 40, w2, 40, "Back", "multiplayer lost", r => changeScene("multiplayer menu"))
+Button.add(mid, height - 40, w2, 40, "Back", "multiplayer lost long", r => changeScene("multiplayer menu"))
 //play buttons
 if(touchScreen){
 var bs = s*0.75 //buton size
@@ -29963,6 +30090,8 @@ Button.add(width / 2, height-30, width / 3, 40, "Done", "edit sign", r => {
 world.setTagByName(editingSign.x,editingSign.y,editingSign.z,"text",editingSign.text,false,editingSign.dimension)
 play()
 })
+//sleep buttons
+Button.add(width / 2, height-30, width/2.25, 40, "Leave Bed", "sleep", play)
 //Help buttons
 Button.add(60, 30, 80, 30, "Back", "options help", r => changeScene(previousScreen))
 // Marketplace buttons
@@ -31134,8 +31263,12 @@ inventory.holding = {id:res.id,amount:res.amount}
 for(let i=0; i<9; i++){
 let block = inventory.crafting[i]
 if(block && block.id){
+if(res.replace[blockData[block.id].name]){
+block.id = blockIds[res.replace[blockData[block.id].name]]
+}else{
 block.amount --
 if(block.amount < 1)inventory.crafting[i].id = 0
+}
 }
 }
 var r = inventory.holding && inventory.holding.id
@@ -31385,8 +31518,12 @@ inventory.holding = {id:res.id,amount:res.amount}
 for(let i=0; i<9; i++){
 let block = inventory.crafting[i]
 if(block && block.id){
+if(res.replace[blockData[block.id].name]){
+block.id = blockIds[res.replace[blockData[block.id].name]]
+}else{
 block.amount --
 if(block.amount < 1)inventory.crafting[i].id = 0
+}
 }
 }
 //achievments
@@ -31763,7 +31900,7 @@ if (screen !== "play") {
 cursor("")
 mouseX = e.x
 mouseY = e.y
-if(screen !== "main menu" && !(screen === "furnace" && furnaceData.data.smelting)){
+if(screen !== "main menu" && !(screen === "furnace" && furnaceData.data.smelting) && screen !== "dead" && screen !== "chat" && screen !== "edit sign" && screen !== "sleep"){
 drawScreens[screen]()
 redraw = true
 Slider.drag()
@@ -33968,7 +34105,7 @@ win.menuMusicVolume = 1
 win.menuMusicIdx = 0
 win.currentMusic = null
 function updateMusic(){
-if(screen === "play" || screen === "pause" || screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "options" || screen.startsWith("options ") || screen === "chat" || screen === "edit sign"){
+if(screen === "play" || screen === "pause" || screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "options" || screen.startsWith("options ") || screen === "chat" || screen === "edit sign" || screen === "sleep"){
 if(menuMusicVolume > 0) menuMusicVolume -= 0.01
 if(menuMusicVolume < 0) menuMusicVolume = 0
 if(currentMusic && menuMusicVolume === 0){
@@ -34369,6 +34506,7 @@ if (urlParams.has("target")) {
 changeScene("multiplayer menu")
 loggedIn().then(logged => {
 if(logged){
+changeScene("multiplayer connecting")
 initMultiplayer(urlParams.get("target"))
 }
 })
@@ -35197,6 +35335,11 @@ defineWorld(tick)
 clear()
 }
 drawScreens["edit sign"] = () => {
+var tags = world.getTags(editingSign.x,editingSign.y,editingSign.z,editingSign.dimension)
+if(!tags || !tags.sign){
+play()
+return
+}
 defineWorld(tick)
 clear()
 textSize(50)
@@ -35208,6 +35351,31 @@ drawScreens.inventory = drawInv
 drawScreens.crafting = drawCrafting
 drawScreens.furnace = drawFurnace
 drawScreens.chest = drawChest
+drawScreens.sleep = () => {
+defineWorld(tick)
+if(skyLight > 0.5){
+return play()
+}
+clear()
+fill(0,0,0,50)
+ctx.fillRect(0,0,width,height)
+textSize(50)
+fill(255)
+ctx.textAlign = 'center'
+text("zzzzzzzzzzzzzz", width / 2, 60)
+if(multiplayer){
+var i = 1, total = 1
+for(var e in players){
+if(players[e].sleeping) i++
+total++
+}
+allSleeping = i === total
+textSize(20)
+fill(255)
+ctx.textAlign = 'center'
+text(`${i} of ${total} players sleeping.`, width / 2, height - 70)
+}else allSleeping = true
+}
 drawScreens.pause = () => {
 strokeWeight(1)
 clear()
@@ -35286,13 +35454,20 @@ ctx.textAlign = 'center'
 fill(255)
 textSize(25)
 text("Connection lost!", width / 2, height / 2 - 40)
-if(multiplayerError){
-if(typeof multiplayerError !== "string"){
-multiplayerError = multiplayerError.toString()
+if(multiplayerError && multiplayerError.data){
+if(typeof multiplayerError.data !== "string"){
+multiplayerError.data = multiplayerError.toString()
 }
 textSize(18)
-text(multiplayerError, width / 2, height / 2, 18)
+text(multiplayerError.data, width / 2, height / 2, 18)
 }
+}
+drawScreens["multiplayer lost long"] = () => {
+dirt()
+ctx.textAlign = 'center'
+fill(255)
+textSize(25)
+text("Connection lost!", width / 2, 40)
 }
 drawScreens.editworld = dirt
 drawScreens.marketplace = () => {
@@ -35339,7 +35514,7 @@ drawScreens[screen]()
 Button.draw()
 Slider.draw()
 }
-if (screen === "play" || screen === "loading" || screen === "netherLoading" || screen === "endLoading" || screen === "dead" || screen === "chat" || screen === "edit sign") {
+if (screen === "play" || screen === "loading" || screen === "netherLoading" || screen === "endLoading" || screen === "dead" || screen === "chat" || screen === "edit sign" || screen === "sleep") {
 drawScreens[screen]()
 Button.draw()
 Slider.draw()
