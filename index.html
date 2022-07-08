@@ -550,6 +550,7 @@ gtag('config', 'G-VRNT3CCCGH');
 </div>
 <textarea id="editSignBox" class="hidden"></textarea>
 <div id="centerMessage" class="hidden"></div>
+<input type="text" id="anvilTextbox" class="hidden" style="position: absolute; top: 0px; left: 0px; z-index: 1;">
 <div id="onhover" class="hidden"></div>
 <p id="savedirections" class="hidden" style="position: absolute; top: 40px; left: 10px; z-index: 1; background-color: rgba(255, 255, 255, 0.3);">
 To save your world, copy/paste the saveString<br>
@@ -1090,6 +1091,7 @@ window.url = document.querySelector("#editworld #url")
 window.editworld = document.getElementById("editworld")
 window.editSignBox = document.getElementById("editSignBox")
 window.centerMessage = document.getElementById("centerMessage")
+window.anvilTextbox = document.getElementById("anvilTextbox")
 var hoverbox = document.getElementById("onhover")
 window.controls = document.getElementById("controls")
 window.controlDetect = document.getElementById("controlDetect")
@@ -5297,6 +5299,10 @@ transparent: true,
 anvil: true,
 digSound: "block.anvil.land",
 stepSound: ["block.stone.step1", "block.stone.step2","block.stone.step3","block.stone.step4","block.stone.step5","block.stone.step6"],
+onclick:function(x,y,z,dimension){
+changeScene("anvil")
+releasePointer()
+},
 onupdate: function(x,y,z,b,world,sx,sy,sz,dimension){
 fall(x,y,z,b,world,false,dimension)
 },
@@ -5496,7 +5502,8 @@ item: true,
 pickaxe: true,
 mineSpeed: 4,
 durability: 131,
-attackDamage: 2
+attackDamage: 2,
+material:"cobblestone"
 },
 {
 name:"ironPickaxe",
@@ -5505,7 +5512,8 @@ item: true,
 pickaxe: true,
 mineSpeed: 6,
 durability: 250,
-attackDamage: 3
+attackDamage: 3,
+material:"ironIngot"
 },
 {
 name:"goldenPickaxe",
@@ -5514,7 +5522,8 @@ item: true,
 pickaxe: true,
 mineSpeed: 12,
 durability: 32,
-attackDamage: 4
+attackDamage: 4,
+material:"goldIngot"
 },
 {
 name:"diamondPickaxe",
@@ -5523,7 +5532,8 @@ item: true,
 pickaxe: true,
 mineSpeed: 8,
 durability: 1561,
-attackDamage: 5
+attackDamage: 5,
+material:"diamond"
 },
 { name:"flint", Name:"Flint", item:true },
 {
@@ -5725,7 +5735,8 @@ Name:"Stone Sword",
 item: true,
 sword: true,
 durability: 131,
-attackDamage: 5
+attackDamage: 5,
+material:"cobblestone"
 },
 {
 name:"ironSword",
@@ -5733,7 +5744,8 @@ Name:"Iron Sword",
 item: true,
 sword: true,
 durability: 250,
-attackDamage: 6
+attackDamage: 6,
+material:"ironIngot"
 },
 {
 name:"goldenSword",
@@ -5741,7 +5753,8 @@ Name:"Golden Sword",
 item: true,
 sword: true,
 durability: 32,
-attackDamage: 4
+attackDamage: 4,
+material:"goldIngot"
 },
 {
 name:"diamondSword",
@@ -5749,7 +5762,8 @@ Name:"Diamond Sword",
 item: true,
 sword: true,
 durability: 1561,
-attackDamage: 7
+attackDamage: 7,
+material:"diamond"
 },
 { name:"azaleaLeaves",
 Name:"Azalea Leaves",
@@ -5963,7 +5977,8 @@ item: true,
 shovel: true,
 durability: 131,
 mineSpeed:3.6,
-attackDamage: 4
+attackDamage: 4,
+material:"cobblestone"
 },
 {
 name:"ironShovel",
@@ -5972,7 +5987,8 @@ item: true,
 shovel: true,
 durability: 250,
 mineSpeed:6,
-attackDamage: 4
+attackDamage: 4,
+material:"ironIngot"
 },
 {
 name:"goldenShovel",
@@ -5981,7 +5997,8 @@ item: true,
 shovel: true,
 durability: 32,
 mineSpeed:12,
-attackDamage: 2
+attackDamage: 2,
+material:"goldIngot"
 },
 {
 name:"diamondShovel",
@@ -5990,7 +6007,8 @@ item: true,
 shovel: true,
 durability: 1561,
 mineSpeed:8,
-attackDamage: 5
+attackDamage: 5,
+material:"diamond"
 },
 {
 name:"woodenAxe",
@@ -6010,7 +6028,8 @@ axe: true,
 durability: 131,
 mineSpeed:4,
 attackDamage: 9,
-attackSpeed:0.8
+attackSpeed:0.8,
+material:"cobblestone"
 },
 {
 name:"ironAxe",
@@ -6020,7 +6039,8 @@ axe: true,
 durability: 250,
 mineSpeed:6,
 attackDamage: 9,
-attackSpeed:0.9
+attackSpeed:0.9,
+material:"ironIngot"
 },
 {
 name:"goldenAxe",
@@ -6030,7 +6050,8 @@ axe: true,
 durability: 32,
 mineSpeed:12,
 attackDamage: 7,
-attackSpeed:1
+attackSpeed:1,
+material:"goldIngot"
 },
 {
 name:"diamondAxe",
@@ -6040,7 +6061,8 @@ axe: true,
 durability: 1561,
 mineSpeed:8,
 attackDamage: 9,
-attackSpeed:1
+attackSpeed:1,
+material:"diamond"
 },
 {
 name: "strippedOakLog",
@@ -6896,7 +6918,8 @@ hoe: true,
 durability: 131,
 mineSpeed:4,
 attackDamage: 1,
-attackSpeed:2
+attackSpeed:2,
+material:"cobblestone"
 },
 {
 name:"ironHoe",
@@ -6906,7 +6929,8 @@ hoe: true,
 durability: 250,
 mineSpeed:6,
 attackDamage: 1,
-attackSpeed:3
+attackSpeed:3,
+material:"ironIngot"
 },
 {
 name:"goldenHoe",
@@ -6916,7 +6940,8 @@ hoe: true,
 durability: 32,
 mineSpeed:12,
 attackDamage: 1,
-attackSpeed:1
+attackSpeed:1,
+material:"goldIngot"
 },
 {
 name:"diamondHoe",
@@ -6926,7 +6951,8 @@ hoe: true,
 durability: 1561,
 mineSpeed:8,
 attackDamage: 1,
-attackSpeed:4
+attackSpeed:4,
+material:"diamond"
 },
 {
 name:"podzol",
@@ -6968,7 +6994,8 @@ item: true,
 pickaxe: true,
 mineSpeed: 9,
 durability: 2031,
-attackDamage: 6
+attackDamage: 6,
+material:"netheriteIngot"
 },
 {
 name:"netheriteSword",
@@ -6976,7 +7003,8 @@ Name:"Netherite Sword",
 item: true,
 sword: true,
 durability: 2031,
-attackDamage: 8
+attackDamage: 8,
+material:"netheriteIngot"
 },
 {
 name:"netheriteAxe",
@@ -6986,7 +7014,8 @@ axe: true,
 durability: 2031,
 mineSpeed:9,
 attackDamage: 10,
-attackSpeed:1
+attackSpeed:1,
+material:"netheriteIngot"
 },
 {
 name:"netheriteShovel",
@@ -6995,7 +7024,8 @@ item: true,
 shovel: true,
 durability: 2031,
 mineSpeed:9,
-attackDamage: 6
+attackDamage: 6,
+material:"netheriteIngot"
 },
 {
 name:"netheriteHoe",
@@ -7005,7 +7035,8 @@ hoe: true,
 durability: 2031,
 mineSpeed:9,
 attackDamage: 1,
-attackSpeed:4
+attackSpeed:4,
+material:"netheriteIngot"
 },
 {
 name:"cartographyTable",
@@ -8051,7 +8082,7 @@ if(!(data && data.chest && data.contents)) return
 data = data.contents
 for(var i=0; i<data.length; i++){
 if(data[i] && data[i].id){
-for(var j=0; j<data[i].amount; j++)world.addEntity(new Item(x,y,z,0,0,0,data[i].id, true, 1, data[i].durability),false,dimension)
+for(var j=0; j<data[i].amount; j++)world.addEntity(new Item(x,y,z,0,0,0,data[i].id, true, 1, data[i].durability, data[i].customName),false,dimension)
 }
 }
 }
@@ -10942,11 +10973,11 @@ invItems[i] = {id:0,amount:64}
 }
 }
 //add something to inventory
-function newInvItem(id, durability){
+function newInvItem(id, durability, name){
 //look for empty slot
 for(let i=0; i<inventory.hotbar.length; i++){
 if(!inventory.hotbar[i].id){
-inventory.hotbar[i] = {id:id, amount:1, durability:durability, animation:1.5}
+inventory.hotbar[i] = {id:id, amount:1, durability:durability, customName:name, animation:1.5}
 if(i === inventory.hotbarSlot){
 inventory.showName = 1.5
 holding = inventory.hotbar[inventory.hotbarSlot].id
@@ -10961,7 +10992,7 @@ return true
 }
 for(let i=0; i<invLength; i++){
 if(!(invItems[i] && invItems[i].id)){
-invItems[i] = {id:id, durability:durability, amount:1}
+invItems[i] = {id:id, durability:durability, customName:name, amount:1}
 return true
 }
 if(invItems[i].id === id && invItems[i].amount < blockData[invItems[i].id].stackSize){
@@ -11314,7 +11345,8 @@ const crafts = {
 "dirt,waterBucket":{name:"mud",shapeless:true,replace:{waterBucket:"bucket"}},
 "waterBucket,air,air,lavaBucket":{name:"obsidian",shaped:true,replace:{waterBucket:"bucket",lavaBucket:"bucket"}},
 "waterBucket,lavaBucket":{name:"cobblestone",shapeless:true,replace:{waterBucket:"bucket",lavaBucket:"bucket"}},
-"carrot,dirt,mud":{name:"mudPie",shapeless:true}
+"carrot,dirt,mud":{name:"mudPie",shapeless:true},
+"ironBlock,ironBlock,ironBlock,air,ironIngot,air,ironIngot,ironIngot,ironIngot":{name:"anvil"}
 }
 /*
 //replace anything in crafts starting with _
@@ -12875,6 +12907,20 @@ onexit: newScene => {
 if(newScene !== "chat") Messages.clear()
 }
 },
+anvil:{
+enter:[anvilTextbox],
+exit:[anvilTextbox],
+onenter: () => {
+let s = inventory.size
+let offX = width - s*5
+let offY = s * 2
+anvilTextbox.style.top = (offY-s)+"px"
+anvilTextbox.style.left = offX+"px"
+anvilTextbox.style.width = (s*4)+"px"
+anvilTextbox.style.height = (s*0.8)+"px"
+anvilTextbox.value = ""
+}
+},
 chat: {
 enter: [window.messageHolder],
 exit: [window.messageHolder],
@@ -13684,13 +13730,13 @@ calculateTotalXP()
 if(survival){
 for(var i=0; i<inventory.hotbar.length; i++){
 if(inventory.hotbar[i].id){
-for(var j=0; j<inventory.hotbar[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,0,inventory.hotbar[i].id,true, 1,inventory.hotbar[i].durability),false,p.dimension)
+for(var j=0; j<inventory.hotbar[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,0,inventory.hotbar[i].id,true, 1,inventory.hotbar[i].durability,inventory.hotbar[i].customName),false,p.dimension)
 inventory.hotbar[i] = 0
 }
 }
 for(var i=0; i<invLength; i++){
 if(invItems[i] && invItems[i].id){
-for(var j=0; j<invItems[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,0,invItems[i].id, true, 1,invItems[i].durability),false,p.dimension)
+for(var j=0; j<invItems[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,0,invItems[i].id, true, 1,invItems[i].durability,invItems[i].customName),false,p.dimension)
 invItems[i].id = 0
 }
 }
@@ -13988,6 +14034,10 @@ space: invItems,
 crafting: [0,0,0,0,0,0,0,0,0],
 craftingStr: "",
 craftingRes: 0, //block id
+anvilInput:0,
+anvilMaterial:0,
+anvilOutput:0,
+anvilCost:0,
 spreaded: [],
 spreadPlace: "", //inventory, crafting, etc
 spreadStart: -1,
@@ -24427,7 +24477,7 @@ this.pitch = Math.PId - atan2(p.y - this.y, adjacent)
 }
 }
 class Item extends Entity {
-constructor(x, y, z, velx, vely, velz, blockID, autoSetVel, amount, durability = null) {
+constructor(x, y, z, velx, vely, velz, blockID, autoSetVel, amount, durability = null, name = null) {
 const block = blockData[blockID]
 const tex = block.textures
 const shape = block.shape
@@ -24463,6 +24513,7 @@ this.block = blockID
 this.type = "Item"
 this.from = userId
 this.durability = durability
+this.name = name
 //this.amount = amount || 1
 this.defaultGravityStength = -0.032
 this.noHitbox = true
@@ -24538,7 +24589,7 @@ this.canDespawn = true
 updateHUD = true
 playSound("entity.item.pickup")
 }else this.updateShape()*/
-if(newInvItem(this.block, this.durability)){
+if(newInvItem(this.block, this.durability, this.name)){
 this.canDespawn = true
 if(this.block === blockIds.oakLog || this.block === blockIds.birchLog || this.block === blockIds.jungleLog || this.block === blockIds.spruceLog || this.block === blockIds.darkOakLog || this.block === blockIds.acaciaLog){
 achievment("Getting Wood")
@@ -24742,15 +24793,20 @@ blockSound(this.block, "land", x,y,z)
 }
 this.canDespawn = true
 }
-if(blockData[this.block].name === "pointedDripstone"){
+if(blockData[this.block].name === "anvil" || blockData[this.block].name === "pointedDripstone"){
 var ent = entCollided(this)
-var d = min(max((this.lastY - this.y - 2) * 2, 0), 40)
+var d
+if(blockData[this.block].name === "pointedDripstone") d = min(max((this.lastY - this.y - 2) * 2, 0), 40)
+else if(blockData[this.block].name === "anvil") d = min(max((this.lastY - this.y - 1) * 2, 0), 40)
 if(collidedWithMe && survival){
-damage(d, username+" got poked to death by a falling pointed dripstone.")
+var reason
+if(blockData[this.block].name === "pointedDripstone") reason = username+" got poked to death by a falling pointed dripstone."
+else if(blockData[this.block].name === "anvil") reason = username+" got hit by an anvil and stuff."
+damage(d, reason)
 }else if(ent && ent.onhit){
 ent.onhit(d)
 }
-if(this.onGround){
+if(blockData[this.block].name === "pointedDripstone" && this.onGround){
 var b = blockIds.pointedDripstone
 world.addEntity(new Item(this.x,this.y,this.z,0,0,0,b,true),false,this.dimension)
 blockParticles(b,this.x,this.y,this.z,30, "break",world,this.dimension)
@@ -25385,6 +25441,7 @@ super(x, y, z, 0, 0, 0, 0, 0, 0.5, 0.5, 0.5, null, null, experienceOrbVaos.size,
 this.type = "ExperienceOrb"
 this.value = value
 this.tint = {r:1,g:1,b:1}
+this.noHitbox = true
 }
 update(){
 let now = performance.now()
@@ -28581,7 +28638,7 @@ return i
 }
 }
 getEntPos(ent){
-return {x:ent.x, y:ent.y, z:ent.z, yaw:ent.yaw, pitch:ent.pitch, block:ent.block, velx:ent.velx, vely:ent.vely, velz:ent.velz, amount:ent.amount, solidOnGround:ent.solidOnGround,harmEffect:ent.harmEffect, health:ent.health, from:ent.from, spawn:ent.spawn, value:ent.value, burning:ent.burning, durability:ent.durability, sx:ent.sx,sy:ent.sy,sz:ent.sz,mx:ent.mx,my:ent.my,mz:ent.mz,despawns:ent.despawns,solidWhenDone:ent.solidWhenDone,text:ent.text,size:ent.size,color:ent.color,background:ent.background}
+return {x:ent.x, y:ent.y, z:ent.z, yaw:ent.yaw, pitch:ent.pitch, block:ent.block, velx:ent.velx, vely:ent.vely, velz:ent.velz, amount:ent.amount, solidOnGround:ent.solidOnGround,harmEffect:ent.harmEffect, health:ent.health, from:ent.from, spawn:ent.spawn, value:ent.value, burning:ent.burning, durability:ent.durability, sx:ent.sx,sy:ent.sy,sz:ent.sz,mx:ent.mx,my:ent.my,mz:ent.mz,despawns:ent.despawns,solidWhenDone:ent.solidWhenDone,text:ent.text,size:ent.size,color:ent.color,background:ent.background,name:ent.name}
 }
 addEntity(ent, remote, dimension){
 if(!ent.id)ent.id = Date.now()
@@ -28613,7 +28670,7 @@ if(ent.type === "TextEntity" && ent.text !== p.text) ent.setText(p.text)
 }else{
 switch(d.entType){
 case "Item":
-ent = new Item(0, 0, 0, 0, 0, 0, p.block, false, p.amount, p.durability)
+ent = new Item(0, 0, 0, 0, 0, 0, p.block, false, p.amount, p.durability, p.name)
 break
 case "BlockEntity":
 ent = new BlockEntity(p.block, 0,0,0, p.solidOnGround)
@@ -29400,29 +29457,49 @@ let str = ""
 let arr = []
 for(let i=0; i<inventory.hotbar.length; i++){
 if(inventory.hotbar[i]){
-arr.push(inventory.hotbar[i].id)
+arr.push(inventory.hotbar[i].id || "")
 arr.push(inventory.hotbar[i].amount)
 }else{
-arr.push(0)
-arr.push(0)
+arr.push("")
+arr.push("")
 }
 }
 str += arr.join(",") + "|"
 arr = []
 for(i=0; i<invItems.length; i++){
 if(invItems[i]){
-arr.push(invItems[i].id)
+arr.push(invItems[i].id || "")
 arr.push(invItems[i].amount)
 }else{
-arr.push(0)
-arr.push(0)
+arr.push("")
+arr.push("")
 }
 }
+//durability
 str += arr.join(",") + "|"
 arr = []
 for(let i=0; i<inventory.hotbar.length; i++){
 if(inventory.hotbar[i]){
-arr.push(inventory.hotbar[i].durability || 0)
+arr.push(inventory.hotbar[i].durability || "")
+}else{
+arr.push("")
+}
+}
+str += arr.join(",") + "|"
+arr = []
+for(i=0; i<invItems.length; i++){
+if(invItems[i]){
+arr.push(invItems[i].durability || "")
+}else{
+arr.push(0)
+}
+}
+//name
+str += arr.join(",") + "|"
+arr = []
+for(let i=0; i<inventory.hotbar.length; i++){
+if(inventory.hotbar[i]){
+arr.push(inventory.hotbar[i].customName || "")
 }else{
 arr.push(0)
 }
@@ -29431,11 +29508,12 @@ str += arr.join(",") + "|"
 arr = []
 for(i=0; i<invItems.length; i++){
 if(invItems[i]){
-arr.push(invItems[i].durability || 0)
+arr.push(invItems[i].customName || "")
 }else{
 arr.push(0)
 }
 }
+str += arr.join(",") + "|"
 return str
 }
 getSurvivStr(){
@@ -29560,22 +29638,24 @@ inventory.hotbar = []
 for(let i=0; i<len*2; i+=2){
 if(hotb[i]){
 inventory.hotbar.push({
-id: parseInt(hotb[i]),
-amount: parseInt(hotb[i+1])
+id: parseInt(hotb[i]) || 0,
+amount: parseInt(hotb[i+1]) || 0
 })
 }else inventory.hotbar.push(0)
 }
 invItems = []
 for(let i=0; i<inv.length; i+=2){
+if(inv[i]){
 invItems.push({
-id: parseInt(inv[i]),
-amount: parseInt(inv[i+1])
+id: parseInt(inv[i]) || 0,
+amount: parseInt(inv[i+1]) || 0
 })
+}else invItems.push(0)
 }
 try{
 inv = arr[3].split(",")
 hotb = arr[2].split(",")
-for(let i=0; i<len*2; i++){
+for(let i=0; i<len; i++){
 hotb[i] = parseInt(hotb[i]) || 0
 if(hotb[i]){
 inventory.hotbar[i].durability = hotb[i]
@@ -29585,6 +29665,18 @@ for(let i=0; i<inv.length; i++){
 inv[i] = parseInt(inv[i]) || 0
 if(inv[i]){
 invItems[i].durability = inv[i]
+}
+}
+inv = arr[5].split(",")
+hotb = arr[4].split(",")
+for(let i=0; i<len; i++){
+if(hotb[i]){
+inventory.hotbar[i].customName = hotb[i]
+}
+}
+for(let i=0; i<inv.length; i++){
+if(inv[i]){
+invItems[i].customName = inv[i]
 }
 }
 }catch{}
@@ -30210,7 +30302,7 @@ a.download = world.name+".minekhan"
 a.click()
 }, nothing)
 // Inventory buttons
-Button.add(width - 50, 15, 60, 30, "close", ["inventory","crafting","furnace","chest"], play)
+Button.add(width - 50, 15, 60, 30, "close", ["inventory","crafting","furnace","chest","anvil"], play)
 // You Died buttons
 Button.add(width / 2, 225, 300, 40, "Respawn", "dead", r => {
 respawn()
@@ -30937,7 +31029,7 @@ var barX = x+s*4.5
 ctx.strokeStyle = "black"
 ctx.lineWidth = 4
 ctx.strokeText(level, barX, iy+ih)
-ctx.fillStyle = colors.a
+ctx.fillStyle = colors.css.a
 ctx.fillText(level, barX, iy+ih)
 ctx.textAlign = "left"
 }
@@ -30957,7 +31049,7 @@ var id = slot && slot.id
 if(slot && slot.id && slot.id < isCube && !blockData[slot.id].item) {
 id = slot.id | blockMode
 }
-var name = slot && slot.id && (blockData[id].Name || blockData[id].name)
+var name = slot && slot.id && (slot.customName || blockData[id].Name)
 if(name){
 var w = ctx.measureText(name).width + 20
 var X = (width / 2) - (w/2)
@@ -31248,9 +31340,9 @@ idx++
 let name;
 if(survival){
 let id = invItems[idx] ? invItems[idx].id : 0
-name = id ? blockData[id].Name || blockData[id].name : "";
+name = id ? invItems[idx].customName || blockData[id].Name : "";
 }else{
-name = blockData[idx] ? blockData[idx].Name || blockData[idx].name : "";
+name = blockData[idx] ? blockData[idx].Name : "";
 }
 if((name !== "") && mouseY<s*9.5){
 ctx.font = "16px VT323";
@@ -31266,7 +31358,7 @@ x = width / 2 - inventory.hotbar.length / 2 * s + 0.5 + 25
 y = height - s * 1.5 + 0.5
 if (mouseX < x + 9 * s && mouseX > x && mouseY > y && mouseY < y + s) {
 let slot = inventory.hotbar[overHot]
-let name = slot && slot.id && (blockData[slot.id].Name)
+let name = slot && slot.id && (slot.customName || blockData[slot.id].Name)
 name = name || ""
 if(name !== ""){
 ctx.font = "16px VT323";
@@ -31410,7 +31502,7 @@ updateCraftingGrid()
 }else if(screen === "crafting" && mouseX>offX && mouseX<offX+(s*3) && mouseY>offY && mouseY<offY+(s*3)){}else{
 if(survival && inventory.holding && inventory.holding.id){
 let d = p.direction
-for(var j=0; j<inventory.holding.amount; j++) world.addEntity(new Item(p.x,p.y,p.z,d.x/4,d.y/4,d.z/4,inventory.holding.id,false, 1,inventory.holding.durability),false,p.dimension)
+for(var j=0; j<inventory.holding.amount; j++) world.addEntity(new Item(p.x,p.y,p.z,d.x/4,d.y/4,d.z/4,inventory.holding.id,false, 1,inventory.holding.durability,inventory.holding.customName),false,p.dimension)
 }
 inventory.holding = 0
 }
@@ -31976,7 +32068,7 @@ drawIcon(ix+s2,iy+s2, item.id, item)
 ctx.drawImage(gl.canvas,0,0)
 if(over >= 0 && over < length && data.contents){
 var item = data.contents[over]
-let name = item ? (blockData[item.id].Name) : ""
+let name = item ? (item.customName || blockData[item.id].Name) : ""
 if(name !== ""){
 ctx.textAlign = "left"
 ctx.font = "16px VT323";
@@ -32006,6 +32098,152 @@ inventory.holding = temp
 world.updateTags(chestData.x,chestData.y,chestData.z,chestData.dimension)
 }else clickInv(true, mouse)
 drawScreens.chest()
+}
+function drawAnvil(){
+drawInv(true)
+let s = inventory.size
+let s2 = s/2
+let s4 = s/4
+gl.clearColor(0, 0, 0, 0)
+gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT)
+let offX = width - s*5
+let offY = s * 2
+//input
+let x = offX
+let y = offY
+let over = mouseX>x && mouseX<x+s && mouseY>y && mouseY<y+s
+ctx.lineWidth = over?2:1
+ctx.strokeStyle = over?"white":"black"
+ctx.strokeRect(x,y, s,s)
+if(inventory.anvilInput && inventory.anvilInput.id){
+drawIcon(x+s2,y+s2, inventory.anvilInput.id, inventory.anvilInput)
+}
+//+
+x += s
+ctx.beginPath()
+ctx.moveTo(x,y+s2)
+ctx.lineTo(x+s2,y+s2)
+ctx.moveTo(x+s4,y+s4)
+ctx.lineTo(x+s4,y+s2+s4)
+ctx.stroke()
+x += s2
+over = mouseX>x && mouseX<x+s && mouseY>y && mouseY<y+s
+ctx.lineWidth = over?2:1
+ctx.strokeStyle = over?"white":"black"
+ctx.strokeRect(x,y, s,s)
+if(inventory.anvilMaterial && inventory.anvilMaterial.id){
+drawIcon(x+s2,y+s2, inventory.anvilMaterial.id, inventory.anvilMaterial)
+}
+//arrow
+x += s
+ctx.strokeStyle = "black"
+ctx.lineWidth = 1
+ctx.beginPath()
+ctx.moveTo(x+s,y+s2)
+ctx.lineTo(x+s2,y)
+ctx.moveTo(x+s,y+s2)
+ctx.lineTo(x+s2,y+s)
+ctx.moveTo(x,y+s2)
+ctx.lineTo(x+s,y+s2)
+ctx.stroke()
+x += s
+over = mouseX>x && mouseX<x+s && mouseY>y && mouseY<y+s
+ctx.lineWidth = over?2:1
+ctx.strokeStyle = over?"white":"black"
+ctx.strokeRect(x,y, s,s)
+if(inventory.anvilOutput && inventory.anvilOutput.id){
+drawIcon(x+s2,y+s2, inventory.anvilOutput.id, inventory.anvilOutput)
+}
+ctx.fillStyle = "white"
+ctx.font = "16px VT323"
+ctx.textAlign = "left"
+ctx.fillText("Anvil", offX, offY-s)
+if(inventory.anvilCost){
+x = offX
+y = offY+s+20
+ctx.fillText("Cost: "+inventory.anvilCost+" levels",x,y)
+}
+ctx.drawImage(gl.canvas,0,0)
+if(over && inventory.anvilOutput && inventory.anvilOutput.id){ //right aligned
+var item = inventory.anvilOutput
+let name = inventory.anvilOutput.customName || blockData[inventory.anvilOutput.id].Name
+if(name !== "" && over){
+ctx.textAlign = "left"
+ctx.font = "16px VT323";
+var w = ctx.measureText(name).width;
+fill(0)
+ctx.fillRect(mouseX-w-20, mouseY, w+20, 20);
+fill(255);
+ctx.fillText(name, mouseX+10-w-20, mouseY+13+2);
+}
+}
+ctx.drawImage(canvas2,0,0)
+}
+function clickAnvil(mouse){
+let s = inventory.size
+let s2 = s/2
+let s4 = s/4
+let offX = width - s*5
+let offY = s * 2
+let clicked
+let x = offX
+let y = offY
+let over = mouseX>x && mouseX<x+s && mouseY>y && mouseY<y+s
+let temp
+if(over){
+temp = inventory.anvilInput
+inventory.anvilInput = inventory.holding
+inventory.holding = temp
+let item = inventory.anvilInput
+anvilTextbox.value = item ? (item.customName || blockData[item.id].Name) : ""
+clicked = true
+}
+x = offX+s*1.5
+over = mouseX>x && mouseX<x+s && mouseY>y && mouseY<y+s
+if(over){
+temp = inventory.anvilMaterial
+inventory.anvilMaterial = inventory.holding
+inventory.holding = temp
+clicked = true
+}
+x = offX+s*3.5
+over = mouseX>x && mouseX<x+s && mouseY>y && mouseY<y+s
+if(over && (inventory.anvilCost <= p.level || !survival)){
+if(inventory.anvilInput && inventory.anvilInput.durability && inventory.anvilInput.durability !== inventory.anvilOutput.durability){
+inventory.anvilMaterial.amount--
+if(inventory.anvilMaterial.amount <= 0) inventory.anvilMaterial = 0
+}
+inventory.holding = inventory.anvilOutput
+inventory.anvilOutput = inventory.anvilInput = 0
+if(survival){
+p.level -= inventory.anvilCost
+setLevel()
+}
+playSound("block.anvil.land",0)
+playSound("block.anvil.land",500)
+playSound("block.anvil.land",1000)
+clicked = true
+}
+inventory.anvilCost = 0
+if(inventory.anvilInput && inventory.anvilInput.id){
+let {id,amount,durability} = inventory.anvilInput
+inventory.anvilOutput = {id,amount,durability}
+if(anvilTextbox.value !== blockData[inventory.anvilOutput.id].Name){
+inventory.anvilOutput.customName = anvilTextbox.value
+inventory.anvilCost++
+}
+if(blockData[id].durability && blockData[id].material && inventory.anvilMaterial && inventory.anvilMaterial.id){
+let materialName = blockData[inventory.anvilMaterial.id].name
+let maxDurability = blockData[id].durability
+if(blockData[id].material === materialName){
+inventory.anvilOutput.durability += maxDurability/4
+if(inventory.anvilOutput.durability > maxDurability) inventory.anvilOutput.durability = maxDurability
+inventory.anvilCost++
+}
+}
+}else inventory.anvilOutput = 0, anvilTextbox.value = ""
+if(!clicked) clickInv(true, mouse)
+drawAnvil()
 }
 let unpauseDelay = 0
 function mmoved(e) {
@@ -32037,7 +32275,7 @@ redraw = true
 Slider.drag()
 }
 }
-if(screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest"){
+if(screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "anvil"){
 moveInv()
 redraw = true
 }
@@ -32206,7 +32444,7 @@ if(place) {
 placeKeyPressed()
 }
 }
-} else if (screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest") {
+} else if (screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "anvil") {
 if(mouseDown && mouseX >= width-barW){
 draggingInvBar = true
 invBarOffset = mouseY-map(invScroll, 0, invHeight, (barH/2), height-(barH/2))
@@ -32214,6 +32452,7 @@ invBarOffset = mouseY-map(invScroll, 0, invHeight, (barH/2), height-(barH/2))
 if(screen === "crafting")clickCrafting(e.button)
 else if(screen === "furnace")clickFurnace(e.button)
 else if(screen === "chest") clickChest(e.button)
+else if(screen === "anvil")clickAnvil(e.button)
 else clickInv(false, e.button)
 redraw = true
 }
@@ -32241,7 +32480,7 @@ mouseDown = false
 Button.mouseup()
 Slider.release()
 draggingInvBar = false
-if(screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest") releaseInv()
+if(screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "anvil") releaseInv()
 }
 canvas.onkeydown = function(e) {
 let k = e.key.toLowerCase()
@@ -32347,7 +32586,7 @@ if (k === controlMap.dropItem.key && inventory.hotbar[inventory.hotbarSlot] && i
 let d = p.direction
 let block = holding || inventory.hotbar[inventory.hotbarSlot].id
 block = block < isCube && !blockData[block].item ? block | blockMode : block
-world.addEntity(new Item(p.x, p.y, p.z, d.x/4, d.y/4, d.z/4, block, false, 1,inventory.hotbar[inventory.hotbarSlot].durability),false,p.dimension)
+world.addEntity(new Item(p.x, p.y, p.z, d.x/4, d.y/4, d.z/4, block, false, 1,inventory.hotbar[inventory.hotbarSlot].durability,inventory.hotbar[inventory.hotbarSlot].customName),false,p.dimension)
 if(survival){
 inventory.hotbar[inventory.hotbarSlot].amount --
 inventory.hotbar[inventory.hotbarSlot].animation = 1.5
@@ -32365,20 +32604,38 @@ updateHUD = true
 if(k === controlMap.pause.key) {
 play()
 }
-} else if (screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest") {
+} else if (screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "anvil") {
 if (k === controlMap.inventory.key) {
 if(screen === "crafting" || screen === "inventory"){
 for(var i=0; i<9; i++){
 if(inventory.crafting[i] && inventory.crafting[i].id){
 for(var n=0; n<inventory.crafting[i].amount; n++){
-if(!newInvItem(inventory.crafting[i].id)){
-world.addEntity(new Item(p.x,p.y,p.z,0,0,0,inventory.crafting[i].id),false,p.dimension)
+if(!newInvItem(inventory.crafting[i].id, inventory.crafting[i].durability, inventory.crafting[i].customName)){
+world.addEntity(new Item(p.x,p.y,p.z,0,0,0,inventory.crafting[i].id, false,1, inventory.crafting[i].durability, inventory.crafting[i].customName),false,p.dimension)
 }
 }
 inventory.crafting[i].id = 0
 }
 }
 inventory.craftingRes = 0
+}else if(screen === "anvil"){
+if(inventory.anvilInput && inventory.anvilInput.id){
+for(var n=0; n<inventory.anvilInput.amount; n++){
+if(!newInvItem(inventory.anvilInput.id, inventory.anvilInput.durability, inventory.anvilInput.customName)){
+world.addEntity(new Item(p.x,p.y,p.z,0,0,0,inventory.anvilInput.id, false,1, inventory.anvilInput.durability, inventory.anvilInput.customName),false,p.dimension)
+}
+}
+inventory.anvilInput = inventory.anvilOutput = 0
+}
+if(inventory.anvilMaterial && inventory.anvilMaterial.id){
+for(var n=0; n<inventory.anvilMaterial.amount; n++){
+if(!newInvItem(inventory.anvilMaterial.id, inventory.anvilMaterial.durability, inventory.anvilMaterial.customName)){
+world.addEntity(new Item(p.x,p.y,p.z,0,0,0,inventory.anvilMaterial.id, false,1, inventory.anvilMaterial.durability, inventory.anvilMaterial.customName),false,p.dimension)
+}
+}
+inventory.anvilMaterial = 0
+}
+inventory.anvilCost = 0
 }
 play()
 }
@@ -32394,7 +32651,7 @@ play()
 canvas.onkeyup = function(e) {
 let k = e.key.toLowerCase()
 Key[k] = false
-if(k === "escape" && (screen === "pause" || screen === "inventory" || screen === "chest" || screen === "furnace" || screen === "chat" || screen === "options" && previousScreen === "pause") && Date.now() > unpauseDelay) {
+if(k === "escape" && (screen === "pause" || screen === "inventory" || screen === "chest" || screen === "furnace" || screen === "anvil" || screen === "chat" || screen === "options" && previousScreen === "pause") && Date.now() > unpauseDelay) {
 play()
 }
 if (screen === "play") {
@@ -32446,7 +32703,7 @@ inventory.showName = 1.5
 updateHUD = true
 holding = inventory.hotbar[inventory.hotbarSlot].id
 }
-if(screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest"){
+if(screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "anvil"){
 invScroll += e.deltaY
 if(invScroll < 0) invScroll = 0
 if(invScroll > invHeight) invScroll = invHeight
@@ -34095,7 +34352,7 @@ if((typeof soundVol === "object") || (!soundVol && soundVol !== 0)) soundVol = 1
 volume *= soundVol
 volume *= settings.volume
 var buffer = sound
-if(audioCtx && (typeof buffer !== "string") && volume > 0){
+if(audioCtx && buffer && (typeof buffer !== "string") && volume > 0){
 var source = audioCtx.createBufferSource();
 source.buffer = buffer;
 var gainNode, convolver
@@ -34240,7 +34497,7 @@ win.menuMusicVolume = 1
 win.menuMusicIdx = 0
 win.currentMusic = null
 function updateMusic(){
-if(screen === "play" || screen === "pause" || screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "options" || screen.startsWith("options ") || screen === "chat" || screen === "edit sign" || screen === "sleep"){
+if(screen === "play" || screen === "pause" || screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "anvil" || screen === "options" || screen.startsWith("options ") || screen === "chat" || screen === "edit sign" || screen === "sleep"){
 if(menuMusicVolume > 0) menuMusicVolume -= 0.01
 if(menuMusicVolume < 0) menuMusicVolume = 0
 if(currentMusic && menuMusicVolume === 0){
@@ -34910,7 +35167,7 @@ delete item.dropStart
 let d = p.direction
 let block = item.id
 block = block < isCube && !blockData[block].item ? block | blockMode : block
-world.addEntity(new Item(p.x, p.y, p.z, d.x/4, d.y/4, d.z/4, block, false, 1,item.durability),false,p.dimension)
+world.addEntity(new Item(p.x, p.y, p.z, d.x/4, d.y/4, d.z/4, block, false, 1,item.durability,item.customName),false,p.dimension)
 if(survival){
 item.amount --
 item.animation = 1.5
@@ -35489,6 +35746,7 @@ drawScreens.inventory = drawInv
 drawScreens.crafting = drawCrafting
 drawScreens.furnace = drawFurnace
 drawScreens.chest = drawChest
+drawScreens.anvil = drawAnvil
 drawScreens.sleep = () => {
 defineWorld(tick)
 if(skyLight > 0.5){
