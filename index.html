@@ -976,10 +976,19 @@ if (gl_FragColor.a == 0.0) discard;
 <script type="x-shader/vertex" id="textVertexShader">
 attribute vec2 aVertex;
 attribute vec2 aTexture;
+attribute vec3 aTextColor;
+attribute float aColorSet;
 varying vec2 vTexture;
+varying vec3 vTextColor;
 uniform mat4 uView;
+uniform vec3 textColor;
 void main() {
 vTexture = aTexture;
+if(aColorSet == 1.){
+vTextColor = aTextColor;
+}else{
+vTextColor = textColor;
+}
 gl_Position = uView * vec4(aVertex, 1.0, 1.0);
 }
 </script>
@@ -991,10 +1000,10 @@ precision mediump float;
 #endif
 uniform sampler2D uSampler;
 uniform float uLightLevel;
-uniform vec3 textColor;
 uniform vec4 background;
 uniform bool glow;
 varying vec2 vTexture;
+varying vec3 vTextColor;
 const float pixSize = 1./8.;
 void main(){
 vec4 color = texture2D(uSampler, vTexture);
@@ -1004,10 +1013,10 @@ float down = texture2D(uSampler, vec2(vTexture.x,vTexture.y-pixSize)).a;
 float left = texture2D(uSampler, vec2(vTexture.x-pixSize,vTexture.y)).a;
 float right = texture2D(uSampler, vec2(vTexture.x+pixSize,vTexture.y)).a;
 if(up != 0. || down != 0. || left != 0. || right != 0.){
-color = vec4(textColor*0.75, 1.);
+color = vec4(vTextColor*0.75, 1.);
 }
 }
-gl_FragColor = vec4(mix(background.rgb, color.rgb*textColor, color.a) * uLightLevel, mix(background.a, 1., color.a));
+gl_FragColor = vec4(mix(background.rgb, color.rgb*vTextColor, color.a) * uLightLevel, mix(background.a, 1., color.a));
 if (gl_FragColor.a == 0.0) discard;
 }
 </script>
@@ -3085,6 +3094,8 @@ carrotsStage2: "0g0g6000FĩY^NYBíHÄĊZèŗZ00000000000000000000000000000000000
 carrotsStage1: "0g0g5000^NYÄĊZFĩYBíH00000000000000000000000000000000000000000000000000000000000000000002ûdy0hùİXĘÊ2,xÓ@Ň064ù60080ë80",
 carrotsStage0: "0g0g4000FĩY^NYBíH000000000000000000000000000000000000000000000000000006A0dtts0ħħħ",
 mudPie: "0g0g9000*KW]ĈWSùW)ÝWEKWs(W(KWwSW000g0000000g11000101110g10gzNy0g12y)OyM00iORQUN00AV>NÃNw0NO))UA(0Â?yRN?(0Äy?>>N(0ÅÕððIÓÀ0ñU?GQïS0XIGÆï[008?U[UG000ÆIIï0000000000",
+greenGrapes: "0g0g70001KY1wHÃBZWkZ+īH1SY000w00001S0000240007bëüŇ1ĪÑĕìE2Å1}]Ň09ÊiĨE1įÎiŎ02Ès!9S0-Bìį00_OJÀŇ1āQČdE1ħró.S2ÀAĈ^0000000000000",
+purpleGrapes: "0g0gc000?ĩHÁíH<(Z&zYMëYFKYĳĂHį.YlŉWlęZĜ-Y000000000000i(000004Ä00007XāĈä0008ğòäô0000äğôďë00çëĀģIĠ00ÿĢ7óùÿë7ëÿIĘG8Ę8ğIġ7Iä008ĘďIġôë09ä8ĢäaĘ0äôä9ôä008Ęôäëô00000ôĘ0000000000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -10719,6 +10730,31 @@ edible: true,
 food: 1,
 saturation: 1
 },
+{
+name:"purpleGrapes",
+Name:"Purple Grapes",
+item:true,
+edible: true,
+food: 3,
+saturation: 3
+},
+{
+name:"greenGrapes",
+Name:"Green Grapes",
+item:true,
+edible: true,
+food: 3,
+saturation: 3
+},
+{
+name:"chair",
+Name:"chair",
+textures:"oakPlanks",
+shapeName:"chair",
+transparent:true,
+shadow:false,
+onclick:sit
+},
 /*
 { name: "pigFace" },
 { 
@@ -12081,7 +12117,7 @@ var xStr = codes[0]
 let tx = ctx.measureText(xStr).width
 for(var j=1; j<codes.length; j++){
 let str = codes[j]
-ctx.fillStyle = colors[str.substring(0,1)]
+ctx.fillStyle = colors.css[str.substring(0,1)]
 str = str.substring(1)
 ctx.fillText(str, x+tx-m2, y+h*i)
 xStr += str
@@ -12473,23 +12509,32 @@ gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
 }
 let skybox
 let colors = {
-0: "#000",
-1: "#00a",
-2: "#0a0",
-3: "#0aa",
-4: "#a00",
-5: "#a0a",
-6: "#fa0",
-7: "#aaa",
-8: "#555",
-9: "#55f",
-a: "#5f5",
-b: "#5ff",
-c: "#f55",
-d: "#f5f",
-e: "#ff5",
-f: "#fff",
-g: "#DDD605",//minecoin gold
+rgb:{
+0: [0,0,0],
+1: [0,0,170],
+2: [0,170,0],
+3: [0,170,170],
+4: [170,0,0],
+5: [170,0,170],
+6: [255,170,0],
+7: [170,170,170],
+8: [85,85,85],
+9: [85,85,255],
+a: [85,255,85],
+b: [85,255,255],
+c: [255,85,85],
+d: [255,85,255],
+e: [255,255,85],
+f: [255,255,255],
+g: [221,214,5],//minecoin gold
+},
+css:{}
+}
+for(var c in colors.rgb){
+colors.css[c] = "rgb("+colors.rgb[c].join(",")+")"
+colors.rgb[c][0] /= 255
+colors.rgb[c][1] /= 255
+colors.rgb[c][2] /= 255
 }
 if (height === 400) alert("Canvas is too small. Click the \"Settings\" button to the left of the \"Vote Up\" button under the editor and change the height to 600.")
 let generator = {
@@ -13584,7 +13629,7 @@ var arr = str.split("§")
 var res = "<span>"+arr[0]
 for(var i=1; i<arr.length; i++){
 var s = arr[i]
-var col = colors[s.substring(0,1)]
+var col = colors.css[s.substring(0,1)]
 s = s.substring(1)
 res += "</span><span style='color:"+col+";'>"+s
 }
@@ -13990,7 +14035,7 @@ var allSleeping = true
 function clickBed(x,y,z,dimension){
 if(dimension !== "") return explode(x,y,z,5,false,dimension)
 world.spawnPoint.x=x
-world.spawnPoint.y=y
+world.spawnPoint.y=y+1
 world.spawnPoint.z=z
 Messages.add("Respawn point set")
 if(skyLight < 0.5){
@@ -14024,6 +14069,31 @@ if(multiplayer && multiplayer.sendPos) multiplayer.sendPos(true)
 changeScene("sleep")
 releasePointer()
 }else Messages.add("You can't sleep now.")
+}
+function sit(x,y,z,dimension){
+p.x = x
+p.y = y + 0.995
+p.z = z
+var block = world.getBlock(x,y,z,dimension)
+switch(block & ROTATION){
+case NORTH:
+p.ry = Math.PI
+break
+case SOUTH:
+p.ry = 0
+break
+case EAST:
+p.ry = Math.PI2
+break
+case WEST:
+p.ry = -Math.PI2
+break
+}
+p.sitting = true
+p.bottomH = 0.995
+p.velocity.x = 0
+p.velocity.y = 0
+p.velocity.z = 0
 }
 function play() {
 canvas.onblur()
@@ -16547,6 +16617,25 @@ cull: {
 top: 0,
 bottom: 0,
 north: 3,
+south: 0,
+east: 0,
+west: 0
+},
+rotate:true
+},
+chair:{
+verts:[
+[objectify(3,6,0,10,16,0,0),objectify(3,0,14,2,2,0,0),objectify(11,0,14,2,2,0,0),objectify(3,0,0,2,2,0,0),objectify(11,0,0,2,2,0,0)],
+[objectify(3,8,16,10,16,0,0),objectify(3,24,16,10,2,0,0)],
+[objectify(13,8,16,10,2,0,0),objectify(5,6,16,2,6,0,0),objectify(13,6,16,2,6,0,0),objectify(5,6,2,2,6,0,0),objectify(13,6,2,2,6,0,0),objectify(13,24,16,10,16,0,0)],
+[objectify(3,8,0,10,2,0,0),objectify(3,6,14,2,6,0,0),objectify(11,6,14,2,6,0,0),objectify(3,6,0,2,6,0,0),objectify(11,6,0,2,6,0,0),objectify(3,24,14,10,16,0,0)],
+[objectify(13,8,0,16,2,0,0),objectify(5,6,0,2,6,0,0),objectify(13,6,0,2,6,0,0),objectify(5,6,14,2,6,0,0),objectify(13,6,14,2,6,0,0),objectify(13,24,14,2,16,0,0)],
+[objectify(3,8,16,16,2,0,0),objectify(3,6,2,2,6,0,0),objectify(3,6,16,2,6,0,0),objectify(11,6,2,2,6,0,0),objectify(11,6,16,2,6,0,0),objectify(3,24,16,2,16,0,0)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
 south: 0,
 east: 0,
 west: 0
@@ -19994,6 +20083,7 @@ p3.eating = p.eating
 p3.sprinting = p.sprinting
 p3.punchEffect = p.punchEffect
 p3.sleeping = screen === "sleep"
+p3.sitting = p.sitting
 p3.hidden = screen === "dead" || p.spectator
 updateTextures()
 let prevX
@@ -20145,6 +20235,7 @@ p.character.holding = holding || 0
 p.character.punchEffect = p.punchEffect + 2
 p.character.eating = p.eating
 p.character.sleeping = p3.sleeping
+p.character.sitting = p.sitting
 p.character.hidden = p3.hidden
 p.character.update()
 }
@@ -20162,6 +20253,7 @@ win.pressurePlateHasPressure = pressurePlateHasPressure
 let controls = function() {
 move.x = 0
 move.z = 0
+if(p.sitting) return
 if(controlMap.forward.pressed || onscreenControls.forward) move.z += p.speed
 if(controlMap.backward.pressed || onscreenControls.backward) move.z -= p.speed
 if(controlMap.left.pressed || onscreenControls.left) move.x += p.speed
@@ -20505,7 +20597,7 @@ if(!onuse(x,y,z, cblock, replaceItem, useDurability, minusOne, p.dimension)){p.l
 }
 }
 var item = holding && blockData[holding].item
-if(blockData[holding].canPlace && !blockData[holding].canPlace(cblock)){
+if(holding && blockData[holding].canPlace && !blockData[holding].canPlace(cblock)){
 item = true
 }
 if(!hitBox.pos || !holding || item) {
@@ -25552,6 +25644,7 @@ this.walking = false
 this.sprinting = false
 this.eating = false
 this.sleeping = false
+this.sitting = false
 var part = this.generateVAO(shapes.playerHead,0,0)
 this.addPart("head",part.size,part.vao,0,pix*6,0,1,1,1,0,0)
 part = this.generateVAO(shapes.playerLeftArm,0,0)
@@ -25693,10 +25786,18 @@ this.pOffsetry = this.offsetry
 this.parts.head.rx = this.headPitch
 this.parts.head.ry = 0
 this.parts.head.ry2 = this.headYaw - this.yaw
+this.parts.leftLeg.ry2 = 0
+this.parts.rightLeg.ry2 = 0
 if(this.sleeping){
 this.offsetY = 0
 this.pitch = -Math.PI2
 this.parts.head.rx += Math.PI2
+}else if(this.sitting){
+this.offsetY = this.defaultOffsetY
+this.pitch = 0
+this.parts.leftLeg.rx = this.parts.rightLeg.rx = -Math.PI2
+this.parts.leftLeg.ry2 = Math.PI/8
+this.parts.rightLeg.ry2 = -Math.PI/8
 }else if(this.sneaking){
 this.offsetY = this.sneakingOffsetY
 var rot = Math.PI / 6
@@ -27013,13 +27114,21 @@ this.background = background || [0,0,0,0]
 this.glow = false
 }
 setText(text){
-let data = new Float32Array(text.length*16)
+let data = new Float32Array(text.length*32)
 let lineData = []
 let x = 0, y = 0
 let lineW = []
 let line = 0
 let i = 0
-for (let l of text) {
+let color = [0,0,0], colorSet = 0
+for (let idx = 0; idx<text.length; idx++) {
+let l = text[idx]
+if(l === "§"){
+color = colors.rgb[text[idx+1]] || color
+colorSet = 1
+idx++
+continue
+}
 if(l === "\n"){
 x = 0
 y -= 8
@@ -27031,36 +27140,56 @@ data[i] = x
 data[i+1] = y + coords[5]
 data[i+2] = coords[0]
 data[i+3] = coords[1]
-data[i+4] = x + coords[4]
-data[i+5] = y + coords[5]
-data[i+6] = coords[0] + coords[2]
-data[i+7] = coords[1]
+data[i+4] = color[0]
+data[i+5] = color[1]
+data[i+6] = color[2]
+data[i+7] = colorSet
 data[i+8] = x + coords[4]
-data[i+9] = y
+data[i+9] = y + coords[5]
 data[i+10] = coords[0] + coords[2]
-data[i+11] = coords[1] + coords[3]
-data[i+12] = x
-data[i+13] = y
-data[i+14] = coords[0]
-data[i+15] = coords[1] + coords[3]
+data[i+11] = coords[1]
+data[i+12] = color[0]
+data[i+13] = color[1]
+data[i+14] = color[2]
+data[i+15] = colorSet
+data[i+16] = x + coords[4]
+data[i+17] = y
+data[i+18] = coords[0] + coords[2]
+data[i+19] = coords[1] + coords[3]
+data[i+20] = color[0]
+data[i+21] = color[1]
+data[i+22] = color[2]
+data[i+23] = colorSet
+data[i+24] = x
+data[i+25] = y
+data[i+26] = coords[0]
+data[i+27] = coords[1] + coords[3]
+data[i+28] = color[0]
+data[i+29] = color[1]
+data[i+30] = color[2]
+data[i+31] = colorSet
 x += coords[4]
-lineData[i/16] = line
+lineData[i/32] = line
 lineW[line] = x
-i += 16
+i += 32
 }
-for(i = 0; i<data.length; i+=4){
-data[i] -= lineW[lineData[floor(i/16)]] / 2
+for(i = 0; i<data.length; i+=8){
+data[i] -= lineW[lineData[floor(i/32)]] / 2
 data[i+1] -= y/2
 }
-this.faces = i / 16
+this.faces = i / 32
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer)
 gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
 gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW)
 gl.enableVertexAttribArray(glCache.aVertexText)
 gl.enableVertexAttribArray(glCache.aTextureText)
-gl.vertexAttribPointer(glCache.aVertexText, 2, gl.FLOAT, false, 16, 0)
-gl.vertexAttribPointer(glCache.aTextureText, 2, gl.FLOAT, false, 16, 8)
+gl.enableVertexAttribArray(glCache.aColorText)
+gl.enableVertexAttribArray(glCache.aColorSetText)
+gl.vertexAttribPointer(glCache.aVertexText, 2, gl.FLOAT, false, 32, 0)
+gl.vertexAttribPointer(glCache.aTextureText, 2, gl.FLOAT, false, 32, 8)
+gl.vertexAttribPointer(glCache.aColorText, 3, gl.FLOAT, false, 32, 16)
+gl.vertexAttribPointer(glCache.aColorSetText, 1, gl.FLOAT, false, 32, 28)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
 this.text = text
 }
@@ -27563,6 +27692,7 @@ thisplayer.sprinting = pos.sprinting
 thisplayer.punchEffect = pos.punchEffect
 thisplayer.eating = pos.eating
 thisplayer.sleeping = pos.sleeping
+thisplayer.sitting = pos.sitting
 thisplayer.hidden = pos.hidden
 if(data.inv) playersInv[data.USER] = data.inv
 if(!thisplayer.skinSet && playerSkins[author]){
@@ -30027,6 +30157,7 @@ Button.add(width-bs, height-bs, bs*2,bs*2, "shift", "play", r => {
 onscreenControls.sneak = true
 if(!p.flying){
 p.sneaking = true
+p.sitting = false
 if (p.sprinting) {
 p.FOV(settings.fov, 100)
 }
@@ -31263,7 +31394,7 @@ inventory.holding = {id:res.id,amount:res.amount}
 for(let i=0; i<9; i++){
 let block = inventory.crafting[i]
 if(block && block.id){
-if(res.replace[blockData[block.id].name]){
+if(res.replace && res.replace[blockData[block.id].name]){
 block.id = blockIds[res.replace[blockData[block.id].name]]
 }else{
 block.amount --
@@ -31518,7 +31649,7 @@ inventory.holding = {id:res.id,amount:res.amount}
 for(let i=0; i<9; i++){
 let block = inventory.crafting[i]
 if(block && block.id){
-if(res.replace[blockData[block.id].name]){
+if(res.replace && res.replace[blockData[block.id].name]){
 block.id = blockIds[res.replace[blockData[block.id].name]]
 }else{
 block.amount --
@@ -32167,6 +32298,7 @@ p.FOV(10, 300)
 }
 if (k === controlMap.sneak.key && !p.flying) {
 p.sneaking = true
+p.sitting = false
 if (p.sprinting) {
 p.FOV(settings.fov, 100)
 }
@@ -32432,6 +32564,8 @@ gl.uniform1i(glCache.tintGrayParticle, 0)
 gl.useProgram(programText)
 glCache.aVertexText = gl.getAttribLocation(programText, "aVertex")
 glCache.aTextureText = gl.getAttribLocation(programText, "aTexture")
+glCache.aColorText = gl.getAttribLocation(programText, "aTextColor")
+glCache.aColorSetText = gl.getAttribLocation(programText, "aColorSet")
 glCache.uSamplerText = gl.getUniformLocation(programText, "uSampler")
 glCache.uLightLevelText = gl.getUniformLocation(programText, "uLightLevel")
 glCache.uViewText = gl.getUniformLocation(programText, "uView")
@@ -33000,6 +33134,7 @@ p.autoBuild = false
 p.flying = false
 p.sneaking = false
 p.spectator = false
+p.sitting = false
 p.health = 20
 p.oxygen = 20
 p.food = 20
@@ -34729,6 +34864,9 @@ if(p.sneaking || p.eating || p.usingSpyglass){
 p.sprinting = false
 p.speed = p.sneakSpeed
 if(p.sneaking)p.bottomH = 1.32
+}else if(p.sitting){
+p.sneaking = false
+p.bottomH = 0.995
 }else if(!p.sprinting){
 p.sneaking = false
 p.speed = p.defaultSpeed
