@@ -562,10 +562,9 @@ Then save the program as a Spin-off.
 <div class="world-select hidden" id="servers"></div>
 <div class="world-select hidden" id="marketplace"></div>
 <p id="message" class="hidden darklinks" style="position: absolute; top: 10px; right: 10px; z-index: 1; text-align: right; background-color: rgba(255, 255, 255, 0.3);"></p>
-<datalist id="cmdList"></datalist>
 <div id="messagesHolder" class="hidden">
 <div id="messages"></div>
-<input id="messageInput" list="cmdList">
+<input id="messageInput">
 </div>
 <div id="controls" class="hidden"></div>
 <div id="controlDetect" class="hidden" tabindex="0">Click or press a key</div>
@@ -3098,6 +3097,9 @@ carrotsStage0: "0g0g4000FĩY^NYBíH000000000000000000000000000000000000000000000
 mudPie: "0g0g9000*KW]ĈWSùW)ÝWEKWs(W(KWwSW000g0000000g11000101110g10gzNy0g12y)OyM00iORQUN00AV>NÃNw0NO))UA(0Â?yRN?(0Äy?>>N(0ÅÕððIÓÀ0ñU?GQïS0XIGÆï[008?U[UG000ÆIIï0000000000",
 greenGrapes: "0g0g70001KY1wHÃBZWkZ+īH1SY000w00001S0000240007bëüŇ1ĪÑĕìE2Å1}]Ň09ÊiĨE1įÎiŎ02Ès!9S0-Bìį00_OJÀŇ1āQČdE1ħró.S2ÀAĈ^0000000000000",
 purpleGrapes: "0g0gc000?ĩHÁíH<(Z&zYMëYFKYĳĂHį.YlŉWlęZĜ-Y000000000000i(000004Ä00007XāĈä0008ğòäô0000äğôďë00çëĀģIĠ00ÿĢ7óùÿë7ëÿIĘG8Ę8ğIġ7Iä008ĘďIġôë09ä8ĢäaĘ0äôä9ôä008Ęôäëô00000ôĘ0000000000",
+ultraTntTop: "0g0g4ZšYZŇWVÀW00W6666++++ÌêãĽēĖģő6ŞĶ6=WZŝÍZZÄĒėťĒ7ZZĭW=ťŝÄťêÄēťģőW+eŝm+u+ÄÄÄÄĒĒĒĒ",
+ultraTntBottom: "0g0g3ZšYZŇWVÀW6666mmmmÄÄÄÄĒĒĒĒ6666mmmmÄÄÄÄĒĒĒĒ6666mmmmÄÄÄÄĒĒĒĒ6666mmmmÄÄÄÄĒĒĒĒ",
+ultraTnt: "0g0g9ZŇWÖĈWVSHĚĘWĂÀWZZZ00WĪcW-ŇH0i0)0N0h0N4)Sh0M0iQkSMQh0N0NSMSi0M0NShQiVVVVVVVVVÓÒÒÄÄÓVVÄVÓÄVÒVVÄVÒÓVÒVVÄVÒÄVÒVGGGGGGGGM-OhOMMM4N0)SMSN0i4)0hQh0M0kQhSi0hSN4N0i",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -3577,6 +3579,7 @@ name: "tnt",
 Name:"Trinitrotoluene",
 textures: ["tntBottom", "tntTop", "tntSides"],
 superTntTextures: ["superTntBottom","superTntTop","superTnt"],
+ultraTntTextures: ["ultraTntBottom","ultraTntTop","ultraTnt"],
 //onupdate: function(x,y,z){
 //  explode(x,y,z,5)
 //}, flint and steel explodes it
@@ -3593,6 +3596,12 @@ e.timeLimit = rand(10,30)
 superTntExplode: function(x,y,z,dimension){
 world.setBlock(x,y,z,0,false,false,false,false,dimension)
 var e = new PrimedSuperTNT(x,y,z)
+world.addEntity(e,false,dimension)
+playSound("entity.tnt.fuse", 0, posSound(x,y,z))
+},
+ultraTntExplode: function(x,y,z,dimension){
+world.setBlock(x,y,z,0,false,false,false,false,dimension)
+var e = new PrimedUltraTNT(x,y,z)
 world.addEntity(e,false,dimension)
 playSound("entity.tnt.fuse", 0, posSound(x,y,z))
 },
@@ -4809,6 +4818,8 @@ if(block === blockIds.tnt){
 blockData[blockIds.tnt].explode(x,y,z,null,dimension)
 }else if(block === (blockIds.tnt | SLAB)){
 blockData[blockIds.tnt].superTntExplode(x,y,z,dimension)
+}else if(block === (blockIds.tnt | STAIR)){
+blockData[blockIds.tnt].ultraTntExplode(x,y,z,dimension)
 }else{
 var attached = world.getBlock(hitBox.pos[0],hitBox.pos[1],hitBox.pos[2],dimension)
 var pos = getPosition()
@@ -13251,7 +13262,7 @@ func: () => fromPlayer()
 },
 {
 name: "fillToPlayer",
-args: ["block_name"],
+args: ["block_name:block"],
 info: "Fills from starting position to player position",
 func: split => {
 let id = blockIds[split[1]]
@@ -13273,6 +13284,7 @@ func: () => pasteAtPlayer()
 name: "shape",
 info: "Type can be: sphere, hollowSphere, cylinder, hollowCylinder",
 args: ["type","width", "height", "depth", "block_name", "x", "y", "z"],
+argTypes: {block_name:"block",x:"x",y:"y",z:"z"},
 func: async split => {
 let id = blockIds[split[5]]
 if(!split[5]) id = 0
@@ -13293,6 +13305,7 @@ Messages.add("Finished shape: "+split[1])
 {
 name: "replaceToPlayer",
 args: ["replace_what", "with_what"],
+argTypes:{replace_what:"block",with_what:"block"},
 func: split => {
 let replace = blockIds[split[1]]
 if(!split[1]) replace = 0
@@ -13304,6 +13317,7 @@ replaceBlocks(prevPos[0], prevPos[1]-1, prevPos[2], p2.x, p2.y-1, p2.z, replace,
 {
 name: "give",
 args: ["target", "block_name", "amount"],
+argTypes:{block_name:"block"},
 info: "Gives the target the the specified amount of specified blocks",
 func: split => {
 let id = blockIds[split[2]]
@@ -13410,6 +13424,7 @@ Messages.add("Player doesn't exsist: "+split[1])
 {
 name: "tp",
 args: ["x","y","z","dimension"],
+argTypes:{x:"x",y:"y",z:"z",dimension:"dimension"},
 info: "x, y, and z are the coordinates to teleport to. dimension is optional.",
 func: split => {
 if(split.length < 4) return Messages.add("You need to set the coordinates.");
@@ -13521,16 +13536,12 @@ send({type:"eval",data:split.join(" ")}, to || undefined)
 },
 ]
 win.cmds = cmds
-var cmdList = document.getElementById("cmdList")
 cmds.forEach(cmd => {
 //Now you really need cheats to get commands!
 Object.defineProperty(cmd, 'noCheats', {
 value: cmd.noCheats || false,
 writable: false
 })
-var option = document.createElement("option")
-option.value = cmd.name
-cmdList.appendChild(option)
 })
 function getCmd(name){
 for(var i=0; i<cmds.length; i++){
@@ -13542,6 +13553,7 @@ return cmds[i]
 }
 }
 }
+win.getCmd = getCmd
 function runCmd(str){
 str = str.replace("/", '')
 let split = str.split(" ")
@@ -13590,15 +13602,22 @@ span: document.createElement("span"),
 array: [],
 all: [],
 remove: (function(){
-var arr = [["k","c","u","f"].reverse().join(""), ["t","n","u","c"].reverse().join(""), "stupid","blood","dumb","bitch","shit"]
+var arr = [
+["k","c","u","f"].reverse().join(""), ["t","n","u","c"].reverse().join(""), "stupid",
+{replace:"blood",with:"red liquid"},
+"dumb","bitch",
+{replace:"shit",with:"poo poo"}
+]
 var between = "[THELETTER \*.,|`~\/\\!&]*" //there might be characters between, like this: b.a.d
-arr.forEach((value, i) => {
-var str = ""
+arr.forEach((obj, i) => {
+var str = "", value, witH
+if(typeof obj === "string") value = obj, witH = "bad"
+else value = obj.replace, witH = obj.with
 for(var j=0; j<value.length; j++){
 if(j+1 === value.length) str += value[j]
 else str += value[j] + between.replace("THELETTER",value[j])
 }
-arr[i] = new RegExp("("+str+")", "gi")
+arr[i] = {original:value,replace:new RegExp("("+str+")", "gi"),with:witH}
 })
 return arr
 })(),
@@ -13664,9 +13683,69 @@ Messages.write(messageInput.value)
 }
 messageInput.value = ""
 },
+updateInput(){
+var value = messageInput.value
+if(value[0] === "/"){
+var amount = 0, str = "", cmd = ""
+for(let i=0; i<value.length; i++){
+if(value[i] === " ") amount++
+if(amount === 0 && i !== 0) cmd += value[i]
+}
+if(value.includes(" ")){
+cmd = getCmd(cmd)
+if(cmd && cmd.args){
+str += "<span style='color:#aaa;'>"
+str += "/"+cmd.name+" "
+for(i=0; i<cmd.args.length; i++){
+if(i+1 === amount) str += "<span style='color:white;'>"
+str += cmd.args[i]+" "
+if(i+1 === amount) str += "</span>"
+}
+str += "</span>"
+if(cmd.args[amount-1] && cmd.argTypes && cmd.argTypes[cmd.args[amount-1]]){
+let type = cmd.argTypes[cmd.args[amount-1]]
+let argValue = ""
+let count = 0
+for(i of value){
+if(i === " ") count++
+else if(count === amount) argValue += i
+}
+if(type === "block"){
+count = 0
+for(i=1; i<BLOCK_COUNT; i++){
+if(blockData[i].name.includes(argValue)) str += "<br>"+blockData[i].name, count++
+if(count>50) break
+}
+}else if(type === "x"){
+str += "<br>"+(round(p.x*100)/100)+"<br>~"
+}else if(type === "y"){
+str += "<br>"+(round(p.y*100)/100)+"<br>~"
+}else if(type === "z"){
+str += "<br>"+(round(p.z*100)/100)+"<br>~"
+}else if(type === "dimension"){
+str += "<br>overworld<br>nether<br>end"
+}
+}
+}
+}else{
+amount = 0
+for(i of cmds){
+if(i.name.includes(cmd)){
+str += "/"+i.name+"<br>"
+amount++
+}
+if(amount>50) break
+}
+}
+if(str !== messages.innerHTML) messages.innerHTML = str
+}else if(messageInput.prevValue && messageInput.prevValue.startsWith("/")){
+this.showAll()
+}
+messageInput.prevValue = value
+},
 format(str){
-for(var regex of this.remove){ //remove bad words
-str = str.replace(regex, "<span style='color:red; background:black;'>bad</span>")
+for(var obj of this.remove){ //remove bad words
+str = str.replace(obj.replace, "<span style='color:red; background:black;'>"+obj.with+"</span>")
 }
 this.span.innerHTML = str
 str = this.span.innerHTML //make html in message correct
@@ -13695,6 +13774,8 @@ if(e.key === "Enter") {
 Messages.submitInput()
 }else if (e.key === "Escape") {
 play()
+}else{
+Messages.updateInput()
 }
 }
 let title = ""
@@ -17668,6 +17749,26 @@ world.setTagByName(x,y,z, "color",blockData[holding].dye.slice(),false,dimension
 editSign(x,y,z,dimension)
 }
 }
+var itemFrameSet = function(x,y,z,dimension,block,itemFrameBlock){
+for(var ent of world.entities){
+if(ent.type === "ItemFrame" && ent.x === x && ent.y === y && ent.z === z) return
+}
+world.addEntity(new ItemFrame(x,y,z,block,itemFrameBlock),false,dimension)
+}
+var itemFrameOnplace = function(x,y,z, dimension){
+var block = world.getBlock(x,y,z,dimension)
+this.set(x,y,z,dimension,0,block)
+}
+var itemFrameOnclick = function(x,y,z, dimension){
+var prev = world.getTagByName(x,y,z,"block",dimension) || 0
+if(!prev && holding) world.setTagByName(x,y,z, "block",holding,false,dimension)
+else{
+var rot = world.getTagByName(x,y,z,"rot",dimension) || 0
+rot++
+if(rot >= 8) rot = 0
+world.setTagByName(x,y,z, "rot",rot,false,dimension)
+}
+}
 for (let i = 0; i < BLOCK_COUNT; i++) {
 let baseBlock = blockData[i]
 for(var t=0; t<baseBlock.textures.length; t++){
@@ -17911,7 +18012,12 @@ makeBlock([cap,cap,cap,pore,pore,pore], shapes.rotate, wallFlatBlock)
 }
 if(baseBlock.cake) baseBlock.shape = shapes.cake
 if(baseBlock.stonecutter) baseBlock.shape = shapes.stonecutter
-if(baseBlock.itemFrame) baseBlock.shape = shapes.itemFrame
+if(baseBlock.itemFrame){
+baseBlock.shape = shapes.itemFrame
+baseBlock.set = itemFrameSet
+baseBlock.onplace = itemFrameOnplace
+baseBlock.onclick = itemFrameOnclick.bind(baseBlock)
+}
 if(baseBlock.name === "redstoneLamp"){
 makeBlock(new Array(6).fill("redstoneLampOn"), shapes.cube, slabBlock)
 slabBlock.lightLevel = 15
@@ -18119,6 +18225,7 @@ makeBlock(textures, shapes.pistonOpenSW, portalBlock, baseBlockTransparent)
 }
 if(baseBlock.name === "tnt"){
 makeBlock(fillTextureArray(baseBlock.superTntTextures), shapes.cube, slabBlock, baseBlock, "Super TNT")
+makeBlock(fillTextureArray(baseBlock.ultraTntTextures), shapes.cube, stairBlock, baseBlock, "Ultra TNT")
 }
 if(baseBlock.name === "observer"){
 baseBlock.shape = shapes.rotate
@@ -22802,6 +22909,9 @@ blockData[block].tick(block,x,y,z,this.type)
 if(blockData[block].sign){
 blockData[block].set(x,y,z,this.type,block)
 }
+if(blockData[block].itemFrame){
+blockData[block].set(x,y,z,this.type,0,block)
+}
 }
 }
 getLight(x, y, z, block = 0) {
@@ -24718,6 +24828,7 @@ this.cached[blockID] = this.vao
 }
 }
 changeBlock(blockID){
+if(this.block === blockID) return
 this.block = blockID
 if(this.cached[blockID]){
 this.vao = this.cached[blockID]
@@ -24875,6 +24986,16 @@ this.type = "PrimedSuperTNT"
 explode(){
 var x = round(this.x), y = round(this.y), z = round(this.z)
 explode(x,y,z,8, blockData[world.getBlock(x,y,z)].liquid || !worldSettings.tntExplode, this.dimension)
+}
+}
+class PrimedUltraTNT extends PrimedTNT{
+constructor(x,y,z, timerStart){
+super(x,y,z, timerStart, blockIds.tnt | STAIR)
+this.type = "PrimedUltraTNT"
+}
+explode(){
+var x = round(this.x), y = round(this.y), z = round(this.z)
+explode(x,y,z,24, blockData[world.getBlock(x,y,z)].liquid || !worldSettings.tntExplode, this.dimension)
 }
 }
 class MovingBlock extends BlockEntity{
@@ -25408,6 +25529,76 @@ glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
 if(this.textEnt) this.textEnt.render()
+}
+}
+class ItemFrame extends BlockEntity{
+constructor(x,y,z,block,base){
+super(block,x,y,z)
+this.type = "ItemFrame"
+this.width = this.height = this.depth = 0.5
+this.baseBlock = base
+this.noHitbox = true
+this.rz = 0
+this.offsetX = 0, this.offsetZ = 0
+var off = 7/16
+switch(base & ROTATION){
+case NORTH:
+this.offsetZ = off
+break
+case SOUTH:
+this.offsetZ = -off
+this.yaw = Math.PI
+break
+case EAST:
+this.offsetX = off
+this.yaw = Math.PI2
+break
+case WEST:
+this.offsetX = -off
+this.yaw = -Math.PI2
+break
+}
+}
+update(){
+if(world.getBlock(this.x,this.y,this.z,this.dimension) !== this.baseBlock) this.canDespawn = true
+var rot = world.getTagByName(this.x,this.y,this.z,"rot",this.dimension) || 0
+this.rz = rot*Math.PId/8
+this.changeBlock(world.getTagByName(this.x,this.y,this.z,"block",this.dimension) || 0)
+}
+render(){
+const modelMatrix = entityMatrices.modelMatrix;
+modelMatrix.identity()
+modelMatrix.translate(this.x+this.offsetX, this.y, this.z+this.offsetZ)
+modelMatrix.rotX(this.pitch)
+modelMatrix.rotY(this.yaw)
+modelMatrix.rotZ(this.rz)
+modelMatrix.scale(this.width, this.height, this.depth)
+const viewMatrix = p.transformation.elements
+const proj = p.projection
+let projectionMatrix = entityMatrices.projectionMatrix
+projectionMatrix.set(proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0)
+projectionMatrix = projectionMatrix.elements
+const modelViewProjectionMatrix = entityMatrices.modelViewProjectionMatrix
+modelViewProjectionMatrix.identity()
+modelViewProjectionMatrix.mult(projectionMatrix)
+modelViewProjectionMatrix.mult(viewMatrix)
+modelViewProjectionMatrix.mult(modelMatrix.elements)
+// row major to column major
+modelViewProjectionMatrix.transpose()
+const x = round(this.x)
+const y = round(this.y)
+const z = round(this.z)
+const blockLight = world.getLight(x, y, z, 1, this.dimension)
+const skysLight = world.getLight(x, y, z, 0, this.dimension)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
+gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
+gl.uniform1i(glCache.uSamplerEntity, 0)
+gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
+gl.uniform1f(glCache.harmEffectEntity, 0)
+gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
+glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
 }
 class ExperienceOrb extends Entity{
@@ -28680,6 +28871,9 @@ ent = new PrimedTNT(0,0,0)
 break
 case "PrimedSuperTNT":
 ent = new PrimedSuperTNT(0,0,0)
+break
+case "PrimedUltraTNT":
+ent = new PrimedUltraTNT(0,0,0)
 break
 case "MovingBlock":
 ent = new MovingBlock(p.block, p.sx,p.sy,p.sz,p.mx,p.my,p.mz,p.despawns,p.solidWhenDone)
