@@ -3100,6 +3100,13 @@ purpleGrapes: "0g0gc000?ĩHÁíH<(Z&zYMëYFKYĳĂHį.YlŉWlęZĜ-Y000000000000i(
 ultraTntTop: "0g0g4ZšYZŇWVÀW00W6666++++ÌêãĽēĖģő6ŞĶ6=WZŝÍZZÄĒėťĒ7ZZĭW=ťŝÄťêÄēťģőW+eŝm+u+ÄÄÄÄĒĒĒĒ",
 ultraTntBottom: "0g0g3ZšYZŇWVÀW6666mmmmÄÄÄÄĒĒĒĒ6666mmmmÄÄÄÄĒĒĒĒ6666mmmmÄÄÄÄĒĒĒĒ6666mmmmÄÄÄÄĒĒĒĒ",
 ultraTnt: "0g0g9ZŇWÖĈWVSHĚĘWĂÀWZZZ00WĪcW-ŇH0i0)0N0h0N4)Sh0M0iQkSMQh0N0NSMSi0M0NShQiVVVVVVVVVÓÒÒÄÄÓVVÄVÓÄVÒVVÄVÒÓVÒVVÄVÒÄVÒVGGGGGGGGM-OhOMMM4N0)SMSN0i4)0hQh0M0kQhSi0hSN4N0i",
+arrow: "0g0g9Ŋ÷WZZZ000ĪcWĆkZÞàYĞ?YĦÓWĆåZ12yyyyyywgyyyyz2QÄÓáÓÓ](wgyyyyEí12yyyyyyy2yyyyyyyiyyyyyy1Î2yyyyyyiyyyyyyy2yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+arrowIcon: "0g0ga000þÇHZZZ?kHłÚYòJHEÝYŊ÷WĮsH;ŚZ0000000000000000000000i(00000kT(00000*>000000Äj000005K(00000Ä0000005K000000Ä0000005K000007ð000000äå000000ÿù000000900000000000000",
+bowPulling2: "0g0gb000ZZZ]ĸHĚĲWłÚYòJHÖMZEÝYÖĎY?kHþÇH00000000000000000100yyyw03SyÄVÄÅ00âðGGGÝ00DÆ000ù02óâ000ù02Õ7À0900BÝ0â0900CÝ07À900BÝ00â900BÝ007À00BÝ009000CÝ9āù000Båù000007000000",
+bowPulling1: "0g0gb000ZZZ]ĸHĚĲWłÚYòJHÖMZEÝYÖĎY?kHþÇH000000000g0000yw0)00yyÄÅ07ÀyÄVGÝ00âðGG0ù00DÆ000ù02óâ009002Õ7À0900BÝ0â0ù00CÝ07Àù00BÝ00â000BÝ00ù002Å00ā0002Ô0ā00002Åā000000Ý000000",
+bowPulling0: "0g0gb000ZZZĚĲWłÚY]ĸHEÝYòJHÖMZÖĎY?kHþÇH100000002(0004QS0Ä00Q@GÒ05KQÔÒVÀ00ÄñVÀ0ù00?Õ009004óÄ009004ä5K0ù00@À0Ä9000[À05Ö000@À00ù004Ò00ā0004â0900004â9ù00004Òù000000À000000",
+bow: "0g0g8000]ĸHòJHÖMZEÝYÖĎY?kHþÇH0000000000i]000AĎĻ009|Pw00ØJ1ë03é0c00rŏ0K00nS3000Đ0o000Ġ0ħ000Đ60005S(0005Ĩë0005ĳ00005S0000200000",
+kelpIcon:"0g0g6000VúZÌ3WÈċWËĩHTTW00000000000]0000AI000P+I00JÚĜį08łÖCŏ0@Ł|ğS0ĎĺÚŁ00čr×ë06EûU006küĈ006oý0004İB000kįÕ0002łS000000000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -4710,10 +4717,13 @@ var isIt = blockData[top].name === "twistingVines" || blockData[top].name === "t
 if(isIt){
 world.setBlock(x,y,z,blockIds.twistingVinesPlant | CROSS,false,false,false,false,dimension)
 }
-}
 },
-{ 
+hidden:true,
+drop:"twistinVinesPlant"
+},
+{
 name: "twistingVinesPlant",
+Name: "Twisting Vines",
 transparent: true,
 solid: false,
 shadow: false,
@@ -4728,7 +4738,7 @@ world.setBlock(x,y,z,blockIds.twistingVines | CROSS,false,false,false,false,dime
 }
 }
 },
-{ 
+{
 name: "weepingVines",
 transparent: true,
 solid: false,
@@ -4741,10 +4751,13 @@ var isIt = blockData[top].name === "weepingVines" || blockData[top].name === "we
 if(isIt){
 world.setBlock(x,y,z,blockIds.weepingVinesPlant | CROSS,false,false,false,false,dimension)
 }
-}
 },
-{ 
+hidden:true,
+drop:"weepingVinesPlant"
+},
+{
 name: "weepingVinesPlant",
+Name:"Weeping Vines",
 transparent: true,
 solid: false,
 shadow: false,
@@ -4778,22 +4791,22 @@ textures: ["respawnAnchorBottom", "respawnAnchorTopOff", "respawnAnchorSide0"],
 { 
 name: "RespawnAnchor1",
 textures: ["respawnAnchorBottom", "respawnAnchorTop1", "respawnAnchorSide1"],
-//hidden: true
+hidden: true
 },
 { 
 name: "RespawnAnchor2",
 textures: ["respawnAnchorBottom", "respawnAnchorTop2", "respawnAnchorSide2"],
-//hidden: true
+hidden: true
 },
 { 
 name: "RespawnAnchor3",
 textures: ["respawnAnchorBottom", "respawnAnchorTop3", "respawnAnchorSide3"],
-//hidden: true
+hidden: true
 },
 { 
 name: "RespawnAnchor",
 textures: ["respawnAnchorBottom", "respawnAnchorTop", "respawnAnchorSide4"],
-//hidden: true
+hidden: true
 },
 {
 name:"redBed",
@@ -5149,21 +5162,27 @@ name: "blueOrchidPot",
 transparent: true,
 shadow: false,
 solid: false,
-potCross: true
+potCross: true,
+hidden:true,
+drop:"blueOrchid"
 },
 {
 name: "warpedRootsPot",
 transparent: true,
 shadow: false,
 solid: false,
-potCross: true
+potCross: true,
+hidden:true,
+drop:"warpedRoots"
 },
 {
 name: "crimsonRootsPot",
 transparent: true,
 shadow: false,
 solid: false,
-potCross: true
+potCross: true,
+hidden:true,
+drop:"crimsonRoots"
 },
 { name: "whiteCarpet", Name: "White Carpet", textures: "whiteWool", carpet: true, clothSound:true},
 { name: "orangeCarpet", Name: "Orange Carpet", textures: "orangeWool", carpet: true, clothSound:true},
@@ -5193,52 +5212,52 @@ stepSound: ["block.nether_bricks.step1", "block.nether_bricks.step2","block.neth
 {
 name: "oakLogSW",
 textures: ["logSide","logSide","logTop","oakLogSW"],
-rotate: true, woodSound:true
+rotate: true, woodSound:true, hidden:true
 },
 {
 name: "acaciaLogSW",
 textures: ["acaciaLogSide","acaciaLogSide","acaciaLogTop","acaciaLogSW"],
-rotate: true, woodSound:true
+rotate: true, woodSound:true, hidden:true
 },
 {
 name: "birchLogSW",
 textures: ["birchLogSide","birchLogSide","birchLogTop","birchLogSW"],
-rotate: true, woodSound:true
+rotate: true, woodSound:true, hidden:true
 },
 {
 name: "darkOakLogSW",
 textures: ["darkOakLogSide","darkOakLogSide","darkOakLogTop","darkOakLogSW"],
-rotate: true, woodSound:true
+rotate: true, woodSound:true, hidden:true
 },
 {
 name: "jungleLogSW",
 textures: ["jungleLogSide","jungleLogSide","jungleLogTop","jungleLogSW"],
-rotate: true, woodSound:true
+rotate: true, woodSound:true, hidden:true
 },
 {
 name: "spruceLogSW",
 textures: ["spruceLogSide","spruceLogSide","spruceLogTop","spruceLogSW"],
-rotate: true, woodSound:true
+rotate: true, woodSound:true, hidden:true
 },
 {
 name: "crimsonStemSW",
 textures: ["crimsonStemSide","crimsonStemSide","crimsonStemTop","crimsonStemSW"],
-rotate: true, stemSound:true
+rotate: true, stemSound:true, hidden:true
 },
 {
 name: "warpedStemSW",
 textures: ["warpedStemSide","warpedStemSide","warpedStemTop","warpedStemSW"],
-rotate: true, stemSound:true
+rotate: true, stemSound:true, hidden:true
 },
 {
 name: "basaltSW",
 textures: ["basaltSide","basaltSide","basaltTop","basaltSideSW"],
-rotate: true, basaltSound:true
+rotate: true, basaltSound:true, hidden:true
 },
 {
 name: "polishedBasaltSW",
 textures: ["polishedBasaltSide","polishedBasaltSide","polishedBasaltTop","polishedBasaltSideSW"],
-rotate: true, basaltSound: true
+rotate: true, basaltSound: true, hidden:true
 },
 { name:"crimsonPlanks", Name: "Crimson Planks", woodSound:true, breakTime:3, type:"wood" },
 {
@@ -5564,6 +5583,7 @@ compostChance:0.3
 },
 {
 name: "caveVines",
+Name:"Cave Vines",
 solid: false,
 transparent: true,
 shadow: false,
@@ -5588,10 +5608,13 @@ var isIt = blockData[top].name === "caveVines" || blockData[top].name === "caveV
 if(!isIt){
 world.setBlock(x,y,z,blockIds.caveVines | CROSS,false,false,false,false,dimension)
 }
-}
+},
+hidden:true,
+drop:"caveVines"
 },
 {
 name: "caveVinesLit",
+Name: "Cave Vines With Glow Berries",
 solid: false,
 transparent: true,
 shadow: false,
@@ -5618,7 +5641,8 @@ var isIt = blockData[top].name === "caveVines" || blockData[top].name === "caveV
 if(!isIt){
 world.setBlock(x,y,z,blockIds.caveVinesLit | CROSS,false,false,false,false,dimension)
 }
-}
+},
+hidden:true
 },
 {
 name:"sporeBlossom",
@@ -6089,7 +6113,8 @@ burnTime:50
 name: "strippedOakLogSW",
 textures: ["strippedOakLog", "strippedOakLog", "strippedOakLogTop","strippedOakLogSW"],
 woodSound:true,
-rotate:true
+rotate:true,
+hidden:true
 },
 {
 name: "strippedBirchLog",
@@ -6105,7 +6130,8 @@ burnTime:50
 name: "strippedBirchLogSW",
 textures: ["strippedBirchLog", "strippedBirchLog", "strippedBirchLogTop","strippedBirchLogSW"],
 woodSound:true,
-rotate:true
+rotate:true,
+hidden:true
 },
 {
 name: "strippedAcaciaLog",
@@ -6121,7 +6147,8 @@ burnTime:50
 name: "strippedAcaciaLogSW",
 textures: ["strippedAcaciaLog", "strippedAcaciaLog", "strippedAcaciaLogTop","strippedAcaciaLogSW"],
 woodSound:true,
-rotate:true
+rotate:true,
+hidden:true
 },
 {
 name: "strippedJungleLog",
@@ -6137,7 +6164,8 @@ burnTime:50
 name: "strippedJungleLogSW",
 textures: ["strippedJungleLog", "strippedJungleLog", "strippedJungleLogTop","strippedJungleLogSW"],
 woodSound:true,
-rotate:true
+rotate:true,
+hidden:true
 },
 {
 name: "strippedSpruceLog",
@@ -6153,7 +6181,8 @@ burnTime:50
 name: "strippedSpruceLogSW",
 textures: ["strippedSpruceLog", "strippedSpruceLog", "strippedSpruceLogTop","strippedSpruceLogSW"],
 woodSound:true,
-rotate:true
+rotate:true,
+hidden:true
 },
 {
 name: "strippedDarkOakLog",
@@ -6169,12 +6198,14 @@ burnTime:50
 name: "strippedDarkOakLogSW",
 textures: ["strippedDarkOakLog", "strippedDarkOakLog", "strippedDarkOakLogTop","strippedDarkOakLogSW"],
 woodSound:true,
-rotate:true
+rotate:true,
+hidden:true
 },
 {
 name:"boneBlockSW",
 textures:["boneBlockSide","boneBlockSide","boneBlockTop","boneBlockSW"],
-rotate:true
+rotate:true,
+hidden:true
 },
 {
 name:"redMushroom",
@@ -6715,7 +6746,8 @@ name: "strippedCrimsonStemSW",
 textures: ["strippedCrimsonStem", "strippedCrimsonStem", "strippedCrimsonStemTop","strippedCrimsonStemSW"],
 breakTime:2,
 stemSound:true,
-rotate:true
+rotate:true,
+hidden:true
 },
 {
 name: "strippedWarpedStem",
@@ -6729,7 +6761,8 @@ name: "strippedWarpedStemSW",
 textures: ["strippedWarpedStem", "strippedWarpedStem", "strippedWarpedStemTop","strippedWarpedStemSW"],
 breakTime:2,
 stemSound:true,
-rotate:true
+rotate:true,
+hidden:true
 },
 {
 name: "oakPressurePlate",
@@ -7861,6 +7894,9 @@ type:"wood",
 },
 { 
 name: "kelp",
+Name:"Kelp",
+flatIcon:true,
+iconTexture:"kelpIcon",
 transparent: true,
 solid: false,
 shadow: false,
@@ -7885,7 +7921,8 @@ var isIt = blockData[top].name === "kelp" || blockData[top].name === "kelpPlant"
 if(!isIt){
 world.setBlock(x,y,z,blockIds.kelp | CROSS,false,false,false,false,dimension)
 }
-}
+},
+hidden:true
 },
 {
 name:"seagrass",
@@ -8289,7 +8326,8 @@ burnTime:50
 name:"cherryLogSW",
 textures: ["cherryLog","cherryLog","cherryLogTop","cherryLogSW"],
 rotate: true,
-woodSound:true
+woodSound:true,
+hidden:true
 },
 {
 name:"cherryLeaves",
@@ -9980,12 +10018,12 @@ burnTime:50
 {
 name:"mangroveLogSW",
 textures: ["mangroveLog","mangroveLog","mangroveLogTop","mangroveLogSW"],
-rotate: true, woodSound:true
+rotate: true, woodSound:true, hidden:true
 },
 {
 name:"strippedMangroveLogSW",
 textures: ["strippedMangroveLog","strippedMangroveLog","strippedMangroveLogTop","strippedMangroveLogSW"],
-rotate: true, woodSound:true
+rotate: true, woodSound:true, hidden:true
 },
 {name:"mangrovePlanks", Name:"Mangrove Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 { 
@@ -10208,6 +10246,7 @@ if(!block || !blockData[block].canHaveSoulFire) world.setBlock(x,y,z,0,false,fal
 {
 name:"sweetBerries",
 Name:"Sweet Berries (they're spiky)",
+item:true,
 edible:true,
 food:4,
 saturation: 1.2,
@@ -10225,7 +10264,9 @@ flatIcon:true,
 solid: false,
 transparent: true,
 shadow: false,
-smoothLight:false
+smoothLight:false,
+hidden:true,
+drop:"sweetBerries"
 },
 {
 name:"smallDripleaf",
@@ -10489,7 +10530,8 @@ blastResistance:3,
 transparent:true,
 shadow:false,
 drop:"cocaBeans",
-woodSound:true
+woodSound:true,
+hidden:true
 },
 {
 name:"cookie",
@@ -10736,7 +10778,8 @@ transparent: true,
 shadow: false,
 solid: false,
 crop: true,
-drop:"beetrootSeeds"
+drop:"beetrootSeeds",
+hidden:true
 },
 {
 name:"potatoes",
@@ -10749,7 +10792,8 @@ transparent: true,
 shadow: false,
 solid: false,
 crop: true,
-drop:"potato"
+drop:"potato",
+hidden:true
 },
 {
 name:"carrots",
@@ -10762,7 +10806,8 @@ transparent: true,
 shadow: false,
 solid: false,
 crop: true,
-drop:"carrot"
+drop:"carrot",
+hidden:true
 },
 {
 name:"mudPie",
@@ -10797,6 +10842,16 @@ transparent:true,
 shadow:false,
 onclick:sit
 },
+/*{
+name:"bow",
+Name:"Bow",
+onuse: function(x,y,z, block, replaceItem, useDurability, minusOne,dimension){
+var pd = p.direction
+world.addEntity(new SlingshotShot(p.x,p.y,p.z,pd.x,pd.y,pd.z),false,dimension)
+},
+useAnywhere:true,
+stackSize:1
+},*/
 /*
 { name: "pigFace" },
 { 
@@ -12339,8 +12394,9 @@ let survival = false;
 let cheats = false
 let dieMessage = ""
 let blockIds = {}
-blockData.forEach(block => blockIds[block.name] = block.id)
+let inventoryBlocks = []
 blockData.forEach(block => {
+blockIds[block.name] = block.id
 if(block.rotate && block.name.includes("SW")){
 var unSw = block.name.replace("SW",'')
 if(blockIds[unSw]){
@@ -12352,9 +12408,13 @@ block.burnChance = obj.burnChance
 block.burnTime = obj.burnTime
 }
 }
+if(block.id && !block.hidden){
+inventoryBlocks.push(block.id)
+}
 })
 win.blockData = blockData
 win.blockIds = blockIds
+win.inventoryBlocks = inventoryBlocks
 win.eachFrame = null
 var currentAmbient = {} //Object with ambient sound sources
 var currentAmbientVolume = {}
@@ -14131,6 +14191,7 @@ chestData:{
 x:0,y:0,z:0,dimension:"",
 data:null
 },
+category:0
 }
 inventory.craftingStr = inventory.crafting.join(",")
 let furnaceData = inventory.furnaceData
@@ -14237,6 +14298,7 @@ fill(255, 255, 255)
 textSize(10)
 canvas.focus()
 changeScene("play")
+if(!survival) inventory.category = 1
 }
 let gl
 let glExtensions
@@ -17728,7 +17790,7 @@ for(var ent of world.entities){
 if(ent.type === "Sign" && ent.x === x && ent.y === y && ent.z === z) return
 }
 var signBlock = (block & STAIR) === STAIR ? (this.id | CROSS) : (this.id | SLAB)
-world.addEntity(new Sign(x,y,z,signBlock,block),false,dimension)
+world.addEntity(new Sign(x,y,z,signBlock,block),true,dimension)
 }
 var signOnplace = function(x,y,z, dimension){
 var block = world.getBlock(x,y,z,dimension)
@@ -17753,7 +17815,7 @@ var itemFrameSet = function(x,y,z,dimension,block,itemFrameBlock){
 for(var ent of world.entities){
 if(ent.type === "ItemFrame" && ent.x === x && ent.y === y && ent.z === z) return
 }
-world.addEntity(new ItemFrame(x,y,z,block,itemFrameBlock),false,dimension)
+world.addEntity(new ItemFrame(x,y,z,block,itemFrameBlock),true,dimension)
 }
 var itemFrameOnplace = function(x,y,z, dimension){
 var block = world.getBlock(x,y,z,dimension)
@@ -18269,11 +18331,9 @@ makeBlock(baseBlock.textures1, shapes.cross, slabBlock, baseBlock)
 slabBlock.spikyBush = true
 makeBlock(baseBlock.textures2, shapes.cross, stairBlock, baseBlock)
 stairBlock.spikyBush = true
-stairBlock.drop = "sweetBerries"
 stairBlock.dropAmount = [1,2]
 makeBlock(baseBlock.textures3, shapes.cross, crossBlock, baseBlock)
 crossBlock.spikyBush = true
-crossBlock.drop = "sweetBerries"
 crossBlock.dropAmount = [2,3]
 }
 if(baseBlock.logicGate){
@@ -26033,13 +26093,12 @@ part.pry2 = part.ry2
 this.pOffsetry = this.offsetry
 this.parts.head.rx = this.headPitch
 this.parts.head.ry = 0
-this.parts.head.ry2 = this.headYaw - this.yaw
+this.parts.head.ry2 = this.headYaw
 this.parts.leftLeg.ry2 = 0
 this.parts.rightLeg.ry2 = 0
 if(this.sleeping){
 this.offsetY = 0
 this.pitch = -Math.PI2
-this.parts.head.rx += Math.PI2
 }else if(this.sitting){
 this.offsetY = this.defaultOffsetY
 this.pitch = 0
@@ -26050,7 +26109,6 @@ this.parts.rightLeg.ry2 = -Math.PI/8
 this.offsetY = this.sneakingOffsetY
 var rot = Math.PI / 6
 this.pitch = rot
-this.parts.head.rx -= rot
 this.parts.leftLeg.rx = this.parts.rightLeg.rx = -rot
 }else{
 this.offsetY = this.defaultOffsetY
@@ -26289,6 +26347,10 @@ modelMatrix.rotX(lerp(diff,arm.prx,arm.rx))
 modelMatrix.rotY(lerp(diff,arm.pry,arm.ry))
 }
 modelMatrix.translate(part.x, part.y, part.z)
+if(part.name === "head"){
+modelMatrix.rotX(-this.pitch)
+modelMatrix.rotY(-this.yaw)
+}
 modelMatrix.rotZ(lerp(diff,part.prz,part.rz))
 if(part.ry2) modelMatrix.rotY(lerp(diff,part.pry2,part.ry2))
 modelMatrix.rotX(lerp(diff,part.prx,part.rx))
@@ -30144,6 +30206,7 @@ return
 let hovering = this.mouseIsOver()
 let disabled = this.disabled()
 let hoverText = this.hoverText()
+if(disabled === -1) return
 if(this.setIndex){
 this.index = this.setIndex()
 }
@@ -30496,7 +30559,10 @@ a.download = world.name+".minekhan"
 a.click()
 }, nothing)
 // Inventory buttons
+let hideIfSurvival = () => survival && -1
 Button.add(width - 50, 15, 60, 30, "close", ["inventory","crafting","furnace","chest","anvil"], play)
+Button.add(width - 70, height-15, 100, 30, "Inventory", ["inventory","crafting","furnace","chest","anvil"], () => {inventory.category = 0; drawScreens[screen]()}, hideIfSurvival)
+Button.add(width - 70, height-45, 100, 30, "Blocks", ["inventory","crafting","furnace","chest","anvil"], () => {inventory.category = 1; drawScreens[screen]()}, hideIfSurvival)
 // You Died buttons
 Button.add(width / 2, 225, 300, 40, "Respawn", "dead", r => {
 respawn()
@@ -31331,17 +31397,18 @@ ctx.fillRect(0, 0, canvas.width, canvas.height)
 ctx2.clearRect(0, 0, canvas.width, canvas.height)
 FOV(90)
 let count = 1;
-if(survival){
+if(inventory.category === 0){
 count = invLength
 }else{
-for (let i = 1; i < BLOCK_COUNT; i++) {
-if(!blockData[i].hidden)count ++;
-}
+count = inventoryBlocks.length
 }
 invHeight = (Math.ceil(count / perRow) * s)
 let invWinH = s * 9;
 // Scrollbar
-if(survival){invScroll = 0}else{
+if(survival || inventory.category === 0){
+invScroll = 0
+inventory.category = 0
+}else{
 barH = height * (invWinH/invHeight);
 if(draggingInvBar){
 invScroll = map(mouseY-invBarOffset, (barH/2), height-(barH/2), 0, invHeight);
@@ -31392,7 +31459,7 @@ ctx.strokeRect(x, y, s, s)
 }
 //Box highlight in inv
 let overInv = Math.round(((mouseY + invScroll) - 50) / s) * perRow + Math.round((mouseX - 50) / s)
-if (overInv >= 0 && overInv < count - (survival?0:1) && mouseX < 50 - s2 + perRow * s && mouseX > 50 - s2) {
+if (overInv >= 0 && overInv < count && mouseX < 50 - s2 + perRow * s && mouseX > 50 - s2) {
 x = overInv % perRow * s + 50 - s2
 y = (overInv / perRow | 0) * s + 50 - s2
 y -= invScroll
@@ -31406,7 +31473,7 @@ ctx.strokeRect(x, y, s, s)
 if (inventory.holding && inventory.holding.id) {
 drawIcon(mouseX, mouseY, inventory.holding.id, inventory.holding, !survival)
 }
-if(survival){
+if(inventory.category === 0){
 for (let i = 0; i < invLength; i++) {
 if(invItems[i] && invItems[i].id){
 x = (i) % perRow * s + 50
@@ -31421,18 +31488,12 @@ drawIcon(x, y - invScroll, invItems[i].id, invItems[i], noAmount)
 }
 }
 }else{
-let invIdx = 0;
-for (let i = 1; i < BLOCK_COUNT; i++) {
-invIdx ++;
-if(blockData[i].hidden){
-while(blockData[i] && blockData[i].hidden) i++
-if(!blockData[i]) break
-}
-x = (invIdx - 1) % perRow * s + 50
-y = ((invIdx - 1) / perRow | 0) * s + 50
+for (let i = 0; i < inventoryBlocks.length; i++) {
+x = i % perRow * s + 50
+y = (i / perRow | 0) * s + 50
 y -= invScroll
 if(y < s*9.5 && y > 0){
-drawIcon(x, y, i)
+drawIcon(x, y, inventoryBlocks[i])
 }
 }
 }
@@ -31511,28 +31572,13 @@ hotbar()
 //hud()
 ctx.drawImage(gl.canvas, 0, 0)
 // show block name on hover
-if (overInv >= 0 && overInv < count - (survival?0:1) && mouseX < 50 - s2 + perRow * s && mouseX > 50 - s2) {
+if (overInv >= 0 && overInv < count && mouseX < 50 - s2 + perRow * s && mouseX > 50 - s2) {
 x = overInv % perRow
 y = (overInv / perRow | 0)
-var wrongidx = x+(y*perRow)+1;
-var idx=1;
-if(survival){
-idx = wrongidx - 1
-}else{
-for(var i=1; i<wrongidx; i++){
-idx++;
-if(blockData[i+1] && blockData[i+1].hidden){
-/*let i2 = idx
-while(blockData[i2] && blockData[i2].hidden){
-i2++
-idx++
-}*/
-idx++
-}
-}
-}
+var idx=x+(y*perRow)
+if(inventory.category !== 0) idx = inventoryBlocks[idx]
 let name;
-if(survival){
+if(inventory.category === 0){
 let id = invItems[idx] ? invItems[idx].id : 0
 name = id ? invItems[idx].customName || blockData[id].Name : "";
 }else{
@@ -31570,16 +31616,7 @@ let s = inventory.size
 let s2 = s / 2
 let perRow = 13
 let over = Math.round((mouseY + invScroll - 50) / s) * perRow + Math.round((mouseX - 50) / s)
-if(!survival){
-var idx = 0;
-for(var i=1; i<over+1; i++){
-if(!blockData[i]) break;
-idx ++;
-if(blockData[i+1] && blockData[i+1].hidden)idx++;
-}
-over = idx;
-}
-let count = survival ? invLength : BLOCK_COUNT - 1
+let count = inventory.category === 0 ? invLength : inventoryBlocks.length
 //for crafting
 let offX = width - s*4
 let offY = s * 2
@@ -31593,7 +31630,7 @@ let temp = inventory.hotbar[overHot]
 inventory.hotbar[overHot] = inventory.holding
 inventory.holding = temp
 } else if (over >= 0 && over < count && mouseX < 50 - s2 + perRow * s && mouseX > 50 - s2 && mouseY < s*9.5) {
-if(survival){
+if(inventory.category === 0){
 if(!invItems[over]) invItems[over] = {id:0,amount:0}
 if(mouse === 2 && inventory.holding.amount > 1){
 let holding = inventory.holding
@@ -31638,7 +31675,7 @@ inventory.spreadPlace = "invSpace"
 }
 }
 }else{
-inventory.holding = {id:over + 1, amount:blockData[over+1].stackSize}
+inventory.holding = {id:inventoryBlocks[over], amount:blockData[over+1].stackSize}
 }
 } else if(screen === "inventory" && mouseX>offX && mouseX<offX+(s*2) && mouseY>offY && mouseY<offY+(s*2)){
 //inv crafting grid
@@ -31707,16 +31744,10 @@ let s = inventory.size
 let s2 = s / 2
 let perRow = 13
 let over = Math.round((mouseY + invScroll - 50) / s) * perRow + Math.round((mouseX - 50) / s)
-if(!survival){
-var idx = 0;
-for(var i=1; i<over+1; i++){
-if(!blockData[i]) break;
-idx ++;
-if(blockData[i+1] && blockData[i+1].hidden)idx++;
+if(inventory.category !== 0){
+over = inventoryBlocks[over]
 }
-over = idx;
-}
-let count = survival ? invLength : BLOCK_COUNT - 1
+let count = inventory.category === 0 ? invLength : inventoryBlocks.length
 //for crafting
 let offX = width - s*4
 let offY = s * 2
@@ -31727,10 +31758,10 @@ let y = height - s * 1.5
 let overHot = (mouseX - x) / s | 0
 if (mouseX < x + 9 * s && mouseX > x && mouseY > y && mouseY < y + s) {
 //hotbar
-} else if (over >= 0 && over < count && mouseX < 50 - s2 + perRow * s && mouseX > 50 - s2 && mouseY < s*9.5) {
-if(survival){
+} else if (over >= 0 && over < count && mouseX < 50 - s2 + perRow * s && mouseX > 50 - s2 && mouseY < s*9.5 && inventory.spreadPlace === "invSpace") {
+if(inventory.category === 0){
 if(!invItems[over]) invItems[over] = {id:0,amount:0}
-if(inventory.spreadPlace === "invSpace" && inventory.spreadStart > -1 && invItems[inventory.spreadStart].amount > 1 && mouseDown){
+if(inventory.spreadStart > -1 && invItems[inventory.spreadStart].amount > 1 && mouseDown){
 inventory.spreading = true
 }
 if(inventory.spreading && !(invItems[over] && invItems[over].id) && over !== inventory.spreadStart && inventory.spreaded.length < invItems[inventory.spreadStart].amount){
@@ -31743,16 +31774,16 @@ inventory.spreaded.push(inventory.spreadStart, over)
 }
 }
 }
-}else if(
+}else if((
 (screen === "inventory" && mouseX > offX && mouseY > offY && mouseX < offX + s*2 && mouseY < offY + s*2) ||
 (screen === "crafting" && mouseX > offX && mouseY > offY && mouseX < offX + s*3 && mouseY < offY + s*3)
-){
+) && inventory.spreadPlace === "crafting"){
 let X = Math.floor((mouseX - offX) / s)
 let Y = Math.floor((mouseY - offY) / s)
 let idx = (Y*3)+X
 let c = inventory.crafting
 if(!c[idx]) c[idx] = {id:0,amount:0}
-if(inventory.spreadPlace === "crafting" && inventory.spreadStart > -1 && c[inventory.spreadStart].amount > 1 && mouseDown){
+if(inventory.spreadStart > -1 && c[inventory.spreadStart].amount > 1 && mouseDown){
 inventory.spreading = true
 }
 if(inventory.spreading && !(c[idx] && c[idx].id) && idx !== inventory.spreadStart && inventory.spreaded.length < c[inventory.spreadStart].amount){
@@ -31771,16 +31802,10 @@ let s = inventory.size
 let s2 = s / 2
 let perRow = 13
 let over = Math.round((mouseY + invScroll - 50) / s) * perRow + Math.round((mouseX - 50) / s)
-if(!survival){
-var idx = 0;
-for(var i=1; i<over+1; i++){
-if(!blockData[i]) break;
-idx ++;
-if(blockData[i+1] && blockData[i+1].hidden)idx++;
+if(inventory.category !== 0){
+over = inventoryBlocks[over]
 }
-over = idx;
-}
-let count = survival ? invLength : BLOCK_COUNT - 1
+let count = inventory.category === 0 ? invLength : inventoryBlocks.length
 //for crafting
 let offX = width - s*4
 let offY = s * 2
@@ -31792,7 +31817,7 @@ let overHot = (mouseX - x) / s | 0
 if (mouseX < x + 9 * s && mouseX > x && mouseY > y && mouseY < y + s) {
 //hotbar
 } else if (over >= 0 && over < count && mouseX < 50 - s2 + perRow * s && mouseX > 50 - s2 && mouseY < s*9.5) {
-if(survival){
+if(inventory.category === 0){
 if(!invItems[over]) invItems[over] = {id:0,amount:0}
 if(inventory.spreadPlace === "invSpace" && inventory.spreaded.length){
 //a/b with remainder
@@ -31819,7 +31844,7 @@ inventory.spreading = false
 (screen === "crafting" && mouseX > offX && mouseY > offY && mouseX < offX + s*3 && mouseY < offY + s*3)
 ){
 let c = inventory.crafting
-if(!invItems[over]) invItems[over] = {id:0,amount:0}
+if(!c[inventory.spreadStart]) c[inventory.spreadStart] = {id:0,amount:0}
 if(inventory.spreadPlace === "crafting" && inventory.spreaded.length){
 //a/b with remainder
 var a=c[inventory.spreadStart].amount
