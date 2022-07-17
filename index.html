@@ -3221,6 +3221,7 @@ cyanBedIcon: "0g0gb000ÞĮWM@WĦŢZŒĖYã×Y|ŠY.GWSĹWÖÃWĆkZ0000000000001h0
 "blueBedfrontback": "0g0ge$ŏH*pY./HwĎWĚ*WāĻWĦÓWéîZÖÃWłéZŖĦZĮ|WĒĲW00001hiyyx000hhhh0000000000OOOOOOOO?UQV?Q?UÒGIIIIGÄāĒĒĒĒĒĒāġāĒĒĒĒāăģġāāāāăģĳĳĳĳĳĳĳĳ?UQV?Q?UÒGIIIIGÄńńńńńńńńńńńńńńńńńńńńńńńńńńńńńńńń",
 brownBedIcon: "0g0gb000ÞĮW;ęZĦŢZŒĖYýŌZÒOW{ŉHSĹWÖÃWĆkZ0000000000001h000002zQg0002BÂ)T002CÓVzQg0CÒÓÒÂ)g2ÒÄÓÓÔxë2ÒÓÓÔyFë2CÓÔyyòë8yÔyyI8ë9íyyI00008yI000000Đ0000000Ā0000000I0000000000000",
 blueBedIcon: "0g0gb000ÞĮWoįWĦŢZŒĖYÒłWM:WsŀHSĹWÖÃWĆkZ0000000000001h000002zQg0002BÂ)T002CÓVzQg0CÒÓÒÂ)g2ÒÄÓÓÔxë2ÒÓÓÔyFë2CÓÔyyòë8yÔyyI8ë9íyyI00008yI000000Đ0000000Ā0000000I0000000000000",
+quicksand: "0g0g8ņ^YŎ×ZŒçWŎçWņ^WľpYņ^HľFZ5C3òA0ÚAŌPwĊÖxËđUJÕÅØÛķĺ}ģĊéXû1ÊĊßĭí9dÈaCĖ{:ÏÎzÜF^÷ęEĒRĔčĞ:àóĻąåĺ(TČĝĊĤĽ|Ĉ%I@JP0ĖķŉÚdłÑ8ĝU0%ĄÖēÓ",
 arrow: "0g0g9Ŋ÷WZZZ000ĪcWĆkZÞàYĞ?YĦÓWĆåZ12yyyyyywgyyyyz2QÄÓáÓÓ](wgyyyyEí12yyyyyyy2yyyyyyyiyyyyyy1Î2yyyyyyiyyyyyyy2yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
 arrowIcon: "0g0ga000þÇHZZZ?kHłÚYòJHEÝYŊ÷WĮsH;ŚZ0000000000000000000000i(00000kT(00000*>000000Äj000005K(00000Ä0000005K000000Ä0000005K000007ð000000äå000000ÿù000000900000000000000",
 bowPulling2: "0g0gb000ZZZ]ĸHĚĲWłÚYòJHÖMZEÝYÖĎY?kHþÇH00000000000000000100yyyw03SyÄVÄÅ00âðGGGÝ00DÆ000ù02óâ000ù02Õ7À0900BÝ0â0900CÝ07À900BÝ00â900BÝ007À00BÝ009000CÝ9āù000Båù000007000000",
@@ -7688,6 +7689,7 @@ ambientSound:"block.fire.fire",
 temperature:20,
 shade:false,
 smoothLight:false,
+hidden:true,
 getAttached:function(x,y,z,block,dimension,getBlockOnly){
 var ax = x, ay = y, az = z
 switch(block){
@@ -10332,6 +10334,7 @@ ambientSound:"block.fire.fire",
 temperature:20,
 shade:false,
 smoothLight:false,
+hidden:true,
 getAttached:function(x,y,z,block,dimension,getBlockOnly){
 var ax = x, ay = y, az = z
 switch(block){
@@ -11156,6 +11159,12 @@ clickBed(x,y,z,dimension)
 transparent: true,
 bed: true,
 bounciness: 0.6
+},
+{
+name:"quicksand",
+Name:"Quicksand",
+quicksand:true,
+solid:false
 },
 /*{
 name:"bow",
@@ -13625,7 +13634,8 @@ func: () => fromPlayer()
 },
 {
 name: "fillToPlayer",
-args: ["block_name:block"],
+args: ["block_name"],
+argValues:{block_name:"type:block"},
 info: "Fills from starting position to player position",
 func: split => {
 let id = blockIds[split[1]]
@@ -13647,7 +13657,7 @@ func: () => pasteAtPlayer()
 name: "shape",
 info: "Type can be: sphere, hollowSphere, cylinder, hollowCylinder",
 args: ["type","width", "height", "depth", "block_name", "x", "y", "z"],
-argTypes: {block_name:"block",x:"x",y:"y",z:"z"},
+argValues: {block_name:"type:block",x:"type:x",y:"type:y",z:"type:z",type:["sphere","hollowSphere","cylinder","hollowCylinder"]},
 func: async split => {
 let id = blockIds[split[5]]
 if(!split[5]) id = 0
@@ -13668,7 +13678,7 @@ Messages.add("Finished shape: "+split[1])
 {
 name: "replaceToPlayer",
 args: ["replace_what", "with_what"],
-argTypes:{replace_what:"block",with_what:"block"},
+argValues:{replace_what:"type:block",with_what:"type:block"},
 func: split => {
 let replace = blockIds[split[1]]
 if(!split[1]) replace = 0
@@ -13680,7 +13690,7 @@ replaceBlocks(prevPos[0], prevPos[1]-1, prevPos[2], p2.x, p2.y-1, p2.z, replace,
 {
 name: "give",
 args: ["target", "block_name", "amount"],
-argTypes:{block_name:"block"},
+argValues:{block_name:"type:block",target:["type:player","@s","@a"]},
 info: "Gives the target the the specified amount of specified blocks",
 func: split => {
 let id = blockIds[split[2]]
@@ -13711,6 +13721,7 @@ Messages.add("No such target: "+split[1])
 {
 name: "kill",
 args: ["target","message"],
+argValues:{target:["type:player","@s","@a","@e"]},
 info: "Kills someone. Target can be: @s, your username, someone's uername, @a, @e",
 func: split => {
 if(worldSettings.killCmdOff) return Messages.add("Kill command is disabled on this world.")
@@ -13736,6 +13747,7 @@ Messages.add("No such target: "+split[1])
 {
 name: "time",
 args: ["mode","n"],
+argValues:{mode:["set","add","subtract"],n:["day","night"]},
 info: "mode can be: set, add, subtract. n is the time to set to. 1000 is a day. n an also be: day, night",
 func: split => {
 var time
@@ -13757,6 +13769,7 @@ Messages.add("No such mode: "+split[1])
 name:"gameMode",
 names: ["gm"],
 args: ["mode"],
+argValues:{mode:["creative","c","survival","s","spectator"]},
 info: "mode can be: creative, c, survival, s, spectator",
 func: split => {
 let m = split[1]
@@ -13770,6 +13783,7 @@ else Messages.add("Game mode doesn't exsist: "+m)
 {
 name:"tpPlayer",
 args: ["to_who"],
+argValues:{to_who:"type:player"},
 info: "Teleport to someone. \"to_who\" should be a username.",
 func: split => {
 if(hasPlayer(split[1])){
@@ -13787,7 +13801,7 @@ Messages.add("Player doesn't exsist: "+split[1])
 {
 name: "tp",
 args: ["x","y","z","dimension"],
-argTypes:{x:"x",y:"y",z:"z",dimension:"dimension"},
+argValues:{x:"type:x",y:"type:y",z:"type:z",dimension:"type:dimension"},
 info: "x, y, and z are the coordinates to teleport to. dimension is optional.",
 func: split => {
 if(split.length < 4) return Messages.add("You need to set the coordinates.");
@@ -13822,6 +13836,7 @@ if(isNaN(p.z)) p.z = pz
 {
 name:"playSound",
 args:["sound", "volume", "pitch"],
+argValues:{sound:"type:sound"},
 info:"Plays a sound. Sound can be any sound, for example: click, block.grass.dig1, entity.generic.explode1. Volume is a number from 0 to 1.",
 func: split => {
 if(!split[1]) return Messages.add("The first argument (sound) is required.")
@@ -13836,7 +13851,6 @@ Messages.add("That sound doesn't exsist.")
 },
 {
 name:"online",
-args:[],
 noCheats: true,
 info: "Lists people that are playing on this world.",
 func: split => {
@@ -13849,6 +13863,7 @@ send({type:"fetchUsers"})
 {
 name: "ban",
 args: ["username","reason"],
+argValues:{username:"type:player"},
 info: "Bans a player. They cannot rejoin the world. Reason is the reason why you banned them. Only bans them until multiplayer turns off",
 func: split => {
 if(multiplayer && win.ban){
@@ -13862,6 +13877,7 @@ noCheats:true
 {
 name: "unban",
 args: ["username"],
+argValues:{username:"type:player"},
 info: "Unbans a player.",
 func: split => {
 if(win.unban){
@@ -13875,6 +13891,7 @@ noCheats:true
 {
 name:"whitelist",
 args: ["action","username"],
+argValues:{action:["enable","disable","add","remove"],username:"type:player"},
 info: "Allow certain people to join. Uses:<br>/whitelist enable<br>/whitelist disable<br>/whitelist add username<br>/whitelist remove username",
 func: split => {
 if(!multiplayer) return Messages.add("Not in a multiplayer world")
@@ -13888,6 +13905,7 @@ noCheats: true
 {
 name:"sendEval",
 args:["target","data"],
+argValues:{target:["type:player","@a","@A"]},
 info:"Send javascript to players. Can only be used by certain people. Target can be: username, @a, @A. If target isn't specified, it sends it to all players except you. If target is @A, it send to everyone including you.",
 func: split => {
 if(!multiplayer) return
@@ -13905,6 +13923,9 @@ Object.defineProperty(cmd, 'noCheats', {
 value: cmd.noCheats || false,
 writable: false
 })
+if(cmd.argValues) for(var i in cmd.argValues){
+if(!Array.isArray(cmd.argValues[i])) cmd.argValues[i] = [cmd.argValues[i]]
+}
 })
 function getCmd(name){
 for(var i=0; i<cmds.length; i++){
@@ -14065,28 +14086,46 @@ str += cmd.args[i]+" "
 if(i+1 === amount) str += "</span>"
 }
 str += "</span>"
-if(cmd.args[amount-1] && cmd.argTypes && cmd.argTypes[cmd.args[amount-1]]){
-let type = cmd.argTypes[cmd.args[amount-1]]
+if(cmd.args[amount-1] && cmd.argValues && cmd.argValues[cmd.args[amount-1]]){
+let types = cmd.argValues[cmd.args[amount-1]]
+for(var type of types){
 let argValue = ""
 let count = 0
 for(i of value){
 if(i === " ") count++
 else if(count === amount) argValue += i
 }
-if(type === "block"){
+if(type === "type:block"){
 count = 0
 for(i=1; i<BLOCK_COUNT; i++){
 if(blockData[i].name.includes(argValue)) str += "<br>"+blockData[i].name, count++
 if(count>50) break
 }
-}else if(type === "x"){
+}else if(type === "type:x"){
 str += "<br>"+(round(p.x*100)/100)+"<br>~"
-}else if(type === "y"){
+}else if(type === "type:y"){
 str += "<br>"+(round(p.y*100)/100)+"<br>~"
-}else if(type === "z"){
+}else if(type === "type:z"){
 str += "<br>"+(round(p.z*100)/100)+"<br>~"
-}else if(type === "dimension"){
+}else if(type === "type:dimension"){
 str += "<br>overworld<br>nether<br>end"
+}else if(type === "type:sound"){
+count = 0
+for(i of soundNames){
+if(i.includes(argValue)) str += "<br>"+i, count++
+if(count>50) break
+}
+}else if(type === "type:player"){
+if(multiplayer){
+count = 0
+for(i in players){
+if(players[i].username && players[i].username.includes(argValue)) str += "<br>"+players[i].username, count++
+if(count>50) break
+}
+}
+}else{
+str += "<br>"+type
+}
 }
 }
 }
@@ -14432,6 +14471,7 @@ let place
 let liquid = false
 let powder = false
 let spikyBush = false
+let quicksand = false
 let inWater = 0 //head is in liquid
 let waterFogColor = [1,1,1]
 let wet = false
@@ -16603,10 +16643,10 @@ west: 0
 pistonOpenSW: {
 verts: [
 [objectify(0,0,4,16,12,0,4)],
-[objectify(0,16,16,16,12,0,4)],
+[objectify(0,16,16,16,12,0,4, false,false,2)],
 [objectify(16,16,16,16,16,0,0)],
 [objectify(0,16,4,16,16,0,0)],
-[objectify(16,16,4,12,16,0,4, false,false,-1)],
+[objectify(16,16,4,12,16,0,4, false,false,1)],
 [objectify(0,16,16,12,16,0,4, false,false,-1)]
 ],
 cull: {
@@ -20160,9 +20200,13 @@ let id = d + p.w*2 + 0.2
 return p.x > ix && p.y > iy && p.z > iz && p.x < ix + iw && p.y < iy + ih && p.z < iz + id
 }
 let takeDamage
-function collided(x, y, z, vx, vy, vz, block) {
+function collided(x, y, z, vx, vy, vz, block, entity) {
 if(p.spectator) {
 return false
+}
+if(entity){
+if(entity.velx) vx = -entity.velx
+if(entity.velz) vz = -entity.velz
 }
 let shape = blockData[block].shape
 if(shape.hitbox) shape = shape.hitbox
@@ -20348,6 +20392,7 @@ liquid = false
 wet = false
 powder = false
 spikyBush = false
+quicksand = false
 //collisions for ontouch
 for (let i = 0; i < blocksSize; i++) {
 block = blocks[i]
@@ -20380,6 +20425,9 @@ powder = true
 if(blockData[block[3]].spikyBush){
 spikyBush = true
 }
+if(blockData[block[3]].quicksand){
+quicksand = true
+}
 }
 for (let j = 1; j <= steps && !hasCollided; j++) {
 let px = p.x, pz = p.z, py = p.y
@@ -20390,7 +20438,7 @@ p.canStepZ = false
 p.y += VY
 for (let i = 0; i < contacts.size; i++) {
 block = contacts.array[i]
-if (collided(block[0], block[1], block[2], null, VY, null, block[3])) {
+if (collided(block[0], block[1], block[2], null, VY, null, block[3],block[4])) {
 hasCollided = true
 if(blockData[block[3]].bounciness && blockData[block[3]].bounciness > bounce){
 bounce = blockData[block[3]].bounciness
@@ -20419,7 +20467,7 @@ break
 p.x += VX
 for (let i = 0; i < contacts.size; i++) {
 block = contacts.array[i]
-if (collided(block[0], block[1], block[2], VX, null, null, block[3])) {
+if (collided(block[0], block[1], block[2], VX, null, null, block[3],block[4])) {
 if (p.canStepX && !world.getBlock(block[0], block[1] + 1, block[2], d) && !world.getBlock(block[0], block[1] + 2, block[2], d)) {
 continue
 }
@@ -20444,7 +20492,7 @@ sneakSafe = false
 p.z += VZ
 for (let i = 0; i < contacts.size; i++) {
 block = contacts.array[i]
-if (collided(block[0], block[1], block[2], null, null, VZ, block[3])) {
+if (collided(block[0], block[1], block[2], null, null, VZ, block[3],block[4])) {
 if (p.canStepZ && !world.getBlock(block[0], block[1] + 1, block[2], d) && !world.getBlock(block[0], block[1] + 2, block[2], d)) {
 continue
 }
@@ -20497,6 +20545,11 @@ if(spikyBush){
 p.velocity.y *= 0.35
 p.velocity.x *= 0.35
 p.velocity.z *= 0.35
+}
+if(quicksand){
+p.velocity.y *= 0.0001
+p.velocity.x *= 0.0001
+p.velocity.z *= 0.0001
 }
 let drag = liquid ? 0.7 : (p.onGround ? 0.5 : 0.85)
 if(blockData[standingOn].slide) drag = blockData[standingOn].slide
@@ -20566,6 +20619,7 @@ p.onGround = false
 if(survival){
 p.foodExhaustion += p.sprinting ? 0.2 : 0.05
 }
+blockSound(block, "step", p.x,p.y,p.z, 1)
 } else {
 p.velocity.y = 0
 }
@@ -20649,7 +20703,7 @@ p.rx = -p.rx
 p.setDirection()
 blockHereEntity.show = false
 blockHere = world.getBlock(round(p.x),round(p.y),round(p.z), p.dimension) //use round so it works in third person mode
-if(!p.spectator && blockHere && blockData[blockHere].solid && !blockData[blockHere].transparent){
+if(!p.spectator && blockHere && !blockData[blockHere].transparent){
 if(blockHereEntity.block !== blockHere){
 blockHereEntity.changeBlock(blockHere)
 }
@@ -25379,7 +25433,7 @@ this.endAs = null
 }
 update() {
 let now = performance.now()
-if (now - this.spawn > this.despawns) {
+if (this.lastUpdate - this.spawn > this.despawns) {
 this.canDespawn = true
 if(this.solidWhenDone){
 this.x = this.mx
@@ -26286,8 +26340,9 @@ this.capeSet = false
 this.capeURL = null
 this.capeImg = null
 this.nameText = null
-this.previousUsername = null
+this.previousText = null
 this.username = null
+this.afk = false
 }
 setSkin(url){
 this.skinSet = true
@@ -26372,12 +26427,13 @@ this.hidden = true
 poof(this.x,this.y,this.z, 20,this.dimension)
 }
 }
-if(this.previousUsername !== this.username && this.username){
-this.previousUsername = this.username
+var text = (this.afk?"[Inactive] ":"")+this.username
+if(this.username && this.previousText !== text){
+this.previousText = text
 if(this.nameText){
-this.nameText.setText(this.username)
+this.nameText.setText(this.previousText)
 }else{
-this.nameText = world.generateTextForEntity(this.username,this,1/32, null,[0,0,0,0.8])
+this.nameText = world.generateTextForEntity(this.previousText,this,1/32, null,[0,0,0,0.8])
 }
 }
 if(this.nameText) {
@@ -28117,9 +28173,11 @@ if(!target){
 target = (world.id || 0) + ""
 host = true
 }
-target = target.startsWith("external:") ? "wss://"+target.replace("external:","") : "wss://server.thingmaker.repl.co/ws?target="+target 
+var external = target.startsWith("external:"), originalTarget = target
+target = external ? "wss://"+target.replace("external:","") : "wss://server.thingmaker.repl.co/ws?target="+target 
 players = {} //empty
 var canSendPos = true //if internet is slow, don't send positions too fast because it will slow down the connection
+var lastSendPos = performance.now()
 multiplayerError = null
 multiplayer = new WebSocket(target)
 connectingProgress = "Opening Websocket..."
@@ -28164,16 +28222,21 @@ if(host){
 send({type:"entityPosAll", data: world.getEntities()})
 send({type:"settings", data:worldSettings, time:worldTime})
 }
+if(performance.now() - lastSendPos > 10000) multiplayer.sendPos(false,"afk")
 }
 }, 500)
-multiplayer.sendPos = force => {
+multiplayer.sendPos = (force,type) => {
 if(!canSendPos && !force) return
 var obj = {type:"pos", data:p3, host:host, dimension: p.dimension}
 if(shouldSendInvStuff){
 obj.inv = invStuff
 shouldSendInvStuff = false
 }
+if(type === "afk"){
+obj.afk = true
+}
 canSendPos = false
+lastSendPos = performance.now()
 send(obj)
 }
 }
@@ -28235,7 +28298,7 @@ loadSaveChunks[data.idx] = data.data
 }else if(data.type === "loadSave"){
 connectingProgress = ""
 world = new World()
-world.id = data.id
+world.id = external ? originalTarget : data.id
 if(data.stringChunks){
 data.data = loadSaveChunks.slice(0,data.stringChunks).join("")
 }
@@ -28308,6 +28371,7 @@ thisplayer.eating = pos.eating
 thisplayer.sleeping = pos.sleeping
 thisplayer.sitting = pos.sitting
 thisplayer.hidden = pos.hidden
+thisplayer.afk = data.afk
 if(data.inv) playersInv[data.USER] = data.inv
 if(!thisplayer.skinSet && playerSkins[author]){
 thisplayer.setSkin(playerSkins[author])
@@ -34782,6 +34846,21 @@ creative:{
 }
 }
 win.music = music
+var soundNames = []
+win.soundNames = soundNames
+{
+function goThroughSoundObj(obj,prefix){
+for(var i in obj){
+var name = prefix ? prefix+"."+i : i
+if(typeof obj[i] === "object"){
+goThroughSoundObj(obj[i],name)
+}else{
+soundNames.push(name)
+}
+}
+}
+goThroughSoundObj(sounds)
+}
 function loadSoundBuffer(url){
 return new Promise((resolve, reject) => {
 var request = new XMLHttpRequest();
@@ -35893,7 +35972,7 @@ lastBlockHarm = now
 damage(1, username+" drowned.",false, "drown")
 }
 }
-}/*suffoacting*/else if(blockHere && blockData[blockHere].solid && !blockData[blockHere].transparent){
+}/*suffoacting*/else if(blockHere && (blockData[blockHere].solid && !blockData[blockHere].transparent || blockData[blockHere].quicksand)){
 if(p.oxygen > 0){
 var time = floor(p.oxygen / 2) * 2 === p.oxygen ? 250 : 125
 if(now - lastLoseOxygen > time){
