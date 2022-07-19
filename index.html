@@ -11166,16 +11166,25 @@ Name:"Quicksand",
 quicksand:true,
 solid:false
 },
-/*{
+{
 name:"bow",
 Name:"Bow",
+item:true,
 onuse: function(x,y,z, block, replaceItem, useDurability, minusOne,dimension){
+if(minusOneItem(blockIds.arrow)){
 var pd = p.direction
-world.addEntity(new SlingshotShot(p.x,p.y,p.z,pd.x,pd.y,pd.z),false,dimension)
+world.addEntity(new Arrow(p.x+pd.x,p.y+pd.y,p.z+pd.z,pd.x,pd.y,pd.z),false,dimension)
+}
 },
 useAnywhere:true,
 stackSize:1
-},*/
+},
+{
+name:"arrow",
+Name:"Arrow",
+textures:"arrowIcon",
+item:true
+},
 /*
 { name: "pigFace" },
 { 
@@ -11387,6 +11396,23 @@ return true
 }
 if(invItems[i].id === id && invItems[i].amount < blockData[invItems[i].id].stackSize){
 invItems[i].amount ++;
+return true
+}
+}
+return false
+}
+function minusOneItem(id){
+for(let i=0; i<inventory.hotbar.length; i++){
+if(inventory.hotbar[i] && inventory.hotbar[i].id === id){
+inventory.hotbar[i].amount--
+inventory.hotbar[i].animation = 1.5
+return true
+}
+}
+for(let i=0; i<invLength; i++){
+if(invItems[i] && invItems[i].id === id){
+invItems[i].amount--
+if(invItems[i].amount <= 0) invItems[i] = 0
 return true
 }
 }
@@ -17178,6 +17204,24 @@ west: 0
 },
 rotate:true
 },
+arrow:{
+verts:[
+[objectify(5.5,8,0,5,16,0,0, false,false,true)],
+[objectify(5.5,8,16,5,16,0,0, false,true,true)],
+[],
+[objectify(5.5,10.5,1,5,5,0,5)],
+[objectify(8,10.5,0,16,5,0,0, true)],
+[objectify(8,10.5,16,16,5,0,0)]
+],
+cull: {
+top: 0,
+bottom: 0,
+north: 0,
+south: 0,
+east: 0,
+west: 0
+}
+},
 sun:{
 verts:[
 [],[],[],
@@ -20623,11 +20667,10 @@ blockSound(block, "step", p.x,p.y,p.z, 1)
 } else {
 p.velocity.y = 0
 }
-}else{
+}
 p.velocity.y += p.gravityStength
 if(p.velocity.y < -p.maxYVelocity) {
 p.velocity.y = -p.maxYVelocity
-}
 }
 }
 let defineWorld = function(tick) {
@@ -24485,12 +24528,12 @@ return ent
 }
 }
 }
-if(ent.x - w2 < p.x + p.w &&
-ent.x + w2 > p.x - p.w &&
-ent.y - h2 < p.y + p.topH &&
-ent.y - h2 > p.y - p.bottomH &&
-ent.z - d2 < p.z + p.w &&
-ent.z + d2 > p.z - p.w) collidedWithMe = true
+if(ent.x - w2 <= p.x + p.w &&
+ent.x + w2 >= p.x - p.w &&
+ent.y - h2 <= p.y + p.topH &&
+ent.y - h2 >= p.y - p.bottomH &&
+ent.z - d2 <= p.z + p.w &&
+ent.z + d2 >= p.z - p.w) collidedWithMe = true
 }
 class Contacts {
 constructor() {
@@ -25001,6 +25044,11 @@ facePlayer(){
 this.yaw = Math.PId - (atan2(p.z - this.z, p.x - this.x) + Math.PI2 + Math.PI)
 var adjacent = dist2(this.x,this.z,p.x,p.z)
 this.pitch = Math.PId - atan2(p.y - this.y, adjacent)
+}
+pointAt(x,y,z){
+this.yaw = Math.PId - (atan2(z - this.z, x - this.x) + Math.PI2 + Math.PI)
+var adjacent = dist2(this.x,this.z,x,z)
+this.pitch = Math.PId - atan2(y - this.y, adjacent)
 }
 }
 class Item extends Entity {
@@ -25635,14 +25683,10 @@ this.updateVelocity(now)
 this.move(now)
 var collided = entCollided(this)
 if(collided && collided !== this){
-if(entPlayerCollided){
-send({type:"hit", username:username, data:1, message:username+" killed "+ent.username+" with eggs."}, ent.id)
-}else{
 if(collided.onhit) collided.onhit(1)
-}
 this.canDespawn = true
 }else if(collidedWithMe && survival){
-damage(1, username+" killed themself with an egg.")
+damage(1, username+" got killed by an egg.")
 this.canDespawn = true
 }
 if (now - this.spawn > this.despawns || this.hasCollided) {
@@ -25848,6 +25892,203 @@ const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 gl.uniform1i(glCache.uSamplerEntity, 0)
 gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
+gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
+glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
+gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
+glExtensions.vertex_array_object.bindVertexArrayOES(null)
+}
+}
+class Arrow extends Entity{
+constructor(x,y,z,dx,dy,dz){
+var t = textureCoords[textureMap.arrow]
+var v = generateVAO(shapes.arrow, t[0],t[1])
+super(x, y, z, 0, 0, dx, dy, dz, 1, 1, 1, null, null, v.size, 60000, v.vao)
+this.type = "Arrow"
+this.defaultGravityStength = -0.01
+this.prevChangedX = x
+this.prevChangedY = y
+this.prevChangedZ = z
+this.stopStart = this.spawn
+this.noHitbox = true
+}
+updateVelocity(now) {
+if(this.hasCollided){
+this.velx = this.vely = this.velz = 0
+}else{
+if (this.liquid){
+this.gravityStength = -0.015
+this.vely *= 0.9
+}else{
+this.gravityStength = this.defaultGravityStength
+}
+this.vely += this.gravityStength
+if (this.vely < -1.5) {
+this.vely = -1.5
+}
+let drag = this.liquid ? 0.7 : 0.99
+this.velz += (this.velz * drag - this.velz)
+this.velx += (this.velx * drag - this.velx)
+// this.vely += (this.vely * 0.9 - this.vely) * dt
+}
+}
+collided(x, y, z, vx, vy, vz, block) {
+let verts = blockData[block].shape.verts
+let px = this.x - this.width / 2 - x
+let py = this.y - this.height / 2 - y
+let pz = this.z - this.depth / 2 - z
+let pxx = this.x + this.width / 2 - x
+let pyy = this.y + this.height / 2 - y
+let pzz = this.z + this.depth / 2 - z
+let minX, minY, minZ, maxX, maxY, maxZ, min, max
+//Top and bottom faces
+let faces = verts[0]
+if (vy <= 0) {
+faces = verts[1]
+}
+if (vx === null && vz === null) {
+let col = false
+for (let face of faces) {
+min = face.min
+minX = min[0]
+minZ = min[2]
+max = face.max
+maxX = max[0]
+maxZ = max[2]
+if (face[1] > py && face[1] < pyy && minX < pxx && maxX > px && minZ < pzz && maxZ > pz) {
+col = true
+if (vy <= 0) {
+this.onGround = true
+this.y = face[1] + y + this.height / 2
+this.vely = 0
+} else {
+this.y = face[1] + y - this.height / 2
+this.vely = 0
+}
+}
+if (face[1] >= py && face[1] <= pyy && minX <= pxx && maxX >= px && minZ <= pzz && maxZ >= pz) this.hasCollided = true
+}
+return col
+}
+//West and East faces
+if (vx < 0) {
+faces = verts[4]
+} else if (vx > 0) {
+faces = verts[5]
+}
+if (vx !== null) {
+let col = false
+for (let face of faces) {
+min = face.min
+minZ = min[2]
+minY = min[1]
+max = face.max
+maxZ = max[2]
+maxY = max[1]
+if (face[0] > px && face[0] < pxx && minY < pyy && maxY > py && minZ < pzz && maxZ > pz) {
+if (maxY - py > 0.5) {
+this.canStepX = false
+this.x = x + face[0] + (vx < 0 ? this.width / 2 : -this.width / 2)
+this.velx = 0
+}
+col = true
+}
+if (face[0] >= px && face[0] <= pxx && minY <= pyy && maxY >= py && minZ <= pzz && maxZ >= pz) this.hasCollided = true
+}
+return col
+}
+//South and North faces
+if (vz < 0) {
+faces = verts[2]
+} else if (vz > 0) {
+faces = verts[3]
+}
+if (vz !== null) {
+let col = false
+for (let face of faces) {
+min = face.min
+minX = min[0]
+minY = min[1]
+max = face.max
+maxX = max[0]
+maxY = max[1]
+if (face[2] > pz && face[2] < pzz && minY < pyy && maxY > py && minX < pxx && maxX > px) {
+if (maxY - py > 0.5) {
+this.canStepZ = false
+this.z = z + face[2] + (vz < 0 ? this.depth / 2 : -this.depth / 2)
+this.velz = 0
+}
+col = true
+}
+if (face[2] >= pz && face[2] <= pzz && minY <= pyy && maxY >= py && minX <= pxx && maxX >= px) this.hasCollided = true
+}
+return col
+}
+}
+update(){
+let now = performance.now()
+this.updateVelocity(now)
+this.move(now)
+if(this.previousX !== this.x || this.previousY !== this.y || this.previousZ !== this.z){
+this.prevChangedX = this.previousX
+this.prevChangedY = this.previousY
+this.prevChangedZ = this.previousZ
+}
+if(!this.hasCollided) this.stopStart = now
+if (now - this.stopStart > this.despawns) {
+this.canDespawn = true
+}
+var collided = entCollided(this)
+if(this.hasCollided){
+if(collidedWithMe && newInvItem(blockIds.arrow)) this.canDespawn = true
+}else{
+if(collided && collided !== this){
+if(collided.onhit) collided.onhit(1)
+this.canDespawn = true
+}else if(collidedWithMe && survival){
+damage(1, username+" got killed by an arrow.")
+this.canDespawn = true
+}
+}
+this.yaw = Math.PId - (atan2(this.z - this.prevChangedZ, this.x - this.prevChangedX) + Math.PI2 + Math.PI)
+var adjacent = dist2(this.prevChangedX,this.prevChangedZ,this.x,this.z)
+this.pitch = Math.PId - atan2(this.y - this.prevChangedY, adjacent)
+}
+render() {
+if(this.hidden) return
+let diff = (performance.now() - this.lastUpdate) / tickTime
+if (diff > 1) diff = 1
+const offsetY = this.offsetY
+let renderx = (this.x - this.previousX) * diff + this.previousX
+let rendery = ((this.y - this.previousY) * diff + this.previousY) + offsetY
+let renderz = (this.z - this.previousZ) * diff + this.previousZ
+const modelMatrix = entityMatrices.modelMatrix;
+modelMatrix.identity()
+modelMatrix.translate(renderx, rendery, renderz)
+modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(this.pitch)
+modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
+const viewMatrix = p.transformation.elements
+const proj = p.projection
+let projectionMatrix = entityMatrices.projectionMatrix
+projectionMatrix.set(proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0)
+projectionMatrix = projectionMatrix.elements
+const modelViewProjectionMatrix = entityMatrices.modelViewProjectionMatrix
+modelViewProjectionMatrix.identity()
+modelViewProjectionMatrix.mult(projectionMatrix)
+modelViewProjectionMatrix.mult(viewMatrix)
+modelViewProjectionMatrix.mult(modelMatrix.elements)
+// row major to column major
+modelViewProjectionMatrix.transpose()
+const x = round(this.x)
+const y = round(this.y)
+const z = round(this.z)
+const blockLight = world.getLight(x, y, z, 1, this.dimension)
+const skysLight = world.getLight(x, y, z, 0, this.dimension)
+const lightLevel = min(max(skysLight * skyLight / 15, blockLight / 15) * 0.9 + 0.1, 1.0)
+gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
+gl.uniform1i(glCache.uSamplerEntity, 0)
+gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
+gl.uniform1f(glCache.harmEffectEntity, 0)
 gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
@@ -31387,7 +31628,7 @@ textureImageCtx.putImageData(textureImageData,0,0)
 }
 gl.activeTexture(gl.TEXTURE0)
 gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, textureSize, textureH, 0, gl.RGBA, gl.UNSIGNED_BYTE, texturePixels);
+gl.texSubImage2D(gl.TEXTURE_2D, 0, 0,0, textureSize, textureH, gl.RGBA, gl.UNSIGNED_BYTE, texturePixels);
 }
 function drawIcon(x, y, id, obj, noAmount) {
 id = id < isCube && !blockData[id].item ? (id | blockMode) : id
@@ -32046,7 +32287,7 @@ inventory.spreadPlace = "invSpace"
 }
 }
 }else{
-inventory.holding = {id:inventoryBlocks[over], amount:blockData[over+1].stackSize}
+inventory.holding = {id:inventoryBlocks[over], amount:inventoryBlocks[over].stackSize}
 }
 } else if(screen === "inventory" && mouseX>offX && mouseX<offX+(s*2) && mouseY>offY && mouseY<offY+(s*2)){
 //inv crafting grid
@@ -33850,8 +34091,8 @@ gl.disableVertexAttribArray(glCache.aBlocklight)
 gl.vertexAttrib1f(glCache.aShadow, 1.0)
 gl.vertexAttrib1f(glCache.aSkylight, 1.0)
 gl.vertexAttrib1f(glCache.aBlocklight, 1.0)
-gl.uniform1i(glCache.uSampler, 4)
 gl.bindTexture(gl.TEXTURE_2D, panoramaTexture)
+gl.uniform1i(glCache.uSampler, 4)
 vertexAttribPointer("aVertex", program3D, "aVertex", 3, panoramaVertBuffer)
 vertexAttribPointer("aTexture", program3D, "aTexture", 2, panoramaTexBuffer)
 gl.disable(gl.CULL_FACE)
@@ -33965,7 +34206,7 @@ p.w = 3 / 8
 p.bottomH = 1.62
 p.topH = 0.18
 p.onGround = false
-p.jumpSpeed = 0.45
+p.jumpSpeed = 0.5
 p.sprinting = false
 p.maxYVelocity = 1.5
 p.gravityStength = -0.091
