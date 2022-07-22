@@ -373,6 +373,7 @@ flex-direction:row;
 #help > .nav{
 width:20%;
 background:#0008;
+overflow-y:scroll;
 }
 #help > .nav > a{
 display:block;
@@ -381,11 +382,12 @@ width:100%;
 text-decoration:none;
 color:white;
 cursor:pointer;
+box-sizing:border-box;
 }
 #help > .content{
 width:80%;
 padding:10px;
-overflow:scroll;
+overflow-y:scroll;
 background:#0004;
 }
 #help > .content > div{
@@ -566,6 +568,7 @@ Then save the program as a Spin-off.
 <div id="messages"></div>
 <input id="messageInput">
 </div>
+<div style="position:absolute;top:0;left:0;width:100vw;"><video id="endPoemVideo" style="display:block;height:calc(100vh - 40px);margin:auto;" class="hidden"><source src="https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4"></video></div>
 <div id="controls" class="hidden"></div>
 <div id="controlDetect" class="hidden" tabindex="0">Click or press a key</div>
 <select id="narratorVoiceSelect" class="hidden"></select>
@@ -1092,6 +1095,7 @@ window.editSignBox = document.getElementById("editSignBox")
 window.centerMessage = document.getElementById("centerMessage")
 window.anvilTextbox = document.getElementById("anvilTextbox")
 var hoverbox = document.getElementById("onhover")
+window.endPoemVideo = document.querySelector("#endPoemVideo")
 window.controls = document.getElementById("controls")
 window.controlDetect = document.getElementById("controlDetect")
 window.narratorVoiceSelect = document.getElementById("narratorVoiceSelect")
@@ -4679,6 +4683,15 @@ shadow: false, //to hide faces
 semiTrans: true,
 cullFace:"same",
 blastResistance:100,
+onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
+var top = world.getBlock(x,y+1,z,dimension)
+var isIt = blockData[top].name === "Water"
+if(b === blockIds.Water && !isIt){
+world.setBlock(x,y,z,blockIds.Water | SLAB,false,false,false,false,dimension)
+}else if(b === (blockIds.Water | SLAB) && isIt){
+world.setBlock(x,y,z,blockIds.Water,false,false,false,false,dimension)
+}
+},
 tint:{
 default:[68/255,175/255,245/255],
 snowyField:[20/255,85/255,155/255],
@@ -10089,6 +10102,19 @@ ontouch: function(){
 goToDimension(p.dimension === "end" ? "" : "end")
 playSound("block.portal.travel")
 if(multiplayer) send({type:"playSound", data:"block.portal.travel", x:p.x,y:p.y,z:p.z})
+if(p.dimension === "" && !didEndPoem){
+doEndPoem = didEndPoem = true
+changeScene("endPoem")
+releasePointer()
+endPoemVideo.classList.remove("hidden")
+endPoemVideo.currentTime = 0
+endPoemVideo.onended = () => {
+doEndPoem = false
+endPoemVideo.classList.add("hidden")
+endPoemVideo.pause()
+}
+endPoemVideo.play()
+}
 },
 },
 {
@@ -11799,6 +11825,11 @@ const crafts = {
 "waterBucket,lavaBucket":{name:"cobblestone",shapeless:true,replace:{waterBucket:"bucket",lavaBucket:"bucket"}},
 "carrot,dirt,mud":{name:"mudPie",shapeless:true},
 "ironBlock,ironBlock,ironBlock,air,ironIngot,air,ironIngot,ironIngot,ironIngot":{name:"anvil"},
+"air,stick,string,stick,air,string,air,stick,string":{name:"bow"},
+"redstoneLamp,redDye":{name:"redRedstoneLamp",shapeless:true},
+"redstoneLamp,yellowDye":{name:"yellowRedstoneLamp",shapeless:true},
+"redstoneLamp,greenDye":{name:"greenRedstoneLamp",shapeless:true},
+"redstoneLamp,blueDye":{name:"blueRedstoneLamp",shapeless:true},
 }
 //replace anything in crafts starting with _
 /*var craftTypes = {
@@ -12961,8 +12992,8 @@ let px = (p.x - p.previousX) * diff + p.previousX
 let py = (p.y - p.previousY) * diff + p.previousY
 let pz = (p.z - p.previousZ) * diff + p.previousZ
 gl.useProgram(programEntity)
-this.renderObject(this.sun.vao,px+sin(rotation)*100, py+cos(rotation)*100, pz, -rotation+Math.PI2, this.sun.size)
-this.renderObject(this.moon.vao,px+sin(rotation+Math.PI)*100, py+cos(rotation+Math.PI)*100, pz, -rotation+Math.PI+Math.PI2, this.moon.size, 1-skyLight)
+this.renderObject(this.sun.vao,px+sin(rotation)*1000, py+cos(rotation)*1000, pz, -rotation+Math.PI2, this.sun.size)
+this.renderObject(this.moon.vao,px+sin(rotation+Math.PI)*1000, py+cos(rotation+Math.PI)*1000, pz, -rotation+Math.PI+Math.PI2, this.moon.size, 1-skyLight)
 gl.depthFunc(gl.LESS);
 gl.enable(gl.CULL_FACE)
 gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
@@ -12974,7 +13005,7 @@ modelMatrix.identity()
 modelMatrix.translate(x, y, z)
 modelMatrix.rotZ(rz)
 modelMatrix.rotY(Math.PI2)
-modelMatrix.scale(25,25,25)
+modelMatrix.scale(250,250,250)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
 let projectionMatrix = entityMatrices.projectionMatrix
@@ -14066,9 +14097,11 @@ remove: (function(){
 var arr = [
 ["k","c","u","f"].reverse().join(""), ["t","n","u","c"].reverse().join(""), "stupid",
 {replace:"blood",with:"red liquid"},
-"dumb","bitch",
+"dumb",
+{replace:"bitch",with:"a female dog, wolf, fox, or otter"},
 {replace:"shit",with:"poo poo"},
-{replace:"discord",with:"that chating app"}
+{replace:"discord",with:"that chating app"},
+{replace:"crap",with:"something of extremely poor quality"}
 ]
 var between = "[THELETTER \*.,|`~\/\\!&]*" //there might be characters between, like this: b.a.d
 arr.forEach((obj, i) => {
@@ -14555,9 +14588,8 @@ let waterFogColor = [1,1,1]
 let wet = false
 let blockHere = 0
 let blockHereEntity = null
-let tick = false
+let tick = false, lastTick = 0
 let standingOn = 0 //block id you are standing on
-let lastTick = 0
 let lastLiquid = false
 let attackCooldown = 0, attackCooldownStart = 0, attackCooldownTime = 0 //for swords
 let harmEffect = 0, lastDamage = 0
@@ -14584,8 +14616,9 @@ portalTriggerSound = source
 portalTriggerSoundGain = gainNode
 }
 win.lastStepSound = 0
-let viewBobTime = 0, prevViewBob = false
+let viewBobIntensity = 0, prevViewBobIntensity = 0, prevViewBob = false, viewBobCount = 0, lastViewBobCount = 0
 let eatSoundTimer = 0
+let doEndPoem = false, didEndPoem = false
 let inventory = {
 hotbar: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ],
 hotbarSlot: 0,
@@ -15236,7 +15269,7 @@ size: 6,
 },
 beacon: {
 verts: [
-[objectify( 0, 0,  0, 16, 16, 16, -96),objectify( 2, 0.001, 2, 12, 12, -32, 0)], //bottom
+[objectify( 0, 0,  0, 16, 16, -32, 0),objectify( 2, 0.001, 2, 12, 12, -16, 0)], //bottom
 [objectify( 3, 13, 13, 10, 10, 3, 3),objectify( 0,  16,  16, 16, 16, -32, 0),objectify( 2, 3, 14, 12, 12, -16, 3)], //top
 [objectify(13, 13, 13, 10, 10, 3, 3),objectify( 16, 16,  16, 16, 16, -32, 0),objectify(14, 3, 14, 12, 3,  -16, 3)], //north
 [objectify( 3, 13,  3, 10, 10, 3, 3),objectify( 0,  16,  0,  16, 16, -32, 0),objectify(2,  3, 2,  12, 3,  -16, 3)], //south
@@ -15251,9 +15284,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
 size: 6,
 },
 cactus: {
@@ -15273,10 +15303,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
-size: 6,
 hitbox: "cube"
 },
 pane: {
@@ -15333,10 +15359,6 @@ south: 0,
 east: 3,
 west: 3
 },
-texVerts: [],
-varients: [],
-buffer: null,
-size: 6,
 rotate: true
 },
 trapdoor: {
@@ -15356,10 +15378,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
-size: 6,
 rotate: true,
 flip: true
 },
@@ -15380,9 +15398,6 @@ south: 3,
 east: 3,
 west: 3
 },
-texVerts: [],
-varients: [],
-buffer: null,
 size: 6,
 rotate: true
 },
@@ -15405,10 +15420,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
-size: 6,
 rotate: true
 },
 fence: {
@@ -15428,9 +15439,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
 size: 6,
 },
 wallpost: {
@@ -15452,9 +15460,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
 size: 6
 },
 wall: {
@@ -15476,10 +15481,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
-size: 6,
 rotate: true
 },
 wallu: {
@@ -15501,10 +15502,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
-size: 6,
 rotate: true
 },
 fencq: {
@@ -15581,9 +15578,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
 size: 6,
 },
 pot: {
@@ -15603,9 +15597,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
 size: 6,
 },
 potCross: {
@@ -15625,9 +15616,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
 size: 6
 },
 carpet: {
@@ -15646,11 +15634,7 @@ north: 1,
 south: 1,
 east: 1,
 west: 1
-},
-texVerts: [],
-buffer: null,
-size: 6,
-varients: []
+}
 },
 bed: {
 verts: [
@@ -15689,10 +15673,6 @@ south: 3,
 east: 3,
 west: 3
 },
-texVerts: [],
-buffer: null,
-size: 6,
-varients: [],
 rotate: true
 },
 cactusPot: {
@@ -15712,9 +15692,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-varients: [],
-buffer: null,
 size: 6
 },
 crop: {
@@ -15753,10 +15730,6 @@ south: 0,
 east: 0,
 west: 0
 },
-texVerts: [],
-buffer: null,
-size: 21,
-varients: [],
 rotate: true
 },
 liquid: {
@@ -18249,18 +18222,17 @@ var signSet = function(x,y,z,dimension,block){
 for(var ent of world.entities){
 if(ent.type === "Sign" && ent.x === x && ent.y === y && ent.z === z) return
 }
+block = block || world.getBlock(x,y,z,dimension)
 var signBlock = (block & STAIR) === STAIR ? (this.id | CROSS) : (this.id | SLAB)
 world.addEntity(new Sign(x,y,z,signBlock,block),false,dimension)
 }
 var signOnplace = function(x,y,z, dimension){
 var block = world.getBlock(x,y,z,dimension)
-world.setTagByName(x,y,z,"sign",true, false,dimension)
-var rot = world.getTagByName(x,y,z,"rot",dimension)
-if(!rot && rot !== 0){
-rot = round(p.ry*16/Math.PId)
+var tags = {sign:true}
+var rot = round(p.ry*16/Math.PId)
 if((block & STAIR) === STAIR) rot = round(rot/4)*4
-world.setTagByName(x,y,z, "rot",rot,false,dimension)
-}
+tags.rot = rot
+world.setTags(x,y,z,tags,false,dimension)
 this.set(x,y,z,dimension,block)
 editSign(x,y,z,dimension)
 }
@@ -18277,7 +18249,7 @@ if(ent.type === "ItemFrame" && ent.x === x && ent.y === y && ent.z === z) return
 }
 world.addEntity(new ItemFrame(x,y,z,block,itemFrameBlock),true,dimension)
 }
-var itemFrameOnplace = function(x,y,z, dimension){
+var itemFrameOnset = function(x,y,z, dimension){
 var block = world.getBlock(x,y,z,dimension)
 this.set(x,y,z,dimension,0,block)
 }
@@ -18537,7 +18509,7 @@ if(baseBlock.stonecutter) baseBlock.shape = shapes.stonecutter
 if(baseBlock.itemFrame){
 baseBlock.shape = shapes.itemFrame
 baseBlock.set = itemFrameSet
-baseBlock.onplace = itemFrameOnplace
+baseBlock.importantOnset = itemFrameOnset
 baseBlock.onclick = itemFrameOnclick.bind(baseBlock)
 }
 if(baseBlock.name === "redstoneLamp"){
@@ -18840,7 +18812,7 @@ baseBlock.transparent = true
 baseBlock.shadow = false
 baseBlock.solid = false
 baseBlock.onplace = signOnplace
-baseBlock.set = signSet
+baseBlock.importantOnset = baseBlock.set = signSet
 baseBlock.onclick = signOnclick
 stairBlock.shape = shapes.cube
 }
@@ -20796,29 +20768,34 @@ prevPreviousX = p.previousX
 prevPreviousY = p.previousY
 prevPreviousZ = p.previousZ
 let intensity = 0.125//0.0625
+if(tick) prevViewBobIntensity = viewBobIntensity
 if(!p.thirdPerson && !p3.sleeping){
 //view bobbing
 if(p.walking && !p.swimming && p.onGround){
 if(!prevViewBob){
 prevViewBob = true
-viewBobTime = now
+if(!viewBobIntensity) viewBobCount = lastViewBobCount = 500
 }
-if(now - viewBobTime < 250){
-intensity *= (now - viewBobTime)/250
+if(tick && viewBobIntensity < 5){
+viewBobIntensity++
 }
 }else{
 if(prevViewBob){
 prevViewBob = false
-viewBobTime = now
 }
-if(now - viewBobTime < 250){
-intensity *= 1 - (now - viewBobTime)/250
-}else intensity = 0
+if(tick && viewBobIntensity > 0){
+viewBobIntensity--
 }
+}
+intensity *= lerp(min((now-lastTick)/tickTime,1),prevViewBobIntensity,viewBobIntensity)/5
 if(intensity){
-var speed = 1
-if(p.sprinting) speed = 2
-var bob = (now*speed)%1000
+if(tick){
+lastViewBobCount = viewBobCount
+if(p.sprinting) viewBobCount += 100
+else viewBobCount += 50
+}
+var counter = lerp(min((now-lastTick)/tickTime,1),lastViewBobCount,viewBobCount)
+var bob = counter%1000
 if(bob>500) bob = 1000-bob
 var rx = bob*Math.PI2/250
 getRotation(rx,p.ry+Math.PI2)
@@ -25618,7 +25595,7 @@ this.previousX = this.x
 this.previousY = this.y
 this.previousZ = this.z
 this.lastUpdate = now
-var prog = (now - this.spawn) / this.despawns
+var prog = min((now - this.spawn) / this.despawns, 1)
 this.x = lerp(prog, this.sx, this.mx)
 this.y = lerp(prog, this.sy, this.my)
 this.z = lerp(prog, this.sz, this.mz)
@@ -25636,6 +25613,7 @@ this.velx = velx
 this.vely = vely
 this.velz = velz
 this.from = userId
+this.facesPlayer = true
 this.defaultGravityStength = -0.05
 }
 updateVelocity(now) {
@@ -25713,6 +25691,7 @@ this.velx = velx
 this.vely = vely
 this.velz = velz
 this.from = userId
+this.facesPlayer = true
 this.defaultGravityStength = -0.05
 }
 updateVelocity(now) {
@@ -25798,6 +25777,7 @@ this.velx = velx
 this.vely = vely
 this.velz = velz
 this.from = userId
+this.facesPlayer = true
 this.defaultGravityStength = -0.05
 }
 update() {
@@ -25870,6 +25850,7 @@ this.velx = velx
 this.vely = vely
 this.velz = velz
 this.despawns = 10000
+this.facesPlayer = true
 this.defaultGravityStength = -0.01
 }
 update() {
@@ -26415,6 +26396,7 @@ this.type = "ExperienceOrb"
 this.value = value
 this.tint = {r:1,g:1,b:1}
 this.noHitbox = true
+this.facesPlayer = true
 }
 update(){
 let now = performance.now()
@@ -28179,6 +28161,7 @@ this.defaultGravityStength = 0
 this.offsetZ = 0
 this.offsetX = 0
 this.type = "TextEntity"
+this.facesPlayer = true
 this.vao = glExtensions.vertex_array_object.createVertexArrayOES()
 this.buffer = gl.createBuffer()
 this.setText(text)
@@ -28702,6 +28685,7 @@ loadSaveChunks[data.idx] = data.data
 connectingProgress = ""
 world = new World()
 world.id = external ? originalTarget : data.id
+didEndPoem = false
 if(data.stringChunks){
 data.data = loadSaveChunks.slice(0,data.stringChunks).join("")
 }
@@ -29398,6 +29382,9 @@ if (!lazy && chunk.buffer && (!data.transparent || data.lightLevel) && screen !=
 this.updateLight(x, y, z, false, data.lightLevel, dimension)
 }
 }
+if(blockID && blockData[blockID].importantOnset){
+blockData[blockID].importantOnset(x,y,z, dimension)
+}
 if (lazy) {
 return
 }
@@ -29750,8 +29737,10 @@ ent.dimension = d.dimension
 ent.x = p.x
 ent.y = p.y
 ent.z = p.z
+if(!ent.facesPlayer){
 ent.yaw = p.yaw
 ent.pitch = p.pitch
+}
 ent.velx = p.velx
 ent.vely = p.vely
 ent.velz = p.velz
@@ -30563,7 +30552,8 @@ str += p.oxygen + ","
 str += worldTime + ","
 str += (cheats ? "1" : "0")+","
 str += freezeEffect+","
-str += p.XP+","+p.level
+str += p.XP+","+p.level+","
+str += (didEndPoem ? "1" : "0")
 return str
 }
 getEditedTags(){
@@ -30717,21 +30707,22 @@ invItems[i].customName = inv[i]
 }
 loadSurvivStr(str){
 let arr = str.split(",")
-p.health = parseInt(arr[0])
-witherEffect = parseInt(arr[1])
-witherTime = parseInt(arr[2])
-witherDamage = parseInt(arr[3])
-world.spawnPoint.x = parseInt(arr[4]) || 0
-world.spawnPoint.y = parseInt(arr[5]) || 0
-world.spawnPoint.z = parseInt(arr[6]) || 0
-p.food = parseInt(arr[7]); if(isNaN(p.food)) p.food = 20
-p.foodSaturation = parseFloat(arr[8]) || 0, p.foodExhaustion = parseFloat(arr[9]) || 0
-p.oxygen = parseInt(arr[10]); if(!p.oxygen) p.oxygen = 20
-worldTime = parseFloat(arr[11]) || 0
-cheats = arr[12] ? arr[12] === "1" : !survival
-freezeEffect = parseInt(arr[13])
-p.XP = parseFloat(arr[14]) || 0
-p.level = parseInt(arr[15]) || 0; setLevel()
+p.health = parseInt(arr.shift())
+witherEffect = parseInt(arr.shift())
+witherTime = parseInt(arr.shift())
+witherDamage = parseInt(arr.shift())
+world.spawnPoint.x = parseInt(arr.shift()) || 0
+world.spawnPoint.y = parseInt(arr.shift()) || 0
+world.spawnPoint.z = parseInt(arr.shift()) || 0
+p.food = parseInt(arr.shift()); if(isNaN(p.food)) p.food = 20
+p.foodSaturation = parseFloat(arr.shift()) || 0, p.foodExhaustion = parseFloat(arr.shift()) || 0
+p.oxygen = parseInt(arr.shift()); if(!p.oxygen) p.oxygen = 20
+worldTime = parseFloat(arr.shift()) || 0
+cheats = arr.shift(); cheats = cheats ? cheats === "1" : !survival
+freezeEffect = parseInt(arr.shift())
+p.XP = parseFloat(arr.shift()) || 0
+p.level = parseInt(arr.shift()) || 0; setLevel()
+didEndPoem = arr.shift() === "1"
 }
 setEditedTagsToLoad(obj){
 this.editedTagsToLoad = {}
@@ -31251,6 +31242,10 @@ Button.add(mid, height / 2 + 40, w2, 40, "Cancel", "multiplayer connecting", r =
 //multiplayer lost buttons
 Button.add(mid, height / 2 + 40, w2, 40, "Back", "multiplayer lost", r => changeScene("multiplayer menu"))
 Button.add(mid, height - 40, w2, 40, "Back", "multiplayer lost long", r => changeScene("multiplayer menu"))
+//loading buttons
+Button.add(width-x4/2, height-20, x4, 40, "Skip", "endPoem",() => {
+endPoemVideo.onended()
+})
 //play buttons
 if(touchScreen){
 var bs = s*0.75 //buton size
@@ -33266,7 +33261,7 @@ if (screen !== "play") {
 cursor("")
 mouseX = e.x
 mouseY = e.y
-if(screen !== "main menu" && !(screen === "furnace" && furnaceData.data.smelting) && screen !== "dead" && screen !== "chat" && screen !== "edit sign" && screen !== "sleep"){
+if(screen !== "main menu" && !(screen === "furnace" && furnaceData.data.smelting) && screen !== "dead" && screen !== "chat" && screen !== "edit sign" && screen !== "sleep" && screen !== "endPoem"){
 drawScreens[screen]()
 redraw = true
 Slider.drag()
@@ -34434,7 +34429,7 @@ while(world.getBlock(0, p.y, 0)){
 p.y ++;
 if(p.y > maxHeight) break;
 }*/
-p.y = spawn.y
+p.y = p.lastY = spawn.y
 p.velocity.x = p.velocity.y = p.velocity.z = 0
 p.health = 20
 p.oxygen = 20
@@ -34645,7 +34640,7 @@ var v = data[m]
 v.fetchUrl = "https://minekhan.repl.co/server/map/"+v.name
 marketplaceData.push(v)
 }
-})
+}).catch(() => ({}))
 marketplace = {}
 window.marketplace.innerHTML = ""
 const deselect = () => {
@@ -35510,7 +35505,7 @@ win.menuMusicVolume = 1
 win.menuMusicIdx = 0
 win.currentMusic = null
 function updateMusic(){
-if(screen === "play" || screen === "pause" || screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "anvil" || screen === "options" || screen.startsWith("options ") || screen === "chat" || screen === "edit sign" || screen === "sleep"){
+if(screen === "play" || screen === "pause" || screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "anvil" || screen === "options" || screen.startsWith("options ") || screen === "chat" || screen === "edit sign" || screen === "sleep" || screen === "endPoem"){
 if(menuMusicVolume > 0) menuMusicVolume -= 0.01
 if(menuMusicVolume < 0) menuMusicVolume = 0
 if(currentMusic && menuMusicVolume === 0){
@@ -35596,6 +35591,7 @@ world.loadChunks()
 world.chunkGenQueue.sort(sortChunks)
 worldTime = 375
 p.x = p.z = 8
+didEndPoem = false
 if(survival) {
 setHotbar([0,0,0,0,0,0,0,0,0])
 clearInv()
@@ -35605,6 +35601,7 @@ changeScene("loading")
 async function playSelectedWorld(){
 world = new World()
 p.dimension = ""
+didEndPoem = false
 let code
 let inv
 let surviv
@@ -35709,7 +35706,25 @@ try{mod()}catch(e){console.log(e)}
 }
 changeScene("loading")
 }
-function setupHelp(){
+async function setupHelp(){
+var contentDiv = document.querySelector("#help .content")
+var nav = document.querySelector("#help .nav")
+var pages = await fetch("https://minekhan.repl.co/server/wikiPages").then(r => r.json()).catch(() => ({}))
+for(var i in pages){
+var page = pages[i]
+var theName = page.name.replace(/_/g," ")
+var div = document.createElement("div")
+div.id = "help_"+page.name
+div.innerHTML = "<h1>"+theName+"</h1>"
+if(page.user) div.innerHTML += "<b>By "+page.user+"</b><br>"
+div.innerHTML += "<a href='https://minekhan.repl.co/wiki/page/"+page.name+"' target='_blank'>Open in new window</a><br>"
+div.innerHTML += page.content
+contentDiv.appendChild(div)
+var a = document.createElement("a")
+a.innerHTML = theName
+a.setAttribute("onclick","scrollToEl('help_"+page.name+"')")
+nav.appendChild(a)
+}
 //Setup images
 var divs = document.querySelectorAll("div[img]")
 for(var i=0; i<divs.length; i++){
@@ -36649,7 +36664,7 @@ sub++
 }
 }
 }
-if (standing) {
+if (standing && !doEndPoem) {
 if(world.editedTagsToLoad) world.loadEditedTags(world.editedTagsToLoad)
 world.hasLoaded = true
 play()
@@ -36659,11 +36674,13 @@ world.tick()
 }
 let progress = Math.round( (superflat==="island"?45:100) * sub / maxLoad)
 if(superflat === "island")progress += Math.round((win.islandGenerator.stage/9.0+win.islandGenerator.h/win.islandGenerator.size*3/9)*50)
+if(!doEndPoem){
 dirt()
 fill(255)
 textSize(25)
 ctx.textAlign = "center"
 text(`Loading... ${progress}% complete (${sub} / ${maxLoad})`, width / 2, height / 2)
+}
 }
 drawScreens.netherLoading = () => {
 p.dimension = "nether"
@@ -36746,6 +36763,12 @@ fill(255)
 textSize(25)
 ctx.textAlign = "center"
 text(`Loading... ${progress}% complete (${sub} / ${maxLoad})`, width / 2, height / 2)
+}
+drawScreens.endPoem = () => {
+drawScreens.loading()
+if(doEndPoem){
+dirt()
+}
 }
 drawScreens.chat = () => {
 defineWorld(tick)
@@ -36915,7 +36938,7 @@ initEverything()
 releasePointer()
 }
 if(allLoaded){
-var now = Date.now()
+var now = performance.now()
 tick = false
 if(now - lastTick > tickTime){
 lastTick = Math.floor(now / 50) * 50
@@ -36932,7 +36955,7 @@ drawScreens[screen]()
 Button.draw()
 Slider.draw()
 }
-if (screen === "play" || screen === "loading" || screen === "netherLoading" || screen === "endLoading" || screen === "dead" || screen === "chat" || screen === "edit sign" || screen === "sleep") {
+if (screen === "play" || screen === "loading" || screen === "netherLoading" || screen === "endLoading" || screen === "dead" || screen === "chat" || screen === "edit sign" || screen === "sleep" || screen === "endPoem") {
 drawScreens[screen]()
 Button.draw()
 Slider.draw()
