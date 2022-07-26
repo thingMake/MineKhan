@@ -175,6 +175,11 @@ margin-left: 4px;
 background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAcAAAAICAYAAAA1BOUGAAAAAXNSR0IArs4c6QAAAD9JREFUGFdjZICChQsX/oex4+PjGUFsMAGSgAkg8xnRJZBNwi+ZmZkJtwumC0YzIktOnz6dITMzE66GeEl0YwHnrii1au6ixAAAAABJRU5ErkJggg==");
 background-size:100%;
 }
+.world::after, #marketplaceInfo::after{
+content:'';
+display:block;
+clear:left;
+}
 .world-select .message{
 font-size: 15px;
 font-family: 'VT323', 'Courier New', Courier, monospace;
@@ -531,6 +536,26 @@ margin: 0 auto;
 color: white;
 font: 16px VT323;
 }
+#marketplaceInfo {
+width: 99vw;
+min-width: 300px;
+height: calc(100vh - 220px);
+position: absolute;
+bottom: 120px;
+overflow-y: auto;
+background-color: RGBA(0, 0, 0, 0.6);
+justify-content: center;
+margin: 0 auto;
+color: white;
+font-family:VT323;
+padding:8px;
+box-sizing:border-box;
+}
+#marketplaceInfo .thumbnail{
+float:left;
+width:200px;
+margin: 16px;
+}
 </style>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VRNT3CCCGH"></script>
@@ -563,6 +588,7 @@ Then save the program as a Spin-off.
 <div class="world-select hidden" id="worlds"></div>
 <div class="world-select hidden" id="servers"></div>
 <div class="world-select hidden" id="marketplace"></div>
+<div id="marketplaceInfo" class="hidden"></div>
 <p id="message" class="hidden darklinks" style="position: absolute; top: 10px; right: 10px; z-index: 1; text-align: right; background-color: rgba(255, 255, 255, 0.3);"></p>
 <div id="messagesHolder" class="hidden">
 <div id="messages"></div>
@@ -1094,6 +1120,7 @@ window.editworld = document.getElementById("editworld")
 window.editSignBox = document.getElementById("editSignBox")
 window.centerMessage = document.getElementById("centerMessage")
 window.anvilTextbox = document.getElementById("anvilTextbox")
+window.marketplaceInfo = document.querySelector("#marketplaceInfo")
 var hoverbox = document.getElementById("onhover")
 window.endPoemVideo = document.querySelector("#endPoemVideo")
 window.controls = document.getElementById("controls")
@@ -1178,6 +1205,8 @@ offset += len
 }
 return r
 }
+let generateID = () => "" + Date.now() + (Math.random() * 1000000 | 0)
+window.generateID = generateID
 var tickSpeed = 20
 var tickTime = 1000/tickSpeed
 var fileReader = new FileReader();
@@ -3264,6 +3293,7 @@ moonPhase7_3: "0g0gkĖœZgÂYcÂHcRW8MY8MH4xW4wZ0gY00H00WËÿYłćZcÂWcTZ8TYâ�
 quicksand: "0g0g8ņ^YŎ×ZŒçWŎçWņ^WľpYņ^HľFZ5C3òA0ÚAŌPwĊÖxËđUJÕÅØÛķĺ}ģĊéXû1ÊĊßĭí9dÈaCĖ{:ÏÎzÜF^÷ęEĒRĔčĞ:àóĻąåĺ(TČĝĊĤĽ|Ĉ%I@JP0ĖķŉÚdłÑ8ĝU0%ĄÖēÓ",
 arrow: "0g0g9Ŋ÷WZZZ000ĪcWĆkZÞàYĞ?YĦÓWĆåZ12yyyyyywgyyyyz2QÄÓáÓÓ](wgyyyyEí12yyyyyyy2yyyyyyyiyyyyyy1Î2yyyyyyiyyyyyyy2yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
 arrowIcon: "0g0ga000þÇHZZZ?kHłÚYòJHEÝYŊ÷WĮsH;ŚZ0000000000000000000000i(00000kT(00000*>000000Äj000005K(00000Ä0000005K000000Ä0000005K000007ð000000äå000000ÿù000000900000000000000",
+glisteringMelonSlice: "0g0gg000āĸYĚhZĵÂWŅĢYĤĩWZ$HİwYZĦHļŘHŚwHĔÀYħřZZZZËÀYİĬZ000000000000000000i0000001)À00000iÒâ00000jòēÀ0000qôĝĬ0000jØąâÀ000i?ÇÉĝ000ŉ~ģæÉÀ00e+ÉÅĢâ00ejÜVÇUw00ňA@IÐŇ00eňyO=0000eŕŕŇ000000000",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -4723,7 +4753,8 @@ dieMessage: () => username+" tried to swim in lava.",
 shadow: false,
 blastResistance:100,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
-if (world.getBlock(x,y+1,z,dimension) === blockIds.Water) {
+var block = world.getBlock(x,y+1,z,dimension)
+if (block && blockData[block].name === "Water") {
 world.setBlock(x,y,z,blockIds.obsidian,false,false,false,false,dimension)
 }
 },
@@ -8606,7 +8637,7 @@ world.spreadPower(x,y-1,z,15,dimension)
 },
 onpowerupdate: function(x,y,z,sx,sy,sz,blockPowerChanged,dimension){
 var that = this
-setTimeout(function(){
+world.setTimeout(function(){
 //find block it's attached to
 var me = world.getBlock(x,y,z,dimension)
 var ax=x,ay=y,az=z
@@ -9033,7 +9064,7 @@ world.setBlockPower(tx,ty,tz,null,side,dimension)
 }
 }
 var shouldBeOn = world.getRepeaterPower(x,y,z,fx,fy,fz,dimension) || world.getBlockPower(fx,fy,fz,null,dimension) ? true : false
-if(on !== shouldBeOn) setTimeout(function(){
+if(on !== shouldBeOn) world.setTimeout(function(){
 block = world.getBlock(x,y,z,dimension)
 var on = world.getRepeaterPower(x,y,z,fx,fy,fz,dimension) || world.getBlockPower(fx,fy,fz,null,dimension) ? true : false //should it be on?
 var isOn = false
@@ -9563,7 +9594,7 @@ world.setBlock(x,y,z,open,false,false,false,false,dimension)
 var e = new MovingBlock(headCut,x,y,z,tx,ty,tz, tickTime*2, true)
 e.endAs = head
 world.addEntity(e,false,dimension)
-setTimeout(function(){
+world.setTimeout(function(){
 e.changeBlock(head)
 }, tickTime*1.5)
 for(var i=0; i<push.length; i+=4){
@@ -9619,10 +9650,10 @@ return console.log("oh no! piston isn't facing anywhere")
 world.setBlock(tx,ty,tz,0,false,false,false,false,dimension)
 var e = new MovingBlock(head,tx,ty,tz,x,y,z, tickTime*2)
 world.addEntity(e,false,dimension)
-setTimeout(function(){
+world.setTimeout(function(){
 e.changeBlock(headCut)
 }, tickTime*0.5)
-setTimeout(function(){
+world.setTimeout(function(){
 world.setBlock(x,y,z,body,false,false,false,false,dimension)
 }, tickTime*2)
 }
@@ -9787,7 +9818,7 @@ world.addEntity(new MovingBlock(push[i+3],bx,by,bz,bx+mx,by+my,bz+mz, tickTime*2
 }
 e.endAs = head
 world.addEntity(e,false,dimension)
-setTimeout(function(){
+world.setTimeout(function(){
 e.changeBlock(head)
 }, tickTime*1.5)
 },
@@ -9843,10 +9874,10 @@ return console.log("oh no! piston isn't facing anywhere")
 world.setBlock(tx,ty,tz,0,false,false,false,false,dimension)
 var e = new MovingBlock(head,tx,ty,tz,x,y,z, tickTime*2)
 world.addEntity(e,false,dimension)
-setTimeout(function(){
+world.setTimeout(function(){
 e.changeBlock(headCut)
 }, tickTime*0.5)
-setTimeout(function(){
+world.setTimeout(function(){
 world.setBlock(x,y,z,body,false,false,false,false,dimension)
 }, tickTime*2)
 var pull = getPistonPulledBlocks(x,y,z,mx,my,mz,dimension)
@@ -9937,7 +9968,7 @@ default:
 return
 }
 if(!(x+tx === sx && y+ty === sy && z+tz === sz) && !detected) return
-setTimeout(function(){
+world.setTimeout(function(){
 var curBlock = world.getBlock(x,y,z,dimension)
 if(!(curBlock && blockData[curBlock].name === "observer")) return
 world.setBlock(x,y,z,onBlock, false,true,false,false,dimension)
@@ -9946,7 +9977,7 @@ if(blockBehind && blockData[blockBehind].name === "redstoneDust"){
 world.setPower(x-tx,y-ty,z-tz, 15,false,dimension)
 world.spreadPower(x-tx,y-ty,z-tz, 15,dimension)
 }
-setTimeout(function(){
+world.setTimeout(function(){
 var curBlock = world.getBlock(x,y,z,dimension)
 if(!(curBlock && blockData[curBlock].name === "observer")) return
 world.setBlock(x,y,z,block, false,true,false,false,dimension)
@@ -11228,11 +11259,18 @@ solid:false
 name:"bow",
 Name:"Bow",
 item:true,
-onuse: function(x,y,z, block, replaceItem, useDurability, minusOne,dimension){
+iconTexture:["bow","bowPulling0","bowPulling1","bowPulling2"],
+onrelease: function(x,y,z, dimension, item){
+if(!item.pulling) return true
 if(minusOneItem(blockIds.arrow)){
 var pd = p.direction
-world.addEntity(new Arrow(p.x+pd.x,p.y+pd.y,p.z+pd.z,pd.x,pd.y,pd.z),false,dimension)
+var i = item.pulling / 3
+world.addEntity(new Arrow(p.x+pd.x,p.y+pd.y,p.z+pd.z,pd.x*i,pd.y*i,pd.z*i),false,dimension)
 }
+delete item.pulling
+delete item.pullStart
+delete item.icon
+updateHUD = true
 },
 useAnywhere:true,
 stackSize:1
@@ -11241,6 +11279,11 @@ stackSize:1
 name:"arrow",
 Name:"Arrow",
 textures:"arrowIcon",
+item:true
+},
+{
+name:"glisteringMelonSlice",
+Name:"Slice of Watermelon With Unedible Gold",
 item:true
 },
 /*
@@ -11357,7 +11400,7 @@ data.attackTime = 20/1
 if(data.axe || data.hoe){
 data.stackSize = 1
 }
-data.tool = data.pickaxe || data.sword || data.shovel || data.axe || data.hoe
+data.tool = data.tool || data.pickaxe || data.sword || data.shovel || data.axe || data.hoe
 if(data.attackSpeed) data.attackTime = 20/data.attackSpeed
 if(data.stoneSound){
 data.digSound = stoneDigSound
@@ -11475,6 +11518,19 @@ if(survival){
 invItems[i].amount--
 if(invItems[i].amount <= 0) invItems[i] = 0
 }
+return true
+}
+}
+return false
+}
+function hasItem(id){
+for(let i=0; i<inventory.hotbar.length; i++){
+if(inventory.hotbar[i] && inventory.hotbar[i].id === id){
+return true
+}
+}
+for(let i=0; i<invLength; i++){
+if(invItems[i] && invItems[i].id === id){
 return true
 }
 }
@@ -11830,6 +11886,7 @@ const crafts = {
 "redstoneLamp,yellowDye":{name:"yellowRedstoneLamp",shapeless:true},
 "redstoneLamp,greenDye":{name:"greenRedstoneLamp",shapeless:true},
 "redstoneLamp,blueDye":{name:"blueRedstoneLamp",shapeless:true},
+"goldNugget,goldNugget,goldNugget,goldNugget,melonSlice,goldNugget,goldNugget,goldNugget,goldNugget":{name:"glisteringMelonSlice"}
 }
 //replace anything in crafts starting with _
 /*var craftTypes = {
@@ -13389,7 +13446,33 @@ window.url.value = w.thumbnail
 },
 marketplace: {
 enter: [window.marketplace],
-exit: [window.marketplace]
+exit: [window.marketplace],
+onenter: initMarketplace
+},
+"marketplace info":{
+enter:[marketplaceInfo],
+exit:[marketplaceInfo],
+onenter:() => {
+var map = marketplace[selectedWorld]
+marketplaceInfo.innerHTML = ""
+if(!map) return
+if(map.thumbnail) marketplaceInfo.innerHTML += "<img class='thumbnail' src='"+map.thumbnail+"'>"
+marketplaceInfo.innerHTML += "<h1>"+map.name+"</h1>"
+if(map.user) marketplaceInfo.innerHTML += "By "+map.user+"<br>"
+if(map.category) marketplaceInfo.innerHTML += "Category: "+map.category+"<br>"
+if (map.created){
+let str = (new Date(map.created).toLocaleDateString(undefined, {
+year: "numeric",
+month: "short",
+day: "numeric",
+hour: "numeric",
+minute: "2-digit"
+}))
+marketplaceInfo.innerHTML += str + "<br>"
+}
+marketplaceInfo.innerHTML += map.bytes + " bytes<br>"
+if(map.description) marketplaceInfo.innerHTML += map.description
+}
 },
 play: {
 enter: [window.messageHolder],
@@ -13889,6 +13972,21 @@ else Messages.add("Game mode doesn't exsist: "+m)
 }
 },
 {
+name:"spectatePlayer",
+names:["sp"],
+args:["username"],
+argValues:{username:"type:player"},
+info:"Spectate a player.",
+func: split => {
+if(hasPlayer(split[1])){
+var player = getPlayerByUsername(split[1])
+p.spectator = p.flying = true
+survival = false
+p.spectating = player
+}else Messages.add("Player doesn't exsist: "+split[1])
+}
+},
+{
 name:"tpPlayer",
 args: ["to_who"],
 argValues:{to_who:"type:player"},
@@ -14334,6 +14432,7 @@ for(var j=0; j<invItems[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,
 invItems[i].id = 0
 }
 }
+holding = 0
 if(p.totalXP > 0) world.addEntity(new ExperienceOrb(p.x,p.y,p.z,p.totalXP),false,p.dimension)
 }
 lastDeathTime = performance.now()
@@ -14464,7 +14563,7 @@ shift,
 ctrl,
 alt,
 get pressed() {
-return Boolean(Key[this.key]
+return Boolean((Key[this.key] || onscreenControls[this.name])
 && (!this.shift || Key.ShiftLeft || Key.ShiftRight)
 && (!this.ctrl || Key.ControlLeft || Key.ControlRight)
 && (!this.alt || Key.AltLeft || Key.AltRight))
@@ -18020,7 +18119,7 @@ world.setPower(x,y,z,16,false,dimension)
 world.spreadPower(x,y,z,16,dimension)
 world.setBlockPower(ax,ay,az,"strong",dir,dimension)
 playSound("click",0,posSound(x,y,z),0.6)
-setTimeout(function(){
+world.setTimeout(function(){
 world.setBlock(x,y,z,target, false,false,false,false,dimension)
 world.setPower(x,y,z,0,false,dimension)
 world.unspreadPower(x,y,z,16,false,dimension)
@@ -18046,7 +18145,7 @@ var me = this
 var i = setInterval(function(){
 if(pressurePlateHasPressure(x,y,z,dimension)) return
 clearInterval(i)
-setTimeout(function(){
+world.setTimeout(function(){
 world.setBlock(x,y,z,me.id, false,false,false,false,dimension)
 world.setPower(x,y,z,0,false,dimension)
 world.unspreadPower(x,y,z,16,false,dimension)
@@ -18152,7 +18251,7 @@ world.setBlockPower(tx,ty,tz,null,side,dimension)
 }
 }
 if(isOn !== shouldBeOn){
-setTimeout(function(){
+world.setTimeout(function(){
 world.setBlock(x,y,z,target,false,false,false,false,dimension)
 var tblock = world.getBlock(tx,ty,tz,dimension)
 if(shouldBeOn){
@@ -19139,7 +19238,8 @@ block = blockData[blockIds[block.icon]]
 }
 if(block.iconTexture){
 prevTexture = block.textures
-block.textures = new Array(6).fill(block.iconTexture)
+var t = block.iconTexture
+block.textures = new Array(6).fill(Array.isArray(t) ? t[0] : t)
 }
 if(block.flatIcon){
 v = _2dIconVerts
@@ -19169,6 +19269,28 @@ blockIcons[i | TORCH] = buffer
 blockIcons.lengths[i | TORCH] = 6
 blockIcons[i | PANE] = buffer
 blockIcons.lengths[i | PANE] = 6
+var t = block.iconTexture
+if(Array.isArray(t)){
+for(let k = 1; k<t.length; k++){
+data = []
+for (let j = 3; j >= 0; j--) {
+let tex = textureCoords[textureMap[t[k]]]
+let tx = tex[0]
+let ty = tex[1]
+data.push(-v[j * 5 + 0] * scale)
+data.push(v[j * 5 + 1] * scale)
+data.push(0.1666666)
+data.push(tx + v[j * 5 + 2] / 16)
+data.push(ty + v[j * 5 + 3] / 16)
+data.push(1)
+}
+buffer = gl.createBuffer()
+gl.bindBuffer(gl.ARRAY_BUFFER, buffer)
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW)
+blockIcons[i+"_"+k] = buffer
+blockIcons.lengths[i+"_"+k] = 6
+}
+}
 }else if(block.carpet){
 v = carpetIconVerts
 for (let j = 11; j >= 0; j--) {
@@ -19737,7 +19859,6 @@ let x = (this.x - this.previousX) * diff + this.previousX
 let y = (this.y - this.previousY) * diff + this.previousY
 let z = (this.z - this.previousZ) * diff + this.previousZ
 this.transformation.copyMatrix(defaultTransformation)
-//this.transformation.wobble(performance.now(),0.1)
 this.transformation.rotZ(this.rz)
 this.transformation.rotX(this.rx)
 this.transformation.rotY(this.ry)
@@ -19955,14 +20076,14 @@ camera.transform()
 uniformMatrix("view3d", program3D, "uView", false, camera.getMatrix())
 } else {
 copyArr(defaultModelView, modelView)
-rotX(modelView, rx)
-rotY(modelView, ry)
-trans(modelView, -x, -y, -z)
 if(sy){
 scale(modelView,sx,sy,1)
 }else{
 scale(modelView, sx,sx,1)
 }
+rotX(modelView, rx)
+rotY(modelView, ry)
+trans(modelView, -x, -y, -z)
 matMult()
 transpose(matrix)
 uniformMatrix("view3d", program3D, "uView", false, matrix)
@@ -20152,7 +20273,7 @@ entPlayerCollided = false
 var dimension = p.dimension
 for(var i=0; i<world.entities.length; i++){
 var ent = world.entities[i]
-if(ent.dimension !== dimension || ent.noHitbox) continue
+if(ent.dimension !== dimension || ent.noHitbox || ent.hidden) continue
 let c = entityRayTrace(ent.x,ent.y,ent.z,ent.width,ent.height,ent.depth)
 if(c[0] < entHitbox.closest){
 entHitbox.closest = c[0]
@@ -20163,7 +20284,7 @@ entHitbox.ent = ent
 if(multiplayer){
 for(var i in players){
 var ent = players[i]
-if(ent.dimension !== dimension) continue
+if(ent.dimension !== dimension || ent.hidden) continue
 let c = entityRayTrace(ent.x,ent.y,ent.z,ent.width,ent.height,ent.depth)
 if(c[0] < entHitbox.closest){
 entHitbox.closest = c[0]
@@ -20702,7 +20823,7 @@ if(fall > 0.5 && block){
 blockParticles(block, p.x,p.y-p.bottomH,p.z,10, "player",world, p.dimension)
 blockSound(block, "step", p.x,p.y,p.z, 1)
 }
-if(controlMap.jump.pressed || onscreenControls.jump) {
+if(controlMap.jump.pressed) {
 p.velocity.y = p.jumpSpeed
 p.onGround = false
 if(survival){
@@ -20748,6 +20869,7 @@ p3.punchEffect = p.punchEffect
 p3.sleeping = screen === "sleep"
 p3.sitting = p.sitting
 p3.swimming = p.swimming
+p3.pulling = p.pulling
 p3.hidden = screen === "dead" || p.spectator
 updateTextures()
 let prevX
@@ -20758,7 +20880,8 @@ let prevRotY
 let prevPreviousX
 let prevPreviousY
 let prevPreviousZ
-if(!p.spectator){
+let canMoveCamera = !p.spectator || p.spectating && p.spectating.type === "Player"
+if(canMoveCamera){
 prevX = p.x
 prevY = p.y
 prevZ = p.z
@@ -20807,14 +20930,17 @@ p.previousY += node.y*intensity
 p.previousZ += node.z*intensity
 }
 if(p.swimming){
-getRotation(0,p.ry)
-p.x += node.x*0.5
-p.z += node.z*0.5
-p.previousX += node.x*0.5
-p.previousZ += node.z*0.5
-}
+var d = p.direction
+p.x -= d.x*0.25
+p.y -= d.y*0.25
+p.z -= d.z*0.25
+p.previousX -= d.x*0.25
+p.previousY -= d.y*0.25
+p.previousZ -= d.z*0.25
+}else{
 p.y -= 0.25
 p.previousY -= 0.25
+}
 getRotation(p.rx+Math.PI2,p.ry)
 p.x += node.x*0.25
 p.y += node.y*0.25
@@ -20848,7 +20974,7 @@ blockHereEntity.y = round(p.y)
 blockHereEntity.z = round(p.z)
 }
 world.render()
-if(!p.spectator){
+if(canMoveCamera){
 p.x = prevX
 p.y = prevY
 p.z = prevZ
@@ -20919,6 +21045,28 @@ p.character.render()
 }
 }
 let updtPlayer = function(){
+if(p.spectator && p.spectating){
+var s = p.spectating
+p.x = s.x
+p.y = s.y
+p.z = s.z
+p.dimension = s.dimension
+switch(s.type){
+case "Player":
+p.rx = -s.headPitch
+p.ry = -s.headYaw
+p.walking = s.walking
+p.sprinting = s.sprinting
+p.sneaking = s.sneaking
+p.eating = s.eating
+p.swimming = s.swimming
+break
+default:
+p.rx = -s.pitch
+p.ry = -s.yaw
+}
+harmEffect = s.harmEffect || 0
+}
 if(p.ry - p.bodyRot > Math.PI) p.bodyRot += Math.PId //prevent weird thing happening when rotation was 0 but is now 360
 if(p.ry - p.bodyRot < -Math.PI) p.bodyRot -= Math.PId
 if(p.ry - p.bodyRot > Math.PI4) p.bodyRot = p.ry - Math.PI4//if rotation difference is too much rotate body
@@ -20946,6 +21094,7 @@ p.character.eating = p.eating
 p.character.sleeping = p3.sleeping
 p.character.sitting = p.sitting
 p.character.swimming = p.swimming
+p.character.pulling = p.pulling
 p.character.hidden = p3.hidden
 p.character.update()
 }
@@ -20964,13 +21113,13 @@ let controls = function() {
 move.x = 0
 move.z = 0
 if(p.sitting) return
-if(controlMap.forward.pressed || onscreenControls.forward) move.z += p.speed
-if(controlMap.backward.pressed || onscreenControls.backward) move.z -= p.speed
-if(controlMap.left.pressed || onscreenControls.left) move.x += p.speed
-if(controlMap.right.pressed || onscreenControls.right) move.x -= p.speed
+if(controlMap.forward.pressed) move.z += p.speed
+if(controlMap.backward.pressed) move.z -= p.speed
+if(controlMap.left.pressed) move.x += p.speed
+if(controlMap.right.pressed) move.x -= p.speed
 if (p.flying) {
-if(controlMap.jump.pressed || onscreenControls.jump) p.velocity.y += 0.09
-if(controlMap.sneak.pressed || onscreenControls.sneak) p.velocity.y -= 0.09
+if(controlMap.jump.pressed) p.velocity.y += 0.09
+if(controlMap.sneak.pressed) p.velocity.y -= 0.09
 }
 if(Key.arrowleft) p.ry -= 0.1
 if(Key.arrowright) p.ry += 0.1
@@ -21010,7 +21159,7 @@ friction *= speedFactor
 if(p.swimming){
 let d = p.direction
 p.velocity.x += (d.x * move.z) * friction
-p.velocity.y += (d.y * move.z) * friction
+if(inWater === 1 || d.y < 0) p.velocity.y += (d.y * move.z) * friction
 p.velocity.z += (d.z * move.z) * friction
 }else{
 p.velocity.x += (co * move.x - si * move.z) * friction
@@ -21751,7 +21900,7 @@ if(instant){
 world.setBlock(x,y,z, 0, false,false,false,false,dimension)
 world.addEntity(new BlockEntity(b, x,y,z, solid),false,dimension)
 }else{
-setTimeout(() => {
+world.setTimeout(() => {
 if(world.getBlock(x,y-1,z,dimension)) return
 world.setBlock(x,y,z, 0, false,false,false,false,dimension)
 world.addEntity(new BlockEntity(b, x,y,z, solid),false,dimension)
@@ -21762,7 +21911,7 @@ return true
 function needsSupportingBlocks(x,y,z, b,world,dimension){ // if block under is gone, dissapear
 var under = world.getBlock(x,y-1,z,dimension)
 if(!under || !blockData[under].solid){
-setTimeout(() => {
+world.setTimeout(() => {
 var under = world.getBlock(x,y-1,z,dimension)
 if(under && blockData[under].solid) return
 world.setBlock(x,y,z, 0,false,false,false,false,dimension)
@@ -26145,11 +26294,12 @@ var collided = entCollided(this)
 if(this.hasCollided){
 if(collidedWithMe && newInvItem(blockIds.arrow)) this.canDespawn = true
 }else{
+var d = dist3(this.velx,this.vely,this.velz,0,0,0)*4
 if(collided && collided !== this){
-if(collided.onhit) collided.onhit(1)
+if(collided.onhit) collided.onhit(d)
 this.canDespawn = true
 }else if(collidedWithMe && survival){
-damage(1, username+" got killed by an arrow.")
+damage(d, username+" got killed by an arrow.")
 this.canDespawn = true
 }
 }
@@ -26641,10 +26791,11 @@ glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
 }
 //character is seen in 3rd person mode
-class Character extends Entity{
+class Player extends Entity{
 constructor(blockID){
 super(0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 1, null, null, 0, Infinity, "this isn't really a VAO... but it will be overwritten")
 var v = this.generateVAO(shapes.playerBody, 0,0)
+this.type = "Player"
 this.faces = v.size
 this.vao = v.vao
 var pix = 1/16
@@ -26658,6 +26809,7 @@ this.eating = false
 this.sleeping = false
 this.sitting = false
 this.swimming = false
+this.pulling = false
 this.prevSwimming = false
 this.swimStart = 0
 var part = this.generateVAO(shapes.playerHead,0,0)
@@ -26827,14 +26979,16 @@ this.parts.leftLeg.rx = this.parts.rightLeg.rx = -rot
 this.offsetY = this.defaultOffsetY
 this.parts.leftLeg.rx = this.parts.rightLeg.rx = 0
 if(now - this.swimStart < 250){
-this.pitch = lerp((now-this.swimStart)/250,0,Math.PI2)
-}else this.pitch = Math.PI2
+this.pitch = lerp((now-this.swimStart)/250,0,Math.PI2+this.headPitch)
+}else{
+this.pitch = Math.PI2 + this.headPitch
+}
 }else{
 this.offsetY = this.defaultOffsetY
 this.pitch = 0
 this.parts.leftLeg.rx = this.parts.rightLeg.rx = 0
 if(now - this.swimStart < 500){
-this.pitch = lerp((now-this.swimStart)/500,Math.PI2,0)
+this.pitch = lerp((now-this.swimStart)/500,Math.PI2+this.headPitch,0)
 }
 }
 //head shouldn't be smooth because if previous rotation was 360 and now it is 0, weird things will happen
@@ -26857,6 +27011,13 @@ if(blockData[this.holding].tool){//part.size,part.vao,pix*-6, 0, pix*8, 0.25,0.2
 part.x = 0
 part.y = pix*-12
 part.z = pix*6
+part.w = part.h = part.d = 1
+part.rx = Math.PI / 1.25
+part.ry = Math.PI * -0.5
+}else if(blockData[this.holding].name === "bow"){
+part.x = 0
+part.y = pix*-12
+part.z = pix*0
 part.w = part.h = part.d = 1
 part.rx = Math.PI / 1.25
 part.ry = Math.PI * -0.5
@@ -26925,9 +27086,15 @@ this.parts.rightArm.rx -= punchEffect/6
 this.parts.rightArm.ry2 = sin(punchEffect*Math.PI/10)
 this.offsetry = this.parts.rightArm.ry2 / 3
 }else this.parts.rightArm.ry2 = 0
+this.parts.leftArm.ry2 = 0
 if(this.eating){
 this.parts.rightArm.rx -= Math.PI2 + (sin(((now - this.spawn) / 125) * Math.PI) / 16) - 0.5
 this.parts.rightArm.ry2 = Math.PI4
+}
+if(this.pulling){
+this.parts.leftArm.rx = -Math.PI2
+this.parts.leftArm.ry2 = -Math.PI4
+this.parts.rightArm.rx = -Math.PI2
 }
 if(this.capeImg){
 var target
@@ -27011,8 +27178,9 @@ let diff = (performance.now() - this.lastUpdate) / tickTime
 if (diff > 1) diff = 1
 const offsetY = this.offsetY
 let renderx = (this.x - this.previousX) * diff + this.previousX
-let rendery = ((this.y - this.previousY) * diff + this.previousY) + offsetY
+let rendery = (this.y - this.previousY) * diff + this.previousY
 let renderz = (this.z - this.previousZ) * diff + this.previousZ
+if(!this.swimming) rendery += offsetY
 var offsetry = lerp(diff, this.pOffsetry, this.offsetry)
 //set texture to skin
 gl.activeTexture(gl.TEXTURE7)
@@ -27026,6 +27194,7 @@ modelMatrix.rotZ(this.dieRotate)
 modelMatrix.translate(0,this.height/2,0)
 modelMatrix.rotY(this.yaw + offsetry)
 modelMatrix.rotX(this.pitch)
+if(this.swimming) modelMatrix.translate(0, offsetY, 0)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
 const projectionMatrix = [proj[0], 0, 0, 0, 0, proj[1], 0, 0, 0, 0, proj[2], proj[3], 0, 0, proj[4], 0]
@@ -27083,6 +27252,7 @@ modelMatrix.rotZ(this.dieRotate)
 modelMatrix.translate(0,this.height/2,0)
 modelMatrix.rotY(this.yaw)
 modelMatrix.rotX(this.pitch)
+if(this.swimming) modelMatrix.translate(0, this.offsetY, 0)
 if(part.name === "holding"){
 var arm = this.parts.rightArm
 modelMatrix.translate(arm.x, arm.y, arm.z)
@@ -27117,7 +27287,7 @@ gl.uniform1i(glCache.isTextureAtlasEntity,0)
 }
 }
 }
-window.Player = Character
+window.Player = Player
 class Mob extends Entity{
 constructor(){
 super(...arguments)
@@ -28758,6 +28928,7 @@ thisplayer.eating = pos.eating
 thisplayer.sleeping = pos.sleeping
 thisplayer.sitting = pos.sitting
 thisplayer.swimming = pos.swimming
+thisplayer.pulling = pos.pulling
 thisplayer.hidden = pos.hidden
 thisplayer.afk = data.afk
 if(data.inv) playersInv[data.USER] = data.inv
@@ -29013,6 +29184,7 @@ this.generateQueue = []
 this.lightingQueue = []
 this.loadQueue = []
 this.meshQueue = []
+this.timeoutQueue = []
 this.loadFrom = []
 this.netherLoadFrom = []
 this.endLoadFrom = []
@@ -29653,7 +29825,7 @@ getEntPos(ent){
 return {x:ent.x, y:ent.y, z:ent.z, yaw:ent.yaw, pitch:ent.pitch, block:ent.block, velx:ent.velx, vely:ent.vely, velz:ent.velz, amount:ent.amount, solidOnGround:ent.solidOnGround,harmEffect:ent.harmEffect, health:ent.health, from:ent.from, spawn:ent.spawn, value:ent.value, burning:ent.burning, durability:ent.durability, sx:ent.sx,sy:ent.sy,sz:ent.sz,mx:ent.mx,my:ent.my,mz:ent.mz,despawns:ent.despawns,solidWhenDone:ent.solidWhenDone,text:ent.text,size:ent.size,color:ent.color,background:ent.background,name:ent.name}
 }
 addEntity(ent, remote, dimension){
-if(!ent.id)ent.id = Date.now()
+if(!ent.id) ent.id = generateID()
 if(dimension || dimension === "") ent.dimension = dimension
 if(multiplayer && !remote && !ent.remote){
 //host controls entities
@@ -29977,6 +30149,10 @@ if(block && blockData[block].onpowerupdate){
 blockData[block].onpowerupdate(x,y,z,sx,sy,sz, blockPowerChanged,dimension)
 }
 }
+setTimeout(func,time){
+func.time = performance.now() + time
+this.timeoutQueue.push(func)
+}
 tick() {
 let tickStart = performance.now()
 let maxChunkX = (p.x >> 4) + settings.renderDistance
@@ -30030,6 +30206,9 @@ for(let i in players){
 players[i].update()
 }
 }
+}
+for(let i = this.timeoutQueue.length-1; i>=0; i--){
+if(tickStart - this.timeoutQueue[i].time >= 0) this.timeoutQueue.splice(i,1)[0]()
 }
 do {
 let doneWork = false
@@ -30171,13 +30350,17 @@ gl.useProgram(programEntity)
 gl.disable(gl.CULL_FACE);
 for (let i = this.entities.length - 1; i >= 0; i--) {
 const entity = this.entities[i]
+if(entity === p.spectating) gl.enable(gl.CULL_FACE)
 if(entity.dimension === p.dimension) entity.render()
+if(entity === p.spectating) gl.disable(gl.CULL_FACE)
 }
 if(multiplayer){
 for(let i in players){
 let player = players[i]
 if(player.dimension === p.dimension){
+if(player === p.spectating) gl.enable(gl.CULL_FACE)
 player.render()
+if(player === p.spectating) gl.disable(gl.CULL_FACE)
 if(player.crack > -1 && player.survival){
 let pos = player.crackPos
 crack.entity.x = pos[0]
@@ -31064,7 +31247,7 @@ mouseup(){
 if (this.disabled() || !this.scenes.includes(screen)) {
 return
 }
-if(this.pressed){
+if(this.pressed && this.mouseIsOver()){
 this.pressed = false
 if(this.mouseupCallback) this.mouseupCallback()
 return true
@@ -31229,14 +31412,15 @@ changeScene("loadsave menu")
 })
 Button.add(mid, height / 2 + 50, w2, 40, "Back", "editworld", r => changeScene(previousScreen))
 // Multiplayer buttons
-Button.add(mid + 3 * x4, height - 30, w4, 40, "Cancel", "multiplayer menu", r => changeScene("main menu"))
-Button.add(mid - x2, height - 75, w2, 40, "Play Selected World", "multiplayer menu", async() => {
+Button.add(mid - x2, height - 75, w2, 40, "Join Server", "multiplayer menu", async() => {
 changeScene("multiplayer connecting")
 initMultiplayer(servers[selectedWorld].id)
 }, () => !servers[selectedWorld])
 Button.add(mid + x2, height - 75, w2, 40, "More information", "multiplayer menu", () => {
 window.open("https://"+selectedWorld.replace("external:",""), "_blank")
 }, () => !(typeof selectedWorld === "string" && selectedWorld.startsWith("external:")))
+Button.add(mid - 3 * x4, height - 30, w4, 40, "Refresh", "multiplayer menu", initServersMenu)
+Button.add(mid + 3 * x4, height - 30, w4, 40, "Cancel", "multiplayer menu", r => changeScene("main menu"))
 //multiplayer connecting buttons
 Button.add(mid, height / 2 + 40, w2, 40, "Cancel", "multiplayer connecting", r => {multiplayer.close();changeScene("multiplayer lost")})
 //multiplayer lost buttons
@@ -31352,7 +31536,9 @@ Button.add(width / 2, height-30, width/2.25, 40, "Leave Bed", "sleep", play)
 Button.add(60, 30, 80, 30, "Back", "options help", r => changeScene(previousScreen))
 // Marketplace buttons
 Button.add(60, 40, 80, 30, "Back", "marketplace", r => changeScene("main menu"))
-Button.add(mid - x2, height - 75, w2, 40, "Download", "marketplace", saveFromMarketplace, () => !marketplace[selectedWorld])
+Button.add(mid - x2, height - 75, w2, 40, "Download", ["marketplace", "marketplace info"], saveFromMarketplace, () => !marketplace[selectedWorld])
+Button.add(mid + x2, height - 75, w2, 40, "Description", "marketplace", r => changeScene("marketplace info"), () => !marketplace[selectedWorld])
+Button.add(60, 40, 80, 30, "Back", "marketplace info", r => changeScene("marketplace"))
 // Comingsoon menu buttons
 Button.add(width / 2, 395, width / 3, 40, "Back", "comingsoon menu", r => changeScene(previousScreen))
 // Options Sliders & Buttons
@@ -31802,9 +31988,13 @@ scale = obj.animation
 let semiTrans
 if(blockData[id].semiTrans) semiTrans = true
 initModelView(null, X, Y, 0, 0, 0, scale)
-let buffer = blockIcons[id]
-let length = blockIcons.lengths[id]
-if(!blockIcons[id]){
+let icon = id
+if(obj && obj.icon){
+icon = obj.icon
+}
+let buffer = blockIcons[icon]
+let length = blockIcons.lengths[icon]
+if(!blockIcons[icon]){
 buffer = blockIconError
 length = blockIconError.length
 }
@@ -33471,6 +33661,13 @@ break
 mouseDown = false
 Button.mouseup()
 Slider.release()
+if(screen === "play"){
+if(blockData[holding] && blockData[holding].onrelease){
+var pos = hitBox.pos, x = pos && pos[0], y = pos && pos[1], z = pos && pos[2]
+if(survival && blockData[holding].minusOnUse){inventory.hotbar[inventory.hotbarSlot].amount --; updateHUD = true}
+if(!blockData[holding].onrelease(x,y,z, p.dimension, inventory.hotbar[inventory.hotbarSlot])){p.lastPlace = Date.now(); return}
+}
+}
 draggingInvBar = false
 if(screen === "inventory" || screen === "crafting" || screen === "furnace" || screen === "chest" || screen === "anvil") releaseInv()
 }
@@ -33542,6 +33739,9 @@ if (k === controlMap.spectator.key) {
 p.spectator = !p.spectator
 p.flying = true
 p.onGround = false
+if(p.spectator){
+p.spectating = entHitbox.ent
+}else p.spectating = null
 if(survival){
 p.spectator = false
 p.flying = false
@@ -34244,7 +34444,7 @@ gl.enableVertexAttribArray(glCache.aShadow)
 gl.enableVertexAttribArray(glCache.aSkylight)
 gl.enableVertexAttribArray(glCache.aBlocklight)/*/
 gl.useProgram(program3D)
-//FOV(90)
+FOV(90)
 initModelView(null, 0, 0, 0, 0, mainBGRot, 1,1)
 gl.disableVertexAttribArray(glCache.aShadow)
 gl.disableVertexAttribArray(glCache.aSkylight)
@@ -34385,6 +34585,7 @@ p.sneaking = false
 p.spectator = false
 p.sitting = false
 p.swimming = false
+p.spectating = null
 p.health = 20
 p.oxygen = 20
 p.food = 20
@@ -34395,7 +34596,7 @@ p.foodJitter = 0
 p.eatStart = 0
 p.eating = false
 p.lastY = 0 //y the last time it touched the ground
-p.character = new Character(1)
+p.character = new Player(1)
 p.thirdPerson = false
 p.spyglassTimer = 0
 p.spyglassStart = 0
@@ -34633,6 +34834,9 @@ survival = false
 }
 let marketplace = {}; win.marketplaceData = null
 async function initMarketplace(){
+selectedWorld = null
+marketplace = {}
+window.marketplace.innerHTML = ""
 marketplaceData = await fetch("maps.json").then(r => r.json())
 await fetch("https://minekhan.repl.co/server/maps").then(r => r.json()).then(data => {
 for(var m in data){
@@ -34641,15 +34845,13 @@ v.fetchUrl = "https://minekhan.repl.co/server/map/"+v.name
 marketplaceData.push(v)
 }
 }).catch(() => ({}))
-marketplace = {}
-window.marketplace.innerHTML = ""
 const deselect = () => {
 let elem = document.getElementsByClassName("selected")
 if (elem && elem[0]) {
 elem[0].classList.remove("selected")
 }
 }
-function addWorld(name, version, size, id, by, edited) {
+function addWorld(name, version, size, id, by, edited, thumbnail) {
 let div = doc.createElement("div")
 div.className = "world"
 div.onclick = e => {
@@ -34659,7 +34861,8 @@ selectedWorld = id
 }
 let br = "<br>"
 div.id = id
-div.innerHTML = "<strong>" + Messages.format(name) + "</strong>" + br
+if(thumbnail) div.innerHTML += "<img class='thumbnail' src='"+thumbnail+"'>"
+div.innerHTML += "<strong>" + Messages.format(name) + "</strong>" + br
 if (edited){
 let str = (new Date(edited).toLocaleDateString(undefined, {
 year: "numeric",
@@ -34684,7 +34887,7 @@ let tempWorld = new World()
 marketplaceData.forEach((data,i) => {
 let id = i
 if(data.fetchUrl){
-addWorld(data.name, "", data.bytes, id, data.user, data.created)
+addWorld(data.name, "", data.bytes, id, data.user, data.created, data.thumbnail)
 marketplace[id] = data
 }else{
 let loadString, mod
@@ -34700,6 +34903,7 @@ id: id,
 name: tempWorld.name,
 version: tempWorld.version,
 mod: mod,
+bytes: loadString.length
 }
 }
 })
@@ -35568,7 +35772,7 @@ function createNewWorld(){
 playersInv = {}
 world = new World()
 p.dimension = ""
-world.id = Date.now()
+world.id = generateID()
 let name = boxCenterTop.value || "World"
 let number = ""
 while(true) {
@@ -35669,7 +35873,7 @@ Object.assign(worldSettings, defaultWorldSettings)
 if (code) {
 try {
 world.loadSave(code)
-world.id = world.id || Date.now()
+world.id = world.id || generateID()
 }
 catch(e) {
 alert("Unable to load save. Error: "+e)
@@ -35914,7 +36118,6 @@ Button.draw()
 Slider.draw()
 p.FOV(settings.fov)
 initWorldsMenu()
-initMarketplace()
 initButtons()
 initAudioCtx()
 updateControls()
@@ -36211,6 +36414,22 @@ item.dropStart = performance.now()
 }else if(item.dropStart) delete item.dropStart
 }
 }
+if(tick) p.pulling = false
+if(tick && controlMap.place.pressed){
+var item = inventory.hotbar[inventory.hotbarSlot]
+if(item && item.id && blockData[item.id].name === "bow" && hasItem(blockIds.arrow)){
+p.pulling = true
+var pull = item.pulling || 0
+var start = item.pullStart || 0
+if(pull < 3 && now - start > 500){
+item.pullStart = now
+pull++
+item.pulling = pull
+item.icon = item.id+"_"+pull
+updateHUD = true
+}
+}
+}
 if((now - attackCooldownStart) / 1000 * 20 > attackCooldownTime){
 if(attackCooldown !== 0) updateHUD = true
 attackCooldown = 0
@@ -36372,7 +36591,7 @@ if(!survival) p.burnTimer = 0
 }
 blockHere = world.getBlock(p2.x, p2.y, p2.z, p.dimension)
 inWater = 0
-if(blockHere === blockIds.Water) inWater = 1
+if(blockHere && blockData[blockHere].name === "Water") inWater = 1
 if(blockHere === blockIds.Lava) inWater = 2
 var blockAtFeet = world.getBlock(p2.x, round(p.y-p.bottomH), p2.z, p.dimension)
 if(!p.flying && ((blockHere && blockData[blockHere].ladder) || (blockAtFeet && blockData[blockAtFeet].ladder))){
@@ -36385,12 +36604,12 @@ p.velocity.y *= 0.8
 if(inWater && p.sprinting && !p.swimming && !p.flying){
 p.swimming = true
 p.bottomH = 0.625
-}else if((!inWater || !p.walking) && p.swimming){
+}else if((!liquid || !p.walking) && p.swimming){
 p.swimming = false
 p.bottomH = 1.62
 }
 if(survival){
-if(liquid && blockHere === blockIds.Water){
+if(liquid && inWater === 1){
 if(p.oxygen > 0){
 var time = floor(p.oxygen / 2) * 2 === p.oxygen ? 1000 : 125
 if(now - lastLoseOxygen > time){
@@ -36918,6 +37137,7 @@ textSize(18)
 fill(255)
 text("Marketplace", width / 2, 20)
 }
+drawScreens["marketplace info"] = drawScreens.marketplace
 drawScreens.downloading = () => {
 dirt()
 ctx.textAlign = 'center'
