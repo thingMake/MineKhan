@@ -4720,7 +4720,7 @@ wet:true,
 solid:false,
 shadow: false, //to hide faces
 semiTrans: true,
-cullFace:"sameID",
+cullFace:"never",
 blastResistance:100,
 hidden:true,
 getLevel:function(block){
@@ -4777,6 +4777,10 @@ return b && blockData[b].id === this.id
 isThis:function(b){
 return blockData[b].id === this.id
 },
+isSourceAt:function(x,y,z,d){
+var b = world.getBlock(x,y,z,d)
+return b === this.id
+},
 tryFlowTo:function(x,y,z,dimension,level){
 if(!world.getBlock(x,y,z,dimension)){
 world.setBlock(x,y,z,this.getLevelBlock(level),false,false,false,false,dimension)
@@ -4826,27 +4830,31 @@ var t = () => me.flow(x,y,z,dimension)
 t.x = x, t.y = y, t.z = z
 world.setTimeout(t, tickTime*5)
 },
+current:{
+x:0,z:0,
+ang4:Math.sqrt(0.5),
+ang8:Math.sqrt(5)
+},
+getCurrent:function(bx,by,bz,dimension,level,noNormalize){
+if(level === undefined) level = this.getLevelAt(bx,by,bz,dimension)
+var x = this.getLevelAt(bx-1,by,bz,dimension)
+var X = this.getLevelAt(bx+1,by,bz,dimension)
+var z = this.getLevelAt(bx,by,bz-1,dimension)
+var Z = this.getLevelAt(bx,by,bz+1,dimension)
+var current = this.current
+current.x = (X < level) + (x > level) - (X > level) - (x < level)
+current.z = (Z < level) + (z > level) - (Z > level) - (z < level)
+if(noNormalize) return current
+let mag = Math.sqrt(current.x * current.x + current.z * current.z)
+current.x /= mag
+current.z /= mag
+return current
+},
 getY:function(x,y,z,dimension){
 var block = world.getBlock(x,y,z,dimension)
-if(block === this.id) return /*this.isThisHere(x,y+1,z,dimension) ? (11.5/16)-0.5 : */(18/16)-0.5
-return (min(this.getLevel(block)*2,14.5)/16)-0.5
+return (min((this.getLevel(block) || (block ? 8 : 0))*2,14.5)/16)-0.5
 },
-customShape:function(x,y,z,dimension,block,face,verts,tex){
-if(block === this.id && !this.isThisHere(x,y+1,z,dimension)){
-var h = (14.5/16)-0.5, th = 14.5/256
-if(face === "bottom"){
-verts[1] = h
-verts[4] = h
-verts[7] = h
-verts[10] = h
-}else if(face === "north" || face === "south" || face === "east" || face === "west"){
-verts[1] = h
-verts[4] = h
-tex[5] = th
-tex[7] = th
-}
-return
-}
+getFace:function(x,y,z,dimension,block,face,verts,tex,texCoord){
 var level = this.getLevel(block)
 var h = (min(level*2,14.5)/16)-0.5
 var XZ = avg(this.getY(x+1,y,z+1,dimension), this.getY(x+1,y,z,dimension), this.getY(x,y,z+1,dimension), h)
@@ -4858,6 +4866,37 @@ verts[1] = xZ
 verts[4] = XZ
 verts[7] = Xz
 verts[10] = xz
+var c = this.getCurrent(x,y,z,dimension,level,true)
+if(!c.x && !c.z) return
+c.x = -c.x
+let o = 1/32
+tex[0] -= o, tex[1] -= o, tex[2] -= o, tex[3] -= o, tex[4] -= o, tex[5] -= o, tex[6] -= o, tex[7] -= o
+let x2 = tex[0], y2 = tex[1]
+tex[0] = x2 * c.z + y2 * c.x
+tex[1] = x2 * c.x - y2 * c.z
+x2 = tex[2], y2 = tex[3]
+tex[2] = x2 * c.z + y2 * c.x
+tex[3] = x2 * c.x - y2 * c.z
+x2 = tex[4], y2 = tex[5]
+tex[4] = x2 * c.z + y2 * c.x
+tex[5] = x2 * c.x - y2 * c.z
+x2 = tex[6], y2 = tex[7]
+tex[6] = x2 * c.z + y2 * c.x
+tex[7] = x2 * c.x - y2 * c.z
+var d = max(...tex)/o
+tex[0] /= d
+tex[1] /= d
+tex[2] /= d
+tex[3] /= d
+tex[4] /= d
+tex[5] /= d
+tex[6] /= d
+tex[7] /= d
+tex[0] += o, tex[1] += o, tex[2] += o, tex[3] += o, tex[4] += o, tex[5] += o, tex[6] += o, tex[7] += o
+var t = textureCoords[textureMap.waterFlow]
+texCoord[0] = t[0], texCoord[1] = t[1]
+}else if(face === "top"){
+return
 }else{
 var left,right
 switch(face){
@@ -4879,6 +4918,56 @@ verts[4] = right
 tex[1] = (1-(left+0.5))/16
 tex[3] = (1-(right+0.5))/16
 }
+},
+customShape:function(x,y,z,dimension,block,face,verts,tex,texCoord){
+if(this.isThisHere(x,y+1,z,dimension)){ //full block
+if(face === "bottom") return !this.isThisHere(x,y+1,z,dimension)
+if(face === "top") return !this.isThisHere(x,y-1,z,dimension)
+if(face === "north" && this.isThisHere(x,y,z+1,dimension) && this.isThisHere(x,y+1,z+1,dimension)) return false
+if(face === "south" && this.isThisHere(x,y,z-1,dimension) && this.isThisHere(x,y+1,z-1,dimension)) return false
+if(face === "east" && this.isThisHere(x+1,y,z,dimension) && this.isThisHere(x+1,y+1,z,dimension)) return false
+if(face === "west" && this.isThisHere(x-1,y,z,dimension) && this.isThisHere(x-1,y+1,z,dimension)) return false
+if(face === "north" && !this.isThisHere(x,y,z+1,dimension)) return
+if(face === "south" && !this.isThisHere(x,y,z-1,dimension)) return
+if(face === "east" && !this.isThisHere(x+1,y,z,dimension)) return
+if(face === "west" && !this.isThisHere(x-1,y,z,dimension)) return
+var idx = 0
+switch(face){
+case "north":
+z++
+face = "south"
+break
+case "south":
+z--
+face = "north"
+break
+case "east":
+x++
+face = "west"
+idx = 2
+break
+case "west":
+x--
+face = "east"
+idx = 2
+break
+}
+block = world.getBlock(x,y,z,dimension)
+this.getFace(x,y,z,dimension,block,face,verts,tex)
+//only show face where other block isn't showing it
+verts[7] = verts[1]
+verts[10] = verts[4]
+verts[1] = verts[4] = 0.5
+tex[5] = tex[1]
+tex[7] = tex[3]
+tex[1] = tex[3] = 0
+return
+}
+if(face === "north" && this.isThisHere(x,y,z+1,dimension)) return false
+if(face === "south" && this.isThisHere(x,y,z-1,dimension)) return false
+if(face === "east" && this.isThisHere(x+1,y,z,dimension)) return false
+if(face === "west" && this.isThisHere(x-1,y,z,dimension)) return false
+this.getFace(x,y,z,dimension,block,face,verts,tex,texCoord)
 },
 tint:{
 default:[68/255,175/255,245/255],
@@ -12807,6 +12896,7 @@ vector.z = this.z * z
 return vector
 }
 }
+win.PVector = PVector
 let fill = function(r, g, b, a) {
 if (g === undefined) {
 g = r
@@ -18697,7 +18787,6 @@ if(baseBlock.cactus) potCrossBlock.shape = shapes.cactusPot
 if(baseBlock.crop) baseBlock.shape = shapes.crop
 if(baseBlock.tallCrop)baseBlock.shape = shapes.tallCrop
 if(baseBlock.anvil) baseBlock.shape = shapes.anvil
-if(baseBlock.liquid) baseBlock.shape = shapes.liquid, slabBlock.shape = shapes.liquidSurface
 if(baseBlock._1PixLower) baseBlock.shape = shapes._1PixLower, baseBlock.transparent = true
 if(baseBlock.torch) slabBlock.shape = shapes.wallTorch
 if(baseBlock.sporeBlossom) baseBlock.shape = shapes.sporeBlossom
@@ -20914,6 +21003,14 @@ liquid = true
 if(blockData[block[3]].wet){
 wet = true
 }
+if(blockData[block[3]].name === "Water" && !p.spectator){
+var me = blockData[blockIds.Water]
+var c = me.getCurrent(x,y,z,p.dimension)
+p.velocity.x += (c.x||0)/64
+p.velocity.z += (c.z||0)/64
+var under = world.getBlock(x,y-1,z,p.dimension)
+if(me.isThis(under) && under !== me.id) p.velocity.y -= 1/64
+}
 if(!blockData[block[3]].solid && blockData[block[3]].powder){
 powder = true
 }
@@ -21076,7 +21173,7 @@ damage(takeDamage, dieMessage, false, type)
 }
 p.touchingBurnBlock = damageBlock && damageBlock.burnPlayer && true
 if(ontouch){
-ontouch(x, y, z)
+ontouch(x, y, z, p.dimension)
 }
 }
 let runGravity = function() {
@@ -23645,7 +23742,8 @@ texVerts = textureCoords[textureMap[tags[originalShapeVerts.texTag]]]
 if(block.customShape){
 verts = verts.slice()
 texShapeVerts = texShapeVerts.slice()
-block.customShape(x2,y2,z2,this.type,id,side,verts,texShapeVerts)
+texVerts = texVerts.slice()
+if(block.customShape(x2,y2,z2,this.type,id,side,verts,texShapeVerts,texVerts) === false) continue
 }
 tx = texVerts[0]
 ty = texVerts[1]
@@ -25453,6 +25551,17 @@ this.contacts.add(x, y, z, block)
 }
 if(x === round(this.x) && z === round(this.z) && blockData[block].liquid){
 this.liquid = true
+if(this.canFloat && x === round(this.x) && z === round(this.z) && y === round(this.y)){
+this.vely+=1/32
+}
+}
+if(blockData[block].name === "Water"){
+var me = blockData[blockIds.Water]
+var c = me.getCurrent(x,y,z,this.dimension)
+this.velx += (c.x||0)/64
+this.velz += (c.z||0)/64
+var under = world.getBlock(x,y-1,z,this.dimension)
+if(me.isThis(under) && under !== me.id) this.vely -= 1/64
 }
 }
 }
@@ -25676,6 +25785,7 @@ this.name = name
 //this.amount = amount || 1
 this.defaultGravityStength = -0.032
 this.noHitbox = true
+this.canFloat = true
 if(autoSetVel){
 this.velx = (Math.random()-0.5) * 0.2
 this.vely = Math.random() * 0.2
@@ -35914,6 +36024,11 @@ gain: gainNode.gain
 }
 loadSoundsObj(sounds)
 loadMusicObj(music)
+{
+//! ZzFXM (v2.0.3) | (C) Keith Clark | MIT | https://github.com/keithclark/ZzFXM
+win.zzfx=((...z)=>zzfxP(zzfxG(...z))),win.zzfxP=((...z)=>{let t=zzfxX.createBufferSource(),f=zzfxX.createBuffer(z.length,z[0].length,zzfxR);return z.map((z,t)=>f.getChannelData(t).set(z)),t.buffer=f,t.connect(zzfxX.destination),t.start(),t}),win.zzfxG=((z=1,t=.05,f=220,a=0,x=0,e=.1,n=0,h=1,M=0,r=0,R=0,i=0,o=0,s=0,u=0,c=0,d=0,l=1,b=0,m=0)=>{let P,X,g=2*Math.PI,C=M*=500*g/zzfxR**2,p=(0<u?1:-1)*g/4,w=f*=(1+2*t*Math.random()-t)*g/zzfxR,A=[],B=0,G=0,I=0,V=1,k=0,D=0,S=0;for(a=99+zzfxR*a,b*=zzfxR,x*=zzfxR,e*=zzfxR,d*=zzfxR,r*=500*g/zzfxR**3,u*=g/zzfxR,R*=g/zzfxR,i*=zzfxR,o=zzfxR*o|0,X=a+b+x+e+d|0;I<X;A[I++]=S)++D%(100*c|0)||(S=n?1<n?2<n?3<n?Math.sin((B%g)**3):Math.max(Math.min(Math.tan(B),1),-1):1-(2*B/g%2+2)%2:1-4*Math.abs(Math.round(B/g)-B/g):Math.sin(B),S=(o?1-m+m*Math.sin(2*Math.PI*I/o):1)*(0<S?1:-1)*Math.abs(S)**h*z*zzfxV*(I<a?I/a:I<a+b?1-(I-a)/b*(1-l):I<a+b+x?l:I<X-d?(X-I-d)/e*l:0),S=d?S/2+(d>I?0:(I<X-d?1:(X-I)/d)*A[I-d|0]/2):S),B+=(P=(f+=M+=r)*Math.sin(G*u-p))-P*s*(1-1e9*(Math.sin(I)+1)%2),G+=P-P*s*(1-1e9*(Math.sin(I)**2+1)%2),V&&++V>i&&(f+=R,w+=R,V=0),!o||++k%o||(f=w,M=C,V=V||1);return A}),win.zzfxV=.3,win.zzfxR=44100,win.zzfxX=audioCtx;
+win.zzfxM=(n,f,t,e=125)=>{let l,o,z,r,g,h,x,a,u,c,d,i,m,p,G,M=0,R=[],b=[],j=[],k=0,q=0,s=1,v={},w=zzfxR/e*60>>2;for(;s;k++)R=[s=a=d=m=0],t.map((e,d)=>{for(x=f[e][k]||[0,0,0],s|=!!f[e][k],G=m+(f[e][0].length-2-!a)*w,p=d==t.length-1,o=2,r=m;o<x.length+p;a=++o){for(g=x[o],u=o==x.length+p-1&&p||c!=(x[0]||0)|g|0,z=0;z<w&&a;z++>w-99&&u?i+=(i<1)/99:0)h=(1-i)*R[M++]/2||0,b[r]=(b[r]||0)-h*q+h,j[r]=(j[r++]||0)+h*q+h;g&&(i=g%1,q=x[1]||0,(g|=0)&&(R=v[[c=x[M=0]||0,g]]=v[[c,g]]||(l=[...n[c]],l[2]*=2**((g-12)/12),g>0?zzfxG(...l):[])))}m=G});return[b,j]}
+}
 }
 function playSound(name, start, volume, pitch, onend, loop, getSourceFunc, reverb){ //from https://www.html5rocks.com/en/tutorials/webaudio/intro/
 if(!settings.volume) return
