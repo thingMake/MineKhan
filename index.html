@@ -954,10 +954,13 @@ uniform sampler2D uSampler;
 uniform float uLightLevel;
 uniform float harmEffect;
 uniform vec3 tint;
+uniform bool tintGray;
 varying vec2 vTexture;
 void main(){
 vec4 color = texture2D(uSampler, vTexture);
+if(!tintGray || (color.r == color.g && color.g == color.b)){
 color.rgb *= tint;
+}
 if(harmEffect > 0.0){
 color.rgb = mix(color.rgb, vec3(255.,0.,0.), .5);
 }
@@ -1151,11 +1154,13 @@ return Math.random()*a
 }else return Math.random()
 }
 const avg = function(){
-var res = 0
+var res = 0, c = 0
 for(var i=0; i<arguments.length; i++){
+if(!arguments[i] && arguments[i] !== 0) continue
 res += arguments[i]
+c++
 }
-res /= arguments.length
+res /= c
 return res
 }
 const divideWithRemainder = function(a,b){
@@ -3294,6 +3299,10 @@ quicksand: "0g0g8ņ^YŎ×ZŒçWŎçWņ^WľpYņ^HľFZ5C3òA0ÚAŌPwĊÖxËđUJÕ�
 arrow: "0g0g9Ŋ÷WZZZ000ĪcWĆkZÞàYĞ?YĦÓWĆåZ12yyyyyywgyyyyz2QÄÓáÓÓ](wgyyyyEí12yyyyyyy2yyyyyyyiyyyyyy1Î2yyyyyyiyyyyyyy2yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
 arrowIcon: "0g0ga000þÇHZZZ?kHłÚYòJHEÝYŊ÷WĮsH;ŚZ0000000000000000000000i(00000kT(00000*>000000Äj000005K(00000Ä0000005K000000Ä0000005K000007ð000000äå000000ÿù000000900000000000000",
 glisteringMelonSlice: "0g0gg000āĸYĚhZĵÂWŅĢYĤĩWZ$HİwYZĦHļŘHŚwHĔÀYħřZZZZËÀYİĬZ000000000000000000i0000001)À00000iÒâ00000jòēÀ0000qôĝĬ0000jØąâÀ000i?ÇÉĝ000ŉ~ģæÉÀ00e+ÉÅĢâ00ejÜVÇUw00ňA@IÐŇ00eňyO=0000eŕŕŇ000000000",
+untntTop: "0g0g2ZZZ00WhhVV*ÇZZręGńvŘZZvŘGńręZZ*ÇVVhhZZ",
+untntBottom: "0g0g2ZZZ00WhhhhhhZZhhhhhhZZhhhhhhZZhhhhhhZZ",
+untnt: "0g0g4ZZZ00Wţ0WţfZ11111111111111111111VVVVíĪĔ/íŚL-íĶ$şEĪ$-VVVV11111111111111111111",
+blank: "0g0g1ZZZ",
 //pretty: "0g0g40001blc009d4hc009efw01ulak1c3300022112200033333022111122033303332112211233300033312222133300022333222233322022113330033311222112233333322112112220333302221111222033330222112112233333322112221133300333112202233322223332200033312222133300033321122112333033302211112203333300222112200033",
 //pigFace: "0g0gr000006w14172ew1hejb3s1heul881luzbw81lvx4oo1o2w1dk1qb44541qbfcoo1sj0ws81sjc3qw1sjc5bs1sjndvc1sjnfg81sjynzs1sjypko1sk9y481skl9tk1ur8we01urk6ig1urvf201urvgmw1urvi7s1us6p6g1us6qrc1ustb081x2x0xkaa669999ddddbbddaa669999ddddbbdd7766ccii99kknnnn7766ccii99kknnnn88cceeeeddddeenn88cceeeeddddeenn00qqbbbbjjjjqq0000qqbbbbjjjjqq0099ddhhppppppggdd99ddhhppppppggddcccc11ddff11llllcccc11ddff11llll999922335544oomm999922335544oommbbbbddeellffffnnbbbbddeellffffnn",
 /*
@@ -3418,7 +3427,7 @@ time:2,
 arr:(function(){var a=[]; for(var i=0; i<19; i++)a.push("tallSeagrassBottom"+i); return a})()
 },
 waterFlow:{
-time:1,
+time:0.25,
 arr:(function(){var a=[]; for(var i=0; i<128; i++)a.push("waterFlow"+i); return a})(),
 //tint:[10,30,255]
 },
@@ -4711,15 +4720,164 @@ wet:true,
 solid:false,
 shadow: false, //to hide faces
 semiTrans: true,
-cullFace:"same",
+cullFace:"sameID",
 blastResistance:100,
+hidden:true,
+getLevel:function(block){
+switch(block){
+case this.id | LAYER1:
+return 1
+case this.id | LAYER2:
+return 2
+case this.id | LAYER3:
+return 3
+case this.id | LAYER4:
+return 4
+case this.id | LAYER5:
+return 5
+case this.id | LAYER6:
+return 6
+case this.id | LAYER7:
+return 7
+case this.id | LAYER8:
+case this.id:
+return 8
+default:
+return 0
+}
+},
+getLevelBlock:function(l){
+switch(l){
+case 1:
+return this.id | LAYER1
+case 2:
+return this.id | LAYER2
+case 3:
+return this.id | LAYER3
+case 4:
+return this.id | LAYER4
+case 5:
+return this.id | LAYER5
+case 6:
+return this.id | LAYER6
+case 7:
+return this.id | LAYER7
+case 8:
+return this.id | LAYER8
+}
+},
+getLevelAt:function(x,y,z,dimension){
+var block = world.getBlock(x,y,z,dimension)
+return this.getLevel(block)
+},
+isThisHere:function(x,y,z,d){
+var b = world.getBlock(x,y,z,d)
+return b && blockData[b].id === this.id
+},
+isThis:function(b){
+return blockData[b].id === this.id
+},
+tryFlowTo:function(x,y,z,dimension,level){
+if(!world.getBlock(x,y,z,dimension)){
+world.setBlock(x,y,z,this.getLevelBlock(level),false,false,false,false,dimension)
+return true
+}
+},
+flow:function(x,y,z,dimension){
+var block = world.getBlock(x,y,z,dimension)
+if(!this.isThis(block)) return
+var source = block === this.id
+var level = this.getLevel(block)
+var down = world.getBlock(x,y-1,z,dimension)
+if(!source){
+if((world.getBlock(x,y,z+1,dimension) === this.id)+(world.getBlock(x,y,z-1,dimension) === this.id)+(world.getBlock(x+1,y,z,dimension) === this.id)+(world.getBlock(x-1,y,z,dimension) === this.id) >= 2 && (down || down === this.id)){
+return world.setBlock(x,y,z,this.id, false,false,false,false,dimension) //if two or more sources surrounding, turn into source
+}
+var levelTarget = level
+if(this.isThisHere(x,y+1,z,dimension)){
+levelTarget = 8
+}else{
+var around = max(this.getLevelAt(x,y,z+1), this.getLevelAt(x,y,z-1), this.getLevelAt(x+1,y,z), this.getLevelAt(x-1,y,z))-1
+if(around !== levelTarget) levelTarget = around
+if(levelTarget <= 0) return world.setBlock(x,y,z,0, false,false,false,false,dimension)
+}
+if(level !== levelTarget){
+level = levelTarget
+world.setBlock(x,y,z,this.getLevelBlock(level), false,false,false,false,dimension)
+}
+}
+if(!this.tryFlowTo(x,y-1,z,dimension,8) && level > 1 && !(this.isThis(down) && down !== this.id)){
+this.tryFlowTo(x,y,z+1,dimension,level-1)
+this.tryFlowTo(x,y,z-1,dimension,level-1)
+this.tryFlowTo(x+1,y,z,dimension,level-1)
+this.tryFlowTo(x-1,y,z,dimension,level-1)
+}
+},
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
-var top = world.getBlock(x,y+1,z,dimension)
-var isIt = blockData[top].name === "Water"
-if(b === blockIds.Water && !isIt){
-world.setBlock(x,y,z,blockIds.Water | SLAB,false,false,false,false,dimension)
-}else if(b === (blockIds.Water | SLAB) && isIt){
-world.setBlock(x,y,z,blockIds.Water,false,false,false,false,dimension)
+for(var i=0; i<world.timeoutQueue.length; i++){
+var t = world.timeoutQueue[i]
+if(t.x === x && t.y === y && t.z === z){
+world.timeoutQueue.splice(i,1)
+i--
+}
+}
+var me = this
+var t = () => me.flow(x,y,z,dimension)
+t.x = x, t.y = y, t.z = z
+world.setTimeout(t, tickTime*5)
+},
+getY:function(x,y,z,dimension){
+var block = world.getBlock(x,y,z,dimension)
+if(block === this.id) return /*this.isThisHere(x,y+1,z,dimension) ? (11.5/16)-0.5 : */(18/16)-0.5
+return (min(this.getLevel(block)*2,14.5)/16)-0.5
+},
+customShape:function(x,y,z,dimension,block,face,verts,tex){
+if(block === this.id && !this.isThisHere(x,y+1,z,dimension)){
+var h = (14.5/16)-0.5, th = 14.5/256
+if(face === "bottom"){
+verts[1] = h
+verts[4] = h
+verts[7] = h
+verts[10] = h
+}else if(face === "north" || face === "south" || face === "east" || face === "west"){
+verts[1] = h
+verts[4] = h
+tex[5] = th
+tex[7] = th
+}
+return
+}
+var level = this.getLevel(block)
+var h = (min(level*2,14.5)/16)-0.5
+var XZ = avg(this.getY(x+1,y,z+1,dimension), this.getY(x+1,y,z,dimension), this.getY(x,y,z+1,dimension), h)
+var Xz = avg(this.getY(x+1,y,z-1,dimension), this.getY(x+1,y,z,dimension), this.getY(x,y,z-1,dimension), h)
+var xz = avg(this.getY(x-1,y,z-1,dimension), this.getY(x-1,y,z,dimension), this.getY(x,y,z-1,dimension), h)
+var xZ = avg(this.getY(x-1,y,z+1,dimension), this.getY(x-1,y,z,dimension), this.getY(x,y,z+1,dimension), h)
+if(face === "bottom"){
+verts[1] = xZ
+verts[4] = XZ
+verts[7] = Xz
+verts[10] = xz
+}else{
+var left,right
+switch(face){
+case "north":
+left = XZ, right = xZ
+break
+case "south":
+left = xz, right = Xz
+break
+case "east":
+left = Xz, right = XZ
+break
+case "west":
+left = xZ, right = xz
+break
+}
+verts[1] = left
+verts[4] = right
+tex[1] = (1-(left+0.5))/16
+tex[3] = (1-(right+0.5))/16
 }
 },
 tint:{
@@ -4752,6 +4910,7 @@ burnPlayer:true,
 dieMessage: () => username+" tried to swim in lava.",
 shadow: false,
 blastResistance:100,
+hidden:true,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 var block = world.getBlock(x,y+1,z,dimension)
 if (block && blockData[block].name === "Water") {
@@ -5030,6 +5189,8 @@ blockData[blockIds.tnt].explode(x,y,z,null,dimension)
 blockData[blockIds.tnt].superTntExplode(x,y,z,dimension)
 }else if(block === (blockIds.tnt | STAIR)){
 blockData[blockIds.tnt].ultraTntExplode(x,y,z,dimension)
+}else if(block === blockIds.untnt){
+blockData[blockIds.untnt].explode(x,y,z,null,dimension)
 }else{
 var attached = world.getBlock(hitBox.pos[0],hitBox.pos[1],hitBox.pos[2],dimension)
 var pos = getPosition()
@@ -5897,11 +6058,11 @@ name: "bucket",
 Name:"Bucket",
 item: true,
 onuse: (x,y,z, block, replaceItem,useDurability,minusOne,dimension) => {
-if(blockData[block].name === "Water"){
+if(block === blockIds.Water){
 replaceItem(blockIds.waterBucket)
 world.setBlock(x,y,z,0,false,false,false,false,dimension)
 }
-if(blockData[block].name === "Lava"){
+if(block === blockIds.Lava){
 replaceItem(blockIds.lavaBucket)
 world.setBlock(x,y,z,0,false,false,false,false,dimension)
 }
@@ -11286,6 +11447,25 @@ name:"glisteringMelonSlice",
 Name:"Slice of Watermelon With Unedible Gold",
 item:true
 },
+{
+name:"untnt",
+Name:"UnTNT",
+textures:["untntBottom","untntTop","untnt"],
+explode:function(x,y,z,how,dimension){
+world.setBlock(x,y,z,0,false,false,false,false,dimension)
+var e = new PrimedUnTNT(x,y,z)
+world.addEntity(e,false,dimension)
+playSound("entity.tnt.fuse", 0, posSound(x,y,z))
+switch(how){
+case "explosion":
+e.timeLimit = rand(10,30)
+}
+},
+burnChance:0.6,
+onburn:function(x,y,z,dimension){
+this.explode(x,y,z,null,dimension)
+},
+},
 /*
 { name: "pigFace" },
 { 
@@ -12846,6 +13026,7 @@ doc.title = "MineKhan "+version
 let normReach = 5
 let bigReach = 40
 let reach = normReach // Max distance player can place or break blocks
+let thirdPersonReach = 4
 let defaultSky = [0,0,0] //actual default: 0.6, 0.8, 0.9
 let sky = [...defaultSky]/*[0.33, 0.54, 0.72, (originl sky)]*/ // 0 to 1 RGB color scale
 let skyBottom = [...defaultSky]
@@ -18528,7 +18709,7 @@ potCrossBlock.textures = [t[0],t[0],t[1],t[1],t[1],t[1]]
 }
 if(baseBlock.sunflower) baseBlock.shape = shapes.sunflower
 if(baseBlock.sideCross){baseBlock.shape = shapes.sideCross; slabBlock.shape = shapes.bottomCross}
-if(baseBlock.layers){
+if(baseBlock.layers || baseBlock.liquid){
 torchBlock.shape = shapes.layer1
 torchBlock.solid = true
 torchBlock.shadow = false
@@ -18819,6 +19000,7 @@ makeBlock(textures, shapes.pistonOpenSW, portalBlock, baseBlockTransparent)
 if(baseBlock.name === "tnt"){
 makeBlock(fillTextureArray(baseBlock.superTntTextures), shapes.cube, slabBlock, baseBlock, "Super TNT")
 makeBlock(fillTextureArray(baseBlock.ultraTntTextures), shapes.cube, stairBlock, baseBlock, "Ultra TNT")
+makeBlock(new Array(6).fill("blank"), shapes.cube, crossBlock, baseBlock)
 }
 if(baseBlock.name === "observer"){
 baseBlock.shape = shapes.rotate
@@ -19806,9 +19988,19 @@ this.z = 0
 this.previousX = 0
 this.previousY = 0
 this.previousZ = 0
+this.offsetX = 0
+this.offsetY = 0
+this.offsetZ = 0
+this.pOffsetX = 0
+this.pOffsetY = 0
+this.pOffsetZ = 0
+this.offsetDist = 0
 this.rx = 0; // Pitch
 this.ry = 0; // Yaw
 this.rz = 0;
+this.prx = 0
+this.pry = 0
+this.prz = 0
 this.currentFov = 0
 this.defaultFov = settings.fov
 this.targetFov = settings.fov
@@ -19858,10 +20050,13 @@ if (diff > 1) diff = 1
 let x = (this.x - this.previousX) * diff + this.previousX
 let y = (this.y - this.previousY) * diff + this.previousY
 let z = (this.z - this.previousZ) * diff + this.previousZ
+x += lerp(diff,this.pOffsetX,this.offsetX)
+y += lerp(diff,this.pOffsetY,this.offsetY)
+z += lerp(diff,this.pOffsetZ,this.offsetZ)
 this.transformation.copyMatrix(defaultTransformation)
-this.transformation.rotZ(this.rz)
-this.transformation.rotX(this.rx)
-this.transformation.rotY(this.ry)
+this.transformation.rotZ(lerp(diff,this.prz,this.rz))
+this.transformation.rotX(lerp(diff,this.prx,this.rx))
+this.transformation.rotY(lerp(diff,this.pry,this.ry))
 this.transformation.translate(-x, -y, -z)
 }
 getMatrix() {
@@ -19885,13 +20080,20 @@ matrix[14] = proj[2] * view[11] + proj[3] * view[15]
 matrix[15] = proj[4] * view[11]
 return matrix
 }
+calculateDirection(){
+let diff = (performance.now() - this.lastUpdate) / tickTime
+if (diff > 1) diff = 1
+let rx = lerp(diff,this.prx,this.rx)
+let ry = lerp(diff,this.pry,this.ry)
+this.direction.x = -sin(ry) * cos(rx)
+this.direction.y = sin(rx)
+this.direction.z = cos(ry) * cos(rx)
+}
 setDirection() {
 if (this.targetFov !== this.currentFov) {
 this.FOV()
 }
-this.direction.x = -sin(this.ry) * cos(this.rx)
-this.direction.y = sin(this.rx)
-this.direction.z = cos(this.ry) * cos(this.rx)
+this.calculateDirection()
 this.computeFrustum()
 }
 computeFrustum() {
@@ -19939,7 +20141,7 @@ y -= 0.5
 z -= 0.5
 maxY += 0.5
 let px = 0, py = 0, pz = 0, plane = null
-let cx = p.x, cy = p.y, cz = p.z
+let cx = this.x+this.offsetX, cy = this.y+this.offsetY, cz = this.z+this.offsetZ
 for (let i = 0; i < 5; i++) {
 plane = this.frustum[i]
 px = x + plane.dx
@@ -20076,14 +20278,14 @@ camera.transform()
 uniformMatrix("view3d", program3D, "uView", false, camera.getMatrix())
 } else {
 copyArr(defaultModelView, modelView)
+rotX(modelView, rx)
+rotY(modelView, ry)
+trans(modelView, -x, -y, -z)
 if(sy){
 scale(modelView,sx,sy,1)
 }else{
 scale(modelView, sx,sx,1)
 }
-rotX(modelView, rx)
-rotY(modelView, ry)
-trans(modelView, -x, -y, -z)
 matMult()
 transpose(matrix)
 uniformMatrix("view3d", program3D, "uView", false, matrix)
@@ -20124,7 +20326,7 @@ function roundBits(number) {
 return ((number * 1000000 + 0.5) | 0) / 1000000
 }
 function rayTrace(x, y, z, shape) {
-let cf, cd = 1e9; //Closest face and distance
+let cf, cd = 1e9, cix, ciy, ciz; //Closest face and distance
 let m; //Absolute distance to intersection point
 let ix, iy, iz; //Intersection coords
 let minX, minY, minZ, maxX, maxY, maxZ, min, max; //Bounds of face coordinates
@@ -20151,6 +20353,9 @@ iz = m * p.direction.z + p.z
 if (m > 0 && m < cd && ix >= x + minX && ix <= x + maxX && iz >= z + minZ && iz <= z + maxZ) {
 cd = m; //Ray crosses bottom face
 cf = top ? "top" : "bottom"
+cix = ix - p.x
+ciy = m * p.direction.y
+ciz = iz - p.z
 }
 }
 }
@@ -20174,6 +20379,9 @@ iz = m * p.direction.z + p.z
 if (m > 0 && m < cd && iy >= y + minY && iy <= y + maxY && iz >= z + minZ && iz <= z + maxZ) {
 cd = m
 cf = east ? "east" : "west"
+cix = m * p.direction.x
+ciy = iy - p.y
+ciz = iz - p.z
 }
 }
 }
@@ -20197,10 +20405,13 @@ iy = m * p.direction.y + p.y
 if (m > 0 && m < cd && ix >= x + minX && ix <= x + maxX && iy >= y + minY && iy <= y + maxY) {
 cd = m
 cf = north ? "north" : "south"
+cix = ix - p.x
+ciy = iy - p.y
+ciz = m * p.direction.z
 }
 }
 }
-return [ cd, cf ]
+return [ cd, cf, cix,ciy,ciz ]
 }
 function entityRayTrace(x,y,z,w,h,d){
 let cf, cd = 1e9; //Closest face and distance
@@ -20311,6 +20522,21 @@ crack.shape = shape
 }
 }
 }
+function runCameraRayTrace(x, y, z) {
+let block = world.getBlock(x, y, z, p.dimension)
+if (block && blockData[block].solid) {
+let shape = blockData[block].shape
+if(shape.hitbox) shape = shape.hitbox
+let rt = rayTrace(x, y, z, shape)
+if (rt[1] && rt[0] < p.offsetDist) {
+p.offsetDist = rt[0]
+p.offsetX = rt[2]
+p.offsetY = rt[3]
+p.offsetZ = rt[4]
+p.offsetFound = true
+}
+}
+}
 function lookingAt() {
 // Checks blocks in front of the player to see which one they're looking at
 hitBox.pos = null
@@ -20375,11 +20601,70 @@ runRayTrace(minX, minY, maxZ)
 }
 if (hitBox.pos) {
 if(entHitbox.ent && entHitbox.closest < hitBox.closest) hitBox.pos = null
-return; //The ray has collided; it can't possibly find a closer collision now
+break; //The ray has collided; it can't possibly find a closer collision now
 }
 minZ = maxZ
 minY = maxY
 minX = maxX
+}
+}
+function setCameraOffset(){
+if(p.spectator && !p.spectating) return
+p.pOffsetX = p.offsetX
+p.pOffsetY = p.offsetY
+p.pOffsetZ = p.offsetZ
+p.offsetX = p.offsetY = p.offsetZ = 0
+p.offsetDist = 1e9
+p.offsetFound = false
+let pd = p.direction
+let minX = p2.x
+let maxX = 0
+let minY = p2.y
+let maxY = 0
+let minZ = p2.z
+let maxZ = 0
+if(p.thirdPerson){ //Make sure the camera doesn't go through blocks
+if(p.thirdPerson === true){
+pd.x = -pd.x
+pd.y = -pd.y
+pd.z = -pd.z
+}
+p.offsetX = pd.x*thirdPersonReach, p.offsetY = pd.y*thirdPersonReach, p.offsetZ = pd.z*thirdPersonReach
+for (let i = 0; i < thirdPersonReach+1; i++) {
+if (i > thirdPersonReach) {
+i = thirdPersonReach
+}
+maxX = round(p.x + pd.x * i)
+maxY = round(p.y + pd.y * i)
+maxZ = round(p.z + pd.z * i)
+if (maxX === minX && maxY === minY && maxZ === minZ) {
+continue
+}
+if (minX !== maxX) {
+if (minY !== maxY) {
+if (minZ !== maxZ) runCameraRayTrace(maxX, maxY, maxZ)
+runCameraRayTrace(maxX, maxY, minZ)
+}
+if (minZ !== maxZ) runCameraRayTrace(maxX, minY, maxZ)
+runCameraRayTrace(maxX, minY, minZ)
+}
+if (minY !== maxY) {
+if (minZ !== maxZ) runCameraRayTrace(minX, maxY, maxZ)
+runCameraRayTrace(minX, maxY, minZ)
+}
+if (minZ !== maxZ) {
+runCameraRayTrace(minX, minY, maxZ)
+}
+if (p.offsetFound) break
+minZ = maxZ
+minY = maxY
+minX = maxX
+}
+if(p.thirdPerson === true){
+pd.x = -pd.x
+pd.y = -pd.y
+pd.z = -pd.z
+}
 }
 }
 let inBox = function(x, y, z, w, h, d) {
@@ -20871,16 +21156,14 @@ p3.sitting = p.sitting
 p3.swimming = p.swimming
 p3.pulling = p.pulling
 p3.hidden = screen === "dead" || p.spectator
+p3.spectating = p.spectating && p.spectating.id || null
 updateTextures()
-let prevX
-let prevY
-let prevZ
-let prevRotX
-let prevRotY
-let prevPreviousX
-let prevPreviousY
-let prevPreviousZ
-let canMoveCamera = !p.spectator || p.spectating && p.spectating.type === "Player"
+let prevX, prevY, prevZ, prevRotX, prevRotY, prevPreviousX, prevPreviousY, prevPreviousZ, prevPrevRotX, prevPrevRotY
+let diff = (tickStart - p.lastUpdate) / tickTime
+if (diff > 1) diff = 1
+let rx = lerp(diff,p.prx,p.rx)
+let ry = lerp(diff,p.pry,p.ry)
+let canMoveCamera = !p.spectator && !p.thirdPerson || p.thirdPerson === "front" || p.spectating && p.spectating.type === "Player" && !p.spectating.hidden
 if(canMoveCamera){
 prevX = p.x
 prevY = p.y
@@ -20890,6 +21173,8 @@ prevRotY = p.ry
 prevPreviousX = p.previousX
 prevPreviousY = p.previousY
 prevPreviousZ = p.previousZ
+prevPrevRotX = p.prx
+prevPrevRotY = p.pry
 let intensity = 0.125//0.0625
 if(tick) prevViewBobIntensity = viewBobIntensity
 if(!p.thirdPerson && !p3.sleeping){
@@ -20920,8 +21205,8 @@ else viewBobCount += 50
 var counter = lerp(min((now-lastTick)/tickTime,1),lastViewBobCount,viewBobCount)
 var bob = counter%1000
 if(bob>500) bob = 1000-bob
-var rx = bob*Math.PI2/250
-getRotation(rx,p.ry+Math.PI2)
+var brx = bob*Math.PI2/250
+getRotation(brx,ry+Math.PI2)
 p.x += node.x*intensity
 p.y += node.y*intensity
 p.z += node.z*intensity
@@ -20941,7 +21226,7 @@ p.previousZ -= d.z*0.25
 p.y -= 0.25
 p.previousY -= 0.25
 }
-getRotation(p.rx+Math.PI2,p.ry)
+getRotation(rx+Math.PI2,ry)
 p.x += node.x*0.25
 p.y += node.y*0.25
 p.z += node.z*0.25
@@ -20949,16 +21234,20 @@ p.previousX += node.x*0.25
 p.previousY += node.y*0.25
 p.previousZ += node.z*0.25
 }
-var d = p.thirdPerson === "front" ? 4 : !p.thirdPerson ? 0.25 : -4
+if(!p.thirdPerson){
+p.calculateDirection()
+var d = 0.25
 p.x += p.direction.x*d
 p.y += p.direction.y*d
 p.z += p.direction.z*d
 p.previousX += p.direction.x*d
 p.previousY += p.direction.y*d
 p.previousZ += p.direction.z*d
-if(p.thirdPerson === "front"){
+}else if(p.thirdPerson === "front"){
 p.ry += Math.PI
 p.rx = -p.rx
+p.pry += Math.PI
+p.prx = -p.prx
 }
 }
 p.setDirection()
@@ -20980,10 +21269,12 @@ p.y = prevY
 p.z = prevZ
 p.rx = prevRotX
 p.ry = prevRotY
+p.prx = prevPrevRotX
+p.pry = prevPrevRotY
 p.previousX = prevPreviousX
 p.previousY = prevPreviousY
 p.previousZ = prevPreviousZ
-if(p.thirdPerson === "front" || !p.thirdPerson) p.setDirection() // make it correct
+p.calculateDirection() // make it correct
 }
 analytics.totalRenderTime += performance.now() - renderStart
 }
@@ -21045,32 +21336,10 @@ p.character.render()
 }
 }
 let updtPlayer = function(){
-if(p.spectator && p.spectating){
-var s = p.spectating
-p.x = s.x
-p.y = s.y
-p.z = s.z
-p.dimension = s.dimension
-switch(s.type){
-case "Player":
-p.rx = -s.headPitch
-p.ry = -s.headYaw
-p.walking = s.walking
-p.sprinting = s.sprinting
-p.sneaking = s.sneaking
-p.eating = s.eating
-p.swimming = s.swimming
-break
-default:
-p.rx = -s.pitch
-p.ry = -s.yaw
-}
-harmEffect = s.harmEffect || 0
-}
 if(p.ry - p.bodyRot > Math.PI) p.bodyRot += Math.PId //prevent weird thing happening when rotation was 0 but is now 360
 if(p.ry - p.bodyRot < -Math.PI) p.bodyRot -= Math.PId
-if(p.ry - p.bodyRot > Math.PI4) p.bodyRot = p.ry - Math.PI4//if rotation difference is too much rotate body
-if(p.ry - p.bodyRot < -Math.PI4) p.bodyRot = p.ry + Math.PI4
+if(p.ry - p.bodyRot > Math.PI4) p.bodyRot = lerp(0.75,p.bodyRot,p.ry - Math.PI4)//if rotation difference is too much rotate body
+if(p.ry - p.bodyRot < -Math.PI4) p.bodyRot = lerp(0.75,p.bodyRot,p.ry + Math.PI4)
 if(move.z && !move.x) p.bodyRot = lerp(0.4, p.bodyRot, p.ry) //forward and backward
 if(move.x > 0 && !move.z) p.bodyRot = lerp(0.4, p.bodyRot, p.ry-Math.PI4) //right
 if(move.x < 0 && !move.z) p.bodyRot = lerp(0.4, p.bodyRot, p.ry+Math.PI4) //left
@@ -21110,9 +21379,12 @@ return collided
 }
 win.pressurePlateHasPressure = pressurePlateHasPressure
 let controls = function() {
+p.prx = p.rx
+p.pry = p.ry
+p.prz = p.rz
 move.x = 0
 move.z = 0
-if(p.sitting) return
+if(!p.sitting){
 if(controlMap.forward.pressed) move.z += p.speed
 if(controlMap.backward.pressed) move.z -= p.speed
 if(controlMap.left.pressed) move.x += p.speed
@@ -21121,10 +21393,14 @@ if (p.flying) {
 if(controlMap.jump.pressed) p.velocity.y += 0.09
 if(controlMap.sneak.pressed) p.velocity.y -= 0.09
 }
+}
 if(Key.arrowleft) p.ry -= 0.1
 if(Key.arrowright) p.ry += 0.1
 if(Key.arrowup) p.rx += 0.1
 if(Key.arrowdown) p.rx -= 0.1
+p.rx += mmoveX
+p.ry += mmoveY
+mmoveX = mmoveY = 0
 if (!p.sprinting && controlMap.sprint.pressed && !p.sneaking && controlMap.forward.pressed) {
 p.FOV(settings.fov + 10, 250)
 p.sprinting = true
@@ -21165,12 +21441,37 @@ p.velocity.z += (d.z * move.z) * friction
 p.velocity.x += (co * move.x - si * move.z) * friction
 p.velocity.z += (si * move.x + co * move.z) * friction
 }
+if(p.spectator && p.spectating){
+var s = p.spectating
+p.x = s.x
+p.y = s.y
+p.z = s.z
+p.velocity.x = p.velocity.y = p.velocity.z = 0
+p.dimension = s.dimension
+switch(s.type){
+case "Player":
+p.rx = -s.headPitch
+p.ry = -s.headYaw
+p.walking = s.walking
+p.sprinting = s.sprinting
+p.sneaking = s.sneaking
+p.eating = s.eating
+p.swimming = s.swimming
+break
+default:
+p.rx = -s.pitch
+p.ry = -s.yaw
+}
+harmEffect = s.harmEffect || 0
+}
 const TAU = Math.PI * 2
 const PI1_2 = Math.PI / 2
 while(p.ry > TAU) p.ry -= TAU
 while(p.ry < 0)   p.ry += TAU
 if(p.rx > PI1_2)  p.rx = PI1_2
 if(p.rx < -PI1_2) p.rx = -PI1_2
+if(p.ry - p.pry > Math.PI) p.pry += Math.PId //prevent weird thing happening when rotation was 0 but is now 360
+if(p.ry - p.pry < -Math.PI) p.pry -= Math.PId
 }
 function box2(sides, tex, shape) {
 if (blockFill && !shape) {
@@ -21781,13 +22082,14 @@ if(!controlMap.break.pressed && !touchBreak){
 crack.delayStart = now
 }
 }
-function explode(x,y,z, r, liquid, dimension){
+function explode(x,y,z, r, type, dimension){
 /*world.setBlock(x,y,z,blockIds.air);
 for(var i=radius; i>0; i--){
 sphereoidAt(x,y,z,i,i,i, blockIds.air)
 }*/
 //ball(x,y,z,r,r,r,0)
-if(!liquid)world.setBlock(x,y,z, 0, false,false,false,false,dimension)
+if(!type)world.setBlock(x,y,z, 0, false,false,false,false,dimension)
+else if(type === "original") world.setBlock(x,y,z, world.getOriginalBlock(x,y,z,dimension), false,false,false,false,dimension)
 /*let w2 = r * r
 let h2 = w2
 let d2 = w2
@@ -21819,12 +22121,11 @@ world.setBlock(X + x, Y + y, Z + z, 0)
 }
 }*/
 //create rays rays coming from the center of the cube to each outer edge
+let destroyed = {}
 for(var cx=0; cx<16; cx++){
 for(var cy=0; cy<16; cy++){
 for(var cz=0; cz<16; cz++){
-if((cx === 0 || cx === 15) || (cy === 0 || cy === 15) || (cz === 0 || cz === 15)){
-continue
-}
+if(!(cx === 0 || cx === 15 || cy === 0 || cy === 15 || cz === 0 || cz === 15)) continue
 var intensity =  (0.7 + rand(0.6)) * r
 var x2 = cx / 16, y2 = cy / 16, z2 = cz / 16
 //step 0.3 blocks each time
@@ -21836,12 +22137,14 @@ var sy = round(lerp(i, y, (y2-0.5)*2*r+y))
 var sz = round(lerp(i, z, (z2-0.5)*2*r+z))
 intensity -= 0.3 * 0.75
 var block = world.getBlock(sx,sy,sz, dimension)
+var isDestroyed = destroyed[sx+","+sy+","+sz]
 //if block isn't air, reduce intensity based on blast resistance
-if(block){
+if(block && !isDestroyed){
 var br = blockData[block].blastResistance || 0
 intensity -= (br + 0.3) * 0.3
 if(intensity > 0) {
-if(!liquid){
+destroyed[sx+","+sy+","+sz] = true
+if(!type){
 if(blockData[block].ongetexploded){
 blockData[block].ongetexploded(sx,sy,sz,block,world,dimension)
 }
@@ -21852,10 +22155,15 @@ world.addEntity(new Item(sx, sy, sz, 0, 0, 0, block, true),false,dimension)
 }
 if(block === blockIds.tnt){
 blockData[blockIds.tnt].explode(sx,sy,sz, "explosion",dimension)
+}else if(block === blockIds.untnt){
+blockData[blockIds.untnt].explode(sx,sy,sz, "explosion",dimension)
 }
 }/*end if(intensity > 0)*/else{
 continue
 }
+}
+if(intensity > 0 && type === "original" && !isDestroyed){
+world.setBlock(sx,sy,sz, world.getOriginalBlock(sx,sy,sz,dimension), false,false,false,false,dimension)
 }
 if(intensity > 0 && rand() > 0.995){
 var time = rand()*1000
@@ -22047,7 +22355,7 @@ if (!block) {
 return 1
 }
 let data = blockData[block]
-let sourceData = blockData[type]
+let sourceData = blockData[type || 0]
 let cullFace = data.cullFace
 if(!cullFace && data.transparent) cullFace = "same"
 let sourceRange = 3
@@ -22057,7 +22365,11 @@ if (func !== getBlock || screen === "loading" || screen === "netherLoading" || s
 sourceRange = sourceData.shape.cull[sourceDir]
 hiderRange = data.shape.cull[dir]
 }
-if ((sourceRange & hiderRange) !== sourceRange || sourceRange === 0 || cullFace === "never" || block !== type && cullFace && cullFace !== "diff" || block === type && cullFace && cullFace !== "same") {
+if(cullFace === "sameID" && data.id === sourceData.id) return 0
+if(block === type && cullFace === "diff"){
+return 0
+}
+if ((sourceRange & hiderRange) !== sourceRange || sourceRange === 0 || cullFace === "never" || block !== type && (cullFace === "same" || cullFace === "sameID")) {
 return 1
 }
 return 0
@@ -23284,7 +23596,7 @@ tx = 0, ty = 0
 let wx = this.x, wy = this.y, wz = this.z
 let blocks = this.world.getAdjacentSubchunks(wx, wy, wz, false, this.type)
 let lightChunks = this.world.getAdjacentSubchunks(wx, wy, wz, true, this.type)
-let block = null, tags = null, shader = null
+let block = null, id = 0, tags = null, shader = null
 let shadows = null, slights = [0, 0, 0, 0], blights = [0, 0, 0, 0], tints = [1,1,1,1,1,1,1,1,1,1,1,1]
 let blockSides = Object.keys(Block)
 let side = ""
@@ -23295,7 +23607,8 @@ let pallete = this.pallete
 // let intShad = interpolateShadows
 for (let i = 0; i < length; i++) {
 data = rData[i]
-block = blockData[pallete[data & 0x1fff]]
+id = pallete[data & 0x1fff]
+block = blockData[id]
 tex = block.textures
 sides = data >> 13 & 0x3f
 loc = data >> 19 & 0xfff
@@ -23323,14 +23636,19 @@ for (let facei = 0; facei < directionalFaces.length; facei++) {
 verts = directionalFaces[facei]
 originalShapeVerts = shapeOriginalVerts[n][facei]
 texVerts = textureCoords[textureMap[tex[texNum]]]
+texShapeVerts = shapeTexVerts[n][facei]
 if(originalShapeVerts && originalShapeVerts.texTag){
 if(tags && tags[originalShapeVerts.texTag] && textureMap[tags[originalShapeVerts.texTag]]){
 texVerts = textureCoords[textureMap[tags[originalShapeVerts.texTag]]]
 }else continue
 }
+if(block.customShape){
+verts = verts.slice()
+texShapeVerts = texShapeVerts.slice()
+block.customShape(x2,y2,z2,this.type,id,side,verts,texShapeVerts)
+}
 tx = texVerts[0]
 ty = texVerts[1]
-texShapeVerts = shapeTexVerts[n][facei]
 barray[index] = verts[0] + x2
 barray[index+1] = verts[1] + y2
 barray[index+2] = verts[2] + z2
@@ -23708,6 +24026,13 @@ this.world.doubleRenderChunks.push(this)
 }
 }
 this.sections[y >> 4].setBlock(x, y & 15, z, blockID)
+}
+getOriginalBlock(x,y,z){
+let s = y >> 4
+if(!this.cleanSections[s]) return 0
+y = y & 15
+var c = this.sections[s]
+return this.cleanSections[s][x * c.size * c.size + y * c.size + z]
 }
 getTags(x, y, z){
 let s = y >> 4
@@ -24574,16 +24899,16 @@ for(l=0; l<16; l++){
 let x = random(0, 16)
 let y = random(10, 177)
 let z = random(0, 16)
-if(world.getBlock(wx+x,y,wz+z,type) === blockIds.netherrack && world.getBlock(wx+x,y+1,wz+z,type) === blockIds.netherrack && world.getBlock(wx+x,y-1,wz+z,type) === blockIds.netherrack){
-world.setBlock(wx+x,y,wz+z, blockIds.netherQuartzOre, false,false,false,false,type)
+if(world.getBlock(wx+x,y,wz+z,this.type) === blockIds.netherrack && world.getBlock(wx+x,y+1,wz+z,this.type) === blockIds.netherrack && world.getBlock(wx+x,y-1,wz+z,this.type) === blockIds.netherrack){
+world.setBlock(wx+x,y,wz+z, blockIds.netherQuartzOre, false,false,false,false,this.type)
 }
 }
 for(l=0; l<10; l++){
 let x = random(0, 16)
 let y = random(10, 177)
 let z = random(0, 16)
-if(world.getBlock(wx+x,y,wz+z,type) === blockIds.netherrack && world.getBlock(wx+x,y+1,wz+z,type) === blockIds.netherrack && world.getBlock(wx+x,y-1,wz+z,type) === blockIds.netherrack){
-world.setBlock(wx+x,y,wz+z, blockIds.netherGoldOre, false,false,false,false,type)
+if(world.getBlock(wx+x,y,wz+z,this.type) === blockIds.netherrack && world.getBlock(wx+x,y+1,wz+z,this.type) === blockIds.netherrack && world.getBlock(wx+x,y-1,wz+z,this.type) === blockIds.netherrack){
+world.setBlock(wx+x,y,wz+z, blockIds.netherGoldOre, false,false,false,false,this.type)
 }
 }
 }else if(this.type === "end"){}else{
@@ -24862,6 +25187,8 @@ this.canStepX = true
 this.canStepY = true
 this.pitch = pitch
 this.yaw = yaw
+this.previousPitch = pitch
+this.previousYaw = yaw
 this.velx = velx
 this.vely = vely
 this.velz = velz
@@ -24869,6 +25196,7 @@ this.width = width
 this.height = height
 this.depth = depth
 this.offsetY = 0
+this.prevOffsetY = 0
 this.extraSize = 0
 this.hidden = false
 this.harmEffect = 0
@@ -25132,6 +25460,9 @@ this.liquid = true
 this.previousX = this.x
 this.previousY = this.y
 this.previousZ = this.z
+this.previousPitch = this.pitch
+this.previousYaw = this.yaw
+this.prevOffsetY = this.offsetY
 this.hasCollided = false
 for (let j = 1; j <= steps && !this.hasCollided; j++) {
 let px = this.x, pz = this.z, py = this.y
@@ -25210,7 +25541,7 @@ render() {
 if(this.hidden) return
 let diff = (performance.now() - this.lastUpdate) / tickTime
 if (diff > 1) diff = 1
-const offsetY = this.offsetY
+const offsetY = lerp(diff,this.prevOffsetY,this.offsetY)
 let renderx = (this.x - this.previousX) * diff + this.previousX
 let rendery = ((this.y - this.previousY) * diff + this.previousY) + offsetY
 let renderz = (this.z - this.previousZ) * diff + this.previousZ
@@ -25220,8 +25551,8 @@ modelMatrix.translate(renderx, rendery, renderz)
 modelMatrix.translate(0,-this.height/2,0)
 modelMatrix.rotZ(this.dieRotate)
 modelMatrix.translate(0,this.height/2,0)
-modelMatrix.rotX(this.pitch)
-modelMatrix.rotY(this.yaw)
+modelMatrix.rotX(lerp(diff,this.previousPitch,this.pitch))
+modelMatrix.rotY(lerp(diff,this.previousYaw,this.yaw))
 modelMatrix.scale(this.width + this.extraSize, this.height + this.extraSize, this.depth + this.extraSize)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
@@ -25245,10 +25576,14 @@ gl.bindTexture(gl.TEXTURE_2D, textureAtlas)
 gl.uniform1i(glCache.uSamplerEntity, 0)
 gl.uniform1f(glCache.uLightLevelEntity, lightLevel)
 gl.uniform1f(glCache.harmEffectEntity, this.harmEffect || this.dieEffect)
+if(this.tint) gl.uniform3f(glCache.tintEntity, this.tint[0],this.tint[1],this.tint[2])
+if(this.tintGray) gl.uniform1i(glCache.tintGrayEntity, 1)
 gl.uniformMatrix4fv(glCache.uViewEntity, false, modelViewProjectionMatrix.elements)
 glExtensions.vertex_array_object.bindVertexArrayOES(this.vao)
 gl.drawElements(gl.TRIANGLES, 6 * this.faces, gl.UNSIGNED_INT, 0)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
+if(this.tint) gl.uniform3f(glCache.tintEntity, 1,1,1)
+if(this.tintGray) gl.uniform1i(glCache.tintGrayEntity, 0)
 for(var part in this.parts){
 this.renderPart(this.parts[part], modelMatrix, modelViewProjectionMatrix, projectionMatrix, viewMatrix, renderx, rendery, renderz)
 }
@@ -25290,9 +25625,9 @@ gl.drawElements(gl.TRIANGLES, 6 * part.size, gl.UNSIGNED_INT, 0)
 glExtensions.vertex_array_object.bindVertexArrayOES(null)
 }
 facePlayer(){
-this.yaw = Math.PId - (atan2(p.z - this.z, p.x - this.x) + Math.PI2 + Math.PI)
-var adjacent = dist2(this.x,this.z,p.x,p.z)
-this.pitch = Math.PId - atan2(p.y - this.y, adjacent)
+this.yaw = Math.PId - (atan2(p.z+p.offsetZ - this.z, p.x+p.offsetX - this.x) + Math.PI2 + Math.PI)
+var adjacent = dist2(this.x,this.z,p.x+p.offsetX,p.z+p.offsetZ)
+this.pitch = Math.PId - atan2(p.y+p.offsetY - this.y, adjacent)
 }
 pointAt(x,y,z){
 this.yaw = Math.PId - (atan2(z - this.z, x - this.x) + Math.PI2 + Math.PI)
@@ -25348,16 +25683,17 @@ this.velz = (Math.random()-0.5) * 0.2
 }
 }
 update() {
+let now = performance.now()
+this.updateVelocity(now)
+this.move(now)
 if(this.amount <= 0){
 return this.canDespawn = true
 }
-let now = performance.now()
-this.yaw += 0.01;
-if(this.yaw > Math.PI*2){
-this.yaw -= Math.PI*2
+this.yaw += 0.05;
+if(this.yaw > Math.PId){
+this.yaw -= Math.PId
+this.previousYaw -= Math.PId
 }
-this.updateVelocity(now)
-this.move(now)
 let pickup = false
 let comeCloser = false
 if(now - this.spawn > 1000 && !p.spectator && p.dimension === this.dimension){
@@ -25437,7 +25773,14 @@ playSound("entity.item.pickup", 0, 1, pitch)
 if(multiplayer) send({type:"playSound", data:"entity.item.pickup", x:this.x,y:this.y,z:this.z, pitch:pitch})
 }
 }
-this.offsetY = -0.1 * cos((performance.now() - this.spawn) * 0.0015) + 0.15
+this.offsetY = -0.1 * cos(this.yaw*2) + 0.15
+var id = this.block
+if(id && blockData[id].tint){
+var biome = world.getBiome(round(this.x),round(this.y),round(this.z),this.dimension)
+var tints = blockData[id].tint
+this.tint = tints[biome] || tints.default
+this.tintGray = true
+}
 }
 updateShape(){
 if(blockData[this.block].shape !== shapes.cube) return
@@ -25618,6 +25961,13 @@ blockSound(this.block, "land", x,y,z)
 }
 this.canDespawn = true
 }
+var id = this.block
+if(id && blockData[id].tint){
+var biome = world.getBiome(round(this.x),round(this.y),round(this.z),this.dimension)
+var tints = blockData[id].tint
+this.tint = tints[biome] || tints.default
+this.tintGray = true
+}
 if(blockData[this.block].name === "anvil" || blockData[this.block].name === "pointedDripstone"){
 var ent = entCollided(this)
 var d
@@ -25675,7 +26025,7 @@ var i = Math.floor((now - this.timerStart) / 250)
 if(i%2){
 this.tex = this.tntBlockId
 }else{
-this.tex = blockIds.whiteConcrete
+this.tex = blockIds.tnt | CROSS
 world.addParticle(new SmokeParticle(this.x,this.y+0.5-0.125,this.z), this.dimension)
 }
 if(this.prevTex !== this.tex){
@@ -25710,6 +26060,16 @@ this.type = "PrimedUltraTNT"
 explode(){
 var x = round(this.x), y = round(this.y), z = round(this.z)
 explode(x,y,z,24, blockData[world.getBlock(x,y,z)].liquid || !worldSettings.tntExplode, this.dimension)
+}
+}
+class PrimedUnTNT extends PrimedTNT{
+constructor(x,y,z, timerStart){
+super(x,y,z, timerStart, blockIds.untnt)
+this.type = "PrimedUnTNT"
+}
+explode(){
+var x = round(this.x), y = round(this.y), z = round(this.z)
+explode(x,y,z,5, blockData[world.getBlock(x,y,z)].liquid || !worldSettings.tntExplode || "original", this.dimension)
 }
 }
 class MovingBlock extends BlockEntity{
@@ -26950,6 +27310,7 @@ part.prx = part.rx
 part.pry = part.ry
 part.prz = part.rz
 part.pry2 = part.ry2
+part.lastUpdate = now
 }
 this.pOffsetry = this.offsetry
 if(this.swimming !== this.prevSwimming){
@@ -26991,11 +27352,8 @@ if(now - this.swimStart < 500){
 this.pitch = lerp((now-this.swimStart)/500,Math.PI2+this.headPitch,0)
 }
 }
-//head shouldn't be smooth because if previous rotation was 360 and now it is 0, weird things will happen
-this.parts.head.prx = this.parts.head.rx
-this.parts.head.pry = this.parts.head.ry
-this.parts.head.prz = this.parts.head.rz
-this.parts.head.pry2 = this.parts.head.ry2
+if(this.parts.head.ry2 - this.parts.head.pry2 > Math.PI) this.parts.head.pry2 += Math.PId //prevent weird thing happening when rotation was 0 but is now 360
+if(this.parts.head.ry2 - this.parts.head.pry2 < -Math.PI) this.parts.head.pry2 -= Math.PId
 this.parts.leftArm.rz = armRot
 this.parts.rightArm.rz = -armRot
 var part = this.parts.holding
@@ -27116,9 +27474,13 @@ this.z = z
 this.lastUpdate = performance.now()
 }
 setRot(rx,ry, bodyRot){
+this.previousPitch = this.pitch
+this.previousYaw = this.yaw
 this.headPitch = rx
 this.headYaw = ry
 this.yaw = (bodyRot || bodyRot === 0) ? bodyRot : ry
+if(this.yaw - this.previousYaw > Math.PI) this.previousYaw += Math.PId //prevent weird thing happening when rotation was 0 but is now 360
+if(this.yaw - this.previousYaw < -Math.PI) this.previousYaw -= Math.PId
 }
 changeBlock(blockID){
 return //using skin texture, not block texture
@@ -27192,8 +27554,8 @@ modelMatrix.translate(renderx, rendery, renderz)
 modelMatrix.translate(0,-this.height/2,0)
 modelMatrix.rotZ(this.dieRotate)
 modelMatrix.translate(0,this.height/2,0)
-modelMatrix.rotY(this.yaw + offsetry)
-modelMatrix.rotX(this.pitch)
+modelMatrix.rotY(lerp(diff,this.previousYaw,this.yaw) + offsetry)
+modelMatrix.rotX(lerp(diff,this.previousPitch,this.pitch))
 if(this.swimming) modelMatrix.translate(0, offsetY, 0)
 const viewMatrix = p.transformation.elements
 const proj = p.projection
@@ -27245,31 +27607,35 @@ gl.uniform1i(glCache.isTextureAtlasEntity,1)
 }
 let diff = (performance.now() - this.lastUpdate) / tickTime
 if (diff > 1) diff = 1
+let partDiff = (performance.now() - part.lastUpdate) / tickTime
+if (partDiff > 1) partDiff = 1
+let yaw = lerp(diff,this.previousYaw,this.yaw)
+let pitch = lerp(diff,this.previousPitch,this.pitch)
 modelMatrix.identity()
 modelMatrix.translate(x, y, z)
 modelMatrix.translate(0,-this.height/2,0)
 modelMatrix.rotZ(this.dieRotate)
 modelMatrix.translate(0,this.height/2,0)
-modelMatrix.rotY(this.yaw)
-modelMatrix.rotX(this.pitch)
+modelMatrix.rotY(yaw)
+modelMatrix.rotX(pitch)
 if(this.swimming) modelMatrix.translate(0, this.offsetY, 0)
 if(part.name === "holding"){
 var arm = this.parts.rightArm
 modelMatrix.translate(arm.x, arm.y, arm.z)
-modelMatrix.rotZ(lerp(diff,arm.prz,arm.rz))
-if(arm.ry2) modelMatrix.rotY(lerp(diff,arm.pry2,arm.ry2))
-modelMatrix.rotX(lerp(diff,arm.prx,arm.rx))
-modelMatrix.rotY(lerp(diff,arm.pry,arm.ry))
+modelMatrix.rotZ(lerp(partDiff,arm.prz,arm.rz))
+if(arm.ry2) modelMatrix.rotY(lerp(partDiff,arm.pry2,arm.ry2))
+modelMatrix.rotX(lerp(partDiff,arm.prx,arm.rx))
+modelMatrix.rotY(lerp(partDiff,arm.pry,arm.ry))
 }
 modelMatrix.translate(part.x, part.y, part.z)
 if(part.name === "head"){
-modelMatrix.rotX(-this.pitch)
-modelMatrix.rotY(-this.yaw)
+modelMatrix.rotX(-pitch)
+modelMatrix.rotY(-yaw)
 }
-modelMatrix.rotZ(lerp(diff,part.prz,part.rz))
+modelMatrix.rotZ(lerp(partDiff,part.prz,part.rz))
 if(part.ry2) modelMatrix.rotY(lerp(diff,part.pry2,part.ry2))
-modelMatrix.rotX(lerp(diff,part.prx,part.rx))
-modelMatrix.rotY(lerp(diff,part.pry,part.ry))
+modelMatrix.rotX(lerp(partDiff,part.prx,part.rx))
+modelMatrix.rotY(lerp(partDiff,part.pry,part.ry))
 modelMatrix.scale(part.w, part.h, part.d)
 modelViewProjectionMatrix.identity()
 modelViewProjectionMatrix.mult(projectionMatrix)
@@ -28930,6 +29296,7 @@ thisplayer.sitting = pos.sitting
 thisplayer.swimming = pos.swimming
 thisplayer.pulling = pos.pulling
 thisplayer.hidden = pos.hidden
+thisplayer.spectating = pos.spectating
 thisplayer.afk = data.afk
 if(data.inv) playersInv[data.USER] = data.inv
 if(!thisplayer.skinSet && playerSkins[author]){
@@ -29366,7 +29733,7 @@ chunk.setBlock(i, gen - 2, k, blockIds.sandstone);
 chunk.setBlock(i, gen - 3, k, blockIds.sandstone);
 if(gen<60) {
 gen = 59;
-chunk.setBlock(i, gen+1, k, blockIds.Water | SLAB);
+chunk.setBlock(i, gen+1, k, blockIds.Water);
 chunk.setBlock(i, gen, k, blockIds.Water);
 chunk.setBlock(i, gen - 1, k, blockIds.Water);
 chunk.setBlock(i, gen - 2, k, blockIds.gravel);
@@ -29387,7 +29754,7 @@ chunk.setBlock(i, gen - 2, k, blockIds.dirt);
 chunk.setBlock(i, gen - 3, k, blockIds.dirt);
 if(gen<60) {
 gen = 59;
-chunk.setBlock(i, gen+1, k, blockIds.Water | SLAB);
+chunk.setBlock(i, gen+1, k, blockIds.Water);
 chunk.setBlock(i, gen, k, blockIds.Water);
 chunk.setBlock(i, gen - 1, k, blockIds.Water);
 chunk.setBlock(i, gen - 2, k, blockIds.gravel);
@@ -29446,7 +29813,7 @@ chunk.setBlock(i, gen - 1, k, blockIds.dirt);
 chunk.setBlock(i, gen - 2, k, blockIds.dirt);
 chunk.setBlock(i, gen - 3, k, blockIds.dirt);
 if(gen<60) {
-chunk.setBlock(i, 60, k, blockIds.Water | SLAB);
+chunk.setBlock(i, 60, k, blockIds.Water);
 for(var y=59; y>=gen; y--){
 chunk.setBlock(i, y, k, blockIds.Water);
 }
@@ -29499,9 +29866,14 @@ chunk.updateBlock(x & 15, y, z & 15, this, lazy, noOnupdate, sx,sy,sz)
 }
 }
 getChunk(x, z, dimension) {
+let lwidth = this.lwidth
 let X = (x >> 4) + this.offsetX
 let Z = (z >> 4) + this.offsetZ
-return (dimension === "nether" ? this.netherLoaded : (dimension === "end" ? this.endLoaded : this.loaded))[X * this.lwidth + Z]
+var chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
+if (X < 0 || X >= lwidth || Z < 0 || Z >= lwidth) {
+return chunks[x >> 4][z >> 4]
+}
+return (dimension === "nether" ? this.netherLoaded : (dimension === "end" ? this.endLoaded : this.loaded))[X * lwidth + Z]
 }
 getWorldBlock(x, y, z, dimension) {
 var chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
@@ -29523,6 +29895,10 @@ return this.getWorldBlock(x, y, z, dimension)
 }
 var chunk = (dimension === "nether" ? this.netherLoaded : (dimension === "end" ? this.endLoaded : this.loaded))[X * lwidth + Z]
 return chunk ? chunk.getBlock(x & 15, y, z & 15) : blockIds.air
+}
+getOriginalBlock(x, y, z, dimension) {
+var chunk = this.getChunk(x,z,dimension)
+return chunk ? chunk.getOriginalBlock(x & 15, y, z & 15) : blockIds.air
 }
 setBlock(x, y, z, blockID, lazy, noOnupdate, remote, keepTags, dimension) {
 var chunks = dimension === "nether" ? this.netherChunks : (dimension === "end" ? this.endChunks : this.chunks)
@@ -29867,6 +30243,9 @@ ent = new PrimedSuperTNT(0,0,0)
 break
 case "PrimedUltraTNT":
 ent = new PrimedUltraTNT(0,0,0)
+break
+case "PrimedUnTNT":
+ent = new PrimedUnTNT(0,0,0)
 break
 case "MovingBlock":
 ent = new MovingBlock(p.block, p.sx,p.sy,p.sz,p.mx,p.my,p.mz,p.despawns,p.solidWhenDone)
@@ -31570,6 +31949,7 @@ Button.add(width * 0.75, height/2 + -245, width / 3, 40, "World Options", "optio
 Button.add(width * 0.75, height/2 + -185, width / 3, 40, "Narrator Options", "options", r => changeScene("options narrator"))
 Button.add(width * 0.75, height/2 + -125, width / 3, 40, "Help", "options", r => changeScene("options help"))
 Button.add(width * 0.75, height/2 + -65, width / 3, 40, ["First person","Third person back","Third person front"], "options", r => p.thirdPerson = r === "Third person front" ? "front" : (r === "Third person back"), null,null, () => p.thirdPerson === "front" ? 2 : (p.thirdPerson ? 1 : 0))
+//Button.add(width * 0.75, height/2 + -5, width / 3, 40, ["Start sending audio","Stop sending audio"], "options", r => recordingAudio ? stopRecordAudio() : startRecordAudio(), () => true||!multiplayer,"Sends audio from your microphone to other players. Only works in multiplayer.", () => recordingAudio ? 1 : 0)
 Button.add(width / 2, height - 50, width / 3, 40, "Back", "options", r => changeScene(beforeOptionsScreen))
 // World settings buttons
 var needsCheats = () => !cheats
@@ -32303,6 +32683,7 @@ text("Hyper builder enabled", 5, height - 101, 12)
 if (multiplayer) {
 let closest = Infinity
 let cname = "Yourself"
+let spectating = 0
 for (let name in players) {
 let pos = players[name]
 if(pos.dimension === p.dimension && !pos.hidden){
@@ -32312,11 +32693,15 @@ closest = distance
 cname = pos.username
 }
 }
+if(pos.spectating === userId) spectating++
 }
 if(cname === "Yourself") closest = 0
 var info = round(closest)+" blocks away"
 if(closest === 0) info = "Right here"
 text(`Closest player: ${cname} (${info})`, 5, height - 113, 12)
+if(spectating){
+text(`${spectating} spectators spectating you.`, 5, height - 125, 12)
+}
 }
 ctx.textAlign = 'right'
 text(p2.x + ", " + p2.y + ", " + p2.z, width - 10, 15, 0)
@@ -33427,23 +33812,12 @@ inventory.anvilCost++
 if(!clicked) clickInv(true, mouse)
 drawAnvil()
 }
-let unpauseDelay = 0
+let unpauseDelay = 0, mmoveX = 0, mmoveY = 0
 function mmoved(e) {
 let mouseS = settings.mouseSense / 30000
-p.rx -= e.movementY * mouseS
-p.ry += e.movementX * mouseS
-while(p.ry > Math.PI*2) {
-p.ry -= Math.PI*2
-}
-while(p.ry < 0) {
-p.ry += Math.PI*2
-}
-if(p.rx > Math.PI / 2) {
-p.rx = Math.PI / 2
-}
-if(p.rx < -Math.PI / 2) {
-p.rx = -Math.PI / 2
-}
+mmoveX -= e.movementY * mouseS
+mmoveY += e.movementX * mouseS
+//more stuff in controls
 }
 function trackMouse(e) {
 var redraw = false
@@ -33996,8 +34370,10 @@ glCache.aTextureEntity = gl.getAttribLocation(programEntity, "aTexture")
 glCache.aVertexEntity = gl.getAttribLocation(programEntity, "aVertex")
 glCache.isTextureAtlasEntity = gl.getUniformLocation(programEntity, "isTextureAtlas")
 glCache.tintEntity = gl.getUniformLocation(programEntity, "tint")
+glCache.tintGrayEntity = gl.getUniformLocation(programEntity, "tintGray")
 gl.uniform1i(glCache.isTextureAtlasEntity, 1)
 gl.uniform3f(glCache.tintEntity, 1,1,1)
+gl.uniform1i(glCache.tintGrayEntity, 0)
 gl.useProgram(programParticle)
 glCache.uSamplerParticle = gl.getUniformLocation(programParticle, "uSampler")
 glCache.uLightLevelParticle = gl.getUniformLocation(programParticle, "uLightLevel")
@@ -35741,6 +36117,48 @@ console.log("%cTry Play Music!", "background:#0a0;color:white;padding:10px 20px;
 document.addEventListener("mousedown", tryPlayMusic)
 document.addEventListener("touchstart", tryPlayMusic)
 document.body.onmousedown = e => {if(e.target && e.target.tagName.toLowerCase() === "button") playSound("click")}
+/*var audioRecorder = null, audioStream = null, recordingAudio = false, canSendAudio = false
+async function startRecordAudio(){
+if(recordingAudio) return
+recordingAudio = true
+if(!audioRecorder){
+try{
+audioStream = await navigator.mediaDevices.getUserMedia({audio:true})
+}catch(e){
+console.error(e)
+alert(e)
+return
+}
+audioRecorder = new MediaRecorder(audioStream, { mimeType: "video/webm; codecs=vp9" })
+win.audioRecorder = audioRecorder
+}
+canSendAudio = true
+audioRecorder.ondataavailable = e => {
+e.data.arrayBuffer().then(r => audioCtx.decodeAudioData(r)).then(r => {
+var source = audioCtx.createBufferSource()
+source.buffer = r
+source.connect(audioCtx.destination)
+source.start(0)
+})
+}
+audioRecorder.start()
+audioRecorder.interval = setInterval(() => {
+audioRecorder.stop()
+audioRecorder.start()
+if(!multiplayer) stopRecordAudio()
+},1000)
+}
+function stopRecordAudio(){
+if(!recordingAudio) return
+recordingAudio = false
+clearInterval(audioRecorder.interval)
+audioRecorder.stop()
+}
+function updateRecordAudio(){
+if(canSendAudio){
+canSendAudio = false
+}
+}*/
 let maxStartLoad = 0, loaded = 0
 win.allLoaded = false
 function findObjValueAmount(obj){
@@ -36207,7 +36625,7 @@ document.documentElement.outerHTML.split("\n").length+" lines of code.",
 "More than 10000 users!",
 "If you don't eat the apple,\nwhat's it for?",
 "you should play this\n\ndude",
-"Lifeboat! Mineplex! Cubecraft! Mineville!",
+"Play on servers!",
 //the ones below were suggested by repeat
 "Particularly amusing!",
 "Tastes like chicken!",
@@ -36308,7 +36726,6 @@ var now = Date.now()
 if(tick && rand() > 0.2){
 gl.uniform1i(glCache.flicker, rand() > 0.9)
 }
-p.rz = 0
 if(survival && p.y < 0){
 if(p.y <= -40){
 dieMessage = username+" fell out of the world."
@@ -36655,10 +37072,14 @@ if(p.oxygen > 20) {
 p.oxygen = 20;
 }
 if(harmEffect > 0){
-if(tick) harmEffect -= 3
+if(tick){
+harmEffect -= 3
 p.rz = max(harmEffect-15,0) / 200
+}
 p.character.harmEffect = harmEffect
 updateHUD = true
+}else{
+p.rz = 0
 }
 if(healEffect > 0 && tick){
 healEffect -= 4
@@ -36685,6 +37106,7 @@ playSound("block.portal.trigger", 0, 0.01, null, null, false, portalTriggerSound
 if(portalTriggerSoundGain){
 portalTriggerSoundGain.gain.value = portalEffect / 100
 }
+setCameraOffset()
 }
 //Temperature calculation
 if(tick){
