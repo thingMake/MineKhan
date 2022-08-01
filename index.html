@@ -578,6 +578,7 @@ gtag('config', 'G-VRNT3CCCGH');
 <textarea id="editSignBox" class="hidden"></textarea>
 <div id="centerMessage" class="hidden"></div>
 <input type="text" id="anvilTextbox" class="hidden" style="position: absolute; top: 0px; left: 0px; z-index: 1;">
+<input type="text" id="invTextbox" class="hidden" style="position: absolute; top: 0px; left: 0px; z-index: 1; box-sizing:border-box;">
 <div id="onhover" class="hidden"></div>
 <p id="savedirections" class="hidden" style="position: absolute; top: 40px; left: 10px; z-index: 1; background-color: rgba(255, 255, 255, 0.3);">
 To save your world, copy/paste the saveString<br>
@@ -1123,6 +1124,7 @@ window.editworld = document.getElementById("editworld")
 window.editSignBox = document.getElementById("editSignBox")
 window.centerMessage = document.getElementById("centerMessage")
 window.anvilTextbox = document.getElementById("anvilTextbox")
+window.invTextbox = document.getElementById("invTextbox")
 window.marketplaceInfo = document.querySelector("#marketplaceInfo")
 var hoverbox = document.getElementById("onhover")
 window.endPoemVideo = document.querySelector("#endPoemVideo")
@@ -3513,15 +3515,20 @@ world.setBlock(x,y,z,blockIds.grass | CROSS,false,false,false,false,dimension)
 world.setBlock(x,y,z,blockIds.grass,false,false,false,false,dimension)
 }
 },
-compostChance:0.3
+compostChance:0.3,
+randomRotate:true,
+randomRotateTop:true,
+randomRotateBottom:true,
+category:"nature"
 },
-{ name: "dirt", Name:"Dirt", breakTime:0.75, blastResistance:0.5, type:"ground",
+{ name: "dirt", Name:"Dirt", breakTime:0.75, blastResistance:0.5, type:"ground",category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true,
 digSound: ["block.gravel.dig1", "block.gravel.dig2", "block.gravel.dig3", "block.gravel.dig4"],
 stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","block.gravel.step4"]
 },
-{ name: "stone", Name:"Stone", drop:"cobblestone", type:"rock1", breakTime:7.5, blastResistance:6, stoneSound:true},
-{ name: "bedrock", Name:"Bedrock", breakTime:89000000, blastResistance:3600000, stoneSound:true, pistonPush:false, pistonPull:false},
-{ name: "sand", Name:"Sand", breakTime:0.75, blastResistance:0.5,fallingDust:[212/255, 195/255, 148/255],
+{ name: "stone", Name:"Stone", drop:"cobblestone", type:"rock1",category:"nature", breakTime:7.5, blastResistance:6, stoneSound:true, randomRotate:"flip",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true,},
+{ name: "bedrock", Name:"Bedrock", category:"nature", breakTime:89000000, blastResistance:3600000, stoneSound:true, pistonPush:false, pistonPull:false, randomRotate:"flip",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true,},
+{ name: "sand", Name:"Sand", breakTime:0.75, blastResistance:0.5,fallingDust:[212/255, 195/255, 148/255], category:"nature",
 onupdate: function(x,y,z,b,world,sx,sy,sz,dimension){
 fall(x,y,z,b,world,false,dimension)
 },
@@ -3530,7 +3537,7 @@ fall(x,y,z,b,world,true,dimension)
 },
 digSound: ["block.sand.dig1", "block.sand.dig2", "block.sand.dig3", "block.sand.dig4"],
 stepSound: ["block.sand.step1", "block.sand.step2","block.sand.step3","block.sand.step4","block.sand.step5"]},
-{ name: "gravel", Name:"Gravel", breakTime:0.9, blastResistance:0.6, type:"ground",fallingDust:[132/255, 126/255, 124/255],
+{ name: "gravel", Name:"Gravel", breakTime:0.9, blastResistance:0.6, type:"ground",category:"nature",fallingDust:[132/255, 126/255, 124/255],
 onupdate: function(x,y,z,b,world,sx,sy,sz,dimension){
 fall(x,y,z,b,world,false,dimension)
 },
@@ -3551,6 +3558,7 @@ cullFace:"never",
 breakTime: 0.3,
 blastResistance:0.2,
 type:"plant2",
+category:"nature",
 drop: function(){
 if(rand() > 0.8){
 let r = floor(rand(3))
@@ -3575,26 +3583,27 @@ shadow: false,
 breakTime: 0.45,
 blastResistance:0.3,
 type: "glass",
+category:"build",
 glassSound: true
 },
-{ name: "cobblestone", Name:"Cobblestone", breakTime:10, blastResistance:6, type:"rock1", stoneSound:true},
-{ name: "mossyCobble", Name:"Mossy Cobblestone", breakTime:10, blastResistance:6, type:"rock1", stoneSound:true},
-{ name: "stoneBricks", Name:"Stone Bricks", breakTime:7.5, type:"rock1", stoneSound:true},
-{ name: "mossyStoneBricks", Name:"Mossy Stone Bricks", breakTime:7.5, type:"rock1", stoneSound:true},
-{ name: "bricks", Name:"Bricks", breakTime:10, type:"rock1", stoneSound:true},
-{ name: "coalOre", Name:"Coal Ore", breakTime:15, type:"rock1", drop:"coal", stoneSound:true, experience:0.1},
-{ name: "ironOre", Name:"Iron Ore", breakTime:15, type:"rock2", drop:"rawIron", stoneSound:true},
-{ name: "goldOre", Name:"Gold Ore", breakTime:15, type:"rock3", drop:"rawGold", stoneSound:true},
-{ name: "diamondOre", Name:"Diamond Ore", breakTime:15, type:"rock3", drop:"diamond", stoneSound:true, experience:1},
-{ name: "redstoneOre", Name:"Redstone Ore", breakTime:15, type:"rock3", stoneSound:true, drop:"redstone", dropAmount:[4,5], experience:0.3},
-{ name: "lapisOre", Name:"Lapis Lazuli Ore", breakTime:15, type:"rock2", drop:"lapisLazuli", stoneSound:true, experience:0.5},
-{ name: "emeraldOre", Name:"Emerald Ore", breakTime:15, type:"rock3", drop:"emerald", stoneSound:true, experience:1.5},
-{ name: "coalBlock", Name:"Block of Coal", breakTime:25, type:"rock1", stoneSound:true, burnChance:0.4, burnTime:50},
-{ name: "ironBlock", Name:"Block of Iron", breakTime:25, type:"metal2", stoneSound:true},
-{ name: "goldBlock", Name:"Block of Gold", breakTime:15, type:"metal3", stoneSound:true},
-{ name: "diamondBlock", Name:"Block of Diamond", breakTime:25, type:"metal3", stoneSound:true},
+{ name: "cobblestone", Name:"Cobblestone", breakTime:10, blastResistance:6, type:"rock1",category:"build", stoneSound:true},
+{ name: "mossyCobble", Name:"Mossy Cobblestone", breakTime:10, blastResistance:6, type:"rock1",category:"build", stoneSound:true},
+{ name: "stoneBricks", Name:"Stone Bricks", breakTime:7.5, type:"rock1",category:"build", stoneSound:true},
+{ name: "mossyStoneBricks", Name:"Mossy Stone Bricks", breakTime:7.5, type:"rock1",category:"build", stoneSound:true},
+{ name: "bricks", Name:"Bricks", breakTime:10, type:"rock1",category:"build", stoneSound:true},
+{ name: "coalOre", Name:"Coal Ore", breakTime:15, type:"rock1",category:"nature", drop:"coal", stoneSound:true, experience:0.1},
+{ name: "ironOre", Name:"Iron Ore", breakTime:15, type:"rock2",category:"nature", drop:"rawIron", stoneSound:true},
+{ name: "goldOre", Name:"Gold Ore", breakTime:15, type:"rock3",category:"nature", drop:"rawGold", stoneSound:true},
+{ name: "diamondOre", Name:"Diamond Ore", breakTime:15, type:"rock3",category:"nature", drop:"diamond", stoneSound:true, experience:1},
+{ name: "redstoneOre", Name:"Redstone Ore", breakTime:15, type:"rock3",category:"nature", stoneSound:true, drop:"redstone", dropAmount:[4,5], experience:0.3},
+{ name: "lapisOre", Name:"Lapis Lazuli Ore", breakTime:15, type:"rock2",category:"nature", drop:"lapisLazuli", stoneSound:true, experience:0.5},
+{ name: "emeraldOre", Name:"Emerald Ore", breakTime:15, type:"rock3",category:"nature", drop:"emerald", stoneSound:true, experience:1.5},
+{ name: "coalBlock", Name:"Block of Coal", breakTime:25, type:"rock1",category:"build", stoneSound:true, burnChance:0.4, burnTime:50},
+{ name: "ironBlock", Name:"Block of Iron", breakTime:25, type:"metal2",category:"build", stoneSound:true},
+{ name: "goldBlock", Name:"Block of Gold", breakTime:15, type:"metal3",category:"build", stoneSound:true},
+{ name: "diamondBlock", Name:"Block of Diamond", breakTime:25, type:"metal3",category:"build", stoneSound:true},
 {
-name: "redstoneBlock", Name:"Block of Redstone", breakTime:25, type:"metal1", stoneSound:true,
+name: "redstoneBlock", Name:"Block of Redstone", breakTime:25, type:"metal1",category:"build", stoneSound:true,
 onset:function(x,y,z,dimension){
 world.setPower(x,y,z,16,false,dimension)
 world.spreadPower(x,y,z, 16,dimension)
@@ -3604,9 +3613,9 @@ world.setPower(x,y,z,0,false,dimension)
 world.unspreadPower(x,y,z, 16,false,dimension)
 },
 },
-{ name: "lapisBlock", Name:"Block of Lapis Lazuli", breakTime:15, type:"metal2", stoneSound:true},
-{ name: "emeraldBlock", Name:"Block of Emerald", breakTime:25, type:"metal3", stoneSound:true},
-{ name: "oakPlanks", Name:"Oak Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
+{ name: "lapisBlock", Name:"Block of Lapis Lazuli", breakTime:15, type:"metal2",category:"build", stoneSound:true},
+{ name: "emeraldBlock", Name:"Block of Emerald", breakTime:25, type:"metal3",category:"build", stoneSound:true},
+{ name: "oakPlanks", Name:"Oak Planks", type:"wood",category:"build", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "oakLog",
 Name:"Oak Log",
@@ -3614,10 +3623,11 @@ textures: [ "logTop", "logSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"nature",
 burnChance:0.1,
 burnTime:50
 },
-{ name: "acaciaPlanks", Name:"Acacia Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
+{ name: "acaciaPlanks", Name:"Acacia Planks", type:"wood",category:"build", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "acaciaLog",
 Name:"Acacia Log",
@@ -3625,10 +3635,11 @@ textures: [ "acaciaLogTop", "acaciaLogSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"nature",
 burnChance:0.1,
 burnTime:50
 },
-{ name: "birchPlanks", Name:"Birch Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
+{ name: "birchPlanks", Name:"Birch Planks", type:"wood",category:"build", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "birchLog",
 Name:"Birch Log",
@@ -3636,10 +3647,11 @@ textures: [ "birchLogTop", "birchLogSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"nature",
 burnChance:0.1,
 burnTime:50
 },
-{ name: "darkOakPlanks", Name:"Dark Oak Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
+{ name: "darkOakPlanks", Name:"Dark Oak Planks", type:"wood",category:"build", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "darkOakLog",
 Name:"Dark Oak Log",
@@ -3647,10 +3659,11 @@ textures: [ "darkOakLogTop", "darkOakLogSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"nature",
 burnChance:0.1,
 burnTime:50
 },
-{ name: "junglePlanks", Name:"Jungle Planks", type:"wood", breakTime:3,woodSound:true, burnChance:0.1, burnTime:40},
+{ name: "junglePlanks", Name:"Jungle Planks", type:"wood",category:"build", breakTime:3,woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "jungleLog",
 Name:"Jungle Log",
@@ -3658,10 +3671,11 @@ textures: [ "jungleLogTop", "jungleLogSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"nature",
 burnChance:0.1,
 burnTime:50
 },
-{ name: "sprucePlanks", Name:"Spruce Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
+{ name: "sprucePlanks", Name:"Spruce Planks", type:"wood",category:"build", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 {
 name: "spruceLog",
 Name:"Spruce Log",
@@ -3669,47 +3683,49 @@ textures: [ "spruceLogTop", "spruceLogSide" ],
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"nature",
 burnChance:0.1,
 burnTime:50
 },
-{ name: "whiteWool", Name:"White Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "orangeWool", Name:"Orange Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "magentaWool", Name:"Magenta Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "lightBlueWool", Name:"Light Blue Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "yellowWool", Name:"Yellow Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "limeWool", Name:"Lime Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "pinkWool", Name:"Pink Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "grayWool", Name:"Gray Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "lightGrayWool", Name:"Light Gray Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "cyanWool", Name:"Cyan Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "purpleWool", Name:"Purple Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "blueWool", Name:"Blue Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "brownWool", Name:"Brown Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "greenWool", Name:"Green Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "redWool", Name:"Red Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "blackWool", Name:"Black Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool", burnChance: 0.2, burnTime: 30},
-{ name: "whiteConcrete", Name:"White Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "orangeConcrete", Name:"Orange Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "magentaConcrete", Name:"Magenta Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "lightBlueConcrete", Name:"Light Blue Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "yellowConcrete", Name:"Yellow Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "limeConcrete", Name:"Lime Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "pinkConcrete", Name:"Pink Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "grayConcrete", Name:"Gray Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "lightGrayConcrete", Name:"Light Gray Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "cyanConcrete", Name:"Cyan Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "purpleConcrete", Name:"Purple Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "blueConcrete", Name:"Blue Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "brownConcrete", Name:"Brown Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "greenConcrete", Name:"Green Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "redConcrete", Name:"Red Concrete",breakTime:9, type:"rock1", stoneSound:true},
-{ name: "blackConcrete", Name:"Black Concrete",breakTime:9, type:"rock1", stoneSound:true},
+{ name: "whiteWool", Name:"White Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "orangeWool", Name:"Orange Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "magentaWool", Name:"Magenta Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "lightBlueWool", Name:"Light Blue Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "yellowWool", Name:"Yellow Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "limeWool", Name:"Lime Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "pinkWool", Name:"Pink Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "grayWool", Name:"Gray Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "lightGrayWool", Name:"Light Gray Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "cyanWool", Name:"Cyan Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "purpleWool", Name:"Purple Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "blueWool", Name:"Blue Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "brownWool", Name:"Brown Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "greenWool", Name:"Green Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "redWool", Name:"Red Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "blackWool", Name:"Black Wool",breakTime:1.2, clothSound:true, shearBreakTime:0.2, type:"wool",category:"build", burnChance: 0.2, burnTime: 30},
+{ name: "whiteConcrete", Name:"White Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "orangeConcrete", Name:"Orange Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "magentaConcrete", Name:"Magenta Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "lightBlueConcrete", Name:"Light Blue Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "yellowConcrete", Name:"Yellow Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "limeConcrete", Name:"Lime Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "pinkConcrete", Name:"Pink Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "grayConcrete", Name:"Gray Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "lightGrayConcrete", Name:"Light Gray Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "cyanConcrete", Name:"Cyan Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "purpleConcrete", Name:"Purple Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "blueConcrete", Name:"Blue Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "brownConcrete", Name:"Brown Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "greenConcrete", Name:"Green Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "redConcrete", Name:"Red Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
+{ name: "blackConcrete", Name:"Black Concrete",breakTime:9, type:"rock1",category:"build", stoneSound:true},
 {
 name: "bookshelf",
 Name:"Bookshelf",
 textures: [ "oakPlanks", "bookshelf" ],
 stoneSound: true,
-type:"wood", 
+type:"wood",
+category:"decoration",
 burnChance:0.4,
 burnTime:30
 },
@@ -3717,66 +3733,81 @@ burnTime:30
 Name:"Netherrack",
 breakTime:2,
 type:"rock1",
+category:"nature",
 burnTime:Infinity,
 digSound: ["block.netherrack.dig1", "block.netherrack.dig2", "block.netherrack.dig3", "block.netherrack.dig4", "block.netherrack.dig5", "block.netherrack.dig6"],
-stepSound: ["block.netherrack.step1", "block.netherrack.step2","block.netherrack.step3","block.netherrack.step4","block.netherrack.step5","block.netherrack.step6"]},
+stepSound: ["block.netherrack.step1", "block.netherrack.step2","block.netherrack.step3","block.netherrack.step4","block.netherrack.step5","block.netherrack.step6"],
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
+},
 { name: "soulSand",
 Name:"Soul Sand",
+category:"nature",
 speedFactor: 0.5,
 canHaveSoulFire: true,
 digSound: ["block.soul_sand.dig1", "block.soul_sand.dig2", "block.soul_sand.dig3", "block.soul_sand.dig4", "block.soul_sand.dig5", "block.soul_sand.dig6","block.soul_sand.step7","block.soul_sand.step8","block.soul_sand.step9"],
-stepSound: ["block.soul_sand.step1", "block.soul_sand.step2","block.soul_sand.step3","block.soul_sand.step4","block.soul_sand.step5","block.soul_sand.step6"]},
+stepSound: ["block.soul_sand.step1", "block.soul_sand.step2","block.soul_sand.step3","block.soul_sand.step4","block.soul_sand.step5","block.soul_sand.step6"],
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
+},
 {
 name: "glowstone",
 Name:"Glowstone",
 breakTime:0.45,
 type:"rock1",
+category:"decoration",
 lightLevel: 15,
 glassSound: true,
-shadow:false
+shadow:false,
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 { name: "netherBricks",
 Name:"Nether Bricks",
+category:"build",
 digSound: ["block.nether_bricks.dig1", "block.nether_bricks.dig2", "block.nether_bricks.dig3", "block.nether_bricks.dig4", "block.nether_bricks.dig5", "block.nether_bricks.dig6"],
 stepSound: ["block.nether_bricks.step1", "block.nether_bricks.step2","block.nether_bricks.step3","block.nether_bricks.step4","block.nether_bricks.step5","block.nether_bricks.step6"]},
 { name: "redNetherBricks",
 Name:"Red Nether Bricks",
+category:"build",
 digSound: ["block.nether_bricks.dig1", "block.nether_bricks.dig2", "block.nether_bricks.dig3", "block.nether_bricks.dig4", "block.nether_bricks.dig5", "block.nether_bricks.dig6"],
 stepSound: ["block.nether_bricks.step1", "block.nether_bricks.step2","block.nether_bricks.step3","block.nether_bricks.step4","block.nether_bricks.step5","block.nether_bricks.step6"]},
 {
 name: "netherQuartzOre", 
 Name:"Nether Quartz Ore",
+category:"nature",
 digSound: ["block.nether_ore.dig1", "block.nether_ore.dig2", "block.nether_ore.dig3", "block.nether_ore.dig4"],
 stepSound: ["block.nether_ore.step1", "block.nether_ore.step2","block.nether_ore.step3","block.nether_ore.step4","block.nether_ore.step5"],
 drop: "quartz",
-dropAmount: [1,2]
+dropAmount: [1,2],
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name: "quartzBlock",
 Name:"Block of Quartz",
+category:"build",
 textures: ["quartzBlockBottom", "quartzBlockTop", "quartzBlockSide"],
 stoneSound: true
 },
 {
 name: "quartzPillar",
 Name:"Pillar",
+category:"build",
 textures: ["quartzPillarTop", "quartzPillar"],
 stoneSound: true
 },
 {
 name: "chiseledQuartzBlock",
 Name:"Chiseled Quartz Block",
+category:"build",
 textures: ["chiseledQuartzBlockTop", "chiseledQuartzBlock"],
 stoneSound: true
 },
-{ name: "chiseledStoneBricks", Name:"Chiseled Stone Bricks", stoneSound:true},
-{ name: "smoothStone", Name:"Smooth Stone (it doesn't really look like stone)", stoneSound:true},
-{ name: "andesite", Name:"Andesite", stoneSound:true},
-{ name: "polishedAndesite", Name:"Polished Andesite", stoneSound:true},
-{ name: "diorite", Name:"Diorite", stoneSound:true},
-{ name: "polishedDiorite", Name:"Polished Diorite", stoneSound:true},
-{ name: "granite", Name:"Granite", stoneSound:true},
-{ name: "polishedGranite", Name:"Polished Granite", stoneSound:true},
+{ name: "chiseledStoneBricks", Name:"Chiseled Stone Bricks",category:"build", stoneSound:true},
+{ name: "smoothStone", Name:"Smooth Stone",category:"build", stoneSound:true, randomRotate:"flip",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true,},
+{ name: "andesite", Name:"Andesite", stoneSound:true,category:"nature", randomRotate:"flip",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true},
+{ name: "polishedAndesite", Name:"Polished Andesite",category:"build", stoneSound:true},
+{ name: "diorite", Name:"Diorite", stoneSound:true,category:"nature", randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true},
+{ name: "polishedDiorite", Name:"Polished Diorite",category:"build", stoneSound:true},
+{ name: "granite", Name:"Granite", stoneSound:true,category:"nature", randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true},
+{ name: "polishedGranite", Name:"Polished Granite",category:"build", stoneSound:true},
 { // I swear, if y'all don't stop asking about TNT every 5 minutes!
 name: "tnt",
 Name:"Trinitrotoluene",
@@ -3820,6 +3851,7 @@ burnChance:0.6,
 onburn:function(x,y,z,dimension){
 this.explode(x,y,z,null,dimension)
 },
+category:"redstone",
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -3848,7 +3880,7 @@ ambientSound:"block.portal.portal",
 pistonPush:false,
 pistonPull:false
 },
-{ name: "obsidian", Name:"Obsidian", stoneSound:true, type:"rock4", breakTime:250, blastResistance:1200, pistonPush:false, pistonPull:false},
+{ name: "obsidian", Name:"Obsidian", stoneSound:true, type:"rock4",category:"nature", breakTime:250, blastResistance:1200, pistonPush:false, pistonPull:false, randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true},
 //the old redstone dust added before this version of minekhan was public (early 2021)
 /*{
 name:"redstoneDust",
@@ -3907,7 +3939,8 @@ world.setBlock(x,y,z, blockIds.redstoneDust);
 name:"redstone",
 Name:"Redstone Dust",
 item:true,
-useAs:"redstoneDust"
+useAs:"redstoneDust",
+category:"redstone",
 },
 {
 name:"redstoneDust",
@@ -4211,6 +4244,7 @@ tagTintPropertyWest: "power",
 {
 name: "buffer",
 textures: ["bufferTop", "bufferMiddle"],
+category:"redstone",
 /*onupdate: function(x,y,z){
 setTimeout(() => {
 var isOn = world.getBlock(x,y+1,z);
@@ -4221,14 +4255,15 @@ setTimeout(function(){world.setBlock(x,y-1,z, blockIds.redstoneDustOn)}, 500);
 }, 10)
 }*/
 },
-{ name: "soup"},
-{ name: "soup2"},
+{ name: "soup",category:"food"},
+{ name: "soup2",category:"food"},
 {
 name: "soup3",
 transparent:true,
+category:"food"
 },
-{ name: "soup4"},
-{ name: "randomSoup"},
+{ name: "soup4",category:"food"},
+{ name: "randomSoup",category:"food"},
 {
 name: "redStain",
 transparent: true,
@@ -4257,6 +4292,7 @@ transparent: true,
 cullFace:"never",
 burnChance: 0.2,
 burnTime: 30,
+category:"nature"
 },
 {
 name: "darkLeaves",
@@ -4264,6 +4300,7 @@ transparent: true,
 cullFace:"never",
 burnChance: 0.2,
 burnTime: 30,
+category:"nature"
 },
 {
 name: "redBerryLeaves",
@@ -4271,6 +4308,7 @@ transparent: true,
 cullFace:"never",
 burnChance: 0.2,
 burnTime: 30,
+category:"nature"
 },
 {
 name: "blueBerryLeaves",
@@ -4278,6 +4316,7 @@ transparent: true,
 cullFace:"never",
 burnChance: 0.2,
 burnTime: 30,
+category:"nature"
 },
 {
 name: "pinkLeaves",
@@ -4285,6 +4324,7 @@ transparent: true,
 cullFace:"never",
 burnChance: 0.2,
 burnTime: 30,
+category:"nature"
 },
 { name: "flowerOftheValley",
 Name:"Flower of The Valley",
@@ -4293,7 +4333,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "poppy",
 Name:"Poppy",
@@ -4302,7 +4344,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "dandelion",
 Name:"Dandelion",
@@ -4311,7 +4355,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "blueOrchid",
 Name:"Blue Orchid",
@@ -4319,7 +4365,9 @@ solid: false,
 transparent: true,
 shadow: false,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "pinkTulip",
 Name:"Pink Tulip",
@@ -4328,7 +4376,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "orangeTulip",
 Name:"Orange Tulip",
@@ -4337,7 +4387,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "redTulip",
 Name:"Red Tulip",
@@ -4346,7 +4398,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "whiteTulip",
 Name:"White Tulip",
@@ -4355,7 +4409,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "azureBluet",
 Name:"Azure Bluet",
@@ -4364,7 +4420,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "cornFlower",
 Name:"Cornflower",
@@ -4373,7 +4431,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "purpleFlower",
 Name:"Purple Flower (i don't think this exsists in minecraft)",
@@ -4382,7 +4442,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "allium",
 Name:"Allium",
@@ -4391,7 +4453,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "oxeyeDaisy",
 Name:"Oxeye Daisy",
@@ -4400,7 +4464,9 @@ transparent: true,
 shadow: false,
 potCross: true,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "lilac",
 Name:"Lilac",
@@ -4409,7 +4475,9 @@ transparent: true,
 shadow: false,
 textures: "lilacTop",
 tallcrossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "roseBush",
 Name:"Rose Bush",
@@ -4418,7 +4486,9 @@ transparent: true,
 shadow: false,
 textures: "roseBushTop",
 tallcrossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "peony",
 Name:"Peony",
@@ -4427,7 +4497,9 @@ transparent: true,
 shadow: false,
 textures: "peonyTop",
 tallcrossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 { name: "witherRose",
 Name:"Wither Rose",
@@ -4437,7 +4509,9 @@ shadow: false,
 potCross: true,
 crossShape: true,
 ontouch: () => {witherEffect = 120; witherDamage = 1; witherTime = 2000},
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name: "TallGrass",
@@ -4456,7 +4530,9 @@ biomeTintNorth:true,
 biomeTintSouth:true,
 biomeTintEast:true,
 biomeTintWest:true,
-compostChance:0.5
+compostChance:0.5,
+liquidBreakable:"drop",
+category:"nature"
 },
 { 
 name: "oakDoor",
@@ -4468,6 +4544,7 @@ door:true,
 woodSound:true,
 breakTime:4.5,
 type:"wood",
+category:"build"
 },
 {
 name: "spruceDoor",
@@ -4479,6 +4556,7 @@ door:true,
 woodSound:true,
 breakTime:4.5,
 type:"wood",
+category:"build"
 },
 {
 name: "ironDoor",
@@ -4490,6 +4568,7 @@ door:true,
 stoneSound:true,
 breakTime:4.5,
 type:"wood",
+category:"build"
 },
 {
 name: "darkOakDoor",
@@ -4501,6 +4580,7 @@ door:true,
 woodSound:true,
 breakTime:4.5,
 type:"wood",
+category:"build"
 },
 {
 name: "birchDoor",
@@ -4512,6 +4592,7 @@ door:true,
 woodSound:true,
 breakTime:4.5,
 type:"wood",
+category:"build"
 },
 {
 name: "jungleDoor",
@@ -4523,6 +4604,7 @@ door:true,
 woodSound:true,
 breakTime:4.5,
 type:"wood",
+category:"build"
 },
 {
 name: "acaciaDoor",
@@ -4534,6 +4616,7 @@ door:true,
 woodSound:true,
 breakTime:4.5,
 type:"wood",
+category:"build"
 },
 {
 name: "warpedDoor",
@@ -4545,6 +4628,7 @@ door:true,
 woodSound:true,
 breakTime:4.5,
 type:"wood",
+category:"build"
 },
 {
 name: "crimsonDoor",
@@ -4556,6 +4640,7 @@ door:true,
 woodSound:true,
 breakTime:4.5,
 type:"wood",
+category:"build"
 },
 {
 name: "torch",
@@ -4590,7 +4675,8 @@ default:
 y += pix*2
 }
 world.addParticle(new FlameParticle(x,y,z),dimension)
-}
+},
+category:"decoration"
 },
 {
 name: "soulTorch",
@@ -4625,7 +4711,8 @@ default:
 y += pix*2
 }
 world.addParticle(new FlameParticle(x,y,z,"soul"),dimension)
-}
+},
+category:"decoration"
 },
 {
 name: "lantern",
@@ -4635,6 +4722,7 @@ shadow: false,
 lightLevel: 13,
 iconTexture: "lanternIcon",
 lantern: true,
+category:"decoration",
 digSound: ["block.lantern.dig1", "block.lantern.dig2", "block.lantern.dig3", "block.lantern.dig4", "block.lantern.dig5", "block.lantern.dig6"],
 placeSound: ["block.lantern.place1", "block.lantern.place2","block.lantern.place3","block.lantern.place4","block.lantern.place5","block.lantern.place6"]
 },
@@ -4646,6 +4734,7 @@ shadow: false,
 lightLevel: 10,
 iconTexture:"soulLanternIcon",
 lantern: true,
+category:"decoration",
 digSound: ["block.lantern.dig1", "block.lantern.dig2", "block.lantern.dig3", "block.lantern.dig4", "block.lantern.dig5", "block.lantern.dig6"],
 placeSound: ["block.lantern.place1", "block.lantern.place2","block.lantern.place3","block.lantern.place4","block.lantern.place5","block.lantern.place6"]
 },
@@ -4658,7 +4747,8 @@ beacon: true,
 lightLevel: 15,
 glassSound: true,
 pistonPush:false,
-pistonPull:false
+pistonPull:false,
+category:"decoration"
 },
 {
 name: "cactus",
@@ -4671,7 +4761,9 @@ potCross: true,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
 },
-compostChance:0.5
+compostChance:0.5,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name: "glassPane",
@@ -4681,7 +4773,8 @@ shadow: false,
 breakTime: 60,
 pane:true,
 textures: ["glassPaneTop","glassPaneTop","glass","glass","glassPaneSide","glassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "ladder",
@@ -4690,7 +4783,8 @@ transparent: true,
 shadow: false,
 wallFlat: true,ladder:true,
 breakTime:0.6,
-type:"wood"
+type:"wood",
+category:"decoration"
 },
 {
 name: "vine",
@@ -4701,6 +4795,7 @@ wallFlat: true,ladder:true,
 noDrop:true,
 dropSelfWhenSheared:true,
 shearBreakTime:0.35,
+liquidBreakable:"drop",
 tint:leafTint,
 biomeTintTop:true,
 biomeTintBottom:true,
@@ -4709,7 +4804,8 @@ biomeTintWest:true,
 biomeTintNorth:true,
 biomeTintSouth:true,
 invTint:[leafColor.r,leafColor.g,leafColor.b],
-compostChance:0.5
+compostChance:0.5,
+category:"nature"
 },
 {
 name: "Water",
@@ -4723,6 +4819,7 @@ semiTrans: true,
 cullFace:"never",
 blastResistance:100,
 hidden:true,
+dripThroughBlocks:[43/255, 63/255, 213/255],
 getLevel:function(block){
 switch(block){
 case this.id | LAYER1:
@@ -4782,8 +4879,14 @@ var b = world.getBlock(x,y,z,d)
 return b === this.id
 },
 tryFlowTo:function(x,y,z,dimension,level){
-if(!world.getBlock(x,y,z,dimension)){
+var block = world.getBlock(x,y,z,dimension)
+if(!block || blockData[block].liquidBreakable){
 world.setBlock(x,y,z,this.getLevelBlock(level),false,false,false,false,dimension)
+if(blockData[block].liquidBreakable === "drop"){
+world.addEntity(new Item(x,y,z,0,0,0,block,true),false,dimension)
+blockParticles(block,x,y,z,30, "break",world,dimension)
+blockSound(block, "dig", x,y,z)
+}
 return true
 }
 },
@@ -4801,7 +4904,7 @@ var levelTarget = level
 if(this.isThisHere(x,y+1,z,dimension)){
 levelTarget = 8
 }else{
-var around = max(this.getLevelAt(x,y,z+1), this.getLevelAt(x,y,z-1), this.getLevelAt(x+1,y,z), this.getLevelAt(x-1,y,z))-1
+var around = max(this.getLevelAt(x,y,z+1,dimension), this.getLevelAt(x,y,z-1,dimension), this.getLevelAt(x+1,y,z,dimension), this.getLevelAt(x-1,y,z,dimension))-1
 if(around !== levelTarget) levelTarget = around
 if(levelTarget <= 0) return world.setBlock(x,y,z,0, false,false,false,false,dimension)
 }
@@ -4818,16 +4921,27 @@ this.tryFlowTo(x-1,y,z,dimension,level-1)
 }
 },
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
+var block = world.getBlock(x,y+1,z,dimension)
+if (block && blockData[block].name === "Lava") {
+return world.setBlock(x,y,z,blockIds.stone,false,false,false,false,dimension)
+}
+var n = world.getBlock(x,y,z+1,dimension)
+var s = world.getBlock(x,y,z-1,dimension)
+var e = world.getBlock(x+1,y,z,dimension)
+var w = world.getBlock(x-1,y,z,dimension)
+if (n && blockData[n].name === "Lava" || s && blockData[s].name === "Lava" || e && blockData[e].name === "Lava" || w && blockData[w].name === "Lava") {
+return world.setBlock(x,y,z,blockIds.cobblestone,false,false,false,false,dimension)
+}
 for(var i=0; i<world.timeoutQueue.length; i++){
 var t = world.timeoutQueue[i]
-if(t.x === x && t.y === y && t.z === z){
+if(t.x === x && t.y === y && t.z === z && t.d === dimension){
 world.timeoutQueue.splice(i,1)
 i--
 }
 }
 var me = this
 var t = () => me.flow(x,y,z,dimension)
-t.x = x, t.y = y, t.z = z
+t.x = x, t.y = y, t.z = z, t.d = dimension
 world.setTimeout(t, tickTime*5)
 },
 current:{
@@ -5000,17 +5114,266 @@ dieMessage: () => username+" tried to swim in lava.",
 shadow: false,
 blastResistance:100,
 hidden:true,
-onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
-var block = world.getBlock(x,y+1,z,dimension)
-if (block && blockData[block].name === "Water") {
-world.setBlock(x,y,z,blockIds.obsidian,false,false,false,false,dimension)
-}
-},
 temperature:25,
+dripThroughBlocks:[210/255, 59/255, 17/255],
 tick:function(x,y,z,dimension){
 blockData[blockIds.fire].spread(x,y,z,dimension)
 if(rand() < 0.05) world.addParticle(new LavaParticle(x,y+0.5,z),dimension)
+},
+getLevel:function(block){
+switch(block){
+case this.id | LAYER1:
+return 1
+case this.id | LAYER2:
+return 2
+case this.id | LAYER3:
+return 3
+case this.id | LAYER4:
+return 4
+case this.id | LAYER5:
+return 5
+case this.id | LAYER6:
+return 6
+case this.id | LAYER7:
+return 7
+case this.id | LAYER8:
+case this.id:
+return 8
+default:
+return 0
 }
+},
+getLevelBlock:function(l){
+switch(l){
+case 1:
+return this.id | LAYER1
+case 2:
+return this.id | LAYER2
+case 3:
+return this.id | LAYER3
+case 4:
+return this.id | LAYER4
+case 5:
+return this.id | LAYER5
+case 6:
+return this.id | LAYER6
+case 7:
+return this.id | LAYER7
+case 8:
+return this.id | LAYER8
+}
+},
+getLevelAt:function(x,y,z,dimension){
+var block = world.getBlock(x,y,z,dimension)
+return this.getLevel(block)
+},
+isThisHere:function(x,y,z,d){
+var b = world.getBlock(x,y,z,d)
+return b && blockData[b].id === this.id
+},
+isThis:function(b){
+return blockData[b].id === this.id
+},
+isSourceAt:function(x,y,z,d){
+var b = world.getBlock(x,y,z,d)
+return b === this.id
+},
+tryFlowTo:function(x,y,z,dimension,level){
+var block = world.getBlock(x,y,z,dimension)
+if(!block || blockData[block].liquidBreakable){
+world.setBlock(x,y,z,this.getLevelBlock(level),false,false,false,false,dimension)
+if(blockData[block].liquidBreakable === "drop"){
+world.addEntity(new Item(x,y,z,0,0,0,block,true),false,dimension)
+blockParticles(block,x,y,z,30, "break",world,dimension)
+blockSound(block, "dig", x,y,z)
+}
+return true
+}
+},
+flow:function(x,y,z,dimension){
+var hd = dimension === "nether" ? 1 : 2
+var block = world.getBlock(x,y,z,dimension)
+if(!this.isThis(block)) return
+var source = block === this.id
+var level = this.getLevel(block)
+var down = world.getBlock(x,y-1,z,dimension)
+if(!source){
+var levelTarget = level
+if(this.isThisHere(x,y+1,z,dimension)){
+levelTarget = 8
+}else{
+var around = max(this.getLevelAt(x,y,z+1,dimension), this.getLevelAt(x,y,z-1,dimension), this.getLevelAt(x+1,y,z,dimension), this.getLevelAt(x-1,y,z,dimension))-hd
+if(around !== levelTarget) levelTarget = around
+if(levelTarget <= 0) return world.setBlock(x,y,z,0, false,false,false,false,dimension)
+}
+if(level !== levelTarget){
+level = levelTarget
+world.setBlock(x,y,z,this.getLevelBlock(level), false,false,false,false,dimension)
+}
+}
+if(!this.tryFlowTo(x,y-1,z,dimension,8) && level > hd && !(this.isThis(down) && down !== this.id)){
+this.tryFlowTo(x,y,z+1,dimension,level-hd)
+this.tryFlowTo(x,y,z-1,dimension,level-hd)
+this.tryFlowTo(x+1,y,z,dimension,level-hd)
+this.tryFlowTo(x-1,y,z,dimension,level-hd)
+}
+},
+onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
+var block = world.getBlock(x,y+1,z,dimension)
+if (block && blockData[block].name === "Water") {
+return world.setBlock(x,y,z,blockIds.obsidian,false,false,false,false,dimension)
+}
+for(var i=0; i<world.timeoutQueue.length; i++){
+var t = world.timeoutQueue[i]
+if(t.x === x && t.y === y && t.z === z && t.d === dimension){
+world.timeoutQueue.splice(i,1)
+i--
+}
+}
+var me = this
+var t = () => me.flow(x,y,z,dimension)
+t.x = x, t.y = y, t.z = z, t.d = dimension
+world.setTimeout(t, tickTime*(dimension === "nether" ? 10 : 30))
+},
+current:{
+x:0,z:0,
+ang4:Math.sqrt(0.5),
+ang8:Math.sqrt(5)
+},
+getCurrent:function(bx,by,bz,dimension,level,noNormalize){
+if(level === undefined) level = this.getLevelAt(bx,by,bz,dimension)
+var x = this.getLevelAt(bx-1,by,bz,dimension)
+var X = this.getLevelAt(bx+1,by,bz,dimension)
+var z = this.getLevelAt(bx,by,bz-1,dimension)
+var Z = this.getLevelAt(bx,by,bz+1,dimension)
+var current = this.current
+current.x = (X < level) + (x > level) - (X > level) - (x < level)
+current.z = (Z < level) + (z > level) - (Z > level) - (z < level)
+if(noNormalize) return current
+let mag = Math.sqrt(current.x * current.x + current.z * current.z)
+current.x /= mag
+current.z /= mag
+return current
+},
+getY:function(x,y,z,dimension){
+var block = world.getBlock(x,y,z,dimension)
+return (min((this.getLevel(block))*2,14.5)/16)-0.5
+},
+getFace:function(x,y,z,dimension,block,face,verts,tex,texCoord){
+var level = this.getLevel(block)
+var h = (min(level*2,14.5)/16)-0.5
+var XZ = avg(this.getY(x+1,y,z+1,dimension), this.getY(x+1,y,z,dimension), this.getY(x,y,z+1,dimension), h)
+var Xz = avg(this.getY(x+1,y,z-1,dimension), this.getY(x+1,y,z,dimension), this.getY(x,y,z-1,dimension), h)
+var xz = avg(this.getY(x-1,y,z-1,dimension), this.getY(x-1,y,z,dimension), this.getY(x,y,z-1,dimension), h)
+var xZ = avg(this.getY(x-1,y,z+1,dimension), this.getY(x-1,y,z,dimension), this.getY(x,y,z+1,dimension), h)
+if(face === "bottom"){
+verts[1] = xZ
+verts[4] = XZ
+verts[7] = Xz
+verts[10] = xz
+var c = this.getCurrent(x,y,z,dimension,level,true)
+if(!c.x && !c.z) return
+c.x = -c.x
+let o = 1/32
+tex[0] -= o, tex[1] -= o, tex[2] -= o, tex[3] -= o, tex[4] -= o, tex[5] -= o, tex[6] -= o, tex[7] -= o
+let x2 = tex[0], y2 = tex[1]
+tex[0] = x2 * c.z + y2 * c.x
+tex[1] = x2 * c.x - y2 * c.z
+x2 = tex[2], y2 = tex[3]
+tex[2] = x2 * c.z + y2 * c.x
+tex[3] = x2 * c.x - y2 * c.z
+x2 = tex[4], y2 = tex[5]
+tex[4] = x2 * c.z + y2 * c.x
+tex[5] = x2 * c.x - y2 * c.z
+x2 = tex[6], y2 = tex[7]
+tex[6] = x2 * c.z + y2 * c.x
+tex[7] = x2 * c.x - y2 * c.z
+var d = max(...tex)/o
+tex[0] /= d
+tex[1] /= d
+tex[2] /= d
+tex[3] /= d
+tex[4] /= d
+tex[5] /= d
+tex[6] /= d
+tex[7] /= d
+tex[0] += o, tex[1] += o, tex[2] += o, tex[3] += o, tex[4] += o, tex[5] += o, tex[6] += o, tex[7] += o
+var t = textureCoords[textureMap.lavaFlow]
+texCoord[0] = t[0], texCoord[1] = t[1]
+}else if(face === "top"){
+return
+}else{
+var left,right
+switch(face){
+case "north":
+left = XZ, right = xZ
+break
+case "south":
+left = xz, right = Xz
+break
+case "east":
+left = Xz, right = XZ
+break
+case "west":
+left = xZ, right = xz
+break
+}
+verts[1] = left
+verts[4] = right
+tex[1] = (1-(left+0.5))/16
+tex[3] = (1-(right+0.5))/16
+}
+},
+customShape:function(x,y,z,dimension,block,face,verts,tex,texCoord){
+if(this.isThisHere(x,y+1,z,dimension)){ //full block
+if(face === "bottom") return !this.isThisHere(x,y+1,z,dimension)
+if(face === "top") return !this.isThisHere(x,y-1,z,dimension)
+if(face === "north" && this.isThisHere(x,y,z+1,dimension) && this.isThisHere(x,y+1,z+1,dimension)) return false
+if(face === "south" && this.isThisHere(x,y,z-1,dimension) && this.isThisHere(x,y+1,z-1,dimension)) return false
+if(face === "east" && this.isThisHere(x+1,y,z,dimension) && this.isThisHere(x+1,y+1,z,dimension)) return false
+if(face === "west" && this.isThisHere(x-1,y,z,dimension) && this.isThisHere(x-1,y+1,z,dimension)) return false
+if(face === "north" && !this.isThisHere(x,y,z+1,dimension)) return
+if(face === "south" && !this.isThisHere(x,y,z-1,dimension)) return
+if(face === "east" && !this.isThisHere(x+1,y,z,dimension)) return
+if(face === "west" && !this.isThisHere(x-1,y,z,dimension)) return
+var idx = 0
+switch(face){
+case "north":
+z++
+face = "south"
+break
+case "south":
+z--
+face = "north"
+break
+case "east":
+x++
+face = "west"
+idx = 2
+break
+case "west":
+x--
+face = "east"
+idx = 2
+break
+}
+block = world.getBlock(x,y,z,dimension)
+this.getFace(x,y,z,dimension,block,face,verts,tex)
+//only show face where other block isn't showing it
+verts[7] = verts[1]
+verts[10] = verts[4]
+verts[1] = verts[4] = 0.5
+tex[5] = tex[1]
+tex[7] = tex[3]
+tex[1] = tex[3] = 0
+return
+}
+if(face === "north" && this.isThisHere(x,y,z+1,dimension)) return false
+if(face === "south" && this.isThisHere(x,y,z-1,dimension)) return false
+if(face === "east" && this.isThisHere(x+1,y,z,dimension)) return false
+if(face === "west" && this.isThisHere(x-1,y,z,dimension)) return false
+this.getFace(x,y,z,dimension,block,face,verts,tex,texCoord)
+},
 },
 {
 name: "craftingTable",
@@ -5019,43 +5382,54 @@ textures: ["oakPlanks","craftingTableTop","craftingTableFront","craftingTableSid
 onclick: () => {changeScene("crafting"); releasePointer()},
 woodSound: true,
 breakTime:3.75,
-type:"wood"
+type:"wood",
+category:"items"
 },
 {
 name: "crimsonNylium",
 Name:"Crimson Nylium",
 textures: ["netherrack", "crimsonNyliumTop", "crimsonNyliumSide"],
-nyliumSound: true
+nyliumSound: true,
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true
 },
 {
 name: "warpedNylium",
 Name:"Warped Nylium",
 textures: ["netherrack", "warpedNyliumTop", "warpedNyliumSide"],
-nyliumSound: true
+nyliumSound: true,
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true
 },
 {
 name: "crimsonStem",
 Name:"Crimson Stem",
 textures: ["crimsonStemTop", "crimsonStemSide"],
 stemSound: true,
-type:"wood"
+type:"wood",
+category:"nature"
 },
 {
 name: "warpedStem",
 Name:"Warped Stem",
 textures: ["warpedStemTop", "warpedStemSide"],
 stemSound: true,
-type:"wood"
+type:"wood",
+category:"nature"
 },
 { name: "netherWartBlock",
-Name:"Nether Wart Block",breaktime:1.5,compostChance:0.85,
+Name:"Nether Wart Block",breaktime:1.5,compostChance:0.85,category:"nature",
 digSound: ["block.netherwart.dig1", "block.netherwart.dig2", "block.netherwart.dig3", "block.netherwart.dig4", "block.netherwart.dig5", "block.netherwart.dig6"],
-stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"]},
+stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"],
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
+},
 { name: "warpedWartBlock",
-Name:"Warped Wart Block",breaktime:1.5,compostChance:0.85,
+Name:"Warped Wart Block",breaktime:1.5,compostChance:0.85,category:"nature",
 digSound: ["block.netherwart.dig1", "block.netherwart.dig2", "block.netherwart.dig3", "block.netherwart.dig4", "block.netherwart.dig5", "block.netherwart.dig6"],
-stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"]},
-{ name: "shroomlight", lightLevel:15,Name:"Shroomlight",breaktime:1.5,compostChance:0.65,
+stepSound: ["block.netherwart.step1", "block.netherwart.step2","block.netherwart.step3","block.netherwart.step4","block.netherwart.step5"],
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
+},
+{ name: "shroomlight", lightLevel:15,Name:"Shroomlight",breaktime:1.5,compostChance:0.65,category:"nature",
 digSound: ["block.shroomlight.dig1", "block.shroomlight.dig2", "block.shroomlight.dig3", "block.shroomlight.dig4", "block.shroomlight.dig5"],
 stepSound: ["block.shroomlight.step1", "block.shroomlight.step2","block.shroomlight.step3","block.shroomlight.step4","block.shroomlight.step5","block.shroomlight.step6"]},
 { 
@@ -5067,21 +5441,25 @@ transparent: true,
 crossShape: true,
 potCross: true,
 compostChance:0.65,
+category:"nature",
 digSound: ["block.fungus.dig1", "block.fungus.dig2", "block.fungus.dig3", "block.fungus.dig4", "block.fungus.dig5", "block.fungus.dig6"]
 },
 {
 name: "blackstone",
 Name:"Blackstone",
 textures: ["blackstoneTop", "blackstone" ],
-stoneSound: true
+stoneSound: true,
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true
 },
-{ name: "gildedBlackstone", Name:"Gilded Blackstone", stoneSound: true},
-{ name: "polishedBlackstoneBricks", Name:"Polished Blackstone Bricks", stoneSound: true},
-{ name: "chiseledPolishedBlackstone", Name:"Chiseled Polished Blackstone", stoneSound: true},
+{ name: "gildedBlackstone", Name:"Gilded Blackstone", category:"nature",stoneSound: true, randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true},
+{ name: "polishedBlackstoneBricks", Name:"Polished Blackstone Bricks", category:"build",stoneSound: true},
+{ name: "chiseledPolishedBlackstone", Name:"Chiseled Polished Blackstone", category:"build",stoneSound: true},
 {
 name: "netheriteBlock",
 Name:"Netherite Block",
 type:"rock4",
+category:"build",
 breakTime:250,
 blastResistance:1200,
 digSound: ["block.netherite.dig1", "block.netherite.dig2", "block.netherite.dig3", "block.netherite.dig4"],
@@ -5090,32 +5468,37 @@ stepSound: ["block.netherite.step1", "block.netherite.step2","block.netherite.st
 {
 name: "basalt",
 Name: "Basalt",
+category:"nature",
 textures: [ "basaltTop", "basaltSide" ],
 basaltSound: true
 },
 {
 name: "polishedBasalt",
 Name: "Polished Basalt",
+category:"build",
 textures: [ "polishedBasaltTop", "polishedBasaltSide" ],
 basaltSound: true
 },
-{ name: "chain", Name:"Chain", transparent:true, shadow:false, chain:true, iconTexture:"chainIcon",
+{ name: "chain", Name:"Chain", category:"build",transparent:true, shadow:false, chain:true, iconTexture:"chainIcon",
 digSound: ["block.chain.dig1", "block.chain.dig2", "block.chain.dig3", "block.chain.dig4"],
 stepSound: ["block.chain.step1", "block.chain.step2","block.chain.step3","block.chain.step4","block.chain.step5","block.chain.step6"]},
-{ name: "warpedPlanks", Name:"Warped Planks", breakTime:3, type:"wood", woodSound:true},
+{ name: "warpedPlanks", Name:"Warped Planks", breakTime:3, type:"wood",category:"build", woodSound:true},
 { 
 name: "warpedTrapdoor",
 Name: "Warped Trapdoor",
 transparent: true,
 shadow: false,
 trapdoor: true,
-woodSound:true
+woodSound:true,
+category:"build"
 },
 {
 name: "magma", Name:"Magma Block", lightLevel:15,breakTime:10, type:"rock1",
 damage:1,
 dieMessage: () => username+" discovered the floor was lava.",
-burnTime:Infinity
+burnTime:Infinity,
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name: "crimsonFungus",
@@ -5126,6 +5509,7 @@ transparent: true,
 crossShape: true,
 potCross: true,
 compostChance:0.65,
+category:"nature",
 digSound: ["block.fungus.dig1", "block.fungus.dig2", "block.fungus.dig3", "block.fungus.dig4", "block.fungus.dig5", "block.fungus.dig6"]
 },
 { 
@@ -5136,7 +5520,8 @@ solid: false,
 shadow: false,
 crossShape: true,
 rootSound: true,
-compostChance:0.65
+compostChance:0.65,
+category:"nature",
 },
 { 
 name: "crimsonRoots",
@@ -5146,7 +5531,8 @@ solid: false,
 shadow: false,
 crossShape: true,
 rootSound: true,
-compostChance:0.65
+compostChance:0.65,
+category:"nature"
 },
 { 
 name: "twistingVines",
@@ -5181,7 +5567,8 @@ var isIt = blockData[top].name === "twistingVines" || blockData[top].name === "t
 if(!isIt){
 world.setBlock(x,y,z,blockIds.twistingVines | CROSS,false,false,false,false,dimension)
 }
-}
+},
+category:"nature",
 },
 {
 name: "weepingVines",
@@ -5214,7 +5601,8 @@ var isIt = blockData[top].name === "weepingVines" || blockData[top].name === "we
 if(!isIt){
 world.setBlock(x,y,z,blockIds.weepingVines | CROSS,false,false,false,false,dimension)
 }
-}
+},
+category:"nature"
 },
 { 
 name: "netherSprouts",
@@ -5224,12 +5612,14 @@ shadow: false,
 transparent: true,
 crossShape: true,
 compostChance:0.5,
+category:"nature",
 digSound: ["block.nether_sprouts.dig1", "block.nether_sprouts.dig2", "block.nether_sprouts.dig3", "block.nether_sprouts.dig4"],
 stepSound: ["block.nether_sprouts.step1", "block.nether_sprouts.step2","block.nether_sprouts.step3","block.nether_sprouts.step4","block.nether_sprouts.step5"]
 },
-{ name: "stoneButton", Name:"Stone Button", textures:"stone", button:true, transparent: true, shadow:false, stone:true },
+{ name: "stoneButton", Name:"Stone Button", textures:"stone", category:"redstone",button:true, transparent: true, shadow:false, stone:true },
 { 
 name: "RespawnAnchorOff",
+category:"items",
 textures: ["respawnAnchorBottom", "respawnAnchorTopOff", "respawnAnchorSide0"],
 //onupdate: (x,y,z) => {if(world.type !== "nether"){explode(x,y,z,2)}}
 },
@@ -5264,7 +5654,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name: "flintAndSteel",
@@ -5309,7 +5700,8 @@ if(multiplayer) send({type:"playSound", data:"block.fire.ignite", x:x,y:y,z:z})
 }
 },
 durability:64,
-stackSize:1
+stackSize:1,
+category:"items"
 },
 {
 name: "barrier",
@@ -5320,7 +5712,8 @@ flatIcon:true,
 transparent:true,
 breakTime:Infinity,
 pistonPush:false,
-pistonPull:false
+pistonPull:false,
+category:"items"
 },
 {
 name: "oakSapling",
@@ -5330,6 +5723,7 @@ potCross: true,
 transparent: true,
 solid: false,
 shadow:false,
+liquidBreakable:"drop",
 grow: function(wx,wy,wz,dimension){
 wy--
 let i=wx, j=wy, k=wz
@@ -5399,63 +5793,72 @@ world.setBlock(wx, top + 1, wz - 1, leaf, false,false,false,false,dimension)
 world.setBlock(wx, top + 1, wz + 1, leaf, false,false,false,false,dimension)
 world.setBlock(wx - 1, top + 1, wz, leaf, false,false,false,false,dimension)
 },
-compostChance:0.3
+compostChance:0.3,
+category:"nature"
 },
 { 
 name: "crimsonTrapdoor",
 Name:"Crimson Trapdoor",
 transparent: true,
 trapdoor: true,
-woodSound: true
+woodSound: true,
+category:"build"
 },
 { 
 name: "oakTrapdoor",
 Name:"Oak Trapdoor",
 transparent: true,
 trapdoor: true,
-woodSound: true
+woodSound: true,
+category:"build"
 },
 { 
 name: "spruceTrapdoor",
 Name:"Spruce Trapdoor",
 transparent: true,
 trapdoor: true,
-woodSound: true
+woodSound: true,
+category:"build"
 },
 { 
 name: "darkOakTrapdoor",
 Name:"Dark Oak Trapdoor",
 transparent: true,
 trapdoor: true,
-woodSound: true
+woodSound: true,
+category:"build"
 },
 { 
 name: "birchTrapdoor",
 Name:"Birck Trapdoor",
 transparent: true,
 trapdoor: true,
-woodSound: true
+woodSound: true,
+category:"build"
 },
 { 
 name: "jungleTrapdoor",
 Name:"Jungle Trapdoor",
 transparent: true,
 trapdoor: true,
-woodSound: true
+woodSound: true,
+category:"build"
 },
 { 
 name: "acaciaTrapdoor",
 Name:"Acaica Trapdoor",
 transparent: true,
 trapdoor: true,
-woodSound: true
+woodSound: true,
+category:"build"
 },
 { 
 name: "ironTrapdoor",
 Name:"Iron Trapdoor",
 transparent: true,
 trapdoor: true,
-stoneSound: true
+stoneSound: true,
+category:"build"
 },
 { 
 name: "cryingObsidian",
@@ -5467,14 +5870,19 @@ type:"rock4",
 breakTime:250,
 blastResistance:1200,
 pistonPush:false,
-pistonPull:false
+pistonPull:false,
+drip:[106/255, 6/255, 187/255],
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 { name: "netherGoldOre",
 Name:"Nether Gold Ore",
 digSound: ["block.nether_ore.dig1", "block.nether_ore.dig2", "block.nether_ore.dig3", "block.nether_ore.dig4"],
 stepSound: ["block.nether_ore.step1", "block.nether_ore.step2","block.nether_ore.step3","block.nether_ore.step4","block.nether_ore.step5"],
 drop: "goldNugget",
-dropAmount: [1,3]
+dropAmount: [1,3],
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name: "flowerPot",
@@ -5483,7 +5891,9 @@ transparent: true,
 shadow: false,
 pot: true,
 iconTexture:"flowerPotIcon",
-flatIcon:true
+flatIcon:true,
+category:"decoration",
+liquidBreakable:"drop"
 },
 {
 name: "acaciaSapling",
@@ -5493,7 +5903,9 @@ shadow: false,
 solid: false,
 crossShape: true,
 potCross: true,
-compostChance:0.3
+compostChance:0.3,
+category:"nature",
+liquidBreakable:"drop"
 },
 {
 name: "birchSapling",
@@ -5503,6 +5915,8 @@ shadow: false,
 solid: false,
 crossShape: true,
 potCross: true,
+category:"nature",
+liquidBreakable:"drop",
 grow:function(wx,wy,wz,dimension){
 wy--
 let i=wx, j=wy, k=wz
@@ -5582,7 +5996,9 @@ shadow: false,
 solid: false,
 crossShape: true,
 potCross: true,
-compostChance:0.3
+compostChance:0.3,
+category:"nature",
+liquidBreakable:"drop"
 },
 {
 name: "jungleSapling",
@@ -5592,7 +6008,9 @@ shadow: false,
 solid: false,
 crossShape: true,
 potCross: true,
-compostChance:0.3
+compostChance:0.3,
+category:"nature",
+liquidBreakable:"drop"
 },
 {
 name: "spruceSapling",
@@ -5602,7 +6020,9 @@ shadow: false,
 solid: false,
 crossShape: true,
 potCross: true,
-compostChance:0.3
+compostChance:0.3,
+category:"nature",
+liquidBreakable:"drop"
 },
 {
 name: "blueOrchidPot",
@@ -5611,7 +6031,8 @@ shadow: false,
 solid: false,
 potCross: true,
 hidden:true,
-drop:"blueOrchid"
+drop:"blueOrchid",
+liquidBreakable:"drop"
 },
 {
 name: "warpedRootsPot",
@@ -5620,7 +6041,8 @@ shadow: false,
 solid: false,
 potCross: true,
 hidden:true,
-drop:"warpedRoots"
+drop:"warpedRoots",
+liquidBreakable:"drop"
 },
 {
 name: "crimsonRootsPot",
@@ -5629,30 +6051,34 @@ shadow: false,
 solid: false,
 potCross: true,
 hidden:true,
-drop:"crimsonRoots"
+drop:"crimsonRoots",
+liquidBreakable:"drop"
 },
-{ name: "whiteCarpet", Name: "White Carpet", textures: "whiteWool", carpet: true, clothSound:true},
-{ name: "orangeCarpet", Name: "Orange Carpet", textures: "orangeWool", carpet: true, clothSound:true},
-{ name: "magentaCarpet", Name: "Magenta Carpet", textures: "magentaWool", carpet: true, clothSound:true},
-{ name: "lightBlueCarpet", Name: "Light Blue Carpet", textures: "lightBlueWool", carpet: true, clothSound:true},
-{ name: "yellowCarpet", Name: "Yellow Carpet", textures: "yellowWool", carpet: true, clothSound:true},
-{ name: "limeCarpet", Name: "Lime Carpet", textures: "limeWool", carpet: true, clothSound:true},
-{ name: "pinkCarpet", Name: "Pink Carpet", textures: "pinkWool", carpet: true, clothSound:true},
-{ name: "grayCarpet", Name: "Gray Carpet", textures: "grayWool", carpet: true, clothSound:true},
-{ name: "lightGrayCarpet", Name: "Light Gray Carpet", textures: "lightGrayWool", carpet: true, clothSound:true},
-{ name: "cyanCarpet", Name: "Cyan Carpet", textures: "cyanWool", carpet: true, clothSound:true},
-{ name: "purpleCarpet", Name: "Purple Carpet", textures: "purpleWool", carpet: true, clothSound:true},
-{ name: "blueCarpet", Name: "Blue Carpet", textures: "blueWool", carpet: true, clothSound:true},
-{ name: "brownCarpet", Name: "Brown Carpet", textures: "brownWool", carpet: true, clothSound:true},
-{ name: "greenCarpet", Name: "Green Carpet", textures: "greenWool", carpet: true, clothSound:true},
-{ name: "redCarpet", Name: "Red Carpet", textures: "redWool", carpet: true, clothSound:true},
-{ name: "blackCarpet", Name: "Black Carpet", textures: "blackWool", carpet: true, clothSound:true},
-{ name: "polishedBlackstone", Name: "Polished Blackstone", stoneSound:true},
+{ name: "whiteCarpet", Name: "White Carpet", textures: "whiteWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "orangeCarpet", Name: "Orange Carpet", textures: "orangeWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "magentaCarpet", Name: "Magenta Carpet", textures: "magentaWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "lightBlueCarpet", Name: "Light Blue Carpet", textures: "lightBlueWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "yellowCarpet", Name: "Yellow Carpet", textures: "yellowWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "limeCarpet", Name: "Lime Carpet", textures: "limeWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "pinkCarpet", Name: "Pink Carpet", textures: "pinkWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "grayCarpet", Name: "Gray Carpet", textures: "grayWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "lightGrayCarpet", Name: "Light Gray Carpet", textures: "lightGrayWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "cyanCarpet", Name: "Cyan Carpet", textures: "cyanWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "purpleCarpet", Name: "Purple Carpet", textures: "purpleWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "blueCarpet", Name: "Blue Carpet", textures: "blueWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "brownCarpet", Name: "Brown Carpet", textures: "brownWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "greenCarpet", Name: "Green Carpet", textures: "greenWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "redCarpet", Name: "Red Carpet", textures: "redWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "blackCarpet", Name: "Black Carpet", textures: "blackWool", category:"decoration",carpet: true, clothSound:true},
+{ name: "polishedBlackstone", Name: "Polished Blackstone", category:"build",stoneSound:true},
 { name: "chiseledNetherBricks",
-Name: "Cracked Nether Bricks",
+Name: "Chiseled Nether Bricks",
+category:"build",
 digSound: ["block.nether_bricks.dig1", "block.nether_bricks.dig2", "block.nether_bricks.dig3", "block.nether_bricks.dig4", "block.nether_bricks.dig5", "block.nether_bricks.dig6"],
 stepSound: ["block.nether_bricks.step1", "block.nether_bricks.step2","block.nether_bricks.step3","block.nether_bricks.step4","block.nether_bricks.step5","block.nether_bricks.step6"]},
 { name: "crackedNetherBricks",
+Name:"Cracked Netehr Bricks",
+category:"build",
 digSound: ["block.nether_bricks.dig1", "block.nether_bricks.dig2", "block.nether_bricks.dig3", "block.nether_bricks.dig4", "block.nether_bricks.dig5", "block.nether_bricks.dig6"],
 stepSound: ["block.nether_bricks.step1", "block.nether_bricks.step2","block.nether_bricks.step3","block.nether_bricks.step4","block.nether_bricks.step5","block.nether_bricks.step6"]},
 { name: "smoothBasalt", Name: "Smooth Basalt", basaltSound: true},
@@ -5706,7 +6132,7 @@ name: "polishedBasaltSW",
 textures: ["polishedBasaltSide","polishedBasaltSide","polishedBasaltTop","polishedBasaltSideSW"],
 rotate: true, basaltSound: true, hidden:true
 },
-{ name:"crimsonPlanks", Name: "Crimson Planks", woodSound:true, breakTime:3, type:"wood" },
+{ name:"crimsonPlanks", Name: "Crimson Planks", woodSound:true, breakTime:3, type:"wood",category:"build" },
 {
 name:"deadBush",
 Name:"Dead Bush",
@@ -5718,20 +6144,22 @@ crossShape: true,
 drop: "stick",
 dropAmount: [0,2],
 dropSelfWhenSheared:true,
-shearDropAmount:1
+shearDropAmount:1,
+liquidBreakable:"drop",
+category:"nature",
 },
-{ name:"stick", Name:"Stick", item:true },
-{ name:"coal", Name:"Coal", item:true },
-{ name:"ironIngot", Name:"Iron Ingot", item:true },
-{ name:"copperIngot", Name:"Copper Ingot", item:true },
-{ name:"goldIngot", Name:"Gold Ingot", item:true },
-{ name:"diamond", Name:"Diamond", item:true },
-{ name:"lapisLazuli", Name:"Lapis Lazuli", item:true },
-{ name:"emerald", Name:"Emerald", item:true },
-{ name:"copperOre", Name:"Copper Ore", breakTime:15, drop:"rawCopper", dropAmount:[2,5], type:"rock2", stoneSound:true },
-{ name:"rawIron", Name:"Raw Iron", item:true },
-{ name:"rawCopper", Name:"Raw Copper", item:true },
-{ name:"rawGold", Name:"Raw Gold", item:true },
+{ name:"stick", Name:"Stick", category:"items",item:true },
+{ name:"coal", Name:"Coal", category:"items",item:true },
+{ name:"ironIngot", Name:"Iron Ingot", category:"items",item:true },
+{ name:"copperIngot", Name:"Copper Ingot", category:"items",item:true },
+{ name:"goldIngot", Name:"Gold Ingot", category:"items",item:true },
+{ name:"diamond", Name:"Diamond", category:"items",item:true },
+{ name:"lapisLazuli", Name:"Lapis Lazuli", category:"items",item:true },
+{ name:"emerald", Name:"Emerald", category:"items",item:true },
+{ name:"copperOre", Name:"Copper Ore", breakTime:15, drop:"rawCopper", dropAmount:[2,5], type:"rock2",category:"nature", stoneSound:true },
+{ name:"rawIron", Name:"Raw Iron", category:"items",item:true },
+{ name:"rawCopper", Name:"Raw Copper", category:"items",item:true },
+{ name:"rawGold", Name:"Raw Gold", category:"items",item:true },
 {
 name: "netherWart",
 Name:"Nether Wart",
@@ -5741,7 +6169,8 @@ solid: false,
 crop: true,
 flatIcon:true,
 iconTexture:"netherWartIcon",
-compostChance:0.65
+compostChance:0.65,
+category:"nature",
 },
 {
 name: "wheat",
@@ -5754,6 +6183,7 @@ flatIcon:true,
 iconTexture:"wheatIcon",
 fullDrop:["wheat","wheatSeeds"],
 drop:"wheatSeeds",
+liquidBreakable:"drop",
 textures:new Array(6).fill('wheatStage0'),
 textures1:new Array(6).fill('wheatStage1'),
 textures2:new Array(6).fill('wheatStage2'),
@@ -5762,7 +6192,8 @@ textures4:new Array(6).fill('wheatStage4'),
 textures5:new Array(6).fill('wheatStage5'),
 textures6:new Array(6).fill('wheatStage6'),
 textures7:new Array(6).fill('wheat'),
-compostChance:0.65
+compostChance:0.65,
+category:"nature",
 },
 {
 name: "lodestone",
@@ -5786,6 +6217,7 @@ fall(x,y,z,b,world,false,dimension)
 ongetexploded:function(x,y,z,b,world,dimension){
 fall(x,y,z,b,world,true,dimension)
 },
+category:"items",
 },
 {
 name: "slimeBlock",
@@ -5794,18 +6226,20 @@ transparent: true,
 shadow: false,
 bounciness: 0.9,
 speedFactor: 0.5,
-shapeName:"slimeBlock"
+shapeName:"slimeBlock",
+category:"build",
 },
 { 
 name:"soulSoil",
 Name:"Soul Soil",
 speedFactor: 0.5,
-canHaveSoulFire: true
+canHaveSoulFire: true,
+category:"nature",
 },
-{ name:"blueIce", Name:"Blue Ice", slide:0.9, glassSound: true, temperature:3},
-{ name:"ice", Name:"Ice", transparent:true, shadow:false, slide:0.9, glassSound: true, temperature:3},
-{ name:"packedIce", Name:"Packed Ice", slide:0.9, glassSound: true, temperature:3},
-{ name:"calcite", Name:"Calcite" },
+{ name:"blueIce", Name:"Blue Ice", category:"nature",slide:0.9, glassSound: true, temperature:3},
+{ name:"ice", Name:"Ice", category:"nature",transparent:true, shadow:false, slide:0.9, glassSound: true, temperature:3},
+{ name:"packedIce", Name:"Packed Ice", category:"nature",slide:0.9, glassSound: true, temperature:3},
+{ name:"calcite", Name:"Calcite", category:"nature" },
 {
 name:"furnace",
 Name:"Furnace",
@@ -5819,19 +6253,22 @@ furnaceData.dimension = dimension
 changeScene("furnace")
 releasePointer()
 },
-stoneSound:true
+stoneSound:true,
+category:"items",
 },
 {
 name:"blastFurnace",
 Name:"Blast Furnace",
 textures: ["blastFurnaceTop","blastFurnaceTop","blastFurnaceSide","blastFurnaceFront","blastFurnaceSide","blastFurnaceSide"],
-rotate: true
+rotate: true,
+category:"items",
 },
 {
 name:"smoker",
 Name:"Smoker",
 textures: ["smokerBottom","smokerTop","smokerSide","smokerFront","smokerSide","smokerSide"],
-rotate: true
+rotate: true,
+category:"items",
 },
 {
 name:"noteBlock",
@@ -5901,33 +6338,42 @@ didgeridoo: "pumpkin",
 bit: "emeraldBlock",
 banjo: ["hayBlock", "hayBlockSW"],
 pling: "glowstone"
-})
+}),
+category:"redstone",
 },
 {
 name:"jukebox",
 Name:"Jukebox",
-textures: ["jukeboxTop","jukeboxSide"]
+textures: ["jukeboxTop","jukeboxSide"],
+category:"items"
 },
 {
 name:"loom",
 Name:"Loom",
 textures: ["loomBottom","loomTop","loomFront","loomSide","loomSide","loomSide"],
-rotate: true
+rotate: true,
+category:"items"
 },
 {
 name:"sandstone",
 Name:"Sandstone",
-textures: ["sandstoneBottom", "sandstoneTop", "sandstone"]
+textures: ["sandstoneBottom", "sandstoneTop", "sandstone"],
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true
 },
 { name:"chiseledSandstone",
 Name:"Chiseled Sandstone",
-textures: ["sandstoneBottom", "sandstoneTop","chiseledSandstone"]
+textures: ["sandstoneBottom", "sandstoneTop","chiseledSandstone"],
+category:"build",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true
 },
 { name:"cutSandstone",
 Name:"Cut Sandstone",
-textures: ["sandstoneBottom", "sandstoneTop","cutSandstone"]
+textures: ["sandstoneBottom", "sandstoneTop","cutSandstone"],
+category:"build",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true
 },
-{ name:"smoothSandstone", Name:"Smooth Sandstone", textures:"sandstoneTop" },
+{ name:"smoothSandstone", Name:"Smooth Sandstone", textures:"sandstoneTop", category:"nature",randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true },
 {
 name: "DoubleTallGrass",
 Name:"Tall Grass",
@@ -5950,7 +6396,9 @@ biomeTintNorth:true,
 biomeTintSouth:true,
 biomeTintEast:true,
 biomeTintWest:true,
-compostChance:0.3
+compostChance:0.3,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name:"apple",
@@ -5961,7 +6409,8 @@ eatWhenFull: false,
 food: 4,
 saturation: 2.4,
 eatResult: "appleCore",
-compostChance:0.65
+compostChance:0.65,
+category:"food",
 },
 {
 name:"woodenPickaxe",
@@ -5970,7 +6419,8 @@ item: true,
 pickaxe: true,
 mineSpeed: 2,
 durability: 59,
-attackDamage: 2
+attackDamage: 2,
+category:"tools",
 },
 {
 name:"stonePickaxe",
@@ -5980,7 +6430,8 @@ pickaxe: true,
 mineSpeed: 4,
 durability: 131,
 attackDamage: 2,
-material:"cobblestone"
+material:"cobblestone",
+category:"tools",
 },
 {
 name:"ironPickaxe",
@@ -5990,7 +6441,8 @@ pickaxe: true,
 mineSpeed: 6,
 durability: 250,
 attackDamage: 3,
-material:"ironIngot"
+material:"ironIngot",
+category:"tools",
 },
 {
 name:"goldenPickaxe",
@@ -6000,7 +6452,8 @@ pickaxe: true,
 mineSpeed: 12,
 durability: 32,
 attackDamage: 4,
-material:"goldIngot"
+material:"goldIngot",
+category:"tools",
 },
 {
 name:"diamondPickaxe",
@@ -6010,15 +6463,17 @@ pickaxe: true,
 mineSpeed: 8,
 durability: 1561,
 attackDamage: 5,
-material:"diamond"
+material:"diamond",
+category:"tools",
 },
-{ name:"flint", Name:"Flint", item:true },
+{ name:"flint", Name:"Flint", item:true, category:"items" },
 {
 name:"mossBlock",
 Name: "Moss Block",
 breakTime:0.15,
 type: "plant2",
-compostChance:0.65
+compostChance:0.65,
+category:"nature"
 },
 {
 name:"mossCarpet",
@@ -6026,7 +6481,9 @@ Name: "Moss Carpet",
 textures: "mossBlock",
 breakTime:0.15,
 carpet: true,
-compostChance:0.3
+compostChance:0.3,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name: "caveVines",
@@ -6041,7 +6498,9 @@ var isIt = blockData[top].name === "caveVines" || blockData[top].name === "caveV
 if(isIt){
 world.setBlock(x,y,z,blockIds.caveVinesPlant | CROSS,false,false,false,false,dimension)
 }
-}
+},
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name: "caveVinesPlant",
@@ -6057,7 +6516,8 @@ world.setBlock(x,y,z,blockIds.caveVines | CROSS,false,false,false,false,dimensio
 }
 },
 hidden:true,
-drop:"caveVines"
+drop:"caveVines",
+liquidBreakable:"drop"
 },
 {
 name: "caveVinesLit",
@@ -6073,7 +6533,9 @@ var isIt = blockData[top].name === "caveVines" || blockData[top].name === "caveV
 if(isIt){
 world.setBlock(x,y,z,blockIds.caveVinesPlantLit | CROSS,false,false,false,false,dimension)
 }
-}
+},
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name: "caveVinesPlantLit",
@@ -6089,7 +6551,8 @@ if(!isIt){
 world.setBlock(x,y,z,blockIds.caveVinesLit | CROSS,false,false,false,false,dimension)
 }
 },
-hidden:true
+hidden:true,
+liquidBreakable:"drop"
 },
 {
 name:"sporeBlossom",
@@ -6097,11 +6560,14 @@ Name:"Spore Blossom",
 sporeBlossom: true,
 shadow:false,
 transparent: true,
-compostChance:0.65
+compostChance:0.65,
+category:"nature"
 },
 {
 name: "rootedDirt",
 Name: "Rooted Dirt",
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name: "hangingRoots",
@@ -6110,7 +6576,9 @@ solid: false,
 transparent: true,
 shadow: false,
 crossShape: true,
-compostChance:0.3
+compostChance:0.3,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name:"azalea",
@@ -6120,7 +6588,9 @@ potTex:["pottedAzaleaBushTop","pottedAzaleaBushSide"],
 azalea: true,
 transparent: true,
 potCross:true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name:"floweringAzalea",
@@ -6130,7 +6600,9 @@ potTex:["pottedFloweringAzaleaBushTop","pottedFloweringAzaleaBushSide"],
 azalea: true,
 transparent: true,
 potCross:true,
-compostChance:0.85
+compostChance:0.85,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name:"sunflower",
@@ -6140,7 +6612,8 @@ sunflower: true,
 transparent:true,
 shadow:false,
 iconTexture: "sunflowerFront",
-solid:false
+solid:false,
+category:"nature"
 },
 {
 name: "bucket",
@@ -6161,7 +6634,8 @@ world.setBlock(x,y,z,0,false,false,false,false,dimension)
 }
 },
 stackSize: 1,
-allHitbox: true
+allHitbox: true,
+category:"items"
 },
 {
 name: "waterBucket",
@@ -6172,7 +6646,8 @@ if(survival)replaceItem(blockIds.bucket)
 var pos = getPosition()
 world.setBlock(pos[0],pos[1],pos[2],blockIds.Water,false,false,false,false,dimension)
 },
-stackSize: 1
+stackSize: 1,
+category:"items"
 },
 {
 name: "lavaBucket",
@@ -6183,7 +6658,8 @@ if(survival)replaceItem(blockIds.bucket)
 var pos = getPosition()
 world.setBlock(pos[0],pos[1],pos[2],blockIds.Lava,false,false,false,false,dimension)
 },
-stackSize: 1
+stackSize: 1,
+category:"items"
 },
 {
 name: "cowSpawnEgg",
@@ -6191,7 +6667,8 @@ item: true,
 onuse: (x,y,z, block, replaceItem,useDurability,minusOne,dimension) => {
 world.addEntity(new Cow(p2.x,p2.y,p2.z),false,dimension)
 },
-minusOnUse:true
+minusOnUse:true,
+category:"items"
 },
 {
 name:"sugarCane",
@@ -6201,7 +6678,8 @@ crossShape: true,
 solid: false,
 transparent: true,
 shadow: false,
-compostChance:0.5
+compostChance:0.5,
+category:"nature"
 },
 {
 name:"woodenSword",
@@ -6209,7 +6687,8 @@ Name:"Wooden Swords aren't even sharp!",
 item: true,
 sword: true,
 durability: 59,
-attackDamage: 4
+attackDamage: 4,
+category:"tools"
 },
 {
 name:"stoneSword",
@@ -6218,7 +6697,8 @@ item: true,
 sword: true,
 durability: 131,
 attackDamage: 5,
-material:"cobblestone"
+material:"cobblestone",
+category:"tools"
 },
 {
 name:"ironSword",
@@ -6227,7 +6707,8 @@ item: true,
 sword: true,
 durability: 250,
 attackDamage: 6,
-material:"ironIngot"
+material:"ironIngot",
+category:"tools"
 },
 {
 name:"goldenSword",
@@ -6236,7 +6717,8 @@ item: true,
 sword: true,
 durability: 32,
 attackDamage: 4,
-material:"goldIngot"
+material:"goldIngot",
+category:"tools"
 },
 {
 name:"diamondSword",
@@ -6245,7 +6727,8 @@ item: true,
 sword: true,
 durability: 1561,
 attackDamage: 7,
-material:"diamond"
+material:"diamond",
+category:"tools"
 },
 { name:"azaleaLeaves",
 Name:"Azalea Leaves",
@@ -6263,6 +6746,7 @@ else return "floweringAzalea"
 burnChance: 0.2,
 burnTime: 30,
 compostChance:0.3,
+category:"nature",
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -6282,6 +6766,7 @@ else return "floweringAzalea"
 burnChance: 0.2,
 burnTime: 30,
 compostChance:0.5,
+category:"nature",
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
 stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
 },
@@ -6291,47 +6776,48 @@ item: true,
 onuse: (x,y,z, block, replaceItem,useDurability,minusOne,dimension) => {
 world.addEntity(new Pig(p2.x,p2.y,p2.z),false,dimension)
 },
-minusOnUse:true
+minusOnUse:true,
+category:"items"
 },
-{name:"tuff",Name:"Tuff",breakTime:1.5},
-{name:"deepslate", Name:"Deepslate", textures:["deepslateTop","deepslate"],breakTime:3,deepslateSound:true},
-{name:"cobbledDeepslate", Name:"Cobbled Deepslate",deepslateSound:true},
-{name:"chiseledDeepslate", Name:"Chiseled Deepslate",breakTime:3.5,deepslateSound:true},
-{name:"polishedDeepslate",Name:"Polished Deepslate",breakTime:3.5,deepslateSound:true},
-{name:"deepslateTiles",Name:"Deepslate Tiles",breakTime:3.5,deepslateSound:true},
-{name:"deepslateBricks",Name:"Deepslate Bricks",breakTime:3.5,deepslateBricksSound:true},
-{name:"crackedDeepslateTiles",Name:"Cracked Deepslate Tiles",deepslateSound:true},
-{name:"crackedDeepslateBricks",Name:"Cracked Deepslate Bricks",deepslateBricksSound:true},
-{name:"deepslateCoalOre",Name:"Deepslate Coal Ore",breakTime:22.5,deepslateSound:true},
-{name:"deepslateIronOre",Name:"Deepslate Iron Ore",breakTime:22.5,deepslateSound:true},
-{name:"deepslateCopperOre",Name:"Deepslate Copper Ore",breakTime:22.5,deepslateSound:true},
-{name:"deepslateGoldOre",Name:"Deepslate Gold Ore",breakTime:22.5,deepslateSound:true},
-{name:"deepslateDiamondOre",Name:"Deepslate Diamond Ore",breakTime:22.5,deepslateSound:true},
-{name:"deepslateRedstoneOre",Name:"Deepslate Redstone Ore",breakTime:22.5,deepslateSound:true},
-{name:"deepslateEmeraldOre",Name:"Deepslate Emerald Ore",breakTime:22.5,deepslateSound:true},
-{name:"deepslateLapisOre",Name:"Deepslate Lapis Lazuli Ore",breakTime:22.5,deepslateSound:true},
-{name:"amethystBlock",Name:"Amethyst Block", amethystSound: true},
-{name:"amethystShard",Name:"Amythest Shard",item:true},
-{name:"buddingAmethyst",Name:"Budding Amethyst", amethystSound: true},
-{name:"smallAmethystBud",Name:"Small Amethyst Bud",sideCross:true,
+{name:"tuff",Name:"Tuff",category:"nature",breakTime:1.5},
+{name:"deepslate", Name:"Deepslate", textures:["deepslateTop","deepslate"],category:"nature",breakTime:3,deepslateSound:true, randomRotate:"flip",randomRotateTop:true,randomRotateBottom:true},
+{name:"cobbledDeepslate", Name:"Cobbled Deepslate",deepslateSound:true,category:"nature", randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true},
+{name:"chiseledDeepslate", Name:"Chiseled Deepslate",category:"build",breakTime:3.5,deepslateSound:true},
+{name:"polishedDeepslate",Name:"Polished Deepslate",category:"build",breakTime:3.5,deepslateSound:true},
+{name:"deepslateTiles",Name:"Deepslate Tiles",category:"build",breakTime:3.5,deepslateSound:true},
+{name:"deepslateBricks",Name:"Deepslate Bricks",category:"build",breakTime:3.5,deepslateBricksSound:true},
+{name:"crackedDeepslateTiles",Name:"Cracked Deepslate Tiles",category:"build",deepslateSound:true},
+{name:"crackedDeepslateBricks",Name:"Cracked Deepslate Bricks",category:"build",deepslateBricksSound:true},
+{name:"deepslateCoalOre",Name:"Deepslate Coal Ore",category:"nature",breakTime:22.5,deepslateSound:true},
+{name:"deepslateIronOre",Name:"Deepslate Iron Ore",category:"nature",breakTime:22.5,deepslateSound:true},
+{name:"deepslateCopperOre",Name:"Deepslate Copper Ore",category:"nature",breakTime:22.5,deepslateSound:true},
+{name:"deepslateGoldOre",Name:"Deepslate Gold Ore",category:"nature",breakTime:22.5,deepslateSound:true},
+{name:"deepslateDiamondOre",Name:"Deepslate Diamond Ore",category:"nature",breakTime:22.5,deepslateSound:true},
+{name:"deepslateRedstoneOre",Name:"Deepslate Redstone Ore",category:"nature",breakTime:22.5,deepslateSound:true},
+{name:"deepslateEmeraldOre",Name:"Deepslate Emerald Ore",category:"nature",breakTime:22.5,deepslateSound:true},
+{name:"deepslateLapisOre",Name:"Deepslate Lapis Lazuli Ore",category:"nature",breakTime:22.5,deepslateSound:true},
+{name:"amethystBlock",Name:"Amethyst Block", category:"nature",amethystSound: true},
+{name:"amethystShard",Name:"Amythest Shard",category:"items",item:true},
+{name:"buddingAmethyst",Name:"Budding Amethyst", category:"nature",amethystSound: true},
+{name:"smallAmethystBud",Name:"Small Amethyst Bud",category:"nature",sideCross:true,
 solid: false,
 transparent: true,
 shadow: false,
 amethystClusterSound: true
 },
-{name:"mediumAmethystBud",Name:"Medium Amethyst Bud",sideCross:true,
+{name:"mediumAmethystBud",Name:"Medium Amethyst Bud",category:"nature",sideCross:true,
 solid: false,
 transparent: true,
 shadow: false,
 amethystClusterSound: true
 },
-{name:"largeAmethystBud",Name:"Large Amethyst Bud",sideCross:true,
+{name:"largeAmethystBud",Name:"Large Amethyst Bud",category:"nature",sideCross:true,
 solid: false,
 transparent: true,
 shadow: false,
 amethystClusterSound: true
 },
-{name:"amethystCluster",Name:"Amethyst Cluster",sideCross:true,
+{name:"amethystCluster",Name:"Amethyst Cluster",category:"nature",sideCross:true,
 solid: false,
 transparent: true,
 shadow: false,
@@ -6345,7 +6831,8 @@ textures:"snow",
 breakTime: 1,
 drop:"snowball",
 dropAmount: 4,
-temperature:5
+temperature:5,
+category:"nature",
 },
 {
 name:"snow",
@@ -6361,7 +6848,9 @@ fall(x,y,z,b,world,false,dimension)
 ongetexploded:function(x,y,z,b,world,dimension){
 fall(x,y,z,b,world,true,dimension)
 },
-temperature:5
+temperature:5,
+liquidBreakable:"drop",
+category:"nature",
 },
 {
 name:"powderSnow",
@@ -6371,7 +6860,8 @@ powder: true,
 breakTime: 0.4,
 drop:"air",
 transparent:true,
-temperature:5
+temperature:5,
+category:"nature",
 },
 {
 name:"snowball",
@@ -6382,7 +6872,8 @@ var pd = p.direction
 world.addEntity(new Snowball(p.x+pd.x,p.y+pd.y,p.z+pd.z, pd.x*0.8, pd.y*0.8, pd.z*0.8),false,dimension)
 },
 minusOnUse:true,
-useAnywhere:true
+useAnywhere:true,
+category:"items",
 },
 {
 name:"powderSnowBucket",
@@ -6393,7 +6884,8 @@ if(survival)replaceItem(blockIds.bucket)
 var pos = getPosition()
 world.setBlock(pos[0],pos[1],pos[2],blockIds.powderSnow,false,false,false,false,dimension)
 },
-stackSize: 1
+stackSize: 1,
+category:"items",
 },
 {
 name:"bread",
@@ -6403,18 +6895,21 @@ item:true,
 eatWhenFull: false,
 food: 6,
 saturation: 11,
-compostChance:0.85
+compostChance:0.85,
+category:"food",
 },
 {
 name:"boneBlock",
 Name:"Bone Block",
-textures:["boneBlockTop","boneBlockSide"]
+textures:["boneBlockTop","boneBlockSide"],
+category:"nature",
 },
 {
 name:"farmland",
 Name:"Farmland",
 textures:["dirt","farmland","dirt"],
-_1PixLower: true
+_1PixLower: true,
+category:"nature",
 },
 {
 name:"glowBerries",
@@ -6425,6 +6920,7 @@ eatWhenFull: false,
 food: 2,
 saturation: 0.4,
 compostChance:0.3,
+category:"food",
 },
 {
 name:"hayBlock",
@@ -6433,7 +6929,8 @@ textures:["hayBlockTop","hayBlockSide"],
 type:"plant2",
 damageResistance:0.8,
 burnChance: 0.2,
-burnTime: 20
+burnTime: 20,
+category:"decoration",
 },
 {
 name:"hayBlockSW",
@@ -6441,7 +6938,8 @@ textures: ["hayBlockSide","hayBlockSide","hayBlockTop","hayBlockSW"],
 rotate: true,
 type:"plant2",
 damageResistance:0.8,
-compostChance:0.85
+compostChance:0.85,
+hidden:true
 },
 {
 name:"woodenShovel",
@@ -6450,7 +6948,8 @@ item: true,
 shovel: true,
 durability: 59,
 mineSpeed:2,
-attackDamage: 2
+attackDamage: 2,
+category:"tools"
 },
 {
 name:"stoneShovel",
@@ -6460,7 +6959,8 @@ shovel: true,
 durability: 131,
 mineSpeed:3.6,
 attackDamage: 4,
-material:"cobblestone"
+material:"cobblestone",
+category:"tools"
 },
 {
 name:"ironShovel",
@@ -6470,7 +6970,8 @@ shovel: true,
 durability: 250,
 mineSpeed:6,
 attackDamage: 4,
-material:"ironIngot"
+material:"ironIngot",
+category:"tools"
 },
 {
 name:"goldenShovel",
@@ -6480,7 +6981,8 @@ shovel: true,
 durability: 32,
 mineSpeed:12,
 attackDamage: 2,
-material:"goldIngot"
+material:"goldIngot",
+category:"tools"
 },
 {
 name:"diamondShovel",
@@ -6490,7 +6992,8 @@ shovel: true,
 durability: 1561,
 mineSpeed:8,
 attackDamage: 5,
-material:"diamond"
+material:"diamond",
+category:"tools"
 },
 {
 name:"woodenAxe",
@@ -6500,7 +7003,8 @@ axe: true,
 durability: 59,
 mineSpeed:2,
 attackDamage: 7,
-attackSpeed:0.8
+attackSpeed:0.8,
+category:"tools"
 },
 {
 name:"stoneAxe",
@@ -6511,7 +7015,8 @@ durability: 131,
 mineSpeed:4,
 attackDamage: 9,
 attackSpeed:0.8,
-material:"cobblestone"
+material:"cobblestone",
+category:"tools"
 },
 {
 name:"ironAxe",
@@ -6522,7 +7027,8 @@ durability: 250,
 mineSpeed:6,
 attackDamage: 9,
 attackSpeed:0.9,
-material:"ironIngot"
+material:"ironIngot",
+category:"tools"
 },
 {
 name:"goldenAxe",
@@ -6533,7 +7039,8 @@ durability: 32,
 mineSpeed:12,
 attackDamage: 7,
 attackSpeed:1,
-material:"goldIngot"
+material:"goldIngot",
+category:"tools"
 },
 {
 name:"diamondAxe",
@@ -6544,7 +7051,8 @@ durability: 1561,
 mineSpeed:8,
 attackDamage: 9,
 attackSpeed:1,
-material:"diamond"
+material:"diamond",
+category:"tools"
 },
 {
 name: "strippedOakLog",
@@ -6554,7 +7062,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedOakLogSW",
@@ -6571,7 +7080,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedBirchLogSW",
@@ -6588,7 +7098,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedAcaciaLogSW",
@@ -6605,7 +7116,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedJungleLogSW",
@@ -6622,7 +7134,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedSpruceLogSW",
@@ -6639,7 +7152,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedDarkOakLogSW",
@@ -6663,7 +7177,9 @@ shadow: false,
 potCross: true,
 crossShape: true,
 lightLevel:1,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name:"brownMushroom",
@@ -6674,179 +7190,219 @@ shadow: false,
 potCross: true,
 crossShape: true,
 lightLevel:1,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name:"mushroomStem",
 Name: "Mushroom Stem",
 mushroomBlock:true,
-compostChance:0.65
+compostChance:0.65,
+category:"nature"
 },
 {
 name:"redMushroomBlock",
 Name: "Red Mushroom Block",
 mushroomBlock:true,
-compostChance:0.85
+compostChance:0.85,
+category:"nature"
 },
 {
 name:"brownMushroomBlock",
 Name: "Brown Mushroom Block",
 mushroomBlock:true,
-compostChance:0.85
+compostChance:0.85,
+category:"nature"
 },
 {
 name:"mycelium",
 Name:"Mycelium",
 textures:["dirt","myceliumTop","myceliumSide"],
-type:"ground"
+type:"ground",
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true
 },
 {
 name:"terracotta",
-Name:"Terracotta"
+Name:"Terracotta",
+category:"build"
 },
 {
 name:"redTerracotta",
-Name:"Terracotta with watermelon juice"
+Name:"Terracotta with watermelon juice",
+category:"build"
 },
 {
 name:"blueTerracotta",
-Name:"Terracotta with blueberry juice"
+Name:"Terracotta with blueberry juice",
+category:"build"
 },
 {
 name:"cyanTerracotta",
-Name:"Terracotta with cyan colored fruit punch"
+Name:"Terracotta with cyan colored fruit punch",
+category:"build"
 },
 {
 name:"grayTerracotta",
-Name:"Dusty Terracotta"
+Name:"Dusty Terracotta",
+category:"build"
 },
 {
 name:"limeTerracotta",
-Name:"Terracotta with leaf juice"
+Name:"Terracotta with leaf juice",
+category:"build"
 },
 {
 name:"pinkTerracotta",
-Name:"Terracotta with fruit punch"
+Name:"Terracotta with fruit punch",
+category:"build"
 },
 {
 name:"blackTerracotta",
-Name:"Terracotta painted black"
+Name:"Terracotta painted black",
+category:"build"
 },
 {
 name:"brownTerracotta",
-Name:"Dirty Terracotta"
+Name:"Dirty Terracotta",
+category:"build"
 },
 {
 name:"greenTerracotta",
-Name:"Terracotta with some other leaf juice"
+Name:"Terracotta with some other leaf juice",
+category:"build"
 },
 {
 name:"whiteTerracotta",
-Name:"Terracotta with flour"
+Name:"Terracotta with flour",
+category:"build"
 },
 {
 name:"orangeTerracotta",
-Name:"Orange Terracotta"
+Name:"Orange Terracotta",
+category:"build"
 },
 {
 name:"purpleTerracotta",
-Name:"Purple Terracotta"
+Name:"Purple Terracotta",
+category:"build"
 },
 {
 name:"yellowTerracotta",
-Name:"Terracotta with lemon juice"
+Name:"Terracotta with lemon juice",
+category:"build"
 },
 {
 name:"magentaTerracotta",
-Name:"Magenta Terracotta"
+Name:"Magenta Terracotta",
+category:"build"
 },
 {
 name:"lightBlueTerracotta",
-Name:"Light Blue Terracotta"
+Name:"Light Blue Terracotta",
+category:"build"
 },
 {
 name:"lightGrayTerracotta",
-Name:"Light Gray Terracotta"
+Name:"Light Gray Terracotta",
+category:"build"
 },
 {
 name:"redGlazedTerracotta",
-rotate:true,
-Name:"Watermelon Swirl"
+Name:"Watermelon Swirl",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"blueGlazedTerracotta",
-rotate:true,
-Name:"Blue Fan"
+Name:"Blue Fan",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"cyanGlazedTerracotta",
-rotate:true,
-Name:"Creeper in the skies"
+Name:"Creeper in the skies",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"grayGlazedTerracotta",
-rotate:true,
-Name:"Bunch of Dust"
+Name:"Bunch of Dust",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"limeGlazedTerracotta",
-rotate:true,
-Name:"Overlapping lilies"
+Name:"Overlapping lilies",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"pinkGlazedTerracotta",
-rotate:true,
-Name:"Pink turtle shell"
+Name:"Pink turtle shell",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"blackGlazedTerracotta",
-rotate:true,
-Name:"Red monster"
+Name:"Red monster",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"brownGlazedTerracotta",
-rotate:true,
-Name:"Mudslide in the ocean"
+Name:"Mudslide in the ocean",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"greenGlazedTerracotta",
-rotate:true,
-Name:"Camouflaged monster"
+Name:"Camouflaged monster",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"whiteGlazedTerracotta",
-rotate:true,
-Name:"Sun & clouds"
+Name:"Sun & clouds",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"orangeGlazedTerracotta",
-rotate:true,
-Name:"Flower Monster"
+Name:"Flower Monster",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"purpleGlazedTerracotta",
-rotate:true,
-Name:"Sword & pickaxe monster"
+Name:"Sword & pickaxe monster",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"yellowGlazedTerracotta",
-rotate:true,
-Name:"Some kind of bug"
+Name:"Some kind of bug",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"magentaGlazedTerracotta",
-rotate:true,
-Name:"Arrow"
+Name:"Arrow",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"lightBlueGlazedTerracotta",
-rotate:true,
-Name:"Monster sticking out tongue and eyes facing opposite direction"
+Name:"Monster sticking out tongue and eyes facing opposite direction",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"lightGrayGlazedTerracotta",
-rotate:true,
-Name:"Monster with blue eyes and mouth"
+Name:"Monster with blue eyes and mouth",
+category:"build",
+randomRotate:"pattern",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"ancientDebris",
@@ -6854,6 +7410,7 @@ Name:"Ancient Debris",
 textures:["ancientDebrisTop","ancientDebrisSide"],
 breakTime:150,
 type:"rock4",
+category:"nature",
 },
 {
 name:"wheatSeeds",
@@ -6863,7 +7420,8 @@ useAs:function(x,y,z,block,face){
 if(!block) return
 if(face === "top" && blockData[block].name === "farmland") return "wheat"
 },
-compostChance:0.3
+compostChance:0.3,
+category:"items"
 },
 {
 name:"yellowStainedGlass",
@@ -6872,7 +7430,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"whiteStainedGlass",
@@ -6881,7 +7440,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"redStainedGlass",
@@ -6890,7 +7450,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"purpleStainedGlass",
@@ -6899,7 +7460,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"pinkStainedGlass",
@@ -6908,7 +7470,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"orangeStainedGlass",
@@ -6917,7 +7480,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"magentaStainedGlass",
@@ -6926,7 +7490,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"limeStainedGlass",
@@ -6935,7 +7500,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"lightGrayStainedGlass",
@@ -6944,7 +7510,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"lightBlueStainedGlass",
@@ -6953,7 +7520,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"greenStainedGlass",
@@ -6962,7 +7530,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"grayStainedGlass",
@@ -6971,7 +7540,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"cyanStainedGlass",
@@ -6980,7 +7550,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"brownStainedGlass",
@@ -6989,7 +7560,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"blueStainedGlass",
@@ -6998,7 +7570,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"blackStainedGlass",
@@ -7007,7 +7580,8 @@ transparent: true,
 shadow: false,
 breakTime: 0.3,
 type:"glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "yellowStainedGlassPane",
@@ -7017,7 +7591,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["yellowStainedGlassPaneTop","yellowStainedGlassPaneTop","yellowStainedGlass","yellowStainedGlass","yellowStainedGlassPaneSide","yellowStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "whiteStainedGlassPane",
@@ -7027,7 +7602,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["whiteStainedGlassPaneTop","whiteStainedGlassPaneTop","whiteStainedGlass","whiteStainedGlass","whiteStainedGlassPaneSide","whiteStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "redStainedGlassPane",
@@ -7037,7 +7613,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["redStainedGlassPaneTop","redStainedGlassPaneTop","redStainedGlass","redStainedGlass","redStainedGlassPaneSide","redStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "purpleStainedGlassPane",
@@ -7047,7 +7624,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["purpleStainedGlassPaneTop","purpleStainedGlassPaneTop","purpleStainedGlass","purpleStainedGlass","purpleStainedGlassPaneSide","purpleStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "pinkStainedGlassPane",
@@ -7057,7 +7635,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["pinkStainedGlassPaneTop","pinkStainedGlassPaneTop","pinkStainedGlass","pinkStainedGlass","pinkStainedGlassPaneSide","pinkStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "orangeStainedGlassPane",
@@ -7067,7 +7646,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["orangeStainedGlassPaneTop","orangeStainedGlassPaneTop","orangeStainedGlass","orangeStainedGlass","orangeStainedGlassPaneSide","orangeStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "magentaStainedGlassPane",
@@ -7077,7 +7657,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["magentaStainedGlassPaneTop","magentaStainedGlassPaneTop","magentaStainedGlass","magentaStainedGlass","magentaStainedGlassPaneSide","magentaStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "limeStainedGlassPane",
@@ -7087,7 +7668,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["limeStainedGlassPaneTop","limeStainedGlassPaneTop","limeStainedGlass","limeStainedGlass","limeStainedGlassPaneSide","limeStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "lightGrayStainedGlassPane",
@@ -7097,7 +7679,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["lightGrayStainedGlassPaneTop","lightGrayStainedGlassPaneTop","lightGrayStainedGlass","lightGrayStainedGlass","lightGrayStainedGlassPaneSide","lightGrayStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "lightBlueStainedGlassPane",
@@ -7107,7 +7690,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["lightBlueStainedGlassPaneTop","lightBlueStainedGlassPaneTop","lightBlueStainedGlass","lightBlueStainedGlass","lightBlueStainedGlassPaneSide","lightBlueStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "greenStainedGlassPane",
@@ -7117,7 +7701,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["greenStainedGlassPaneTop","greenStainedGlassPaneTop","greenStainedGlass","greenStainedGlass","greenStainedGlassPaneSide","greenStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "grayStainedGlassPane",
@@ -7127,7 +7712,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["grayStainedGlassPaneTop","grayStainedGlassPaneTop","grayStainedGlass","grayStainedGlass","grayStainedGlassPaneSide","grayStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "cyanStainedGlassPane",
@@ -7137,7 +7723,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["cyanStainedGlassPaneTop","cyanStainedGlassPaneTop","cyanStainedGlass","cyanStainedGlass","cyanStainedGlassPaneSide","cyanStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "brownStainedGlassPane",
@@ -7147,7 +7734,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["brownStainedGlassPaneTop","brownStainedGlassPaneTop","brownStainedGlass","brownStainedGlass","brownStainedGlassPaneSide","brownStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "blueStainedGlassPane",
@@ -7157,7 +7745,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["blueStainedGlassPaneTop","blueStainedGlassPaneTop","blueStainedGlass","blueStainedGlass","blueStainedGlassPaneSide","blueStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "blackStainedGlassPane",
@@ -7167,7 +7756,8 @@ shadow: false,
 breakTime: 0.3,
 pane:true,
 textures: ["blackStainedGlassPaneTop","blackStainedGlassPaneTop","blackStainedGlass","blackStainedGlass","blackStainedGlassPaneSide","blackStainedGlassPaneSide"],
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name: "cobweb",
@@ -7179,14 +7769,17 @@ crossShape: true,
 breakTime:20,
 noDrop:true,
 dropSelfWhenSheared:true,
-shearBreakTime:0.4
+shearBreakTime:0.4,
+liquidBreakable:"drop",
+category:"decoration"
 },
 {
 name: "strippedCrimsonStem",
 Name: "Stripped Crimson Stem",
 textures: ["strippedCrimsonStemTop", "strippedCrimsonStem"],
 breakTime:2,
-stemSound:true
+stemSound:true,
+category:"build"
 },
 {
 name: "strippedCrimsonStemSW",
@@ -7201,7 +7794,8 @@ name: "strippedWarpedStem",
 Name: "Stripped Warped Stem",
 textures: ["strippedWarpedStemTop", "strippedWarpedStem"],
 breakTime:2,
-stemSound:true
+stemSound:true,
+category:"build"
 },
 {
 name: "strippedWarpedStemSW",
@@ -7217,7 +7811,8 @@ Name: "Oak Pressure Plate",
 textures: "oakPlanks",
 pressurePlate: true,
 breakTime:0.75,
-type:"wood"
+type:"wood",
+category:"redstone"
 },
 {
 name: "birchPressurePlate",
@@ -7225,7 +7820,8 @@ Name: "Birch Pressure Plate",
 textures: "birchPlanks",
 pressurePlate: true,
 breakTime:0.75,
-type:"wood"
+type:"wood",
+category:"redstone"
 },
 {
 name: "sprucePressurePlate",
@@ -7233,7 +7829,8 @@ Name: "Spruce Pressure Plate",
 textures: "sprucePlanks",
 pressurePlate: true,
 breakTime:0.75,
-type:"wood"
+type:"wood",
+category:"redstone"
 },
 {
 name: "junglePressurePlate",
@@ -7241,7 +7838,8 @@ Name: "Jungle Pressure Plate",
 textures: "junglePlanks",
 pressurePlate: true,
 breakTime:0.75,
-type:"wood"
+type:"wood",
+category:"redstone"
 },
 {
 name: "acaciaPressurePlate",
@@ -7249,7 +7847,8 @@ Name: "Acacia Pressure Plate",
 textures: "acaciaPlanks",
 pressurePlate: true,
 breakTime:0.75,
-type:"wood"
+type:"wood",
+category:"redstone"
 },
 {
 name:"darkOakPressurePlate",
@@ -7257,7 +7856,8 @@ Name: "Dark Oak Pressure Plate",
 textures: "darkOakPlanks",
 pressurePlate: true,
 breakTime:0.75,
-type:"wood"
+type:"wood",
+category:"redstone"
 },
 {
 name: "warpedPressurePlate",
@@ -7265,7 +7865,8 @@ Name: "Warped Pressure Plate",
 textures: "warpedPlanks",
 pressurePlate: true,
 breakTime:0.75,
-type:"wood"
+type:"wood",
+category:"redstone"
 },
 {
 name: "crimsonPressurePlate",
@@ -7273,7 +7874,8 @@ Name: "Crimson Pressure Plate",
 textures: "crimsonPlanks",
 pressurePlate: true,
 breakTime:0.75,
-type:"wood"
+type:"wood",
+category:"redstone"
 },
 {
 name: "stonePressurePlate",
@@ -7281,14 +7883,16 @@ Name: "Stone Pressure Plate",
 textures: "stone",
 pressurePlate: true,
 type:"stone",
-breakTime:2.5
+breakTime:2.5,
+category:"redstone"
 },
 {
 name: "polishedBlackstonePressurePlate",
 textures: "polishedBlackstone",
 pressurePlate: true,
 type:"stone",
-breakTime:2.5
+breakTime:2.5,
+category:"redstone"
 },
 {
 name: "lightWeightedPressurePlate",
@@ -7296,7 +7900,8 @@ textures: "goldBlock",
 pressurePlate: true,
 type:"stone",
 breakTime:2.5,
-lightWeighted:true
+lightWeighted:true,
+category:"redstone"
 },
 {
 name: "heavyWeightedPressurePlate",
@@ -7304,7 +7909,8 @@ textures: "ironBlock",
 pressurePlate: true,
 type:"stone",
 breakTime:2.5,
-heavyWeighted:true
+heavyWeighted:true,
+category:"redstone"
 },
 {
 name:"oakButton",
@@ -7312,7 +7918,8 @@ Name: "Oak Button",
 textures:"oakPlanks",
 button:true,
 transparent: true,
-shadow:false
+shadow:false,
+category:"redstone"
 },
 {
 name:"birchButton",
@@ -7320,7 +7927,8 @@ Name: "Birch Button",
 textures:"birchPlanks",
 button:true,
 transparent: true,
-shadow:false
+shadow:false,
+category:"redstone"
 },
 {
 name:"acaciaButton",
@@ -7328,7 +7936,8 @@ Name: "Acacia Button",
 textures:"acaciaPlanks",
 button:true,
 transparent: true,
-shadow:false
+shadow:false,
+category:"redstone"
 },
 {
 name:"darkOakButton",
@@ -7336,7 +7945,8 @@ Name: "Dark Oak Button",
 textures:"darkOakPlanks",
 button:true,
 transparent: true,
-shadow:false
+shadow:false,
+category:"redstone"
 },
 {
 name:"jungleButton",
@@ -7344,7 +7954,8 @@ Name: "Jungle Button",
 textures:"junglePlanks",
 button:true,
 transparent: true,
-shadow:false
+shadow:false,
+category:"redstone"
 },
 {
 name:"spruceButton",
@@ -7352,7 +7963,8 @@ Name: "Spruce Button",
 textures:"sprucePlanks",
 button:true,
 transparent: true,
-shadow:false
+shadow:false,
+category:"redstone"
 },
 {
 name:"warpedButton",
@@ -7360,7 +7972,8 @@ Name: "Warped Button",
 textures:"warpedPlanks",
 button:true,
 transparent: true,
-shadow:false
+shadow:false,
+category:"redstone"
 },
 {
 name:"crimsonButton",
@@ -7368,7 +7981,8 @@ Name: "Crimson Button",
 textures:"crimsonPlanks",
 button:true,
 transparent: true,
-shadow:false
+shadow:false,
+category:"redstone"
 },
 {
 name:"polishedBlackstoneButton",
@@ -7377,19 +7991,23 @@ textures:"polishedBlackstone",
 button:true,
 transparent:true,
 shadow:false,
-stone:true
+stone:true,
+category:"redstone"
 },
 {
 name:"copperBlock",
-Name:"Block of Copper"
+Name:"Block of Copper",
+category:"build"
 },
 {
 name:"crackedPolishedBlackstoneBricks",
-Name:"Cracked Polished Blackstone Bricks"
+Name:"Cracked Polished Blackstone Bricks",
+category:"build"
 },
 {
 name:"crackedStoneBricks",
-Name:"Cracked Stone Bricks"
+Name:"Cracked Stone Bricks",
+category:"build"
 },
 {
 name:"woodenHoe",
@@ -7399,7 +8017,8 @@ hoe: true,
 durability: 59,
 mineSpeed:2,
 attackDamage: 1,
-attackSpeed:1
+attackSpeed:1,
+category:"tools"
 },
 {
 name:"stoneHoe",
@@ -7410,7 +8029,8 @@ durability: 131,
 mineSpeed:4,
 attackDamage: 1,
 attackSpeed:2,
-material:"cobblestone"
+material:"cobblestone",
+category:"tools"
 },
 {
 name:"ironHoe",
@@ -7421,7 +8041,8 @@ durability: 250,
 mineSpeed:6,
 attackDamage: 1,
 attackSpeed:3,
-material:"ironIngot"
+material:"ironIngot",
+category:"tools"
 },
 {
 name:"goldenHoe",
@@ -7432,7 +8053,8 @@ durability: 32,
 mineSpeed:12,
 attackDamage: 1,
 attackSpeed:1,
-material:"goldIngot"
+material:"goldIngot",
+category:"tools"
 },
 {
 name:"diamondHoe",
@@ -7443,40 +8065,47 @@ durability: 1561,
 mineSpeed:8,
 attackDamage: 1,
 attackSpeed:4,
-material:"diamond"
+material:"diamond",
+category:"tools"
 },
 {
 name:"podzol",
 Name:"Podzol",
-textures:["dirt","podzolTop","podzolSide"]
+textures:["dirt","podzolTop","podzolSide"],
+category:"nature"
 },
 {
 name:"rawIronBlock",
 Name:"Block of Raw Iron",
 type:"rock2",
-breakTime:25
+breakTime:25,
+category:"build"
 },
 {
 name:"rawGoldBlock",
 Name:"Block of Raw Gold",
 type:"rock3",
-breakTime:25
+breakTime:25,
+category:"build"
 },
 {
 name:"rawCopperBlock",
 Name:"Block of Raw Copper",
 type:"rock2",
-breakTime:25
+breakTime:25,
+category:"build"
 },
 {
 name:"netheriteScrap",
 Name:"Netherite Scrap",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"netheriteIngot",
 Name:"Netherite Ingot",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"netheritePickaxe",
@@ -7486,7 +8115,8 @@ pickaxe: true,
 mineSpeed: 9,
 durability: 2031,
 attackDamage: 6,
-material:"netheriteIngot"
+material:"netheriteIngot",
+category:"tools"
 },
 {
 name:"netheriteSword",
@@ -7495,7 +8125,8 @@ item: true,
 sword: true,
 durability: 2031,
 attackDamage: 8,
-material:"netheriteIngot"
+material:"netheriteIngot",
+category:"tools"
 },
 {
 name:"netheriteAxe",
@@ -7506,7 +8137,8 @@ durability: 2031,
 mineSpeed:9,
 attackDamage: 10,
 attackSpeed:1,
-material:"netheriteIngot"
+material:"netheriteIngot",
+category:"tools"
 },
 {
 name:"netheriteShovel",
@@ -7516,7 +8148,8 @@ shovel: true,
 durability: 2031,
 mineSpeed:9,
 attackDamage: 6,
-material:"netheriteIngot"
+material:"netheriteIngot",
+category:"tools"
 },
 {
 name:"netheriteHoe",
@@ -7527,13 +8160,15 @@ durability: 2031,
 mineSpeed:9,
 attackDamage: 1,
 attackSpeed:4,
-material:"netheriteIngot"
+material:"netheriteIngot",
+category:"tools"
 },
 {
 name:"cartographyTable",
 Name:"Cartograpgy Table",
 textures: ["cartographyTableSide3","cartographyTableTop","cartographyTableSide3","cartographyTableSide1","cartographyTableSide2","cartographyTableSide3"],
-rotate:true
+rotate:true,
+category:"items"
 },
 {
 name:"cake",
@@ -7543,19 +8178,22 @@ cake:true,
 transparent:true,
 flatIcon:true,
 iconTexture:"cake",
-compostChance:1
+compostChance:1,
+category:"food"
 },
 {
 name:"smithingTable",
 Name:"Smithing Table",
 textures:["smithingTableBottom","smithingTableTop","smithingTableFront","smithingTableSide"],
+category:"items"
 },
 {
 name:"stonecutter",
 Name:"Stonecutter",
 textures:["stonecutterBottom","stonecutterTop","stonecutterSide"],
 transparent:true,
-stonecutter:true
+stonecutter:true,
+category:"items"
 },
 {
 name:"itemFrame",
@@ -7563,7 +8201,8 @@ Name:"Item Frame",
 transparent:true,
 itemFrame:true,
 flatIcon:true,
-iconTexture:"itemFrameIcon"
+iconTexture:"itemFrameIcon",
+category:"items"
 },
 {
 name:"enderPearl",
@@ -7573,30 +8212,35 @@ onuse:function(x,y,z, block, replaceItem,useDurability,minusOne,dimension){
 world.addEntity(new EnderPearl(p.x,p.y,p.z, p.direction.x, p.direction.y, p.direction.z),false,dimension)
 },
 minusOnUse:true,
-useAnywhere:true
+useAnywhere:true,
+category:"items"
 },
 {
 name:"ironNugget",
 Name:"Iron Nugget",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"goldNugget",
 Name:"Gold Nugget",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"pumpkin",
 Name:"Pumpkin",
 textures:["pumpkinSide","pumpkinTop","pumpkinSide"],
-compostChance:0.65
+compostChance:0.65,
+category:"nature"
 },
 {
 name:"carvedPumpkin",
 Name:"Carved Pumpkin",
 textures:["pumpkinSide","pumpkinTop","pumpkinSide","carvedPumpkin","pumpkinSide","pumpkinSide"],
 rotate:true,
-compostChance:0.65
+compostChance:0.65,
+category:"nature"
 },
 {
 name:"jackOLantern",
@@ -7604,25 +8248,29 @@ Name:"Jack o'Lantern",
 textures:["pumpkinSide","pumpkinTop","pumpkinSide","jackOLantern","pumpkinSide","pumpkinSide"],
 lightLevel:15,
 rotate:true,
-compostChance:0.65
+compostChance:0.65,
+category:"nature"
 },
 {
 name:"shears",
 Name:"Shears",
 item:true,
-shears:true
+shears:true,
+category:"items"
 },
 {
 name:"pumpkinSeeds",
 Name:"Pumpkin Seeds",
 item:true,
-compostChance:0.3
+compostChance:0.3,
+category:"items"
 },
 {
 name:"melonSeeds",
 Name:"Watermelon Seeds",
 item:true,
-compostChance:0.3
+compostChance:0.3,
+category:"items"
 },
 {
 name:"melon",
@@ -7631,7 +8279,8 @@ textures:["melonSide","melonTop","melonSide"],
 breakTime:1.5,
 drop:"melonSlice",
 dropAmount:[3,7],
-compostChance:0.65
+compostChance:0.65,
+category:"nature"
 },
 {
 name:"melonSlice",
@@ -7640,7 +8289,8 @@ item:true,
 edible: true,
 food: 2,
 saturation: 1.2,
-compostChance:0.5
+compostChance:0.5,
+category:"nature"
 },
 {
 name:"redstoneLamp",
@@ -7656,22 +8306,26 @@ if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,f
 },
 onset:function(x,y,z,dimension){
 this.onpowerupdate(x,y,z,null,null,null,null,dimension)
-}
+},
+category:"redstone"
 },
 {
 name:"glowstoneDust",
 Name:"Glowstone Dust",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"quartz",
 Name:"Quartz",
-item:true
+item:true,
+category:"items"
 },
 {
 name: "endPortalFrame", 
 Name:"End Portal Frame",
-textures: ["endStone", "endPortalFrameTop", "endPortalFrameSide"]
+textures: ["endStone", "endPortalFrameTop", "endPortalFrameSide"],
+category:"items"
 },
 {
 name: "eyeOfEnder",
@@ -7683,11 +8337,14 @@ canPlace:function(block){
 return blockData[block].name === "endPortalFrame"
 },
 placeSound:["block.end_portal.eyeplace1","block.end_portal.eyeplace2","block.end_portal.eyeplace3"],
-eyeOfEnder: true
+eyeOfEnder: true,
+category:"items"
 },
 {
 name:"endStone",
 Name:"End Stone",
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"redSand",
@@ -7700,64 +8357,80 @@ fall(x,y,z,b,world,false,dimension)
 ongetexploded:function(x,y,z,b,world,dimension){
 fall(x,y,z,b,world,true,dimension)
 },
+category:"nature",
 digSound: ["block.sand.dig1", "block.sand.dig2", "block.sand.dig3", "block.sand.dig4"],
 stepSound: ["block.sand.step1", "block.sand.step2","block.sand.step3","block.sand.step4","block.sand.step5"]
 },
 {
 name:"redSandstone",
 Name:"Red Sandstone",
-textures: ["redSandstoneBottom", "redSandstoneTop", "redSandstone"]
+textures: ["redSandstoneBottom", "redSandstoneTop", "redSandstone"],
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true
 },
 { name:"chiseledRedSandstone",
 Name:"Chiseled Red Sandstone",
-textures: ["redSandstoneBottom", "redSandstoneTop","chiseledRedSandstone"]
+textures: ["redSandstoneBottom", "redSandstoneTop","chiseledRedSandstone"],
+category:"build",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true
 },
 { name:"cutRedSandstone",
 Name:"Cut Red Sandstone",
-textures: ["redSandstoneBottom", "redSandstoneTop","cutRedSandstone"]
+textures: ["redSandstoneBottom", "redSandstoneTop","cutRedSandstone"],
+category:"build",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true
 },
-{ name:"smoothredSandstone", Name:"Smooth Red Sandstone", textures:"redSandstoneTop" },
+{ name:"smoothredSandstone", Name:"Smooth Red Sandstone", textures:"redSandstoneTop", category:"nature", randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true },
 {
 name:"purpurBlock",
 Name:"Purpur Block",
+category:"build"
 },
 {
 name:"purpurPillar",
 Name:"Purpur Pillar",
-textures:["purpurPillarTop","purpurPillar"]
+textures:["purpurPillarTop","purpurPillar"],
+category:"build"
 },
 {
 name:"purpurPillarSW",
 textures:["purpurPillar","purpurPillar","purpurPillarTop","purpurPillarSW"],
-rotate:true
+rotate:true,
+hidden:true
 },
 {
 name:"prismarine",
-Name:"Prismarine"
+Name:"Prismarine",
+category:"build"
 },
 {
 name:"prismarineBricks",
-Name:"Prismarine Bricks"
+Name:"Prismarine Bricks",
+category:"build"
 },
 {
 name:"darkPrismarine",
 Name:"Dark Prismarine",
+category:"build"
 },
 {
 name:"prismarineCrystals",
 Name:"Prismarine Crystals",
+category:"items",
 item:true
 },
 {
 name:"prismarineShard",
 Name:"Prismarine Shard",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"seaLantern",
 Name:"Sea Lantern",
 lightLevel:15,
-breakTime:0.45
+breakTime:0.45,
+category:"decoration"
 },
 {
 name:"oakLeaves",
@@ -7790,7 +8463,8 @@ biomeTintEast:true,
 biomeTintWest:true,
 biomeTintNorth:true,
 biomeTintSouth:true,
-invTint:[leafColor.r,leafColor.g,leafColor.b]
+invTint:[leafColor.r,leafColor.g,leafColor.b],
+category:"nature"
 },
 {
 name: "acaciaLeaves",
@@ -7820,7 +8494,8 @@ biomeTintEast:true,
 biomeTintWest:true,
 biomeTintNorth:true,
 biomeTintSouth:true,
-invTint:[leafColor.r,leafColor.g,leafColor.b]
+invTint:[leafColor.r,leafColor.g,leafColor.b],
+category:"nature"
 },
 {
 name: "birchLeaves",
@@ -7842,7 +8517,8 @@ burnChance: 0.2,
 burnTime: 30,
 compostChance:0.3,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
-stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
+stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
+category:"nature"
 },
 {
 name: "darkOakLeaves",
@@ -7873,7 +8549,8 @@ biomeTintEast:true,
 biomeTintWest:true,
 biomeTintNorth:true,
 biomeTintSouth:true,
-invTint:[leafColor.r,leafColor.g,leafColor.b]
+invTint:[leafColor.r,leafColor.g,leafColor.b],
+category:"nature"
 },
 {
 name: "jungleLeaves",
@@ -7903,7 +8580,8 @@ biomeTintEast:true,
 biomeTintWest:true,
 biomeTintNorth:true,
 biomeTintSouth:true,
-invTint:[leafColor.r,leafColor.g,leafColor.b]
+invTint:[leafColor.r,leafColor.g,leafColor.b],
+category:"nature"
 },
 {
 name: "spruceLeaves",
@@ -7925,13 +8603,15 @@ burnChance: 0.2,
 burnTime: 30,
 compostChance:0.3,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
-stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
+stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
+category:"nature"
 },
 {
 name:"spyglass",
 Name:"Spyglass",
 item:true,
-spyglass:true
+spyglass:true,
+category:"items"
 },
 {
 name:"egg",
@@ -7942,17 +8622,20 @@ var pd = p.direction
 world.addEntity(new Egg(p.x+pd.x,p.y+pd.y,p.z+pd.z, pd.x*0.8, pd.y*0.8, pd.z*0.8),false,dimension)
 },
 minusOnUse:true,
-useAnywhere:true
+useAnywhere:true,
+category:"items"
 },
 {
 name:"noodles",
 Name:"Noodles",
-item:true
+item:true,
+category:"food"
 },
 {
 name:"bowl",
 Name:"Bowl",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"mushroomStew",
@@ -7962,7 +8645,8 @@ item:true,
 eatWhenFull: false,
 food: 6,
 saturation: 7.2,
-eatResult:"bowl"
+eatResult:"bowl",
+category:"food"
 },
 {
 name:"ramen",
@@ -7972,7 +8656,8 @@ item:true,
 eatWhenFull: true,
 food: 8,
 saturation: 10,
-eatResult:"bowl"
+eatResult:"bowl",
+category:"food"
 },
 {
 name:"orange",
@@ -7981,7 +8666,8 @@ edible: true,
 item:true,
 eatWhenFull: false,
 food: 4,
-saturation: 2.4
+saturation: 2.4,
+category:"food"
 },
 {
 name:"fern",
@@ -7990,7 +8676,9 @@ solid: false,
 transparent: true,
 shadow: false,
 crossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name: "largeFern",
@@ -8000,7 +8688,9 @@ transparent: true,
 shadow: false,
 textures: "largeFernTop",
 tallcrossShape: true,
-compostChance:0.65
+compostChance:0.65,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name:"fire",
@@ -8016,6 +8706,7 @@ temperature:20,
 shade:false,
 smoothLight:false,
 hidden:true,
+liquidBreakable:true,
 getAttached:function(x,y,z,block,dimension,getBlockOnly){
 var ax = x, ay = y, az = z
 switch(block){
@@ -8118,7 +8809,8 @@ name: "endRod",
 Name:"End Rod",
 transparent: true,
 shadow: false,
-lightLevel: 15
+lightLevel: 15,
+category:"decoration"
 },
 {
 name: "oakWood",
@@ -8128,7 +8820,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"nature"
 },
 {
 name: "acaciaWood",
@@ -8138,7 +8831,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"nature"
 },
 {
 name: "birchWood",
@@ -8148,7 +8842,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"nature"
 },
 {
 name: "darkOakWood",
@@ -8158,7 +8853,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"nature"
 },
 {
 name: "jungleWood",
@@ -8168,7 +8864,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"nature"
 },
 {
 name: "spruceWood",
@@ -8178,7 +8875,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"nature"
 },
 {
 name: "crimsonHyphae",
@@ -8186,6 +8884,7 @@ textures: "crimsonStemSide",
 stemSound: true,
 breakTime:2,
 type:"wood",
+category:"nature"
 },
 {
 name: "warpedHyphae",
@@ -8193,6 +8892,7 @@ textures: "warpedStemSide",
 stemSound: true,
 breakTime:2,
 type:"wood",
+category:"nature"
 },
 {
 name: "strippedOakWood",
@@ -8202,7 +8902,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedAcaciaWood",
@@ -8212,7 +8913,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedBirchWood",
@@ -8222,7 +8924,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedDarkOakWood",
@@ -8232,7 +8935,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedJungleWood",
@@ -8242,7 +8946,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedSpruceWood",
@@ -8252,7 +8957,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name: "strippedCrimsonHyphae",
@@ -8260,6 +8966,7 @@ textures: "strippedCrimsonStem",
 stemSound: true,
 breakTime:2,
 type:"wood",
+category:"build"
 },
 {
 name: "strippedWarpedHyphae",
@@ -8267,6 +8974,7 @@ textures: "strippedWarpedStem",
 stemSound: true,
 breakTime:2,
 type:"wood",
+category:"build"
 },
 {
 name:"oakFenceGate",
@@ -8276,6 +8984,7 @@ fenceGate:true,
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"build"
 },
 {
 name:"acaciaFenceGate",
@@ -8285,6 +8994,7 @@ fenceGate:true,
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"build"
 },
 {
 name:"birchFenceGate",
@@ -8294,6 +9004,7 @@ fenceGate:true,
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"build"
 },
 {
 name:"darkOakFenceGate",
@@ -8303,6 +9014,7 @@ fenceGate:true,
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"build"
 },
 {
 name:"jungleFenceGate",
@@ -8312,6 +9024,7 @@ fenceGate:true,
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"build"
 },
 {
 name:"spruceFenceGate",
@@ -8321,6 +9034,7 @@ fenceGate:true,
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"build"
 },
 {
 name:"crimsonFenceGate",
@@ -8330,6 +9044,7 @@ fenceGate:true,
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"build"
 },
 {
 name:"warpedFenceGate",
@@ -8339,6 +9054,7 @@ fenceGate:true,
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"build"
 },
 { 
 name: "kelp",
@@ -8355,7 +9071,8 @@ var isIt = blockData[top].name === "kelp" || blockData[top].name === "kelpPlant"
 if(isIt){
 world.setBlock(x,y,z,blockIds.kelpPlant | CROSS,false,false,false,false,dimension)
 }
-}
+},
+category:"nature"
 },
 { 
 name: "kelpPlant",
@@ -8379,7 +9096,8 @@ iconTexture:"seagrassIcon",
 transparent: true,
 solid: false,
 shadow: false,
-crop:true
+crop:true,
+category:"nature"
 },
 {
 name:"tallSeagrass",
@@ -8388,7 +9106,8 @@ textures:"tallSeagrassTop",
 transparent: true,
 solid: false,
 shadow: false,
-tallCrop:true
+tallCrop:true,
+category:"nature"
 },
 {
 name:"barrel",
@@ -8401,57 +9120,69 @@ texturesDown:fillTextureArray(["barrelTop","barrelBottom","barrelSide"]),
 texturesDownOpen:fillTextureArray(["barrelTopOpen","barrelBottom","barrelSide"]),
 onclick: () => Messages.write("this barrel doesn't work"),
 woodSound:true,
-barrel:true
+barrel:true,
+category:"items"
 },
 {
 name:"endStoneBricks",
 Name:"End Stone Bricks",
-stoneSound:true
+stoneSound:true,
+category:"build"
 },
 {
 name:"beeNest",
 Name:"Bee Nest",
 textures:["beeNestBottom","beeNestTop","beeNestSide","beeNestFront","beeNestSide","beeNestSide"],
 texturesHoney:["beeNestBottom","beeNestTop","beeNestSide","beeNestFrontHoney","beeNestSide","beeNestSide"],
-rotate:true
+rotate:true,
+category:"nature"
 },
 {
 name:"beehive",
 Name:"Beehive",
 textures:["beehiveEnd","beehiveEnd","beehiveSide","beehiveFront","beehiveSide","beehiveSide"],
 texturesHoney:["beehiveEnd","beehiveEnd","beehiveSide","beehiveFrontHoney","beehiveSide","beehiveSide"],
-rotate:true
+rotate:true,
+category:"items"
 },
 {
 name:"honeyBlock",
 Name:"Block of Honey",
 textures:"honeyBlockBottom",
 transparent:true,
-shapeName:"honeyBlock"
+shapeName:"honeyBlock",
+damageResistance:0.8,
+category:"build"
 },
 {
 name:"honeycomb",
 Name:"Honeycomb",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"honeycombBlock",
-Name:"Honeycomb Block"
+Name:"Honeycomb Block",
+category:"build"
 },
 {
 name:"coarseDirt",
 Name:"Coarse Dirt",
-breakTime:1.5
+breakTime:1.5,
+category:"nature",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"inkSac",
 Name:"Ink Sac",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"glowInkSac",
 Name:"Glow Ink Sac",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"glowItemFrame",
@@ -8459,7 +9190,8 @@ Name:"Glow Item Frame",
 transparent:true,
 itemFrame:true,
 flatIcon:true,
-iconTexture:"glowItemFrameIcon"
+iconTexture:"glowItemFrameIcon",
+category:"items"
 },
 {
 name:"glowLichen",
@@ -8469,45 +9201,56 @@ shadow: false,
 wallFlat: true,
 flatIcon:true,
 lightLevel:7,
-compostChance:0.5
+compostChance:0.5,
+category:"nature"
 },
 {
 name:"sponge",
 Name:"Sponge",
 wetTexture:new Array(6).fill("wetSponge"),
+category:"items",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true
 },
 {
 name:"cutCopper",
-Name:"Cut Copper"
+Name:"Cut Copper",
+category:"build"
 },
 {
 name:"exposedCopper",
-Name:"Exposed Block of Copper"
+Name:"Exposed Block of Copper",
+category:"build"
 },
 {
 name:"exposedCutCopper",
-Name:"Exposed Cut Copper"
+Name:"Exposed Cut Copper",
+category:"build"
 },
 {
 name:"weatheredCopper",
-Name:"Weathered Block of Copper"
+Name:"Weathered Block of Copper",
+category:"build"
 },
 {
 name:"weatheredCutCopper",
-Name:"Weathered Cut Copper"
+Name:"Weathered Cut Copper",
+category:"build"
 },
 {
 name:"oxidizedCopper",
-Name:"Oxidized Block of Copper"
+Name:"Oxidized Block of Copper",
+category:"build"
 },
 {
 name:"oxidizedCutCopper",
-Name:"Oxidized Cut Copper"
+Name:"Oxidized Cut Copper",
+category:"build"
 },
 {
 name:"quartzBricks",
 Name:"Quartz Bricks",
-stoneSound:true
+stoneSound:true,
+category:"build"
 },
 {
 name:"campfire",
@@ -8520,7 +9263,8 @@ shadow:false,
 lightLevel:15,
 transparent:true,
 woodSound:true,
-drop:"campfire"
+drop:"campfire",
+category:"items"
 },
 {
 name:"soulCampfire",
@@ -8533,7 +9277,8 @@ shadow:false,
 lightLevel:10,
 transparent:true,
 woodSound:true,
-drop:"soulCampfire"
+drop:"soulCampfire",
+category:"items"
 },
 {
 name:"bambooShoot",
@@ -8543,6 +9288,8 @@ solid: false,
 transparent: true,
 shadow: false,
 crossShape: true,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name:"bambooStalk",
@@ -8557,7 +9304,9 @@ drop:"bambooStalk",
 breakTime:1.5,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
-}
+},
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name:"chest",
@@ -8581,7 +9330,8 @@ if(data[i] && data[i].id){
 for(var j=0; j<data[i].amount; j++)world.addEntity(new Item(x,y,z,0,0,0,data[i].id, true, 1, data[i].durability, data[i].customName),false,dimension)
 }
 }
-}
+},
+category:"items"
 },
 {
 name:"boneMeal",
@@ -8607,7 +9357,8 @@ world.setBlock(x,y,z, blockIds.potatoes|CROSS,false,false,false,false,dimension)
 }else return
 glint(x,y,z,dimension)
 },
-minusOnUse:true
+minusOnUse:true,
+category:"items"
 },
 {
 name:"clay",
@@ -8617,27 +9368,32 @@ type:"ground",
 digSound: ["block.gravel.dig1", "block.gravel.dig2", "block.gravel.dig3", "block.gravel.dig4"],
 stepSound: ["block.gravel.step1", "block.gravel.step2","block.gravel.step3","block.gravel.step4"],
 drop:"clayBall",
-dropAmount:4
+dropAmount:4,
+category:"nature"
 },
 {
 name:"clayBall",
 Name:"Clay Ball",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"brick",
 Name:"Brick",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"charcoal",
 Name:"Charcoal",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"appleCore",
 Name:"Apple Core",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"tintedGlass",
@@ -8646,7 +9402,8 @@ transparent: true,
 shadow: true,
 breakTime: 0.45,
 type: "glass",
-glassSound: true
+glassSound: true,
+category:"build"
 },
 {
 name:"tomato",
@@ -8656,7 +9413,8 @@ edible:true,
 eatWhenFull: false,
 food: 3,
 saturation: 2,
-eatResult:"tomatoSeeds"
+eatResult:"tomatoSeeds",
+category:"nature"
 },
 {
 name:"tomatoPlant",
@@ -8673,7 +9431,8 @@ transparent:true,
 solid:false,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
-}
+},
+category:"nature"
 },
 {
 name:"tomatoSeeds",
@@ -8687,7 +9446,8 @@ return "tomatoPlant"
 Messages.write("tomato seeds need to be planted on farmland")
 p.lastPlace = Date.now()
 }
-}
+},
+category:"nature"
 },
 {
 name:"newCactusFruit",
@@ -8700,7 +9460,9 @@ cactusFruit:true,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
 },
-compostChance:0.3
+compostChance:0.3,
+liquidBreakable:true,
+category:"nature"
 },
 {
 name:"greenCactusFruit",
@@ -8713,7 +9475,9 @@ cactusFruit:true,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
 },
-compostChance:0.4
+compostChance:0.4,
+liquidBreakable:true,
+category:"nature"
 },
 {
 name:"redCactusFruit",
@@ -8730,7 +9494,9 @@ cactusFruit:true,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
 },
-compostChance:0.5
+compostChance:0.5,
+liquidBreakable:true,
+category:"food"
 },
 {
 name:"purpleCactusFruit",
@@ -8747,7 +9513,9 @@ cactusFruit:true,
 onupdate:function(x,y,z,b,world,sx,sy,sz,dimension){
 needsSupportingBlocks(x,y,z,b,world,dimension)
 },
-compostChance:0.6
+compostChance:0.6,
+liquidBreakable:true,
+category:"food"
 },
 {
 name:"cherry",
@@ -8757,7 +9525,8 @@ edible:true,
 eatWhenFull: false,
 food: 1,
 saturation: 1,
-compostChance:0.5
+compostChance:0.5,
+category:"food"
 },
 {
 name:"cherryLog",
@@ -8768,7 +9537,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"nature"
 },
 {
 name:"cherryLogSW",
@@ -8797,7 +9567,8 @@ shearBreakTime:0.05,
 burnChance: 0.2,
 burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
-stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
+stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
+category:"nature"
 },
 {
 name:"pinkCherryLeaves",
@@ -8819,7 +9590,8 @@ shearBreakTime:0.05,
 burnChance: 0.2,
 burnTime: 30,
 digSound: ["block.grass.dig1", "block.grass.dig2", "block.grass.dig3", "block.grass.dig4"],
-stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"]
+stepSound: ["block.grass.step1", "block.grass.step2","block.grass.step3","block.grass.step4","block.grass.step5","block.grass.step6"],
+category:"nature"
 },
 {
 name:"cherrySapling",
@@ -8828,7 +9600,8 @@ transparent: true,
 shadow: false,
 solid: false,
 crossShape: true,
-potCross: true
+potCross: true,
+category:"nature"
 },
 {
 name:"cherryWood",
@@ -8838,7 +9611,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"nature"
 },
 /*{
 name:"gun",
@@ -8859,7 +9633,8 @@ var pd = p.direction
 world.addEntity(new SlingshotShot(p.x,p.y,p.z,pd.x,pd.y,pd.z),false,dimension)
 },
 useAnywhere:true,
-stackSize:1
+stackSize:1,
+category:"tools"
 },
 {
 name:"redstoneTorch",
@@ -8993,12 +9768,14 @@ b = world.getBlock(x,y-1,z,dimension)
 if(b && blockData[b].name === "redstoneDust"){
 world.unspreadPower(x,y-1,z,15,true,dimension)
 }
-}
+},
+category:"redstone"
 },
 {
 name:"redstoneConnector",
 Name:"Block That Redstone Dust Connects To",
-stoneSound:true
+stoneSound:true,
+category:"redstone"
 },
 {
 name:"lever",
@@ -9694,7 +10471,8 @@ on = true
 if(on && tx === x && ty === y && tz === z){
 return true
 }
-}
+},
+category:"redstone"
 },
 {
 name:"piston",
@@ -9906,13 +10684,15 @@ e.changeBlock(headCut)
 world.setTimeout(function(){
 world.setBlock(x,y,z,body,false,false,false,false,dimension)
 }, tickTime*2)
-}
+},
+category:"redstone"
 },
 {
 name:"smoothQuartz",
 Name:"Smooth Quartz Block",
 textures:"quartzBlockBottom",
-stoneSound:true
+stoneSound:true,
+category:"build"
 },
 {
 name:"pistonSticky",
@@ -10267,108 +11047,126 @@ default:
 return
 }
 if(rx-tx === x && ry-ty === y && rz-tz === z) return true
-}
+},
+category:"redstone"
 },
 {
 name:"string",
 Name:"String",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"redDye",
 Name:"Red Dye",
 item:true,
-dye:[176/255, 46/255, 38/255]
+dye:[176/255, 46/255, 38/255],
+category:"items"
 },
 {
 name:"lightGrayDye",
 Name:"Light Gray Dye",
 item:true,
-dye:[157/255, 157/255, 151/255]
+dye:[157/255, 157/255, 151/255],
+category:"items"
 },
 {
 name:"lightBlueDye",
 Name:"Light Blue Dye",
 item:true,
-dye:[58/255, 178/255, 218/255]
+dye:[58/255, 178/255, 218/255],
+category:"items"
 },
 {
 name:"magentaDye",
 Name:"Magenta Dye",
 item:true,
-dye:[199/255, 78/255, 189/255]
+dye:[199/255, 78/255, 189/255],
+category:"items"
 },
 {
 name:"yellowDye",
 Name:"Yellow Dye",
 item:true,
-dye:[254/255, 215/255, 61/255]
+dye:[254/255, 215/255, 61/255],
+category:"items"
 },
 {
 name:"purpleDye",
 Name:"Purple Dye",
 item:true,
-dye:[137/255, 50/255, 184/255]
+dye:[137/255, 50/255, 184/255],
+category:"items"
 },
 {
 name:"orangeDye",
 Name:"Orange Dye",
 item:true,
-dye:[249/255, 128/255, 29/255]
+dye:[249/255, 128/255, 29/255],
+category:"items"
 },
 {
 name:"whiteDye",
 Name:"White Dye",
 item:true,
-dye:[249/255, 1, 254/255]
+dye:[249/255, 1, 254/255],
+category:"items"
 },
 {
 name:"greenDye",
 Name:"Green Dye",
 item:true,
-dye:[93/255, 124/255, 22/255]
+dye:[93/255, 124/255, 22/255],
+category:"items"
 },
 {
 name:"brownDye",
 Name:"Brown Dye",
 item:true,
-dye:[131/255, 84/255, 50/255]
+dye:[131/255, 84/255, 50/255],
+category:"items"
 },
 {
 name:"blackDye",
 Name:"Black Dye",
 item:true,
-dye:[29/255, 29/255, 33/255]
+dye:[29/255, 29/255, 33/255],
+category:"items"
 },
 {
 name:"pinkDye",
 Name:"Pink Dye",
 item:true,
-dye:[243/255, 139/255, 170/255]
+dye:[243/255, 139/255, 170/255],
+category:"items"
 },
 {
 name:"limeDye",
 Name:"Lime Dye",
 item:true,
-dye:[128/255, 199/255, 31/255]
+dye:[128/255, 199/255, 31/255],
+category:"items"
 },
 {
 name:"grayDye",
 Name:"Gray Dye",
 item:true,
-dye:[71/255, 79/255, 82/255]
+dye:[71/255, 79/255, 82/255],
+category:"items"
 },
 {
 name:"cyanDye",
 Name:"Cyan Dye",
 item:true,
-dye:[22/255, 156/255, 156/255]
+dye:[22/255, 156/255, 156/255],
+category:"items"
 },
 {
 name:"blueDye",
 Name:"Blue Dye",
 item:true,
-dye:[60/255, 67/255, 170/255]
+dye:[60/255, 67/255, 170/255],
+category:"items"
 },
 {
 name:"endPortal",
@@ -10404,28 +11202,32 @@ Name:"Thatch",
 type:"plant2",
 burnChance: 0.2,
 burnTime: 20,
-compostChance:0.85
+compostChance:0.85,
+category:"build"
 },
 {
 name:"pearlescentFroglight",
 Name:"Pearlescent Froglight",
 textures:["pearlescentFroglightTop","pearlescentFroglightSide"],
 lightLevel:15,
-shadow:false
+shadow:false,
+category:"nature"
 },
 {
 name:"verdantFroglight",
 Name:"Verdant Froglight",
 textures:["verdantFroglightTop","verdantFroglightSide"],
 lightLevel:15,
-shadow:false
+shadow:false,
+category:"nature"
 },
 {
 name:"ochreFroglight",
 Name:"Ochre Froglight",
 textures:["ochreFroglightTop","ochreFroglightSide"],
 lightLevel:15,
-shadow:false
+shadow:false,
+category:"nature"
 },
 {
 name:"mangroveLeaves",
@@ -10454,7 +11256,8 @@ biomeTintEast:true,
 biomeTintWest:true,
 biomeTintNorth:true,
 biomeTintSouth:true,
-invTint:[leafColor.r,leafColor.g,leafColor.b]
+invTint:[leafColor.r,leafColor.g,leafColor.b],
+category:"nature"
 },
 {
 name:"mangroveLog",
@@ -10464,7 +11267,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"nature"
 },
 {
 name:"strippedMangroveLog",
@@ -10474,7 +11278,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name:"mangroveLogSW",
@@ -10486,7 +11291,7 @@ name:"strippedMangroveLogSW",
 textures: ["strippedMangroveLog","strippedMangroveLog","strippedMangroveLogTop","strippedMangroveLogSW"],
 rotate: true, woodSound:true, hidden:true
 },
-{name:"mangrovePlanks", Name:"Mangrove Planks", type:"wood", breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
+{name:"mangrovePlanks", Name:"Mangrove Planks", type:"wood", category:"build",breakTime:3, woodSound:true, burnChance:0.1, burnTime:40},
 { 
 name: "mangroveDoor",
 Name:"Mangrove Door",
@@ -10497,13 +11302,15 @@ door:true,
 woodSound:true,
 breakTime:4.5,
 type:"wood",
+category:"build"
 },
 { 
 name: "mangroveTrapdoor",
 Name:"Mangrove Trapdoor",
 transparent: true,
 trapdoor: true,
-woodSound: true
+woodSound: true,
+category:"build"
 },
 {
 name:"mangroveButton",
@@ -10511,7 +11318,8 @@ Name: "Mangrove Button",
 textures:"mangrovePlanks",
 button:true,
 transparent: true,
-shadow:false
+shadow:false,
+category:"redstone"
 },
 {
 name: "mangrovePressurePlate",
@@ -10519,7 +11327,8 @@ Name: "Mangrove Pressure Plate",
 textures: "mangrovePlanks",
 pressurePlate: true,
 breakTime:0.75,
-type:"wood"
+type:"wood",
+category:"redstone"
 },
 {
 name:"mangroveFenceGate",
@@ -10529,6 +11338,7 @@ fenceGate:true,
 breakTime:3,
 woodSound:true,
 type:"wood",
+category:"build"
 },
 {
 name:"mangroveRoots",
@@ -10538,14 +11348,16 @@ type:"wood",
 breakTime:1.05,
 blastResistance:0.7,
 cullFace:"never",
-compostChance:0.3
+compostChance:0.3,
+category:"nature"
 },
 {
 name:"muddyMangroveRoots",
 textures:["muddyMangroveRootsTop","muddyMangroveRootsSide"],
 type:"wood",
 breakTime:1.05,
-blastResistance:0.7
+blastResistance:0.7,
+category:"nature"
 },
 {
 name: "mangroveWood",
@@ -10555,7 +11367,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"nature"
 },
 {
 name: "strippedMangroveWood",
@@ -10565,7 +11378,8 @@ breakTime:3,
 woodSound:true,
 type:"wood",
 burnChance:0.1,
-burnTime:50
+burnTime:50,
+category:"build"
 },
 {
 name:"mud",
@@ -10575,14 +11389,18 @@ blastResistance:0.5,
 type:"ground",
 digSound: ["block.mud.break1", "block.mud.break2", "block.mud.break3", "block.mud.break4", "block.mud.break5", "block.mud.break6"],
 stepSound: ["block.mud.step1", "block.mud.step2","block.mud.step3","block.mud.step4","block.mud.step5","block.mud.step6"],
+category:"nature"
 },
 {
 name:"mudBricks",
 Name:"Mud Bricks",
+category:"build"
 },
 {
 name:"packedMud",
-Name:"Packed Mud"
+Name:"Packed Mud",
+randomRotate:true,randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true,
+category:"build"
 },
 {
 name:"reinforcedDeepslate",
@@ -10590,7 +11408,8 @@ textures:["reinforcedDeepslateBottom","reinforcedDeepslateTop","reinforcedDeepsl
 blastResistance:1200,
 breakTime:82.5,
 pistonPush:false,
-pistonPull:false
+pistonPull:false,
+category:"build"
 },
 {
 name:"redRedstoneLamp",
@@ -10607,7 +11426,8 @@ if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,f
 onset:function(x,y,z,dimension){
 this.onpowerupdate(x,y,z,null,null,null,null,dimension)
 },
-coloredRedstoneLamp:true
+coloredRedstoneLamp:true,
+category:"redstone"
 },
 {
 name:"yellowRedstoneLamp",
@@ -10624,7 +11444,8 @@ if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,f
 onset:function(x,y,z,dimension){
 this.onpowerupdate(x,y,z,null,null,null,null,dimension)
 },
-coloredRedstoneLamp:true
+coloredRedstoneLamp:true,
+category:"redstone"
 },
 {
 name:"greenRedstoneLamp",
@@ -10641,7 +11462,8 @@ if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,f
 onset:function(x,y,z,dimension){
 this.onpowerupdate(x,y,z,null,null,null,null,dimension)
 },
-coloredRedstoneLamp:true
+coloredRedstoneLamp:true,
+category:"redstone"
 },
 {
 name:"blueRedstoneLamp",
@@ -10658,7 +11480,8 @@ if(world.getBlock(x,y,z,dimension) !== block) world.setBlock(x,y,z,block,false,f
 onset:function(x,y,z,dimension){
 this.onpowerupdate(x,y,z,null,null,null,null,dimension)
 },
-coloredRedstoneLamp:true
+coloredRedstoneLamp:true,
+category:"redstone"
 },
 {
 name:"soulFire",
@@ -10714,7 +11537,8 @@ food:4,
 saturation: 1.2,
 eatResult: "stick",
 useAs: "sweetBerryBush",
-compostChance:0.3
+compostChance:0.3,
+category:"food"
 },
 {
 name:"sweetBerryBush",
@@ -10728,7 +11552,9 @@ transparent: true,
 shadow: false,
 smoothLight:false,
 hidden:true,
-drop:"sweetBerries"
+drop:"sweetBerries",
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name:"smallDripleaf",
@@ -10738,7 +11564,9 @@ shapeName:"smallDripleaf",
 solid: false,
 transparent: true,
 shadow: false,
-smoothLight:false
+smoothLight:false,
+liquidBreakable:"drop",
+category:"nature"
 },
 {
 name:"bigDripleaf",
@@ -10749,6 +11577,7 @@ crossShape:true,
 transparent: true,
 shadow: false,
 smoothLight:false,
+liquidBreakable:"drop",
 onupdate:function(x,y,z,block,world,sx,sy,sz,dimension){
 var me = blockIds.bigDripleaf
 var top = world.getBlock(x,y+1,z,dimension)
@@ -10758,7 +11587,8 @@ world.setBlock(x,y,z,me | CROSS,false,false,false,false,dimension)
 }else if(block === (me | CROSS) && !isIt){
 world.setBlock(x,y,z,me,false,false,false,false,dimension)
 }
-}
+},
+category:"nature"
 },
 {
 name:"orGate",
@@ -10771,7 +11601,8 @@ logicGate:true,
 shouldBeOn:function(x,y,z,dimension,px,pz){
 return (world.getRepeaterPower(x,y,z,x-pz,y,z-px,dimension) || world.getBlockPower(x-pz,y,z-px,null,dimension)
 || world.getRepeaterPower(x,y,z,x+pz,y,z+px,dimension) || world.getBlockPower(x+pz,y,z+px,null,dimension)) ? true : false
-}
+},
+category:"redstone"
 },
 {
 name:"andGate",
@@ -10784,7 +11615,8 @@ logicGate:true,
 shouldBeOn:function(x,y,z,dimension,px,pz){
 return ((world.getRepeaterPower(x,y,z,x-pz,y,z-px,dimension) || world.getBlockPower(x-pz,y,z-px,null,dimension))
 && (world.getRepeaterPower(x,y,z,x+pz,y,z+px,dimension) || world.getBlockPower(x+pz,y,z+px,null,dimension))) ? true : false
-}
+},
+category:"redstone"
 },
 {
 name:"notGate",
@@ -10796,7 +11628,8 @@ shadow: false,
 logicGate:true,
 shouldBeOn:function(x,y,z,dimension,px,pz){
 return !(world.getRepeaterPower(x,y,z,x-px,y,z-pz,dimension) || world.getBlockPower(x-px,y,z-pz,null,dimension)) ? true : false
-}
+},
+category:"redstone"
 },
 {
 name:"xorGate",
@@ -10810,14 +11643,17 @@ shouldBeOn:function(x,y,z,dimension,px,pz){
 var a = world.getRepeaterPower(x,y,z,x-pz,y,z-px,dimension) || world.getBlockPower(x-pz,y,z-px,null,dimension)
 var b = world.getRepeaterPower(x,y,z,x+pz,y,z+px,dimension) || world.getBlockPower(x+pz,y,z+px,null,dimension)
 return ((a||b)&&!(a&&b)) ? true : false
-}
+},
+category:"redstone"
 },
 {
 name:"dripstoneBlock",
 Name:"Dripstone Block",
 type:"rock1",
 breakTime:7.5,
-blastResistance:1
+blastResistance:1,
+randomRotate:"flip",randomRotateTop:true,randomRotateBottom:true,randomRotateNorth:true,randomRotateSouth:true,randomRotateEast:true,randomRotateWest:true,
+category:"nature"
 },
 {
 name:"pointedDripstone",
@@ -10853,7 +11689,8 @@ else if(this.pointing(x,y+pointing,z,dimension) === pointing && !this.pointing(x
 else if(this.pointing(x,y+pointing,z,dimension) === pointing) target |= STAIR //middle
 else if(this.pointing(x,y+pointing,z,dimension) === -pointing) target |= TALLCROSS //tip merge
 if(block !== target) world.setBlock(x,y,z,target,false,false,false,false,dimension)
-}
+},
+category:"nature"
 },
 {
 name:"oakSign",
@@ -10864,7 +11701,8 @@ flatIcon:true,
 sign:true,
 breakTime:1.5,
 woodSound:true,
-type:"wood"
+type:"wood",
+category:"decoration"
 },
 {
 name:"birchSign",
@@ -10875,7 +11713,8 @@ flatIcon:true,
 sign:true,
 breakTime:1.5,
 woodSound:true,
-type:"wood"
+type:"wood",
+category:"decoration"
 },
 {
 name:"acaciaSign",
@@ -10886,7 +11725,8 @@ flatIcon:true,
 sign:true,
 breakTime:1.5,
 woodSound:true,
-type:"wood"
+type:"wood",
+category:"decoration"
 },
 {
 name:"jungleSign",
@@ -10897,7 +11737,8 @@ flatIcon:true,
 sign:true,
 breakTime:1.5,
 woodSound:true,
-type:"wood"
+type:"wood",
+category:"decoration"
 },
 {
 name:"spruceSign",
@@ -10908,7 +11749,8 @@ flatIcon:true,
 sign:true,
 breakTime:1.5,
 woodSound:true,
-type:"wood"
+type:"wood",
+category:"decoration"
 },
 {
 name:"darkOakSign",
@@ -10920,7 +11762,8 @@ sign:true,
 breakTime:1.5,
 woodSound:true,
 type:"wood",
-color:[0.85,0.7,0.2]
+color:[0.85,0.7,0.2],
+category:"decoration"
 },
 {
 name:"mangroveSign",
@@ -10931,7 +11774,8 @@ flatIcon:true,
 sign:true,
 breakTime:1.5,
 woodSound:true,
-type:"wood"
+type:"wood",
+category:"decoration"
 },
 {
 name:"composter",
@@ -10976,13 +11820,15 @@ if(add) world.addEntity(new Item(x,y,z+0.5,0,0,0,blockIds.boneMeal,true, 1),fals
 minusOne()
 if(add) world.setBlock(x,y,z,target,false,false,false,false,dimension)
 glint(x,y,z,dimension)
-}
+},
+category:"items"
 },
 {
 name:"cocoaBeans",
 Name:"Cocoa Beans",
 item:true,
-useAs:"cocoa"
+useAs:"cocoa",
+category:"items"
 },
 {
 name:"cocoa",
@@ -10993,7 +11839,8 @@ transparent:true,
 shadow:false,
 drop:"cocaBeans",
 woodSound:true,
-hidden:true
+hidden:true,
+liquidBreakable:"drop"
 },
 {
 name:"cookie",
@@ -11002,7 +11849,8 @@ item:true,
 edible: true,
 food: 2,
 saturation: 0.4,
-compostChance:0.85
+compostChance:0.85,
+category:"food"
 },
 {
 name:"pumpkinPie",
@@ -11011,7 +11859,8 @@ item:true,
 edible: true,
 food: 8,
 saturation: 4.8,
-compostChance:1
+compostChance:1,
+category:"food"
 },
 {
 name:"rawChicken",
@@ -11019,7 +11868,8 @@ Name:"Raw Chicken",
 item:true,
 edible: true,
 food: 2,
-saturation: 1.2
+saturation: 1.2,
+category:"food"
 },
 {
 name:"cookedChicken",
@@ -11027,7 +11877,8 @@ Name:"Cooked Chicken",
 item:true,
 edible: true,
 food: 6,
-saturation: 7.2
+saturation: 7.2,
+category:"food"
 },
 {
 name:"rawCod",
@@ -11035,7 +11886,8 @@ Name:"Raw Cod",
 item:true,
 edible: true,
 food: 2,
-saturation: 0.4
+saturation: 0.4,
+category:"food"
 },
 {
 name:"cookedCod",
@@ -11043,7 +11895,8 @@ Name:"Cooked Cod",
 item:true,
 edible: true,
 food: 5,
-saturation: 6
+saturation: 6,
+category:"food"
 },
 {
 name:"rawMutton",
@@ -11051,7 +11904,8 @@ Name:"Raw Mutton",
 item:true,
 edible: true,
 food: 2,
-saturation: 1.2
+saturation: 1.2,
+category:"food"
 },
 {
 name:"cookedMutton",
@@ -11059,7 +11913,8 @@ Name:"Cooked Mutton",
 item:true,
 edible: true,
 food: 6,
-saturation: 9.6
+saturation: 9.6,
+category:"food"
 },
 {
 name:"rawPorkchop",
@@ -11067,7 +11922,8 @@ Name:"Raw Porckchop",
 item:true,
 edible: true,
 food: 3,
-saturation: 1.8
+saturation: 1.8,
+category:"food"
 },
 {
 name:"cookedPorkchop",
@@ -11075,7 +11931,8 @@ Name:"Stupido",
 item:true,
 edible: true,
 food: 8,
-saturation: 12.8
+saturation: 12.8,
+category:"food"
 },
 {
 name:"rawRabbit",
@@ -11083,7 +11940,8 @@ Name:"Raw Rabbit",
 item:true,
 edible: true,
 food: 3,
-saturation: 1.8
+saturation: 1.8,
+category:"food"
 },
 {
 name:"cookedRabbit",
@@ -11091,7 +11949,8 @@ Name:"Cooked Rabbit",
 item:true,
 edible: true,
 food: 5,
-saturation: 6
+saturation: 6,
+category:"food"
 },
 {
 name:"rawSalmon",
@@ -11099,7 +11958,8 @@ Name:"Raw Salmon",
 item:true,
 edible: true,
 food: 2,
-saturation: 0.4
+saturation: 0.4,
+category:"food"
 },
 {
 name:"cookedSalmon",
@@ -11107,7 +11967,8 @@ Name:"Cooked Salmon",
 item:true,
 edible: true,
 food: 6,
-saturation: 9.6
+saturation: 9.6,
+category:"food"
 },
 {
 name:"tropicalFish",
@@ -11115,7 +11976,8 @@ Name:"Tropical Fish",
 item:true,
 edible: true,
 food: 1,
-saturation: 0.2
+saturation: 0.2,
+category:"food"
 },
 {
 name:"beetroot",
@@ -11124,7 +11986,8 @@ item:true,
 edible: true,
 food: 1,
 saturation: 1.2,
-compostChance:0.65
+compostChance:0.65,
+category:"food"
 },
 {
 name:"beetrootSoup",
@@ -11133,7 +11996,8 @@ item:true,
 edible: true,
 food: 7.2,
 saturation: 13.2,
-eatResult:"bowl"
+eatResult:"bowl",
+category:"food"
 },
 {
 name:"carrot",
@@ -11147,6 +12011,7 @@ useAs:function(x,y,z,block,face){
 if(!block) return
 if(face === "top" && blockData[block].name === "farmland") return "carrots"
 },
+category:"food"
 },
 {
 name:"goldenCarrot",
@@ -11154,7 +12019,8 @@ Name:"Golden Carrot",
 item:true,
 edible: true,
 food: 6,
-saturation: 14.4
+saturation: 14.4,
+category:"food"
 },
 {
 name:"rabbitStew",
@@ -11162,7 +12028,8 @@ Name:"Rabbit Stew",
 item:true,
 edible: true,
 food: 10,
-saturation: 12
+saturation: 12,
+category:"food"
 },
 {
 name:"goldenApple",
@@ -11170,7 +12037,8 @@ Name:"Golden Apple",
 item:true,
 edible: true,
 food: 4,
-saturation: 9.6
+saturation: 9.6,
+category:"food"
 },
 {
 name:"rawBeef",
@@ -11178,7 +12046,8 @@ Name:"Raw Beef",
 item:true,
 edible: true,
 food: 3,
-saturation: 1.8
+saturation: 1.8,
+category:"food"
 },
 {
 name:"cookedBeef",
@@ -11186,7 +12055,8 @@ Name:"stake cooked befe",
 item:true,
 edible: true,
 food: 8,
-saturation: 12.8
+saturation: 12.8,
+category:"food"
 },
 {
 name:"potato",
@@ -11200,6 +12070,7 @@ useAs:function(x,y,z,block,face){
 if(!block) return
 if(face === "top" && blockData[block].name === "farmland") return "potatoes"
 },
+category:"food"
 },
 {
 name:"bakedPotato",
@@ -11208,17 +12079,20 @@ item:true,
 edible: true,
 food: 5,
 saturation: 6,
-compostChance:0.85
+compostChance:0.85,
+category:"food"
 },
 {
 name:"sugar",
 Name:"Sugar",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"milkBucket",
 Name:"Milk Bucket",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"beetrootSeeds",
@@ -11228,6 +12102,7 @@ useAs:function(x,y,z,block,face){
 if(!block) return
 if(face === "top" && blockData[block].name === "farmland") return "beetroots"
 },
+category:"items"
 },
 {
 name:"beetroots",
@@ -11241,7 +12116,8 @@ shadow: false,
 solid: false,
 crop: true,
 drop:"beetrootSeeds",
-hidden:true
+hidden:true,
+liquidBreakable:"drop"
 },
 {
 name:"potatoes",
@@ -11255,7 +12131,8 @@ shadow: false,
 solid: false,
 crop: true,
 drop:"potato",
-hidden:true
+hidden:true,
+liquidBreakable:"drop"
 },
 {
 name:"carrots",
@@ -11269,7 +12146,8 @@ shadow: false,
 solid: false,
 crop: true,
 drop:"carrot",
-hidden:true
+hidden:true,
+liquidBreakable:"drop"
 },
 {
 name:"mudPie",
@@ -11277,7 +12155,8 @@ Name:"Mud Pie",
 item:true,
 edible: true,
 food: 1,
-saturation: 1
+saturation: 1,
+category:"food"
 },
 {
 name:"purpleGrapes",
@@ -11285,7 +12164,8 @@ Name:"Purple Grapes",
 item:true,
 edible: true,
 food: 3,
-saturation: 3
+saturation: 3,
+category:"food"
 },
 {
 name:"greenGrapes",
@@ -11293,7 +12173,8 @@ Name:"Green Grapes",
 item:true,
 edible: true,
 food: 3,
-saturation: 3
+saturation: 3,
+category:"food"
 },
 {
 name:"chair",
@@ -11302,7 +12183,8 @@ textures:"oakPlanks",
 shapeName:"chair",
 transparent:true,
 shadow:false,
-onclick:sit
+onclick:sit,
+category:"items"
 },
 {
 name:"lightGrayBed",
@@ -11315,7 +12197,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"lightBlueBed",
@@ -11328,7 +12211,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"magentaBed",
@@ -11341,7 +12225,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"yellowBed",
@@ -11354,7 +12239,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"purpleBed",
@@ -11367,7 +12253,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"orangeBed",
@@ -11380,7 +12267,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"whiteBed",
@@ -11393,7 +12281,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"greenBed",
@@ -11406,7 +12295,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"brownBed",
@@ -11419,7 +12309,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"blackBed",
@@ -11432,7 +12323,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"pinkBed",
@@ -11445,7 +12337,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"limeBed",
@@ -11458,7 +12351,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"grayBed",
@@ -11471,7 +12365,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"cyanBed",
@@ -11484,7 +12379,8 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"blueBed",
@@ -11497,13 +12393,15 @@ clickBed(x,y,z,dimension)
 },
 transparent: true,
 bed: true,
-bounciness: 0.6
+bounciness: 0.6,
+category:"items"
 },
 {
 name:"quicksand",
 Name:"Quicksand",
 quicksand:true,
-solid:false
+solid:false,
+category:"nature"
 },
 {
 name:"bow",
@@ -11523,18 +12421,21 @@ delete item.icon
 updateHUD = true
 },
 useAnywhere:true,
-stackSize:1
+stackSize:1,
+category:"tools"
 },
 {
 name:"arrow",
 Name:"Arrow",
 textures:"arrowIcon",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"glisteringMelonSlice",
 Name:"Slice of Watermelon With Unedible Gold",
-item:true
+item:true,
+category:"items"
 },
 {
 name:"untnt",
@@ -11554,6 +12455,7 @@ burnChance:0.6,
 onburn:function(x,y,z,dimension){
 this.explode(x,y,z,null,dimension)
 },
+category:"redstone"
 },
 /*
 { name: "pigFace" },
@@ -13127,7 +14029,7 @@ let survival = false;
 let cheats = false
 let dieMessage = ""
 let blockIds = {}
-let inventoryBlocks = []
+let inventoryBlocks = {all:[],search:[]}
 blockData.forEach(block => {
 blockIds[block.name] = block.id
 if(block.rotate && block.name.includes("SW")){
@@ -13142,7 +14044,11 @@ block.burnTime = obj.burnTime
 }
 }
 if(block.id && !block.hidden){
-inventoryBlocks.push(block.id)
+inventoryBlocks.all.push(block.id)
+if(block.category){
+if(!inventoryBlocks[block.category]) inventoryBlocks[block.category] = []
+!inventoryBlocks[block.category].push(block.id)
+}
 }
 })
 win.blockData = blockData
@@ -13471,7 +14377,7 @@ arguments[0] = image
 ctx.drawImage(...arguments)
 }
 win.drawImage = drawImage
-let audioCtx
+let audioCtx, listener
 let CUBE,SLAB,STAIR,CROSS,TALLCROSS,DOOR,TORCH,LANTERN,LANTERNHANG,BEACON,
 CACTUS,PANE,PORTAL,WALLFLAT,TRAPDOOR,TRAPDOOROPEN,FENCE,WALLPOST,WALL,
 WALLU,//wall withe exteion under another wall
@@ -13750,6 +14656,32 @@ enter: [window.messageHolder],
 exit: [window.messageHolder],
 onexit: newScene => {
 if(newScene !== "chat") Messages.clear()
+}
+},
+inventory:{
+exit:[invTextbox],
+onenter: () => {
+invTextbox.oninput = function(){
+let b = inventoryBlocks.search, v = this.value
+b.length = 0
+for(var i of inventoryBlocks.all){
+if(blockData[i].Name.toLowerCase().includes(v.toLowerCase())) b.push(i)
+}
+drawScreens[screen]()
+}
+invTextbox.value = ""
+invTextbox.oninput()
+let s = inventory.size
+let s2 = s/2
+invTextbox.style.top = s*10+"px"
+invTextbox.style.left = s2+"px"
+invTextbox.style.width = s*13+"px"
+if(inventory.category === "search"){
+invTextbox.classList.remove('hidden')
+}
+},
+onexit: () => {
+invTextbox.oninput = null
 }
 },
 anvil:{
@@ -15123,7 +16055,7 @@ fill(255, 255, 255)
 textSize(10)
 canvas.focus()
 changeScene("play")
-if(!survival) inventory.category = 1
+if(!survival) inventory.category = "search"
 }
 let gl
 let glExtensions
@@ -18798,7 +19730,7 @@ potCrossBlock.textures = [t[0],t[0],t[1],t[1],t[1],t[1]]
 }
 if(baseBlock.sunflower) baseBlock.shape = shapes.sunflower
 if(baseBlock.sideCross){baseBlock.shape = shapes.sideCross; slabBlock.shape = shapes.bottomCross}
-if(baseBlock.layers || baseBlock.liquid){
+if(baseBlock.layers){
 torchBlock.shape = shapes.layer1
 torchBlock.solid = true
 torchBlock.shadow = false
@@ -18831,6 +19763,32 @@ doorBlock.shape = shapes.layer8
 doorBlock.solid = true
 doorBlock.shadow = false
 doorBlock.dropAmount = 8
+}
+if(baseBlock.liquid){
+torchBlock.shape = shapes.layer1
+torchBlock.solid = false
+torchBlock.shadow = false
+slabBlock.shape = shapes.layer2
+slabBlock.solid = false
+slabBlock.shadow = false
+stairBlock.shape = shapes.layer3
+stairBlock.solid = false
+stairBlock.shadow = false
+crossBlock.shape = shapes.layer4
+crossBlock.solid = false
+crossBlock.shadow = false
+tallcrossBlock.shape = shapes.layer5
+tallcrossBlock.solid = false
+tallcrossBlock.shadow = false
+lanternBlock.shape = shapes.layer6
+lanternBlock.solid = false
+lanternBlock.shadow = false
+lanternHangBlock.shape = shapes.layer7
+lanternHangBlock.solid = false
+lanternHangBlock.shadow = false
+doorBlock.shape = shapes.layer8
+doorBlock.solid = false
+doorBlock.shadow = false
 }
 if(baseBlock.name === "grass"){
 crossBlock.shape = shapes.cube
@@ -21003,13 +21961,13 @@ liquid = true
 if(blockData[block[3]].wet){
 wet = true
 }
-if(blockData[block[3]].name === "Water" && !p.spectator){
-var me = blockData[blockIds.Water]
+if(blockData[block[3]].getCurrent && !p.spectator){
+var me = blockData[block[3]]
 var c = me.getCurrent(x,y,z,p.dimension)
 p.velocity.x += (c.x||0)/64
 p.velocity.z += (c.z||0)/64
 var under = world.getBlock(x,y-1,z,p.dimension)
-if(me.isThis(under) && under !== me.id) p.velocity.y -= 1/64
+if(me.isThis(under) && under !== me.id) p.velocity.y -= 1/128
 }
 if(!blockData[block[3]].solid && blockData[block[3]].powder){
 powder = true
@@ -21159,6 +22117,17 @@ p.flying = false
 p.lastUpdate = performance.now()
 contacts.clear()
 lookingAt()
+let pd = p.direction
+listener.positionX.value = p.x+p.offsetX
+listener.positionY.value = p.y+p.offsetY
+listener.positionZ.value = p.z+p.offsetZ
+listener.forwardX.value = pd.x
+listener.forwardY.value = pd.y
+listener.forwardZ.value = pd.z
+let up = getRotation(p.rx+Math.PI2,p.ry)
+listener.upX.value = up.x
+listener.upY.value = up.y
+listener.upZ.value = up.z
 if(bounce) p.lastY = p.y
 bounce = pvy * -bounce
 if(bounce && bounce > 0.2){
@@ -21203,7 +22172,7 @@ damage(Math.floor(d*(1-damageResistance)), reason, false, fallType)//Math.floor(
 }
 if(fall > 0.5 && block){
 blockParticles(block, p.x,p.y-p.bottomH,p.z,10, "player",world, p.dimension)
-blockSound(block, "step", p.x,p.y,p.z, 1)
+blockSound(block, "step", p.x,p.y-p.bottomH,p.z)
 }
 if(controlMap.jump.pressed) {
 p.velocity.y = p.jumpSpeed
@@ -21211,7 +22180,7 @@ p.onGround = false
 if(survival){
 p.foodExhaustion += p.sprinting ? 0.2 : 0.05
 }
-blockSound(block, "step", p.x,p.y,p.z, 1)
+blockSound(block, "step", p.x,p.y-p.bottomH,p.z)
 } else {
 p.velocity.y = 0
 }
@@ -21386,22 +22355,26 @@ let pminZ = p2.z - ambientDist
 let pmaxZ = p2.z + ambientDist
 blockTempCount = 0
 avgBlockTemp = 0, avgBlockTempDist = 0
-for(var i in currentAmbient) currentAmbientVolume[i] = 0
 for (let x = pminX; x <= pmaxX; x++) {
 for (let y = pminY; y <= pmaxY; y++) {
 for (let z = pminZ; z <= pmaxZ; z++) {
 let block = world.getBlock(x, y, z, p.dimension)
 var blockObj = blockData[block]
+var pos = x+","+y+","+z
 if (block && blockObj.ambientSound) {
-if(currentAmbientVolume[blockObj.name]){
-var v = posSound(x,y,z)
-if(v > currentAmbientVolume[blockObj.name]){
-currentAmbientVolume[blockObj.name] = v
-}
+if(currentAmbientVolume[pos]){
+var v = currentAmbientVolume[pos]
+v.positionX.value = x
+v.positionY.value = y
+v.positionZ.value = z
+v.theBlock = block
 }else{
 var v = posSound(x,y,z)
-currentAmbientVolume[blockObj.name] = v
+v.theBlock = block
+currentAmbientVolume[pos] = v
 }
+}else if(currentAmbientVolume[pos]){
+delete currentAmbientVolume[pos]
 }
 var dist = max(abs(x-p.x),abs(y-p.y),abs(z-p.z))
 if(block && (blockObj.temperature || blockObj.temperature === 0) && dist < 5){
@@ -21412,16 +22385,18 @@ blockTempCount ++
 }
 }
 }
-for(var i in currentAmbientVolume){
-var v = currentAmbientVolume[i] * settings.volume
-if(currentAmbient[i]){
-currentAmbient[i].gain.value = v
-if(v <= 0){
+for(var i in currentAmbient){
+if(!currentAmbientVolume[i]){
 currentAmbient[i].source.stop()
 delete currentAmbient[i]
 }
+}
+for(var i in currentAmbientVolume){
+var v = currentAmbientVolume[i]
+if(currentAmbient[i]){
+currentAmbient[i].gain.value = settings.volume
 }else{
-var blockObj = blockData[blockIds[i]]
+var blockObj = blockData[v.theBlock]
 playSound(blockObj.ambientSound, 0, v, null, null, true, (source, gainNode) => {currentAmbient[i] = gainNode; currentAmbient[i].source = source})
 }
 }
@@ -22424,13 +23399,6 @@ let caveSize = 0.0055
 let cave1 = abs(0.5 - caveNoise(x * smooth, y * smooth, z * smooth)) < caveSize
 let cave2 = abs(0.5 - caveNoise(y * smooth, z * smooth, x * smooth)) < caveSize
 return (cave1 && cave2)
-}
-function carveSphere(x, y, z) {
-if (y > 3) {
-for (let i = 0; i < sphere.length; i += 3) {
-world.setBlock(x + sphere[i], y + sphere[i + 1], z + sphere[i + 2], blockIds.air, true)
-}
-}
 }
 let renderedChunks = 0
 function getBlock(x, y, z, blocks) {
@@ -23689,7 +24657,8 @@ let rData = this.renderData
 let x = 0, y = 0, z = 0, loc = 0, data = 0,
 sides = 0, tex = null, x2 = 0, y2 = 0, z2 = 0,
 verts = null, texVerts = null, texShapeVerts = null, originalShapeVerts = null,
-tx = 0, ty = 0
+tx = 0, ty = 0,
+texIdx0, texIdx1, texIdx2, texIdx3, randomRotate
 let wx = this.x, wy = this.y, wz = this.z
 let blocks = this.world.getAdjacentSubchunks(wx, wy, wz, false, this.type)
 let lightChunks = this.world.getAdjacentSubchunks(wx, wy, wz, true, this.type)
@@ -23715,6 +24684,12 @@ z = loc >> 8 & 15
 x2 = x + this.x
 y2 = y + this.y
 z2 = z + this.z
+if(block.randomRotate === "pattern"){
+}else if(block.randomRotate){
+randomRotate = hash(hash(x2,z2)*2147483647,y2)
+if(block.randomRotate === "flip") randomRotate = floor(randomRotate*2)*2
+else randomRotate = floor(randomRotate*4)
+}else randomRotate = 0
 tags = this.getTags(x,y,z)
 shader = block.name === "endPortal" ? 1 : 0
 shapeVerts = block.shape.verts
@@ -23745,13 +24720,26 @@ texShapeVerts = texShapeVerts.slice()
 texVerts = texVerts.slice()
 if(block.customShape(x2,y2,z2,this.type,id,side,verts,texShapeVerts,texVerts) === false) continue
 }
+if(block.randomRotate === "pattern"){
+let Z = z2%2, X = x2%2, Y = y2%2
+let e = side === "top" || side === "bottom" ? Z*2 : Y*2
+randomRotate = abs((X+Y+Z+e)%4)
+}
+let offset = (side === "bottom" && block.randomRotateTop || side === "top" && block.randomRotateBottom || side === "north" && block.randomRotateNorth || side === "east" && block.randomRotateEast || side === "south" && block.randomRotateSouth || side === "west" && block.randomRotateWest) ? randomRotate*2 : 0
+texIdx0 = offset
+texIdx1 = offset + 2
+texIdx2 = offset + 4
+texIdx3 = offset + 6
+if(texIdx1 >= 8) texIdx1 -= 8
+if(texIdx2 >= 8) texIdx2 -= 8
+if(texIdx3 >= 8) texIdx3 -= 8
 tx = texVerts[0]
 ty = texVerts[1]
 barray[index] = verts[0] + x2
 barray[index+1] = verts[1] + y2
 barray[index+2] = verts[2] + z2
-barray[index+3] = tx + texShapeVerts[0]
-barray[index+4] = ty + texShapeVerts[1]
+barray[index+3] = tx + texShapeVerts[texIdx0]
+barray[index+4] = ty + texShapeVerts[texIdx0+1]
 barray[index+5] = shadows[0]
 barray[index+6] = slights[0]
 barray[index+7] = blights[0]
@@ -23762,8 +24750,8 @@ barray[index+11] = shader
 barray[index+12] = verts[3] + x2
 barray[index+13] = verts[4] + y2
 barray[index+14] = verts[5] + z2
-barray[index+15] = tx + texShapeVerts[2]
-barray[index+16] = ty + texShapeVerts[3]
+barray[index+15] = tx + texShapeVerts[texIdx1]
+barray[index+16] = ty + texShapeVerts[texIdx1+1]
 barray[index+17] = shadows[1]
 barray[index+18] = slights[1]
 barray[index+19] = blights[1]
@@ -23774,8 +24762,8 @@ barray[index+23] = shader
 barray[index+24] = verts[6] + x2
 barray[index+25] = verts[7] + y2
 barray[index+26] = verts[8] + z2
-barray[index+27] = tx + texShapeVerts[4]
-barray[index+28] = ty + texShapeVerts[5]
+barray[index+27] = tx + texShapeVerts[texIdx2]
+barray[index+28] = ty + texShapeVerts[texIdx2+1]
 barray[index+29] = shadows[2]
 barray[index+30] = slights[2]
 barray[index+31] = blights[2]
@@ -23786,8 +24774,8 @@ barray[index+35] = shader
 barray[index+36] = verts[9] + x2
 barray[index+37] = verts[10] + y2
 barray[index+38] = verts[11] + z2
-barray[index+39] = tx + texShapeVerts[6]
-barray[index+40] = ty + texShapeVerts[7]
+barray[index+39] = tx + texShapeVerts[texIdx3]
+barray[index+40] = ty + texShapeVerts[texIdx3+1]
 barray[index+41] = shadows[3]
 barray[index+42] = slights[3]
 barray[index+43] = blights[3]
@@ -23810,7 +24798,12 @@ for (let z = this.z, zz = 0; z < wz; z++, zz++) {
 wy = this.chunk.tops[zz * 16 + xx]
 for (let y = this.y; y < wy; y++) {
 if (isCave(x, y, z)) {
-carveSphere(x, y, z)
+if (y > 3) {
+for (let i = 0; i < sphere.length; i += 3) {
+if(y+sphere[i + 1]<10) world.setBlock(x + sphere[i], y + sphere[i + 1], z + sphere[i + 2], blockIds.Lava, true,true,false,false, this.type)
+else world.setBlock(x + sphere[i], y + sphere[i + 1], z + sphere[i + 2], blockIds.air, true,true,false,false, this.type)
+}
+}
 }
 }
 }
@@ -24021,9 +25014,28 @@ let y = (rnd >> 4 & 15) + this.y
 let z = (rnd & 15) + this.z
 let block = this.blocks[rnd] || 0
 let f = blockData[block].fallingDust
+let d = blockData[block].dripThroughBlocks
+let dr = blockData[block].drip
 let under = world.getBlock(x,y-1,z,this.type)
+let under2 = world.getBlock(x,y-2,z,this.type)
 if(f && !(under && blockData[under].solid)){
 world.addParticle(new FallingDustParticle(x+rand(-0.5,0.5),y-0.5,z+rand(-0.5,0.5),f),this.type)
+}
+if(d && under && blockData[under].solid && !(under2 && blockData[under2].solid)){
+world.addParticle(new DripParticle(x+rand(-0.5,0.5),y-1.51,z+rand(-0.5,0.5),d),this.type)
+}
+if(dr){
+if(!(under && blockData[under].solid)) world.addParticle(new DripParticle(x+rand(-0.5,0.5),y-0.51,z+rand(-0.5,0.5),dr),this.type)
+let s = world.getBlock(x,y+1,z,this.type)
+if(!(s && blockData[s].solid)) world.addParticle(new DripParticle(x+rand(-0.5,0.5),y+0.51,z+rand(-0.5,0.5),dr),this.type)
+s = world.getBlock(x,y,z+1,this.type)
+if(!(s && blockData[s].solid)) world.addParticle(new DripParticle(x+rand(-0.5,0.5),y+rand(-0.5,0.5),z+0.51,dr),this.type)
+s = world.getBlock(x,y,z-1,this.type)
+if(!(s && blockData[s].solid)) world.addParticle(new DripParticle(x+rand(-0.5,0.5),y+rand(-0.5,0.5),z-0.51,dr),this.type)
+s = world.getBlock(x+1,y,z,this.type)
+if(!(s && blockData[s].solid)) world.addParticle(new DripParticle(x+0.51,y+rand(-0.5,0.5),z+rand(-0.5,0.5),dr),this.type)
+s = world.getBlock(x-1,y,z,this.type)
+if(!(s && blockData[s].solid)) world.addParticle(new DripParticle(x-0.51,y+rand(-0.5,0.5),z+rand(-0.5,0.5),dr),this.type)
 }
 if((blockData[block].name === "fire" || blockData[block].name === "Lava") && worldSettings.fireSpreads){
 blockData[block].tick(x,y,z,this.type)
@@ -25555,13 +26567,13 @@ if(this.canFloat && x === round(this.x) && z === round(this.z) && y === round(th
 this.vely+=1/32
 }
 }
-if(blockData[block].name === "Water"){
-var me = blockData[blockIds.Water]
+if(blockData[block].getCurrent){
+var me = blockData[block]
 var c = me.getCurrent(x,y,z,this.dimension)
 this.velx += (c.x||0)/64
 this.velz += (c.z||0)/64
 var under = world.getBlock(x,y-1,z,this.dimension)
-if(me.isThis(under) && under !== me.id) this.vely -= 1/64
+if(me.isThis(under) && under !== me.id) this.vely -= 1/128
 }
 }
 }
@@ -27049,9 +28061,9 @@ this.tint.g = 1
 this.tint.b = 0
 }
 facePlayer(){
-this.yaw = Math.PId - (atan2(p.z - this.z, p.x - this.x) + Math.PI2 + Math.PI)
-var adjacent = dist2(this.x,this.z,p.x,p.z)
-this.pitch = Math.PId - atan2(p.y - this.y, adjacent)
+this.yaw = Math.PId - (atan2(p.z+p.offsetZ - this.z, p.x+p.offsetX - this.x) + Math.PI2 + Math.PI)
+var adjacent = dist2(this.x,this.z,p.x+p.offsetX,p.z+p.offsetZ)
+this.pitch = Math.PId - atan2(p.y+p.offsetY - this.y, adjacent)
 }
 render(){
 const modelMatrix = new Matrix();
@@ -27934,14 +28946,14 @@ super(...arguments)
 this.tint = null
 this.tintGray = false
 }
-facePlayer(){
+/*facePlayer(){
 this.yaw = Math.PId - (atan2(p.z - this.z, p.x - this.x) + Math.PI2 + Math.PI)
 var adjacent = dist2(this.x,this.z,p.x,p.z)
 this.pitch = Math.PId - atan2(p.y - this.y, adjacent)
-/*//var magnitude = dist3(this.x,this.y,this.z,p.x,p.y,p.z)
+/* //var magnitude = dist3(this.x,this.y,this.z,p.x,p.y,p.z)
 this.yaw = atan2(p.z - this.z, p.x-this.x)
 var adjacent = dist2(this.x,this.z,p.x,p.z)
-this.pitch = atan2(p.y - this.y, adjacent)*/
+this.pitch = atan2(p.y - this.y, adjacent)* /
 /*var r = this.rotationMatrix
 r.identity()
 var e = r.elements
@@ -27969,8 +28981,8 @@ e[5] = y.y
 e[6] = y.z
 e[8] = z.x
 e[9] = z.y
-e[10] = z.z*/
-/*/less code, more computing
+e[10] = z.z* /
+/* /less code, more computing
 var dx = p.x-this.x;
 var dy = p.y-this.y;
 var dz = p.z-this.z;
@@ -27980,8 +28992,8 @@ var phi = Math.atan(dz/rxy)
 if (dx < 0) phi = phi + Math.PI;
 if (dz < 0) lambda = -1 * lambda;
 this.pitch = rxy
-this.yaw = lambda*/
-}
+this.yaw = lambda* /
+}*/
 updateVelocity(now) {
 this.standingOn = world.getBlock(this.x, round(this.y-this.height-1), this.z)
 if (this.liquid){
@@ -28566,9 +29578,10 @@ texture[index + 7] = ty + (texShapeVerts[7]/2)
 index += 8
 }
 }
-super(x, y, z, 0, 0, 0,0,0, 0.25, 0.25, 0.25, new Float32Array(shapeVerts.flat(Infinity)), new Float32Array(texture), size, rand(3000))
+super(x, y, z, 0, 0, rand(-0.001,0.001),rand(-0.001,0.001),rand(-0.001,0.001), 0.25, 0.25, 0.25, new Float32Array(shapeVerts.flat(Infinity)), new Float32Array(texture), size, rand(3000))
 this.defaultGravityStength = 0
 }
+updateVelocity(){}
 }
 function glint(x,y,z,dimension){
 for(var i = 0; i<20; i++){
@@ -28658,6 +29671,52 @@ this.canDespawn = true
 if(this.hasCollided){
 this.width = this.height = this.depth = this.width - 0.02
 if(this.width <= 0) this.canDespawn = true
+}
+this.canFacePlayer = true
+}
+}
+class DripParticle extends Particle{
+constructor(x,y,z,tint){
+const shape = shapes.blockParticle
+const shapeVerts = shape.verts
+const shapeTexVerts = shape.texVerts
+const size = shape.size
+let blockSides = Object.keys(Block)
+let texture = []
+let index = 0
+for (let n = 0; n < 6; n++) {
+let side = blockSides[n]
+let directionalFaces = shapeVerts[Sides[side]]
+for (let facei = 0; facei < directionalFaces.length; facei++) {
+let texVerts = textureCoords[textureMap.blank]
+let tx = texVerts[0]
+let ty = texVerts[1]
+let texShapeVerts = shapeTexVerts[n][facei]
+texture[index    ] = tx + texShapeVerts[0]
+texture[index + 1] = ty + texShapeVerts[1]
+texture[index + 2] = tx + texShapeVerts[2]
+texture[index + 3] = ty + texShapeVerts[3]
+texture[index + 4] = tx + texShapeVerts[4]
+texture[index + 5] = ty + texShapeVerts[5]
+texture[index + 6] = tx + texShapeVerts[6]
+texture[index + 7] = ty + texShapeVerts[7]
+index += 8
+}
+}
+var s = 1/16
+super(x, y, z, 0, 0, 0, 0, 0, s, s, s, new Float32Array(shapeVerts.flat(Infinity)), new Float32Array(texture), size, 20000)
+this.tint = tint
+this.defaultGravityStength = -0.004
+this.delay = Math.random()*2000
+}
+update(){
+let now = performance.now()
+this.updateVelocity(now)
+let delay = now - this.spawn < this.delay
+if(delay) this.vely = 0
+this.move(now)
+if (now - this.spawn > this.despawns || this.onGround && !delay) {
+this.canDespawn = true
 }
 this.canFacePlayer = true
 }
@@ -29237,6 +30296,7 @@ send({type:"mySkin", data:p.character.skinURL, cape:p.character.capeURL})
 send({
 "type":"getSave"
 })
+Messages.add("If you haven't read the multiplayer rules, read them <a href='https://www.thingmaker.repl.co/website/multiplayerRules.html' target='_blank'>here</a>")
 connectingProgress = "Waiting for save code..."
 var invStuff = {}
 var shouldSendInvStuff = false
@@ -29635,6 +30695,7 @@ constructor() {
 generatedChunks = 0
 fogDist = 16
 p.y = superflat ? 6 : (round(noiseProfile.noise(8 * generator.smooth, 8 * generator.smooth) * generator.height) + 2 + generator.extra)
+p.lastY = 0
 this.spawnPoint = {
 x: 8,
 y: p.y,
@@ -31908,7 +32969,7 @@ initMultiplayer(servers[selectedWorld].id)
 Button.add(mid + x2, height - 75, w2, 40, "More information", "multiplayer menu", () => {
 window.open("https://"+selectedWorld.replace("external:",""), "_blank")
 }, () => !(typeof selectedWorld === "string" && selectedWorld.startsWith("external:")))
-Button.add(mid - 3 * x4, height - 30, w4, 40, "Refresh", "multiplayer menu", initServersMenu)
+Button.add(mid - 3 * x4, height - 30, w4, 40, "Reload", "multiplayer menu", initServersMenu)
 Button.add(mid + 3 * x4, height - 30, w4, 40, "Cancel", "multiplayer menu", r => changeScene("main menu"))
 //multiplayer connecting buttons
 Button.add(mid, height / 2 + 40, w2, 40, "Cancel", "multiplayer connecting", r => {multiplayer.close();changeScene("multiplayer lost")})
@@ -32007,8 +33068,15 @@ a.click()
 // Inventory buttons
 let hideIfSurvival = () => survival && -1
 Button.add(width - 50, 15, 60, 30, "close", ["inventory","crafting","furnace","chest","anvil"], play)
-Button.add(width - 70, height-15, 100, 30, "Inventory", ["inventory","crafting","furnace","chest","anvil"], () => {inventory.category = 0; drawScreens[screen]()}, hideIfSurvival)
-Button.add(width - 70, height-45, 100, 30, "Blocks", ["inventory","crafting","furnace","chest","anvil"], () => {inventory.category = 1; drawScreens[screen]()}, hideIfSurvival)
+Button.add(width - 95, height-15, 150, 30, "Inventory", ["inventory","crafting","furnace","chest","anvil"], () => {invCategory(0)}, hideIfSurvival)
+Button.add(width - 95, height-45, 150, 30, "Search", ["inventory","crafting","furnace","chest","anvil"], () => invCategory("search"), hideIfSurvival)
+Button.add(width - 95, height-75, 150, 30, "Construction", ["inventory","crafting","furnace","chest","anvil"], () => invCategory("build"), hideIfSurvival)
+Button.add(width - 95, height-105, 150, 30, "Decoration", ["inventory","crafting","furnace","chest","anvil"], () => invCategory("decoration"), hideIfSurvival)
+Button.add(width - 95, height-135, 150, 30, "Food", ["inventory","crafting","furnace","chest","anvil"], () => invCategory("food"), hideIfSurvival)
+Button.add(width - 95, height-165, 150, 30, "Items", ["inventory","crafting","furnace","chest","anvil"], () => invCategory("items"), hideIfSurvival)
+Button.add(width - 95, height-195, 150, 30, "Nature", ["inventory","crafting","furnace","chest","anvil"], () => invCategory("nature"), hideIfSurvival)
+Button.add(width - 95, height-225, 150, 30, "Redstone", ["inventory","crafting","furnace","chest","anvil"], () => invCategory("redstone"), hideIfSurvival)
+Button.add(width - 95, height-255, 150, 30, "Tools", ["inventory","crafting","furnace","chest","anvil"], () => invCategory("tools"), hideIfSurvival)
 // You Died buttons
 Button.add(width / 2, 225, 300, 40, "Respawn", "dead", r => {
 respawn()
@@ -32046,7 +33114,7 @@ reach = normReach
 }else reach = bigReach
 })
 //Button.add(width / 2, 500, width / 3, 40, ["Sound: On", "Sound: Off"], "options", r => soundOn = r === "Sound: On")
-Slider.add(width / 4, height/2 + -5, width / 3, 40, "options", "Sound Volume", 0,1, "volume", val => settings.volume = val, true, val => {blockSound(blockIds.grass, "place")}, {"0%":"Off"})
+Slider.add(width / 4, height/2 + -5, width / 3, 40, "options", "Sound Volume", 0,1, "volume", val => settings.volume = val, true, val => {blockSound(blockIds.grass, "place",0,0,0,1)}, {"0%":"Off"})
 Button.add(width / 4, height/2 + 55, width / 3, 40, "Change Controls", "options", r => changeScene("options controls"))
 Button.add(width / 4, height/2 + 115, width / 3, 40, "Change skin", "options", r => {
 if(userInfo){
@@ -32858,7 +33926,11 @@ let count = 1;
 if(inventory.category === 0){
 count = invLength
 }else{
-count = inventoryBlocks.length
+if(!inventoryBlocks[inventory.category]){
+console.warn("No category called "+inventory.category)
+inventory.category = "search"
+}
+count = inventoryBlocks[inventory.category].length
 }
 invHeight = (Math.ceil(count / perRow) * s)
 let invWinH = s * 9;
@@ -32870,9 +33942,9 @@ inventory.category = 0
 barH = height * (invWinH/invHeight);
 if(draggingInvBar){
 invScroll = map(mouseY-invBarOffset, (barH/2), height-(barH/2), 0, invHeight);
+}
 if(invScroll > invHeight) invScroll = invHeight
 if(invScroll < 0) invScroll = 0
-}
 var barYCent = map(invScroll, 0, invHeight, (barH/2), height-(barH/2));
 var barTop = barYCent - (barH/2);
 fill(100)
@@ -32946,12 +34018,12 @@ drawIcon(x, y - invScroll, invItems[i].id, invItems[i], noAmount)
 }
 }
 }else{
-for (let i = 0; i < inventoryBlocks.length; i++) {
+for (let i = 0; i < inventoryBlocks[inventory.category].length; i++) {
 x = i % perRow * s + 50
 y = (i / perRow | 0) * s + 50
 y -= invScroll
 if(y < s*9.5 && y > 0){
-drawIcon(x, y, inventoryBlocks[i])
+drawIcon(x, y, inventoryBlocks[inventory.category][i])
 }
 }
 }
@@ -33034,7 +34106,7 @@ if (overInv >= 0 && overInv < count && mouseX < 50 - s2 + perRow * s && mouseX >
 x = overInv % perRow
 y = (overInv / perRow | 0)
 var idx=x+(y*perRow)
-if(inventory.category !== 0) idx = inventoryBlocks[idx]
+if(inventory.category !== 0) idx = inventoryBlocks[inventory.category][idx]
 let name;
 if(inventory.category === 0){
 let id = invItems[idx] ? invItems[idx].id : 0
@@ -33074,7 +34146,7 @@ let s = inventory.size
 let s2 = s / 2
 let perRow = 13
 let over = Math.round((mouseY + invScroll - 50) / s) * perRow + Math.round((mouseX - 50) / s)
-let count = inventory.category === 0 ? invLength : inventoryBlocks.length
+let count = inventory.category === 0 ? invLength : inventoryBlocks[inventory.category].length
 //for crafting
 let offX = width - s*4
 let offY = s * 2
@@ -33133,7 +34205,7 @@ inventory.spreadPlace = "invSpace"
 }
 }
 }else{
-inventory.holding = {id:inventoryBlocks[over], amount:blockData[inventoryBlocks[over]].stackSize}
+inventory.holding = {id:inventoryBlocks[inventory.category][over], amount:blockData[inventoryBlocks[inventory.category][over]].stackSize}
 }
 } else if(screen === "inventory" && mouseX>offX && mouseX<offX+(s*2) && mouseY>offY && mouseY<offY+(s*2)){
 //inv crafting grid
@@ -33197,15 +34269,24 @@ inventory.holding = 0
 }
 if(!dontRedraw)drawScreens.inventory()
 }
+function invCategory(c){
+inventory.category = c
+if(c === "search"){
+invTextbox.classList.remove("hidden")
+}else{
+invTextbox.classList.add("hidden")
+}
+drawScreens[screen]()
+}
 function moveInv(){
 let s = inventory.size
 let s2 = s / 2
 let perRow = 13
 let over = Math.round((mouseY + invScroll - 50) / s) * perRow + Math.round((mouseX - 50) / s)
 if(inventory.category !== 0){
-over = inventoryBlocks[over]
+over = inventoryBlocks[inventory.category][over]
 }
-let count = inventory.category === 0 ? invLength : inventoryBlocks.length
+let count = inventory.category === 0 ? invLength : inventoryBlocks[inventory.category].length
 //for crafting
 let offX = width - s*4
 let offY = s * 2
@@ -33261,9 +34342,9 @@ let s2 = s / 2
 let perRow = 13
 let over = Math.round((mouseY + invScroll - 50) / s) * perRow + Math.round((mouseX - 50) / s)
 if(inventory.category !== 0){
-over = inventoryBlocks[over]
+over = inventoryBlocks[inventory.category][over]
 }
-let count = inventory.category === 0 ? invLength : inventoryBlocks.length
+let count = inventory.category === 0 ? invLength : inventoryBlocks[inventory.category].length
 //for crafting
 let offX = width - s*4
 let offY = s * 2
@@ -35972,7 +37053,8 @@ async function initAudioCtx(){
 try{
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 audioCtx = new AudioContext();
-win.audioCtx = audioCtx
+listener = audioCtx.listener
+win.audioCtx = audioCtx, win.listener = listener
 }catch(e) {
 alert('Web Audio API is not supported in this browser');
 return
@@ -36030,7 +37112,7 @@ win.zzfx=((...z)=>zzfxP(zzfxG(...z))),win.zzfxP=((...z)=>{let t=zzfxX.createBuff
 win.zzfxM=(n,f,t,e=125)=>{let l,o,z,r,g,h,x,a,u,c,d,i,m,p,G,M=0,R=[],b=[],j=[],k=0,q=0,s=1,v={},w=zzfxR/e*60>>2;for(;s;k++)R=[s=a=d=m=0],t.map((e,d)=>{for(x=f[e][k]||[0,0,0],s|=!!f[e][k],G=m+(f[e][0].length-2-!a)*w,p=d==t.length-1,o=2,r=m;o<x.length+p;a=++o){for(g=x[o],u=o==x.length+p-1&&p||c!=(x[0]||0)|g|0,z=0;z<w&&a;z++>w-99&&u?i+=(i<1)/99:0)h=(1-i)*R[M++]/2||0,b[r]=(b[r]||0)-h*q+h,j[r]=(j[r++]||0)+h*q+h;g&&(i=g%1,q=x[1]||0,(g|=0)&&(R=v[[c=x[M=0]||0,g]]=v[[c,g]]||(l=[...n[c]],l[2]*=2**((g-12)/12),g>0?zzfxG(...l):[])))}m=G});return[b,j]}
 }
 }
-function playSound(name, start, volume, pitch, onend, loop, getSourceFunc, reverb){ //from https://www.html5rocks.com/en/tutorials/webaudio/intro/
+function playSound(name, start, volume, pitch, onend, loop, getSourceFunc){ //from https://www.html5rocks.com/en/tutorials/webaudio/intro/
 if(!settings.volume) return
 var sound
 var soundVol
@@ -36052,6 +37134,8 @@ if(!sound) return
 }
 if(!volume && volume !== 0) volume = 1
 if((typeof soundVol === "object") || (!soundVol && soundVol !== 0)) soundVol = 1
+var panner
+if(typeof volume === "object" && volume.connect) panner = volume, volume = 1
 volume *= soundVol
 volume *= settings.volume
 var buffer = sound
@@ -36059,27 +37143,16 @@ if(audioCtx && buffer && (typeof buffer !== "string") && volume > 0){
 var source = audioCtx.createBufferSource();
 source.buffer = buffer;
 var gainNode, convolver
-if(((!(volume || volume === 0)) || volume === 1) && !getSourceFunc){
-if(reverb){
-convolver = audioCtx.createConvolver()
-convolver.buffer = buffer
-source.connect(convolver);
-convolver.connect(audioCtx.destination)
-}else{
+if(panner){
+gainNode = audioCtx.createGain();
+gainNode.gain.value = volume;
+source.connect(panner).connect(gainNode).connect(audioCtx.destination)
+}else if(((!(volume || volume === 0)) || volume === 1) && !getSourceFunc){
 source.connect(audioCtx.destination);
-}
 }else{
 gainNode = audioCtx.createGain();
-if(reverb){
-convolver = audioCtx.createConvolver()
-convolver.buffer = buffer
-source.connect(convolver);
-convolver.connect(gainNode)
-}else{
-source.connect(gainNode);
-}
-gainNode.connect(audioCtx.destination);
 gainNode.gain.value = volume;
+source.connect(gainNode).connect(audioCtx.destination);
 }
 if(pitch) {
 if(Array.isArray(pitch)){
@@ -36098,7 +37171,7 @@ win.playSound = playSound
 function blockSound(blockID, type, x,y,z, volume){
 var block = blockData[blockID]
 if(!(volume || volume === 0)) volume = posSound(x,y,z)
-var sound, pitch = 1, reverb
+var sound, pitch = 1
 switch(type){
 case "place":
 sound = block.placeSound || block.digSound
@@ -36120,7 +37193,7 @@ if(Array.isArray(sound)){
 sound = sound[Math.floor(Math.random()*sound.length)]
 }
 if(sound){
-playSound(sound, 0, volume, pitch,null,null,null,reverb)
+playSound(sound, 0, volume, pitch,null,null,null)
 if(multiplayer) send({type:"playSound", data:sound, x:x,y:y,z:z})
 }
 }
@@ -36169,7 +37242,8 @@ playSound(sound, 0, posSound(x,y,z), pitch)
 if(multiplayer) send({type:"playSound", data:sound, x:x,y:y,z:z, pitch:pitch})
 }
 win.explodeSound = explodeSound
-function posSound(x,y,z, hearDist = 16){
+function posSound(x,y,z, hearDist = 16,mono){
+if(mono){
 var volume = 1
 if((x || x===0) && (y || y===0) && (z || z===0)){
 //var falloff = volume > 16 ? 16*volume : 16
@@ -36180,6 +37254,20 @@ if(volume < 0) volume = 0
 }
 return volume
 }
+return new PannerNode(audioCtx, {
+panningModel: "HRTF",
+distanceModel: "linear",
+positionX: x,
+positionY: y,
+positionZ: z,
+orientationX: 0,
+orientationY: 0,
+orientationZ: -1,
+rolloffFactor: 1,
+maxDistance: hearDist
+})
+}
+win.posSound = posSound
 function eatSound(){
 var i = Math.ceil(Math.random()*3)
 playSound("eat."+i)
@@ -36894,6 +37982,7 @@ p.sneaking = false
 p.speed = p.defaultSpeed
 p.bottomH = 1.62
 }
+if(!p.spectator && p.spectating) p.spectating = null
 let s = inventory.size
 let s2 = s/2
 for(var i=0; i<9; i++){
@@ -37124,7 +38213,7 @@ if(!survival) p.burnTimer = 0
 blockHere = world.getBlock(p2.x, p2.y, p2.z, p.dimension)
 inWater = 0
 if(blockHere && blockData[blockHere].name === "Water") inWater = 1
-if(blockHere === blockIds.Lava) inWater = 2
+if(blockHere === blockData[blockHere].name === "Lava") inWater = 2
 var blockAtFeet = world.getBlock(p2.x, round(p.y-p.bottomH), p2.z, p.dimension)
 if(!p.flying && ((blockHere && blockData[blockHere].ladder) || (blockAtFeet && blockData[blockAtFeet].ladder))){
 if(controlMap.jump.pressed){
@@ -37365,7 +38454,7 @@ let limit = 500
 if(p.sprinting) limit = 250
 if(now - lastStepSound > limit){
 lastStepSound = now
-blockSound(standingOn, "step", p.x,p.y,p.z, 1)
+blockSound(standingOn, "step", p.x,p.y-p.bottomH,p.z)
 if(p.sprinting) blockParticles(standingOn, p.x,p.y-p.bottomH,p.z,10, "player",world, p.dimension)
 }
 }
