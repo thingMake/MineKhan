@@ -4883,7 +4883,7 @@ var block = world.getBlock(x,y,z,dimension)
 if(!block || blockData[block].liquidBreakable){
 world.setBlock(x,y,z,this.getLevelBlock(level),false,false,false,false,dimension)
 if(blockData[block].liquidBreakable === "drop"){
-world.addEntity(new Item(x,y,z,0,0,0,block,true),false,dimension)
+world.addItems(x,y,z,dimension,0,0,0,block,true)
 blockParticles(block,x,y,z,30, "break",world,dimension)
 blockSound(block, "dig", x,y,z)
 }
@@ -5183,7 +5183,7 @@ var block = world.getBlock(x,y,z,dimension)
 if(!block || blockData[block].liquidBreakable){
 world.setBlock(x,y,z,this.getLevelBlock(level),false,false,false,false,dimension)
 if(blockData[block].liquidBreakable === "drop"){
-world.addEntity(new Item(x,y,z,0,0,0,block,true),false,dimension)
+world.addItems(x,y,z,dimension,0,0,0,block,true)
 blockParticles(block,x,y,z,30, "break",world,dimension)
 blockSound(block, "dig", x,y,z)
 }
@@ -8707,6 +8707,7 @@ shade:false,
 smoothLight:false,
 hidden:true,
 liquidBreakable:true,
+noHitbox:true,
 getAttached:function(x,y,z,block,dimension,getBlockOnly){
 var ax = x, ay = y, az = z
 switch(block){
@@ -9327,7 +9328,7 @@ if(!(data && data.chest && data.contents)) return
 data = data.contents
 for(var i=0; i<data.length; i++){
 if(data[i] && data[i].id){
-for(var j=0; j<data[i].amount; j++)world.addEntity(new Item(x,y,z,0,0,0,data[i].id, true, 1, data[i].durability, data[i].customName),false,dimension)
+world.addItems(x,y,z,dimension,0,0,0,data[i].id, true, data[i].amount, data[i].durability, data[i].customName)
 }
 }
 },
@@ -11497,6 +11498,7 @@ temperature:20,
 shade:false,
 smoothLight:false,
 hidden:true,
+noHitbox:true,
 getAttached:function(x,y,z,block,dimension,getBlockOnly){
 var ax = x, ay = y, az = z
 switch(block){
@@ -11815,7 +11817,7 @@ case id | TORCH:
 target |= LANTERN
 break
 case id | LANTERN:
-if(add) world.addEntity(new Item(x,y,z+0.5,0,0,0,blockIds.boneMeal,true, 1),false,dimension)
+if(add) world.addItems(x,y,z+0.5,dimension,0,0,0,blockIds.boneMeal,true, 1)
 }
 minusOne()
 if(add) world.setBlock(x,y,z,target,false,false,false,false,dimension)
@@ -15098,15 +15100,11 @@ newInvItem(id)
 }else if(split[1] === "@a"){
 for(var i in players){
 var p = players[i]
-for(var a=0; a<amount; a++){
-world.addEntity(new Item(p.x,p.y,p.z,0,0,0,id),false,p.dimension)
-}
+world.addItems(p.x,p.y,p.z,p.dimension,0,0,0,id,false,amount)
 }
 }else if(hasPlayer(split[1])){
 var p = getPlayerByUsername(split[1])
-for(var a=0; a<amount; a++){
-world.addEntity(new Item(p.x,p.y,p.z,0,0,0,id),false,p.dimension)
-}
+world.addItems(p.x,p.y,p.z,p.dimension,0,0,0,id,false,amount)
 }else{
 Messages.add("No such target: "+split[1])
 }
@@ -15625,13 +15623,13 @@ calculateTotalXP()
 if(survival){
 for(var i=0; i<inventory.hotbar.length; i++){
 if(inventory.hotbar[i].id){
-for(var j=0; j<inventory.hotbar[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,0,inventory.hotbar[i].id,true, 1,inventory.hotbar[i].durability,inventory.hotbar[i].customName),false,p.dimension)
+world.addItems(p.x,p.y,p.z,0,0,0,inventory.hotbar[i].id,true, inventory.hotbar[i].amount,inventory.hotbar[i].durability,inventory.hotbar[i].customName)
 inventory.hotbar[i] = 0
 }
 }
 for(var i=0; i<invLength; i++){
 if(invItems[i] && invItems[i].id){
-for(var j=0; j<invItems[i].amount; j++)world.addEntity(new Item(p.x,p.y,p.z,0,0,0,invItems[i].id, true, 1,invItems[i].durability,invItems[i].customName),false,p.dimension)
+world.addItems(p.x,p.y,p.z,p.dimension,0,0,0,invItems[i].id, true, 1,invItems[i].durability,invItems[i].customName)
 invItems[i].id = 0
 }
 }
@@ -18784,6 +18782,24 @@ east: 3,
 west: 3
 }
 },
+cube5:{
+verts:[
+[objectify(0,0,0,16,16,0,0),objectify(8,4,8,16,16,0,0),objectify(-8,8,-8,16,16,0,0),objectify(8,-4,-8,16,16,0,0),objectify(16,8,0,16,16,0,0)],
+[objectify(0,16,16,16,16,0,0),objectify(8,20,24,16,16,0,0),objectify(-8,24,8,16,16,0,0),objectify(8,12,8,16,16,0,0),objectify(16,24,16,16,16,0,0)],
+[objectify(16,16,16,16,16,0,0),objectify(24,20,24,16,16,0,0),objectify(8,24,8,16,16,0,0),objectify(24,12,8,16,16,0,0),objectify(32,24,16,16,16,0,0)],
+[objectify(0,16,0,16,16,0,0),objectify(8,20,8,16,16,0,0),objectify(-8,24,-8,16,16,0,0),objectify(8,12,-8,16,16,0,0),objectify(16,24,0,16,16,0,0)],
+[objectify(16,16,0,16,16,0,0),objectify(24,20,8,16,16,0,0),objectify(8,24,-8,16,16,0,0),objectify(24,12,-8,16,16,0,0),objectify(32,24,0,16,16,0,0)],
+[objectify(0,16,16,16,16,0,0),objectify(8,20,24,16,16,0,0),objectify(-8,24,8,16,16,0,0),objectify(8,12,8,16,16,0,0),objectify(16,24,16,16,16,0,0)]
+],
+cull: {
+top: 3,
+bottom: 3,
+north: 3,
+south: 3,
+east: 3,
+west: 3
+}
+},
 tallCube:{
 verts: [
 [objectify( 0,  0,  0, 16, 16, 0, 0)], //bottom
@@ -19609,10 +19625,12 @@ slabBlock.shape = shapes.slab
 slabBlock.transparent = true
 slabBlock.drop = d || (i | SLAB)
 slabBlock.Name += " Slab"
+slabBlock.randomRotate = null
 stairBlock.shape = shapes.stair
 stairBlock.transparent = true
 stairBlock.drop = d || (i | STAIR)
 stairBlock.Name += " Stair"
+stairBlock.randomRotate = null
 crossBlock.shape = shapes.cross
 crossBlock.drop = drop
 tallcrossBlock.shape = shapes.tallCross
@@ -19639,15 +19657,20 @@ openTrapdoor.drop = drop
 fenceBlock.shape = shapes.fence
 fenceBlock.transparent = true
 fenceBlock.drop = drop
+fenceBlock.randomRotate = null
 wallPostBlock.shape = shapes.wallpost
 wallPostBlock.transparent = true
 wallPostBlock.drop = drop
+wallPostBlock.randomRotate = null
 wallBlock.shape = shapes.wall
 wallBlock.drop = drop
+wallBlock.randomRotate = null
 walluBlock.shape = shapes.wallu
 walluBlock.drop = drop
+walluBlock.randomRotate = null
 fencqBlock.shape = shapes.fencq
 fencqBlock.drop = drop
+fencqBlock.randomRotate = null
 buttonBlock.shape = shapes.button
 buttonBlock.drop = drop
 chainBlock.shape = shapes.chain
@@ -22522,6 +22545,9 @@ p.velocity.x = p.velocity.y = p.velocity.z = 0
 p.dimension = s.dimension
 switch(s.type){
 case "Player":
+p.x = s.targetX
+p.y = s.targetY
+p.z = s.targetZ
 p.rx = -s.headPitch
 p.ry = -s.headYaw
 p.walking = s.walking
@@ -22639,14 +22665,10 @@ if(block && pos){
 if(Array.isArray(block)){//drop multiple items
 for(var b=0; b<block.length; b++){
 var bId = blockIds[block[b]]
-for(var i=0; i<amount; i++){
-world.addEntity(new Item(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2], 0, 0, 0, bId, true),false,p.dimension)
-}
+world.addItems(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2],p.dimension, 0, 0, 0, bId, true, amount)
 }
 }else{
-for(var i=0; i<amount; i++){
-world.addEntity(new Item(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2], 0, 0, 0, block, true),false,p.dimension)
-}
+world.addItems(hitBox.pos[0], hitBox.pos[1], hitBox.pos[2],p.dimension, 0, 0, 0, block, true, amount)
 }
 }
 }
@@ -22811,7 +22833,7 @@ world.setBlock(x,y,z,blockIds.dirt, p.dimension)
 var h = inventory.hotbar[inventory.hotbarSlot]
 h.durability --
 h.animation = 1.5
-world.addEntity(new Item(x, y+0.5, z, 0, 0, 0, blockIds.hangingRoots, true),false,p.dimension)
+world.addItems(x, y+0.5, z,p.dimension, 0, 0, 0, blockIds.hangingRoots, true)
 return p.lastPlace = Date.now()
 }
 }
@@ -22821,7 +22843,7 @@ world.setBlock(x,y,z,blockIds.carvedPumpkin, p.dimension)
 var h = inventory.hotbar[inventory.hotbarSlot]
 h.durability --
 h.animation = 1.5
-for(var n=0; n<4; n++)world.addEntity(new Item(x, y+0.5, z, 0, 0, 0, blockIds.pumpkinSeeds, true),false,p.dimension)
+world.addItems(x, y+0.5, z,p.dimension, 0, 0, 0, blockIds.pumpkinSeeds, true, 4)
 return p.lastPlace = Date.now()
 }
 }
@@ -23222,7 +23244,7 @@ blockData[block].ongetexploded(sx,sy,sz,block,world,dimension)
 }
 world.setBlock(sx, sy, sz, 0, false,false,false,false, dimension)
 if(round(rand(r-1)) === 0){
-world.addEntity(new Item(sx, sy, sz, 0, 0, 0, block, true),false,dimension)
+world.addItems(sx, sy, sz, dimension, 0, 0, 0, block, true)
 }
 }
 if(block === blockIds.tnt){
@@ -23295,7 +23317,7 @@ world.setTimeout(() => {
 var under = world.getBlock(x,y-1,z,dimension)
 if(under && blockData[under].solid) return
 world.setBlock(x,y,z, 0,false,false,false,false,dimension)
-world.addEntity(new Item(x,y,z,0,0,0,b,true),false,dimension)
+world.addItems(x,y,z,dimension,0,0,0,b,true)
 blockParticles(b,x,y,z,30, "break",world,dimension)
 blockSound(b, "dig", x,y,z)
 }, tickTime)
@@ -23369,6 +23391,8 @@ releasePointer()
 changeScene("loading")
 }
 }
+p3.hidden = true
+multiplayer.sendPos(true)
 }
 win.goToDimension = goToDimension
 // Save the coords for a small sphere used to carve out caves
@@ -26760,7 +26784,21 @@ class Item extends Entity {
 constructor(x, y, z, velx, vely, velz, blockID, autoSetVel, amount, durability = null, name = null) {
 const block = blockData[blockID]
 const tex = block.textures
-const shape = block.shape
+let shape = block.shape
+if(shape === shapes.cube){
+if(amount === 1){
+shape = "cube"
+}else if(amount <= 16){
+shape = "cube2"
+}else if(amount <= 32){
+shape = "cube3"
+}else if(amount <= 48){
+shape = "cube4"
+}else{
+shape = "cube5"
+}
+shape = shapes[shape]
+}
 const shapeVerts = shape.verts
 const shapeTexVerts = shape.texVerts
 const size = shape.size
@@ -26794,7 +26832,7 @@ this.type = "Item"
 this.from = userId
 this.durability = durability
 this.name = name
-//this.amount = amount || 1
+this.amount = amount || 1
 this.defaultGravityStength = -0.032
 this.noHitbox = true
 this.canFloat = true
@@ -26838,41 +26876,47 @@ var dist2 = dist3(this.x, this.y, this.z, p.x, p.y-1, p.z)
 pickup = ((1 >= dist) && (dist >= -1)) || ((1 >= dist2) && (dist2 >= -1))
 }*/
 }
-/*if(multiplayer ? host : true){
+if(blockData[this.block].shape === shapes.cube){
 let d = 3/4
-var updateShape
+var stackSize = blockData[this.block].stackSize
+var c = false
 for(var i=0; i<world.entities.length; i++){
 var e = world.entities[i]
-if(e.type === "Item" && e !== this){
-xDist = this.x - e.x
-yDist = this.y - e.y
-zDist = this.z - e.z
+if(e.type === "Item" && e !== this && e.block === this.block && e.amount + this.amount <= stackSize){
+var xDist = this.x - e.x
+var yDist = this.y - e.y
+var zDist = this.z - e.z
 let stack = xDist > -d && xDist < d && yDist > -d && yDist < d && zDist > -d && zDist < d
 if(stack){
 this.amount += e.amount
 e.amount = 0
-updateShape = true
+this.velx = (this.velx+e.velx)/2
+this.vely = (this.vely+e.vely)/2
+this.velz = (this.velz+e.velz)/2
+this.x = (this.x+e.x)/2
+this.y = (this.y+e.y)/2
+this.z = (this.z+e.z)/2
+this.willUpdateShape = true
+c = true
 }
 }
 }
-if(updateShape) this.updateShape()
-}*/
+if(c && multiplayer) send({type:"entEvent",event:"itemAmount",data:this.amount,id:this.id})
+}
+if(this.willUpdateShape){
+this.updateShape()
+this.willUpdateShape = false
+}
 if (now - this.spawn > this.despawns) {
 this.canDespawn = true
 }
 if(pickup){
-/*var a = this.amount
-for(var i=0; i<a; i++){
-if(newInvItem(this.block)) this.amount --
-else break
+var pickuped = false
+while(this.amount > 0 && newInvItem(this.block, this.durability, this.name)){
+this.amount--
+pickuped = true
 }
-if(this.amount === 0){
-this.canDespawn = true
-updateHUD = true
-playSound("entity.item.pickup")
-}else this.updateShape()*/
-if(newInvItem(this.block, this.durability, this.name)){
-this.canDespawn = true
+if(pickuped){
 if(this.block === blockIds.oakLog || this.block === blockIds.birchLog || this.block === blockIds.jungleLog || this.block === blockIds.spruceLog || this.block === blockIds.darkOakLog || this.block === blockIds.acaciaLog){
 achievment("Getting Wood")
 }
@@ -26895,6 +26939,9 @@ playSound("entity.item.pickup", 0, 1, pitch)
 if(multiplayer) send({type:"playSound", data:"entity.item.pickup", x:this.x,y:this.y,z:this.z, pitch:pitch})
 }
 }
+if(!this.amount){
+this.canDespawn = true
+}
 this.offsetY = -0.1 * cos(this.yaw*2) + 0.15
 var id = this.block
 if(id && blockData[id].tint){
@@ -26909,10 +26956,14 @@ if(blockData[this.block].shape !== shapes.cube) return
 var shape
 if(this.amount === 1){
 shape = "cube"
-}else if(this.amount < 4){
-shape = "cube"+this.amount
-}else{
+}else if(this.amount <= 16){
+shape = "cube2"
+}else if(this.amount <= 32){
+shape = "cube3"
+}else if(this.amount <= 48){
 shape = "cube4"
+}else{
+shape = "cube5"
 }
 const block = blockData[this.block]
 const tex = block.textures
@@ -27076,7 +27127,7 @@ var x = round(this.x), y = round(this.y), z = round(this.z)
 var b = world.getBlock(x, y, z, this.dimension)
 if(b){
 // non cube block breaks falling blocks
-world.addEntity(new Item(x,y,z, 0,0,0, this.block),false,this.dimension)
+world.addItems(x,y,z,this.dimension, 0,0,0, this.block)
 }else{
 world.setBlock(x,y,z, this.block,false,false,false,false,this.dimension)
 blockSound(this.block, "land", x,y,z)
@@ -27105,7 +27156,7 @@ ent.onhit(d)
 }
 if(blockData[this.block].name === "pointedDripstone" && this.onGround){
 var b = blockIds.pointedDripstone
-world.addEntity(new Item(this.x,this.y,this.z,0,0,0,b,true),false,this.dimension)
+world.addItems(this.x,this.y,this.z,this.dimension,0,0,0,b,true)
 blockParticles(b,this.x,this.y,this.z,30, "break",world,this.dimension)
 this.canDespawn = true
 }
@@ -27774,7 +27825,7 @@ this.canDespawn = true
 }
 var collided = entCollided(this)
 if(this.hasCollided){
-if(collidedWithMe && newInvItem(blockIds.arrow)) this.canDespawn = true
+if(collidedWithMe && !p.spectator && newInvItem(blockIds.arrow)) this.canDespawn = true
 }else{
 var d = dist3(this.velx,this.vely,this.velz,0,0,0)*4
 if(collided && collided !== this){
@@ -28281,6 +28332,14 @@ this.type = "Player"
 this.faces = v.size
 this.vao = v.vao
 var pix = 1/16
+this.targetX = 0
+this.targetY = 0
+this.targetZ = 0
+this.headYaw = 0
+this.headPitch = 0
+this.targetHeadYaw = 0
+this.targetHeadPitch = 0
+this.bodyRot = 0
 this.defaultOffsetY = pix*-8
 this.sneakingOffsetY = pix*-(8-4.8)
 this.die = false
@@ -28306,8 +28365,6 @@ part = this.generateVAO(shapes.playerRightLeg,0,0)
 this.addPart("rightLeg",part.size,part.vao,pix*-2,pix*-6,0,1,1,1,0,0)
 part = this.generateVAO(shapes.cape,0,0,false,4,8)
 this.addPart("cape",part.size,part.vao,0,pix*6,pix*-3,1,1,1,0,0)
-this.headYaw = 0
-this.headPitch = 0
 this.holding = 1 //shown in the hand, it is set to the blockid for the block the player is holding
 this.prevHolding = 1
 this.holdRot = Math.PI / -10
@@ -28426,6 +28483,20 @@ this.nameText.x = this.x
 this.nameText.y = this.y+0.5
 this.nameText.z = this.z
 }
+this.lastUpdate = now
+this.previousX = this.x
+this.previousY = this.y
+this.previousZ = this.z
+this.x = this.targetX
+this.y = this.targetY
+this.z = this.targetZ
+this.previousPitch = this.pitch
+this.previousYaw = this.yaw
+this.headPitch = this.targetHeadPitch
+this.headYaw = this.targetHeadYaw
+this.yaw = this.bodyRot
+if(this.yaw - this.previousYaw > Math.PI) this.previousYaw += Math.PId //prevent weird thing happening when rotation was 0 but is now 360
+if(this.yaw - this.previousYaw < -Math.PI) this.previousYaw -= Math.PId
 for(var p in this.parts){
 var part = this.parts[p]
 part.prx = part.rx
@@ -28587,22 +28658,14 @@ this.parts.cape.rx = lerp(0.125, this.parts.cape.rx, target)
 }
 }
 setPos(x,y,z){
-this.previousX = this.x
-this.previousY = this.y
-this.previousZ = this.z
-this.x = x
-this.y = y
-this.z = z
-this.lastUpdate = performance.now()
+this.targetX = x
+this.targetY = y
+this.targetZ = z
 }
 setRot(rx,ry, bodyRot){
-this.previousPitch = this.pitch
-this.previousYaw = this.yaw
-this.headPitch = rx
-this.headYaw = ry
-this.yaw = (bodyRot || bodyRot === 0) ? bodyRot : ry
-if(this.yaw - this.previousYaw > Math.PI) this.previousYaw += Math.PId //prevent weird thing happening when rotation was 0 but is now 360
-if(this.yaw - this.previousYaw < -Math.PI) this.previousYaw -= Math.PId
+this.targetHeadPitch = rx
+this.targetHeadYaw = ry
+this.bodyRot = (bodyRot || bodyRot === 0) ? bodyRot : ry
 }
 changeBlock(blockID){
 return //using skin texture, not block texture
@@ -30163,21 +30226,27 @@ return false
 changeScene("main menu")
 }
 }
-async function getWorlds(pingCallback){
+async function getWorlds(addWorldCallback,pingCallback){
 if(!navigator.onLine) return "offline"
 var logged = await loggedIn()
 if(!logged){
 return "notLoggedIn"
 }
 var worlds
-await fetch("https://server.thingmaker.repl.co/worlds").then(r => r.json()).then(r => worlds=r).catch(e => logError(e))
+await fetch("https://server.thingmaker.repl.co/worlds").then(r => r.json()).then(r => {
+worlds = r
+for(var w of worlds){
+if(addWorldCallback) addWorldCallback(w)
+}
+}).catch(e => logError(e))
 await fetch("https://minekhan.repl.co/servers/externalServers.json").then(r => r.json()).then(async r => {
 var promises = []
 var start = Date.now()
 function addExternalServer(v){
 promises.push(
 timeoutPromise(
-fetch("https://"+v+"/info").then(r => r.json()).then(r => worlds.push({
+fetch("https://"+v+"/info").then(r => r.json()).then(r => {
+var w = {
 external: true,
 url:v,
 name:r.name,
@@ -30186,7 +30255,11 @@ description:r.description,
 players:r.players,
 thumbnail:r.thumbnail,
 ping: Date.now() - start
-})),
+}
+worlds.push(w)
+if(addWorldCallback) addWorldCallback(w)
+if(pingCallback) pingCallback(w.id,w.ping)
+}),
 20000
 ).catch(() => {})
 )
@@ -30197,11 +30270,10 @@ addExternalServer(v)
 await Promise.all(promises)
 }).catch(console.error)
 if(pingCallback){
-fetch("https://server.thingmaker.repl.co/worldsPing").then(r => r.json()).then(pings => {
-for(var w of worlds){
-if(w.external) pings[w.id] = w.ping
+await fetch("https://server.thingmaker.repl.co/worldsPing").then(r => r.json()).then(pings => {
+for(var p in pings){
+pingCallback(p,pings[p])
 }
-pingCallback(pings)
 }).catch(e => logError(e))
 }
 return worlds
@@ -30429,6 +30501,8 @@ var mod = Function("return "+data.mod)()
 mod()
 }catch(e){console.log("error loading mod: "+e)}
 }
+p3.hidden = true
+multiplayer.sendPos(true)
 changeScene("loading")
 }else if(data.type === "mySkin"){
 playerSkins[author] = data.data
@@ -30507,6 +30581,13 @@ world.posEntity(arr[i], true)
 }else if(data.type === "entityDelete"){
 if(world){
 world.deleteEntity(data.id, true)
+}
+}else if(data.type === "entEvent"){
+var ent = world.entities[world.getEntity(data.id)]
+if(!ent) return
+if(data.event === "itemAmount"){
+ent.amount = data.data
+ent.willUpdateShape = true
 }
 }else if(data.type === "achievment"){
 Messages.add(data.USER+" earned the achievment: "+data.data)
@@ -30694,12 +30775,10 @@ class World {
 constructor() {
 generatedChunks = 0
 fogDist = 16
-p.y = superflat ? 6 : (round(noiseProfile.noise(8 * generator.smooth, 8 * generator.smooth) * generator.height) + 2 + generator.extra)
-p.lastY = 0
 this.spawnPoint = {
-x: 8,
-y: p.y,
-z: 8
+x:8,
+y:0,
+z:8
 }
 this.version = version
 //Initialize the world's arrays
@@ -31398,6 +31477,7 @@ var ent
 if(i || i===0){
 ent = this.entities[i]
 if(ent.type === "TextEntity" && ent.text !== p.text) ent.setText(p.text)
+if(ent.type === "Item" && ent.amount !== p.amount) ent.amount = p.amount, ent.willUpdateShape = true
 }else{
 switch(d.entType){
 case "Item":
@@ -31485,6 +31565,18 @@ dimension:ent.dimension
 })
 })
 return arr
+}
+addItems(x,y,z,dimension,vx,vy,vz,block,autoSetVel,amount,durability,customName){
+var data = blockData[block]
+if(data.shape !== shapes.cube){
+for(var i=0; i<amount; i++) this.addEntity(new Item(x, y, z, vx, vy, vz, block, autoSetVel, 1,durability,customName),false,dimension)
+}else{
+while(amount){
+var a = min(amount,data.stackSize)
+amount -= a
+this.addEntity(new Item(x, y, z, vx, vy, vz, block, autoSetVel, a,durability,customName),false,dimension)
+}
+}
 }
 addParticle(particle,dimension){
 if(dimension || dimension === "") particle.dimension = dimension
@@ -32383,6 +32475,8 @@ loadFrom[loadFrom.length-1].blocks[index] = currentPallete[pid]
 this.saveStr.sections = this.saveStr.sections.substring(0,this.saveStr.sections.length-1) //remove trailing ;
 this.netherSaveStr.sections = this.netherSaveStr.sections.substring(0,this.netherSaveStr.sections.length-1)
 this.endSaveStr.sections = this.endSaveStr.sections.substring(0,this.endSaveStr.sections.length-1)
+p.lastY = 0
+this.spawnPoint.y = superflat ? 6 : (round(noiseProfile.noise(8 * generator.smooth, 8 * generator.smooth) * generator.height) + 2 + generator.extra)
 }
 loadNetherSave(str){ //for older saves
 }
@@ -34263,7 +34357,7 @@ updateCraftingGrid()
 }else if(screen === "crafting" && mouseX>offX && mouseX<offX+(s*3) && mouseY>offY && mouseY<offY+(s*3)){}else{
 if(survival && inventory.holding && inventory.holding.id){
 let d = p.direction
-for(var j=0; j<inventory.holding.amount; j++) world.addEntity(new Item(p.x,p.y,p.z,d.x/4,d.y/4,d.z/4,inventory.holding.id,false, 1,inventory.holding.durability,inventory.holding.customName),false,p.dimension)
+world.addItems(p.x,p.y,p.z,p.dimension,d.x/4,d.y/4,d.z/4,inventory.holding.id,false, inventory.holding.amount,inventory.holding.durability,inventory.holding.customName)
 }
 inventory.holding = 0
 }
@@ -35343,7 +35437,7 @@ if (k === controlMap.dropItem.key && inventory.hotbar[inventory.hotbarSlot] && i
 let d = p.direction
 let block = holding || inventory.hotbar[inventory.hotbarSlot].id
 block = block < isCube && !blockData[block].item ? block | blockMode : block
-world.addEntity(new Item(p.x, p.y, p.z, d.x/4, d.y/4, d.z/4, block, false, 1,inventory.hotbar[inventory.hotbarSlot].durability,inventory.hotbar[inventory.hotbarSlot].customName),false,p.dimension)
+world.addItems(p.x, p.y, p.z, p.dimension, d.x/4, d.y/4, d.z/4, block, false, 1,inventory.hotbar[inventory.hotbarSlot].durability,inventory.hotbar[inventory.hotbarSlot].customName)
 if(survival){
 inventory.hotbar[inventory.hotbarSlot].amount --
 inventory.hotbar[inventory.hotbarSlot].animation = 1.5
@@ -36343,14 +36437,10 @@ if(players) div.innerHTML += players.length+" player"+(players.length===1 ? "" :
 servers[id] = server
 window.servers.appendChild(div)
 }
-var worlds;
-await getWorlds(pings => {
+var worlds = await getWorlds(addWorld, (id,ping) => {
 if(screen !== "multiplayer menu") return
-var elems = window.servers.querySelectorAll(".world")
-for(var i=0; i<elems.length; i++){
-var el = elems[i]
+var el = doc.getElementById(id)
 var p = el.querySelector(".ping")
-var ping = pings[el.id]
 if(typeof ping === "number"){
 var y
 if(ping > 800) y = -56
@@ -36360,15 +36450,18 @@ else if(ping > 200) y = -14
 else y = 0
 p.innerHTML = ping+" miliseconds <div class='img' style='background-position:0 "+y+"px;'></div>"
 }else if(ping === "timeout"){
-p.innerHTML = "Ping timed out"
+p.innerHTML = "Ping timed out <div class='img' style='background-position:0 -70px;'></div>"
 }else{
-p.innerHTML = "Error"
+p.innerHTML = "Error <div class='img' style='background-position:0 -70px;'></div>"
 }
-}
-}).then(r => worlds=r)
+p.setAttribute("pingDone",true)
+})
 if(worlds === "notLoggedIn") return changeScene("main menu")
 if(worlds === "offline") return window.servers.innerHTML = "<div class='message'>You are offline. Connect to the internet first.</div>"
-worlds.forEach(r => addWorld(r))
+for(var el of window.servers.querySelectorAll(".world")){
+var p = el.querySelector(".ping")
+if(!p.getAttribute("pingDone")) p.innerHTML = "Ping failed <div class='img' style='background-position:0 -70px;'></div>"
+}
 var pingStart = Date.now()
 function addPingMsg(msg){
 var div = document.createElement("div")
@@ -37954,7 +38047,7 @@ p.foodSaturation += block.saturation
 if(survival && inventory.hotbar[inventory.hotbarSlot]){
 inventory.hotbar[inventory.hotbarSlot].amount --;
 if(block.eatResult && !newInvItem(blockIds[block.eatResult])) {
-world.addEntity(new Item(p.x,p.y,p.z,0,0,0,blockIds[block.eatResult]),false,p.dimension)
+world.addItems(p.x,p.y,p.z,p.dimension,0,0,0,blockIds[block.eatResult])
 }
 updateHUD = true
 }
@@ -38021,7 +38114,7 @@ delete item.dropStart
 let d = p.direction
 let block = item.id
 block = block < isCube && !blockData[block].item ? block | blockMode : block
-world.addEntity(new Item(p.x, p.y, p.z, d.x/4, d.y/4, d.z/4, block, false, 1,item.durability,item.customName),false,p.dimension)
+world.addItems(p.x, p.y, p.z, p.dimension, d.x/4, d.y/4, d.z/4, block, false, 1,item.durability,item.customName)
 if(survival){
 item.amount --
 item.animation = 1.5
@@ -38213,7 +38306,7 @@ if(!survival) p.burnTimer = 0
 blockHere = world.getBlock(p2.x, p2.y, p2.z, p.dimension)
 inWater = 0
 if(blockHere && blockData[blockHere].name === "Water") inWater = 1
-if(blockHere === blockData[blockHere].name === "Lava") inWater = 2
+if(blockHere && blockData[blockHere].name === "Lava") inWater = 2
 var blockAtFeet = world.getBlock(p2.x, round(p.y-p.bottomH), p2.z, p.dimension)
 if(!p.flying && ((blockHere && blockData[blockHere].ladder) || (blockAtFeet && blockData[blockAtFeet].ladder))){
 if(controlMap.jump.pressed){
